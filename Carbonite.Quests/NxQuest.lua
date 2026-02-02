@@ -1346,11 +1346,6 @@ local function QuestOptions()
                             end,
                             set = function()
                                 Nx.qdb.profile.QuestWatch.HideBlizz = not Nx.qdb.profile.QuestWatch.HideBlizz
-                                C_Timer.After(0, function()
-                                    if Nx and Nx.Quest then
-                                        Nx.Quest:ApplyBlizzardTrackerToggle()
-                                    end
-                                end)
                             end,
                         },
                         qwblizzauto = {
@@ -2624,120 +2619,6 @@ function Nx.Quest:OptsReset()
     Nx.qdb.profile.QuestOpts = qopts
 end
 
-Nx.Quest._blizzTracker = Nx.Quest._blizzTracker or {
-    installed = false,
-    isHidden = false,
-    showOriginal = nil,
-    alphaOriginal = 1,
-    guardFrame = nil,
-}
-
-function Nx.Quest:IsHideBlizzardTrackerEnabled()
-    local qw = Nx.qdb and Nx.qdb.profile and Nx.qdb.profile.QuestWatch
-    if not qw then
-        return true
-    end
-
-    -- Default to true unless explicitly disabled.
-    return qw.HideBlizz ~= false
-end
-
-function Nx.Quest:InstallBlizzardTrackerToggle()
-
-    local tracker = _G.ObjectiveTrackerFrame
-    if not tracker or self._blizzTracker.installed then
-        return
-    end
-
-    self._blizzTracker.installed = true
-    self._blizzTracker.showOriginal = tracker.Show
-    if tracker.GetAlpha then
-        self._blizzTracker.alphaOriginal = tracker:GetAlpha() or 1
-    end
-
-    -- Wrap Show() so Blizzard can request show, but we can veto when hidden.
-    tracker.Show = function(frame, ...)
-        local quest = Nx and Nx.Quest
-        local state = quest and quest._blizzTracker
-        if state and state.isHidden then
-            return
-        end
-        if state and state.showOriginal then
-            return state.showOriginal(frame, ...)
-        end
-    end
-
-    -- Backup guard for other visibility pathways (SetShown, parent relayout, etc.)
-    tracker:HookScript("OnShow", function(frame)
-        local quest = Nx and Nx.Quest
-        local state = quest and quest._blizzTracker
-        if state and state.isHidden then
-            frame:SetAlpha(0)
-            frame:Hide()
-        end
-    end)
-
-    -- Re-apply when Blizzard commonly refreshes/relayouts the tracker.
-    -- This is extremely lightweight and avoids "it came back" reports after zoning.
-    local gf = CreateFrame("Frame")
-    gf:RegisterEvent("PLAYER_ENTERING_WORLD")
-    gf:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    gf:RegisterEvent("SCENARIO_UPDATE")
-    gf:SetScript("OnEvent", function()
-        if Nx and Nx.Quest and Nx.Quest._blizzTracker and Nx.Quest._blizzTracker.isHidden then
-            C_Timer.After(0.2, function()
-                if Nx and Nx.Quest then
-                    Nx.Quest:ApplyBlizzardTrackerToggle()
-                end
-            end)
-        end
-    end)
-    self._blizzTracker.guardFrame = gf
-end
-
-function Nx.Quest:HideBlizzardObjectiveTracker()
-    local tracker = _G.ObjectiveTrackerFrame
-    if not tracker then
-        return
-    end
-
-    self._blizzTracker.isHidden = true
-    tracker:SetAlpha(0)
-    tracker:Hide()
-end
-
-function Nx.Quest:ShowBlizzardObjectiveTracker()
-    local tracker = _G.ObjectiveTrackerFrame
-    if not tracker then
-        return
-    end
-
-    self._blizzTracker.isHidden = false
-    tracker:SetAlpha(self._blizzTracker.alphaOriginal or 1)
-
-    -- Call the original Show directly (bypass wrapper logic)
-    local showOriginal = self._blizzTracker.showOriginal
-    if showOriginal then
-        showOriginal(tracker)
-    else
-        tracker:Show()
-    end
-end
-
-function Nx.Quest:ApplyBlizzardTrackerToggle()
-    if not _G.ObjectiveTrackerFrame then
-        return
-    end
-
-    self:InstallBlizzardTrackerToggle()
-
-    if self:IsHideBlizzardTrackerEnabled() then
-        self:HideBlizzardObjectiveTracker()
-    else
-        self:ShowBlizzardObjectiveTracker()
-    end
-end
-
 -------------------------------------------------------------------------------
 -- DEBUG
 -------------------------------------------------------------------------------
@@ -2756,6 +2637,123 @@ end
 -- Initialize the quest system
 -- Sets up tracking tables, hooks, and windows
 --
+
+Nx.Quest._BlizzTracker = Nx.Quest._BlizzTracker or {
+	installed = false,
+	isHidden = false,
+	frames = {}, -- [frame] = { show=fn, setShown=fn, alpha=number }
+}
+
+local function NxQuest_GetHideBlizzTrackerSetting()
+	-- Existing Carbonite option (Quest Watch): HideBlizz
+	local q = Nx.qdb and Nx.qdb.profile and Nx.qdb.profile.QuestWatch
+	if not q then
+		return false
+	end
+	return q.HideBlizz and true or false
+end
+
+local function NxQuest_TrackerWrapFrame(ctrl, frame)
+	if not frame or ctrl.frames[frame] then
+		return
+	end
+
+	local rec = {
+		show = frame.Show,
+		setShown = frame.SetShown,
+		alpha = frame.GetAlpha and frame:GetAlpha() or 1,
+	}
+	ctrl.frames[frame] = rec
+
+	-- Veto Show calls while hidden
+	if type(frame.Show) == "function" then
+		frame.Show = function(f, ...)
+			if ctrl.isHidden then
+				return
+			end
+			return rec.show and rec.show(f, ...) or nil
+		end
+	end
+
+	-- Veto SetShown(true) calls while hidden
+	if type(frame.SetShown) == "function" then
+		frame.SetShown = function(f, shown, ...)
+			if ctrl.isHidden and shown then
+				return
+			end
+			return rec.setShown and rec.setShown(f, shown, ...) or nil
+		end
+	end
+
+	-- Backup guard: if something forces it visible through other paths
+	if frame.HookScript then
+		frame:HookScript("OnShow", function(f)
+			if ctrl.isHidden then
+				f:SetAlpha(0)
+				f:Hide()
+			end
+		end)
+	end
+end
+
+function Nx.Quest:InstallBlizzardTrackerSuppression()
+	local ctrl = self._BlizzTracker
+	if ctrl.installed then
+		return
+	end
+	ctrl.installed = true
+
+	-- Wrap the main tracker frame and common sub-trackers.
+	-- Not all of these exist in every build; wrapping is conditional/safe.
+	local function WrapKnownFrames()
+		NxQuest_TrackerWrapFrame(ctrl, _G.ObjectiveTrackerFrame)
+		NxQuest_TrackerWrapFrame(ctrl, _G.BonusObjectiveTrackerFrame)
+		NxQuest_TrackerWrapFrame(ctrl, _G.ScenarioObjectiveTrackerFrame)
+		NxQuest_TrackerWrapFrame(ctrl, _G.UIWidgetObjectiveTrackerFrame)
+
+		-- Some builds expose additional tracker frames or plugin frames by name.
+		NxQuest_TrackerWrapFrame(ctrl, _G.WorldQuestTrackerFrame)
+		NxQuest_TrackerWrapFrame(ctrl, _G.WorldQuestTrackerScreenPanel)
+		NxQuest_TrackerWrapFrame(ctrl, _G.WowTokenGameTimeTutorialFrame) -- harmless; defensive
+	end
+
+	WrapKnownFrames()
+
+	-- Re-wrap after Blizzard_ObjectiveTracker loads (ObjectiveTrackerFrame may be created late)
+	local f = CreateFrame("Frame")
+	f:RegisterEvent("ADDON_LOADED")
+	f:SetScript("OnEvent", function(_, _, addonName)
+		if addonName == "Blizzard_ObjectiveTracker" or addonName == "Blizzard_WorldQuestUI" then
+			C_Timer.After(0.1, WrapKnownFrames)
+			C_Timer.After(0.5, WrapKnownFrames)
+		end
+	end)
+end
+
+function Nx.Quest:ApplyBlizzardTrackerSuppression()
+	local ctrl = self._BlizzTracker
+	self:InstallBlizzardTrackerSuppression()
+
+	ctrl.isHidden = NxQuest_GetHideBlizzTrackerSetting()
+
+	-- Apply state immediately to anything currently visible.
+	for frame, rec in pairs(ctrl.frames) do
+		if ctrl.isHidden then
+			if frame.SetAlpha then frame:SetAlpha(0) end
+			if frame.Hide then frame:Hide() end
+		else
+			-- Restore alpha and allow Blizzard to show again.
+			if frame.SetAlpha and rec.alpha then frame:SetAlpha(rec.alpha) end
+		end
+	end
+
+	-- Also hard-hide the root tracker frame if the setting is enabled
+	if ctrl.isHidden and _G.ObjectiveTrackerFrame then
+		_G.ObjectiveTrackerFrame:SetAlpha(0)
+		_G.ObjectiveTrackerFrame:Hide()
+	end
+end
+
 function Nx.Quest:Init()
 
     if WatchFrame then
@@ -2763,20 +2761,6 @@ function Nx.Quest:Init()
     elseif QuestWatchFrame then
         QuestWatchFrame:Hide()
     end
-
-    -- Retail Objective Tracker (11.x+): apply the runtime toggle.
-    -- Blizzard can re-show the tracker during initial layout, so apply twice.
-    C_Timer.After(0.5, function()
-        if Nx and Nx.Quest then
-            Nx.Quest:ApplyBlizzardTrackerToggle()
-        end
-    end)
-
-    C_Timer.After(1.0, function()
-        if Nx and Nx.Quest then
-            Nx.Quest:ApplyBlizzardTrackerToggle()
-        end
-    end)
 
     self.Enabled = Nx.qdb.profile.Quest.Enable
     if not self.Enabled then
@@ -2801,6 +2785,19 @@ function Nx.Quest:Init()
         SetCVar ("autoQuestProgress", 1)
         SetCVar ("autoQuestWatch", 1)
     end
+
+    -- Apply Blizzard tracker suppression (ObjectiveTracker + World Quest tracker)
+    C_Timer.After(0.5, function()
+        if Nx and Nx.Quest then
+            Nx.Quest:ApplyBlizzardTrackerSuppression()
+        end
+    end)
+    C_Timer.After(1.0, function()
+        if Nx and Nx.Quest then
+            Nx.Quest:ApplyBlizzardTrackerSuppression()
+        end
+    end)
+
 
     -- DEBUG
 --    self.OldSelectQuestLogEntry = SelectQuestLogEntry
@@ -9603,7 +9600,7 @@ function Nx.Quest.Watch:Open()
 
     win:SetMinimize (win.SaveData["Minimized"])
     if Nx.qdb.profile.QuestWatch.HideBlizz then
-        --ObjectiveTrackerFrame:Hide()        -- Hide Blizzard's
+        Nx.Quest:ApplyBlizzardTrackerSuppression()
     end
 end
 
@@ -10067,7 +10064,7 @@ function Nx.Quest.Watch:UpdateList()
             self.FlashColor = (self.FlashColor + 1) % 2
             list:SetItemFrameScaleAlpha (itemScale, Nx.Util_str2a (itemAlpha))
             if hideBlizz and not InCombatLockdown() then
-                --ObjectiveTrackerFrame:Hide()        -- Hide Blizzard's
+                Nx.Quest:ApplyBlizzardTrackerSuppression()
             end
             if Nx.Quest.AltView then
                 local curnum = 1
