@@ -3239,7 +3239,7 @@ function Nx.Opts:QuickOptsTimer()
     if Nx.isRetail and not Nx.GetCarboniteMediaPath then
         local mediaVer = Nx.db.profile.Version.MediaAddonNotice or 0
         local gameLocale = GetLocale()
-        if gameLocale == "zhCN" or locale == "zhTW" or gameLocale = "esMX" then
+        if gameLocale == "zhCN" or locale == "zhTW" or gameLocale == "esMX" then
             gameLocale = string.upper(string.sub(GetLocale(), -2))
         else
             gameLocale = string.upper(string.sub(GetLocale(), 1, 2))
