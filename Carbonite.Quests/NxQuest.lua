@@ -1344,8 +1344,11 @@ local function QuestOptions()
                             get = function()
                                 return Nx.qdb.profile.QuestWatch.HideBlizz
                             end,
-                            set = function()
-                                Nx.qdb.profile.QuestWatch.HideBlizz = not Nx.qdb.profile.QuestWatch.HideBlizz
+                            set = function(info, val)
+                                Nx.qdb.profile.QuestWatch.HideBlizz = (val == true)
+                                if Nx.Quest and Nx.Quest.TrackerHider_Apply then
+                                    Nx.Quest:TrackerHider_Apply()
+                                end
                             end,
                         },
                         qwblizzauto = {
@@ -2637,21 +2640,163 @@ end
 -- Initialize the quest system
 -- Sets up tracking tables, hooks, and windows
 --
+-------------------------------------------------------------------------------
+-- BLIZZARD TRACKER HIDING (Retail + Classic + Anniversary + MoP Classic)
+-- Checked = hide; Unchecked = show.
+-------------------------------------------------------------------------------
+
+local NX_TRACKER_FRAMES = {
+    "ObjectiveTrackerFrame", -- Retail / modern
+    "WatchFrame",            -- Classic / MoP Classic / Anniversary
+    "QuestWatchFrame",       -- Fallback (some UI variants)
+}
+
+local function NxTracker_IsProtectedAndLockedDown(frame)
+    return frame and frame.IsProtected and frame:IsProtected() and InCombatLockdown()
+end
+
+function Nx.Quest:TrackerHider_Init()
+    if self._trackerHider then
+        return
+    end
+
+    local hiddenParent = CreateFrame("Frame", nil, UIParent)
+    hiddenParent:Hide()
+
+    self._trackerHider = {
+        hiddenParent = hiddenParent,
+        hooked = {},
+        orig = {},
+        pending = false,
+    }
+
+    local driver = CreateFrame("Frame", nil, UIParent)
+    self._trackerHider.driver = driver
+
+    driver:RegisterEvent("PLAYER_LOGIN")
+    driver:RegisterEvent("PLAYER_ENTERING_WORLD")
+    driver:RegisterEvent("PLAYER_REGEN_ENABLED")
+    driver:RegisterEvent("ADDON_LOADED")
+
+    driver:SetScript("OnEvent", function(_, event)
+        if event == "PLAYER_REGEN_ENABLED" and not self._trackerHider.pending then
+            return
+        end
+        self._trackerHider.pending = false
+        self:TrackerHider_Apply()
+    end)
+end
+
+function Nx.Quest:TrackerHider_ShouldHide()
+    local qProfile = Nx.qdb and Nx.qdb.profile
+    local enabled = qProfile and qProfile.Quest and qProfile.Quest.Enable
+    local watchProfile = qProfile and qProfile.QuestWatch
+    return enabled and watchProfile and watchProfile.HideBlizz == true
+end
+
+function Nx.Quest:TrackerHider_CaptureOriginal(frame, key)
+    local h = self._trackerHider
+    if not h or h.orig[key] then
+        return
+    end
+
+    local mouseEnabled = true
+    if frame.IsMouseEnabled then
+        mouseEnabled = frame:IsMouseEnabled()
+    end
+
+    h.orig[key] = {
+        parent = frame:GetParent(),
+        alpha = frame:GetAlpha(),
+        mouseEnabled = mouseEnabled,
+    }
+end
+
+function Nx.Quest:TrackerHider_SetVisible(frame, key, visible)
+    local h = self._trackerHider
+    if not h or not frame then
+        return
+    end
+
+    if NxTracker_IsProtectedAndLockedDown(frame) then
+        h.pending = true
+        return
+    end
+
+    self:TrackerHider_CaptureOriginal(frame, key)
+    local orig = h.orig[key]
+
+    if visible then
+        frame:SetParent((orig and orig.parent) or UIParent)
+        frame:SetAlpha((orig and orig.alpha) or 1)
+        if frame.EnableMouse then
+            frame:EnableMouse(orig and orig.mouseEnabled ~= false or true)
+        end
+        frame:Show()
+        return
+    end
+
+    frame:SetParent(h.hiddenParent)
+    frame:SetAlpha(0)
+    if frame.EnableMouse then
+        frame:EnableMouse(false)
+    end
+    frame:Hide()
+end
+
+function Nx.Quest:TrackerHider_HookFrame(name)
+    local h = self._trackerHider
+    if not h or h.hooked[name] then
+        return
+    end
+
+    local frame = _G[name]
+    if not frame or not frame.HookScript then
+        return
+    end
+
+    h.hooked[name] = true
+    frame:HookScript("OnShow", function(f)
+        if self:TrackerHider_ShouldHide() then
+            self:TrackerHider_SetVisible(f, name, false)
+        end
+    end)
+end
+
+function Nx.Quest:TrackerHider_Apply()
+    if not self._trackerHider then
+        self:TrackerHider_Init()
+    end
+
+    local hide = self:TrackerHider_ShouldHide()
+
+    for i = 1, #NX_TRACKER_FRAMES do
+        local name = NX_TRACKER_FRAMES[i]
+        local frame = _G[name]
+        if frame then
+            self:TrackerHider_HookFrame(name)
+            self:TrackerHider_SetVisible(frame, name, not hide)
+        end
+    end
+end
+
 function Nx.Quest:Init()
 
-    if WatchFrame then
-        WatchFrame:Hide()
-    elseif QuestWatchFrame then
-        QuestWatchFrame:Hide()
-    end
 
     self.Enabled = Nx.qdb.profile.Quest.Enable
     if not self.Enabled then
 
 --        Nx.Quest = nil
         Nx.Quests = nil    -- Data
+        -- Ensure the Blizzard tracker is not left hidden when the quest module is disabled.
+        self:TrackerHider_Apply()
+
         return
     end
+
+    -- Keep Blizzard tracker visibility in sync with the profile toggle (cross-version safe).
+    self:TrackerHider_Apply()
+
 
     self.GOpts = Nx.db.profile
 
@@ -3593,9 +3738,25 @@ function Nx.Quest:SetCols()
     Nx.Quest.Cols["incompColor"] = Nx.Util_str2colstr (Nx.qdb.profile.QuestWatch.IncompleteColor)
     Nx.Quest.Cols["oCompColor"] = Nx.Util_str2colstr (Nx.qdb.profile.QuestWatch.OCompleteColor)
     Nx.Quest.Cols["oIncompColor"] = Nx.Util_str2colstr (Nx.qdb.profile.QuestWatch.OIncompleteColor)
-    Nx.Quest.Cols["BGColorR"], Nx.Quest.Cols["BGColorG"], Nx.Quest.Cols["BGColorB"], Nx.Quest.Cols["BGColorA"] =  Nx.Util_str2rgba (Nx.qdb.profile.QuestWatch.BGColor)
-    Nx.Quest.Cols["trkR"], Nx.Quest.Cols["trkG"], Nx.Quest.Cols["trkB"], Nx.Quest.Cols["trkA"] =  Nx.Util_str2rgba (Nx.qdb.profile.Quest.MapWatchAreaTrackColor)
-    Nx.Quest.Cols["hovR"], Nx.Quest.Cols["hovG"], Nx.Quest.Cols["hovB"], Nx.Quest.Cols["hovA"] =  Nx.Util_str2rgba (Nx.qdb.profile.Quest.MapWatchAreaHoverColor)
+    do
+        local r, g, b, a = Nx.Util_str2rgba (Nx.qdb.profile.QuestWatch.BGColor)
+        Nx.Quest.Cols["BGColorR"] = tonumber(r) or 0
+        Nx.Quest.Cols["BGColorG"] = tonumber(g) or 0
+        Nx.Quest.Cols["BGColorB"] = tonumber(b) or 0
+        Nx.Quest.Cols["BGColorA"] = tonumber(a) or .4
+
+        r, g, b, a = Nx.Util_str2rgba (Nx.qdb.profile.Quest.MapWatchAreaTrackColor)
+        Nx.Quest.Cols["trkR"] = tonumber(r) or 1
+        Nx.Quest.Cols["trkG"] = tonumber(g) or 1
+        Nx.Quest.Cols["trkB"] = tonumber(b) or 1
+        Nx.Quest.Cols["trkA"] = tonumber(a) or 1
+
+        r, g, b, a = Nx.Util_str2rgba (Nx.qdb.profile.Quest.MapWatchAreaHoverColor)
+        Nx.Quest.Cols["hovR"] = tonumber(r) or 1
+        Nx.Quest.Cols["hovG"] = tonumber(g) or 1
+        Nx.Quest.Cols["hovB"] = tonumber(b) or 1
+        Nx.Quest.Cols["hovA"] = tonumber(a) or 1
+    end
 end
 
 function Nx.Quest:CheckQuestSE (q, n)
@@ -7405,18 +7566,12 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
     end
 
 --    Nx.prtD ("OnQuestUpdate %s Done", event)
-    if WatchFrame then
-        WatchFrame:Hide()
-    elseif QuestWatchFrame then
-        QuestWatchFrame:Hide()
+    -- Keep Blizzard tracker visibility in sync with the profile toggle.
+    if Nx.Quest and Nx.Quest.TrackerHider_Apply then
+        Nx.Quest:TrackerHider_Apply()
     end
 end
 
-if WatchFrame then
-    hooksecurefunc(WatchFrame, 'Show', function (f) f:Hide() end);
-elseif QuestWatchFrame then
-    hooksecurefunc("QuestWatch_Update", function (...) QuestWatchFrame:Hide(); end);
-end
 
 Nx.Quest.TrackedAchievements = {}
 function CarboniteQuest:OnTrackedAchievementsUpdate (event, ...)
@@ -9476,8 +9631,8 @@ function Nx.Quest.Watch:Open()
     self:SetSortMode (1)
 
     win:SetMinimize (win.SaveData["Minimized"])
-    if Nx.qdb.profile.QuestWatch.HideBlizz then
-        --ObjectiveTrackerFrame:Hide()        -- Hide Blizzard's
+    if Nx.Quest and Nx.Quest.TrackerHider_Apply then
+        Nx.Quest:TrackerHider_Apply()
     end
 end
 
