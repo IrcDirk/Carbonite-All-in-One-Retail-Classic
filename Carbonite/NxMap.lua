@@ -7866,7 +7866,16 @@ end
 -- Locale-aware compressed texture path
 -- New structure: Conv/{locale}/{zonefolder}/{textureName}
 -- Fallback structure: Conv/{textureName} (backwards compatible)
+-- External addon structure (retail only): {MediaPath}/{zonefolder}/{textureName}
 local function GetCompressedTexturePath(textureName, zoneFolder)
+    -- Check if external media addon provides a path (retail only)
+    if Nx.isRetail and Nx.GetCarboniteMediaPath then
+        local externalPath = Nx.GetCarboniteMediaPath()
+        if externalPath then
+            return externalPath .. "\\" .. zoneFolder .. "\\" .. textureName
+        end
+    end
+
     local basePath = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\Conv\\"
 
     -- Check if locale textures are enabled
@@ -7886,12 +7895,12 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
     if (mapId == nil or mapId == -1) then
         return
     end
-    
+
     -- Skip Quel'Thalas zones based on player location (old vs new)
     if self:ShouldHideQuelThalasZone(mapId) then
         return
     end
-    
+
     local wzone = self:GetWorldZone (mapId)
     if wzone and (wzone.City or self:IsMicroDungeon(mapId)) then
         return
@@ -10875,6 +10884,20 @@ function Nx.Map:InitTables()
 
     if Nx.WOTLKMaps then
         self.ZoneOverlays["lakewintergrasp"]["lakewintergrasp"] = "0,0,1024,768"
+    end
+
+    -- Merge external compressed overlay data (retail only)
+    if Nx.isRetail and Nx.GetCompressedOverlayData then
+        local externalOverlays = Nx.GetCompressedOverlayData()
+        if externalOverlays then
+            for zoneName, overlayData in pairs(externalOverlays) do
+                self.ZoneOverlays[zoneName] = overlayData
+            end
+        end
+        -- Enable locale textures when external media addon is present
+        if Nx.db and Nx.db.profile and Nx.db.profile.Map then
+            Nx.db.profile.Map.UseLocaleTextures = true
+        end
     end
 
     for k, v in pairs (worldInfo) do

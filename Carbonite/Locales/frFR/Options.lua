@@ -352,8 +352,8 @@ L["General"] = "G\195\169n\195\169ral"
 L["Battlegrounds"] = "Champs de bataille"
 L["Fonts"] = "Polices"
 L["Guide & Gather"] = "Guide & r\195\169colte"
-L["Maps"] = true
-L["Menus"] = true
+L["Maps"] = "Cartes"
+L["Menus"] = "Menus"
 L["Privacy"] = "Vie Priv\195\169e"
 L["Profiles"] = "Profils"
 L["Skin"] = "Apparence"
@@ -361,8 +361,8 @@ L["Tracking HUD"] = "HUD Pistage"
 
 -- General Text
 L["Reload UI"] = "Red\195\169marrer UI (user interface)"
-L["Reload"] = true
-L["Cancel"] = true
+L["Reload"] = "Recharger"
+L["Cancel"] = "Annuler"
 L["Reset options"] = "Remettre \195\160 z\195\169ro les options (reset)"
 L["Reset global options"] = "Remettre \195\160 z\195\169ro les options globales (reset)"
 L["Reset window layouts"] = "Remettre \195\160 z\195\169ro mod\195\168le des fen\195\170tres (reset)"
@@ -372,3 +372,9 @@ L["Delete Misc Locations"] = "Effacer emplacements des divers (MISC)"
 L["Import Herbs"] = "Importer donn\195\169es des herbes"
 L["Import Mining"] = "Importer donn\195\169es des gisements"
 L["Import Misc"] = "Importer donn\195\169es divers (MISC)"
+
+L["Yes"] = "Oui"
+L["No"] = "Non"
+L["Ok"] = "Ok"
+L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."] = "Int\195\169grer la minimap du jeu dans la carte Carbonite?\n\nCeci cr\195\169era une carte unifi\195\169e. Les boutons de la minimap seront d\195\169plac\195\169s dans la fen\195\170tre de boutons Carbonite. Ceci peut aussi \195\170tre chang\195\169 dans les options de la MiniMap."
+L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."] = "Consid\195\169rez l'installation de l'addon Carbonite.Combined.Maps.%s pour am\195\169liorer les FPS en utilisant des cartes compress\195\169es."

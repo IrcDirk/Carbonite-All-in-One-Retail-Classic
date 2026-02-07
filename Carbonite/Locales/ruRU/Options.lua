@@ -156,7 +156,7 @@ L["Sets the action performed when clicking 4th mouse button holding CTRL"] = "З
 -- Minimap Options
 L["MiniMap Options"] = "Настройки миникарты"
 L["Combine Blizzard Minimap with Carbonite Minimap"] = "Совместить миникарту Blizzard с миникартой Carbonite"
-L["When enabled, Carbonite will combine the minimap into itself to create a more functional minimap for you (RELOAD REQUIRED)"] = "Когда Вкл., Carbonite поместит миникарту в себя чтобы создать более функцинальную карту для вас (Нужен перезапуск ПИ)"
+L["When enabled, Carbonite will combine the minimap into itself to create a more functional minimap for you (RELOAD REQUIRED)"] = "Когда Вкл., Carbonite поместит миникарту в свое окно, чтобы создать более функцинальную карту для вас (Нужен перезапуск интерфейса)"
 L["Minimap Shape is Square"] = "Форма миникарты: квадрат"
 L["When enabled, Carbonite will change the minimap shape from circle to square"] = "Когда Вкл., Carbonite изменит форму миникарты с круга на квадрат"
 L["Minimap is drawn above icons"] = "Миникарта отрисовывается поверх иконок"
@@ -371,3 +371,9 @@ L["Delete Misc Locations"] = "Удалить места расположения
 L["Import Herbs"] = "Имортировать травы"
 L["Import Mining"] = "Импртировать руды"
 L["Import Misc"] = "Импортировать"
+
+L["Yes"] = "Да"
+L["No"] = "Нет"
+L["Ok"] = "Принять"
+L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."] = "Разместить миникарту в окне Carbonite?\n\nЭто позволит создать одну общую карту. Кнопки миникарты будут размещены в окне Carbonite. Этот функционал можно отключить в окне параметров миникарты."
+L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."] = "Для повышения FPS, особенно при включении отображения трав/руд мы рекомендуем установить аддон Carbonite.Combined.Maps.%s"

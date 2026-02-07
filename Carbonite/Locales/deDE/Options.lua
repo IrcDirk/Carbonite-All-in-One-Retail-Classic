@@ -362,8 +362,8 @@ L["Tracking HUD"] = "Wegweiser"
 
 -- General Text
 L["Reload UI"] = "Oberf\195\164che neu laden"
-L["Reload"] = true
-L["Cancel"] = true
+L["Reload"] = "Neu laden"
+L["Cancel"] = "Abbrechen"
 L["Reset options"] = "Einstellungen zur\195\188cksetzen"
 L["Reset global options"] = "Globale  Einstellungen zur\195\188cksetzen"
 L["Reset window layouts"] = "Fensterlayout zur\195\188cksetzen"
@@ -373,3 +373,9 @@ L["Delete Misc Locations"] = "Sonstige Orte l\195\182schen"
 L["Import Herbs"] = "Kr\195\164uter importieren"
 L["Import Mining"] = "Erze importieren"
 L["Import Misc"] = "Sonstiges importieren"
+
+L["Yes"] = "Ja"
+L["No"] = "Nein"
+L["Ok"] = "Ok"
+L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."] = "Die Spielminikarte in die Carbonite-Karte einf\195\188gen?\n\nDies erstellt eine einheitliche Karte. Die Minikarten-Kn\195\182pfe werden in das Carbonite-Kn\195\182pfe-Fenster verschoben. Diese Einstellung kann auch \195\188ber die Minikarten-Optionsseite ge\195\164ndert werden."
+L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."] = "Erw\195\164ge die Installation des Carbonite.Combined.Maps.%s addon f\195\188r bessere FPS durch komprimierte Karten."

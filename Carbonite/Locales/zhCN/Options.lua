@@ -361,11 +361,17 @@ L["Tracking HUD"] = "追踪窗口"
 
 -- General Text
 L["Reload UI"] = "重载界面"
-L["Reload"] = true
-L["Cancel"] = true
+L["Reload"] = "重载"
+L["Cancel"] = "取消"
 L["Reset options"] = "重置设定"
 L["Reset global options"] = "重置全局设定"
 L["Reset window layouts"] = "重置窗口布局"
 L["Import Herbs"] = "导入草点"
 L["Import Mining"] = "导入矿点"
 L["Import Misc"] = "导入杂项"
+
+L["Yes"] = "是"
+L["No"] = "否"
+L["Ok"] = "确定"
+L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."] = "将游戏小地图整入Carbonite地图?\n\n这将创建一个统一的地图。小地图按钮将会移入Carbonite按钮窗口。此设置也可以在地图小地图选项页中修改。"
+L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."] = "建议安装Carbonite.Combined.Maps.%s插件以通过压缩地图提高FPS。"

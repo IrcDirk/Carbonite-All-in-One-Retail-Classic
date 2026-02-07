@@ -7543,6 +7543,14 @@ function Nx.Quest.List:Update()
     local list = self.List
     list:Empty()
 
+    local greenRange = 5
+
+    if UnitQuestTrivialLevelRange then
+        greenRange = UnitQuestTrivialLevelRange("player")
+    elseif GetQuestGreenRange then
+        greenRange = GetQuestGreenRange()
+    end
+
     if self.TabSelected == 1 then
 
         local oldSel = GetQuestLogSelection()
@@ -7745,8 +7753,7 @@ function Nx.Quest.List:Update()
         local showOnlyDailies = self.ShowOnlyDailies and not self.ShowAllQuests
 
         local mapId = Map:GetCurrentMapId()
-
-        local minLevel = UnitLevel ("player") - GetQuestGreenRange()
+        local minLevel = UnitLevel ("player") - greenRange
         local maxLevel = showHighLevel and Nx.MaxPlayerLevel or UnitLevel ("player") + 6
 
         -- Divider
@@ -7873,7 +7880,7 @@ function Nx.Quest.List:Update()
 
         local mapId = Map:GetCurrentMapId()
 
-        local minLevel = UnitLevel ("player") - GetQuestGreenRange()
+        local minLevel = UnitLevel ("player") - greenRange
         local maxLevel = showHighLevel and Nx.MaxPlayerLevel or UnitLevel ("player") + 6
 
         -- Divider

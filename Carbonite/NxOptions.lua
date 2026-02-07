@@ -3230,9 +3230,26 @@ function Nx.Opts:QuickOptsTimer()
             ReloadUI()
         end
 
-        local s = "Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."
+        local s = L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."]
 
-        Nx:ShowMessage (s, "Yes", func, "No")
+        Nx:ShowMessage (s, L["Yes"], func, L["No"])
+    end
+
+    -- Suggest compressed maps addon for retail (one-time dialog)
+    if Nx.isRetail and not Nx.GetCarboniteMediaPath then
+        local mediaVer = Nx.db.profile.Version.MediaAddonNotice or 0
+        local gameLocale = GetLocale()
+        if gameLocale == "zhCN" or locale == "zhTW" or gameLocale = "esMX" then
+            gameLocale = string.upper(string.sub(GetLocale(), -2))
+        else
+            gameLocale = string.upper(string.sub(GetLocale(), 1, 2))
+        end
+        if mediaVer < 1 then
+            Nx.db.profile.Version.MediaAddonNotice = 1
+            Nx:ShowMessage(format(L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."], gameLocale, L["Ok"]))
+        end
+        -- Also print to chat
+        Nx.prt(L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."], gameLocale)
     end
 end
 
