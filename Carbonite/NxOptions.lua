@@ -3246,7 +3246,7 @@ function Nx.Opts:QuickOptsTimer()
         end
         if mediaVer < 1 then
             Nx.db.profile.Version.MediaAddonNotice = 1
-            Nx:ShowMessage(format(L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."], gameLocale, L["Ok"]))
+            Nx:ShowMessage(format(L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."], gameLocale), L["Ok"])
         end
         -- Also print to chat
         Nx.prt(L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."], gameLocale)
