@@ -9808,6 +9808,13 @@ function Nx.Map:GetIcon (levelAdd)
     f.NXData = nil
     f.NXData2 = nil
     f.NxQuestOffer = nil      -- Clear quest offer flag
+    f.NxPoiInfo = nil         -- Clear POI data to prevent stale tooltips on reused frames
+    f.NxWidgetSet = nil
+    f.NxAreaPoiID = nil
+    f.GetPoiInfo = nil
+    f.HasDisplayName = nil
+    f.GetDisplayName = nil
+    f.GetLinkedUIMapID = nil
 
     frms.Next = pos + 1
 
@@ -10030,6 +10037,13 @@ function Nx.Map:GetIconStatic (levelAdd)
     f.NXData = nil
     f.NXData2 = nil
     f.NxQuestOffer = nil      -- Clear quest offer flag
+    f.NxPoiInfo = nil         -- Clear POI data to prevent stale tooltips on reused frames
+    f.NxWidgetSet = nil
+    f.NxAreaPoiID = nil
+    f.GetPoiInfo = nil
+    f.HasDisplayName = nil
+    f.GetDisplayName = nil
+    f.GetLinkedUIMapID = nil
 
     frms.Next = pos + 1
 
