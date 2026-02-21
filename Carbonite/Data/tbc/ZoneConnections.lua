@@ -87,6 +87,7 @@ Nx.ZoneConnections = {
     "4|0|"..L["Portal to Silvermoon"].."|1955|59.14|48.29||1954|58.26|19.24", -- [84]
     "3|2|"..L["Boat to Wetlands"].."|1445|71.54|56.37|"..L["Boat to Dustwallow Marsh"].."|1437|5.03|63.46", -- [85]
     "3|3|"..L["Tram to Stormwind City"].."|1455|72.78|50.24|"..L["Tram to Ironforge"].."|1453|66.37|34.13", -- [86]
+    "3|2|"..L["Boat to Wetlands"].."|1439|32.39|43.82|"..L["Boat to Darkshore"].."|1437|4.81|57.64", -- [87]
     "3|2|"..L["Boat to Teldrassil"].."|1439|33.18|40.1|"..L["Boat to Darkshore"].."|1438|54.87|96.8", -- [88]
     "3|2|"..L["Boat to Azuremyst Isle"].."|1439|30.74|41|"..L["Boat to Darkshore"].."|1943|21.33|54.06", -- [89]
     "5|5|"..L["Zeppelin to Stranglethorn Vale"].."|1420|61.87|59.07|"..L["Zeppelin to Undercity"].."|1434|31.56|29.13", -- [90]
