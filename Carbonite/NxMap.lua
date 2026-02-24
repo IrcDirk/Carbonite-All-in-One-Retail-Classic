@@ -10341,6 +10341,8 @@ function Nx.Map:IconOnEnter(motion)
                 else
                     if qpin.icon and qpin.icon.data.ObjectiveTargetId then
                         TooltipLines = QuestieTooltips.GetTooltip("m_" .. qpin.icon.data.ObjectiveTargetId)
+                                    or QuestieTooltips.GetTooltip("o_" .. qpin.icon.data.ObjectiveTargetId)
+                                    or QuestieTooltips.GetTooltip("i_" .. qpin.icon.data.ObjectiveTargetId)
                         if TooltipLines then
                             if TooltipText == "" then
                                 TooltipText = table.concat(TooltipLines, "\n")
