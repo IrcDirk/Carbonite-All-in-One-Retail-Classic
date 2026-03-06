@@ -3752,10 +3752,10 @@ function Nx:GetGather (typ, id)
     end
 end
 
--- Cache for quick node type lookups
+-- Cache for quick node type lookups (nil = not yet built)
 Nx.GatherCache = {}
-Nx.GatherCache.H = {}  -- Herbs
-Nx.GatherCache.M = {}  -- Mines
+Nx.GatherCache.H = nil  -- Herbs
+Nx.GatherCache.M = nil  -- Mines
 
 ---
 -- Check if a spell name is a gathering spell
@@ -3763,16 +3763,23 @@ Nx.GatherCache.M = {}  -- Mines
 -- @return          "Herb Gathering" or "Mining" or nil
 --
 function Nx:IsGathering(nodename)
-    if #Nx.GatherCache.H == 0 then
+    if not Nx.GatherCache.H then
+        Nx.GatherCache.H = {}
         for k, v in ipairs (Nx.GatherInfo["H"]) do
-            Nx.GatherCache.H[v[3]] = true
+            if type(v[3]) == "string" then
+                Nx.GatherCache.H[v[3]] = true
+            end
         end
     end
-    if #Nx.GatherCache.M == 0 then
+    if not Nx.GatherCache.M then
+        Nx.GatherCache.M = {}
         for k, v in ipairs (Nx.GatherInfo["M"]) do
-            Nx.GatherCache.M[v[3]] = true
+            if type(v[3]) == "string" then
+                Nx.GatherCache.M[v[3]] = true
+            end
         end
     end
+    if type(nodename) ~= "string" then return end
     if Nx.GatherCache.H[nodename] then return "Herb Gathering" end
     if Nx.GatherCache.M[nodename] then return L["Mining"] end
 end
