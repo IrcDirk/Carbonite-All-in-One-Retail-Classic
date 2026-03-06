@@ -220,6 +220,8 @@ L["Enable Clock Minimap Button"] = "Abilita Pulsante Orologio"
 L["Shows the clock minimap button in the button panel"] = "Mostra l'Orologio nella Barra dei Pulsanti della Minimappa"
 L["Enable World Map Minimap Button"] = "Abilita Mappa del Mondo"
 L["Shows the world map minimap button in the button panel"] = "Mostra la Mappa del Mondo nella Barra dei Pulsanti della Minimappa"
+L["Enable Dungeon Finder Minimap Button"] = "Abilita Pulsante Cerca Dungeon"
+L["Shows the dungeon finder minimap button in the button panel"] = "Mostra il Pulsante Cerca Dungeon nella Barra dei Pulsanti della Minimappa"
 
 -- Font Options
 L["Font Options"] = "Opzioni Caratteri"

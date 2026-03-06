@@ -220,6 +220,8 @@ L["Enable Clock Minimap Button"] = "Uhr an der Minikarte anzeigen"
 L["Shows the clock minimap button in the button panel"] = "Zeige die Uhr im Fenster mit den Minikarten-Kn\195\182pfen an"
 L["Enable World Map Minimap Button"] = "Weltkarten-Knopf an der Minikarte anzeigen"
 L["Shows the world map minimap button in the button panel"] = "Zeige einen Knopf, der die Weltkarte aktiviert, im Fenster mit den Minikarten-Kn\195\182pfen an"
+L["Enable Dungeon Finder Minimap Button"] = "Instanzsuche-Knopf an der Minikarte anzeigen"
+L["Shows the dungeon finder minimap button in the button panel"] = "Zeige den Instanzsuche-Knopf im Fenster mit den Minikarten-Kn\195\182pfen an"
 
 -- Font Options
 L["Font Options"] = "Schrifteinstellungen"

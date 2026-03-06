@@ -220,6 +220,8 @@ L["Enable Clock Minimap Button"] = "미니맵에 시계 버튼 표시"
 L["Shows the clock minimap button in the button panel"] = "미니맵 버튼 패널에 시계 버튼을 보여줍니다."
 L["Enable World Map Minimap Button"] = "미니맵에 세계 지도 버튼 표시"
 L["Shows the world map minimap button in the button panel"] = "미니맵 버튼 패널에 세계 지도 버튼을 보여줍니다."
+L["Enable Dungeon Finder Minimap Button"] = "미니맵에 던전 찾기 버튼 표시"
+L["Shows the dungeon finder minimap button in the button panel"] = "미니맵 버튼 패널에 던전 찾기 버튼을 보여줍니다."
 
 -- Font Options
 L["Font Options"] = "폰트 옵션"

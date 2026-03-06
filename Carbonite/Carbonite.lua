@@ -782,6 +782,7 @@ local defaults = {
             ButShowCalendar = true,
             ButShowClock = true,
             ButShowWorldMap = true,
+            ButShowLFG = true,
             ButSpacing = 29,
             ButWinMinimize = false,
             DockHigh = "",

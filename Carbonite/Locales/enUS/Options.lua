@@ -216,6 +216,8 @@ L["Enable Clock Minimap Button"] = true
 L["Shows the clock minimap button in the button panel"] = true
 L["Enable World Map Minimap Button"] = true
 L["Shows the world map minimap button in the button panel"] = true
+L["Enable Dungeon Finder Minimap Button"] = true
+L["Shows the dungeon finder minimap button in the button panel"] = true
 
 -- Font Options
 L["Font Options"] = true

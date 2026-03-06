@@ -1571,6 +1571,20 @@ local function mapConfig()
                                 Nx.Opts:NXCmdMMButUpdate()
                             end,
                         },
+                        MMButShowLFG = {
+                            order = 14,
+                            type = "toggle",
+                            width = "full",
+                            name = L["Enable Dungeon Finder Minimap Button"],
+                            desc = L["Shows the dungeon finder minimap button in the button panel"],
+                            get = function()
+                                return Nx.db.profile.MiniMap.ButShowLFG
+                            end,
+                            set = function()
+                                Nx.db.profile.MiniMap.ButShowLFG = not Nx.db.profile.MiniMap.ButShowLFG
+                                Nx.Opts:NXCmdMMButUpdate()
+                            end,
+                        },
                     },
                 },
             },

@@ -220,6 +220,8 @@ L["Enable Clock Minimap Button"] = "Activar botón de minimapa del reloj"
 L["Shows the clock minimap button in the button panel"] = "Muestra el botón de minimapa del reloj en el panel de botones"
 L["Enable World Map Minimap Button"] = "Activar botón de minimapa del mapa del mundo"
 L["Shows the world map minimap button in the button panel"] = "Muestra el botón de minimapa del mapa del mundo en el panel de botones"
+L["Enable Dungeon Finder Minimap Button"] = "Activar botón de minimapa del buscador de calabozos"
+L["Shows the dungeon finder minimap button in the button panel"] = "Muestra el botón de minimapa del buscador de calabozos en el panel de botones"
 
 -- Font Options
 L["Font Options"] = "Opciones de fuente"

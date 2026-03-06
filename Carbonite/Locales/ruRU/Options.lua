@@ -220,6 +220,8 @@ L["Enable Clock Minimap Button"] = "Включить кнопку Часов н�
 L["Shows the clock minimap button in the button panel"] = "Отображает кнопку Часов на панели кнопок миникарты"
 L["Enable World Map Minimap Button"] = "Включить кнопку Карты мира на миникарте"
 L["Shows the world map minimap button in the button panel"] = "Отображает кнопку Карты мира на панели кнопок миникарты"
+L["Enable Dungeon Finder Minimap Button"] = "Включить кнопку Поиска подземелий на миникарте"
+L["Shows the dungeon finder minimap button in the button panel"] = "Отображает кнопку Поиска подземелий на панели кнопок миникарты"
 
 -- Font Options
 L["Font Options"] = "Настройки шрифтов"
