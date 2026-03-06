@@ -6007,12 +6007,13 @@ function Nx.Quest:TooltipProcess2 (stripColor, tipStr)
     for n = 2, tip:NumLines() do
         local s = _G[textName .. n]:GetText()
         if s then
-            local s1 = strfind (s, questStr)
-            if s1 then
+            local ok, s1 = pcall(strfind, s, questStr)
+            if ok and s1 then
 --                Nx.prt ("TTM #%s", GameTooltip:NumLines())
                 return
             end
-            if strsub (s, 1, 3) == " - " then    -- Blizz added quest info?
+            local ok2, sub3 = pcall(strsub, s, 1, 3)
+            if ok2 and sub3 == " - " then    -- Blizz added quest info?
 
                 local fstr = _G[textName .. (n - 1)]
                 local qTitle = fstr:GetText()
@@ -6027,6 +6028,12 @@ function Nx.Quest:TooltipProcess2 (stripColor, tipStr)
                 return true;
             end
         end
+    end
+
+    -- Guard against secret string taint from GetText()
+    if tipStr then
+        local ok = pcall(function() local _ = #tipStr end)
+        if not ok then tipStr = nil end
     end
 
     if tipStr and #tipStr >= 5 and #tipStr < 100 and not self.TTIgnore[tipStr] then

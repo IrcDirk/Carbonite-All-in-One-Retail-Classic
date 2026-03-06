@@ -7899,7 +7899,7 @@ function Nx.Graph:Create(width, height, parentFrm)
 
     g:Clear()
 
-    local sf = CreateFrame ("Slider", nil, f, "NxSliderFrame")
+    local sf = CreateFrame ("Slider", nil, f, "NxSliderFrame" .. (BackdropTemplateMixin and ",BackdropTemplate" or ""))
     g.SliderFrm = sf
     sf.NxGraph = g
 

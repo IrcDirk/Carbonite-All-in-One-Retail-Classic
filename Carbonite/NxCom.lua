@@ -1433,7 +1433,11 @@ function Nx.Com:OnUpdate(elapsed)
             end
             hper = min(floor(hper + .5), 20)
 
-            tStr = format("%c%c%c%c%c%s", tType + 35, tLvl + 35, tCls + 35, hper + 35, #targetName + 35, targetName)
+            local nameLen = 0
+            local nameOk = pcall(function() nameLen = #targetName end)
+            if nameOk then
+                tStr = format("%c%c%c%c%c%s", tType + 35, tLvl + 35, tCls + 35, hper + 35, nameLen + 35, targetName)
+            end
         end
 
         -- Build quest string
