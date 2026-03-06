@@ -1761,7 +1761,9 @@ function Nx:NXOnUpdate (elapsed)
 
     local s = GameTooltipTextLeft1:GetText()
     if s and type(s) == "string" then
-        if Nx.Tick % 4 == 1 and GameTooltipTextLeft1:IsVisible() and #s > 5 then
+        local slen = 0
+        pcall(function() slen = #s end)
+        if Nx.Tick % 4 == 1 and GameTooltipTextLeft1:IsVisible() and slen > 5 then
             if Nx.TooltipLastDiffText ~= s or Nx.TooltipLastDiffNumLines ~= GameTooltip:NumLines() then
                 if Nx.Quest then
                     Nx.Quest:TooltipProcess()
