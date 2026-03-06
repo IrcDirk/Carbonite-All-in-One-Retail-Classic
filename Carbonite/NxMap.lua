@@ -3708,8 +3708,6 @@ function Nx.Map:BlizzToggleWorldMap()
         map:DetachWorldMap()
         if not InCombatLockdown() then
             WorldMapFrame:HandleUserActionToggleSelf()
-        else
-            WorldMapFrame:Show()
         end
     end
 end

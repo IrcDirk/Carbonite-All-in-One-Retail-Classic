@@ -4517,21 +4517,19 @@ end
 -------------------------------------------------------------------------------
 
 function Nx.Quest:ScanBlizzQuestData()
-
---    if Nx.Timer:IsActive ("QScanBlizz") then
---        Nx.prt ("ScanQ skip")
---        return
---    end
-
---    Nx.prt ("ScanQ")
+    -- Skip if a scan is already running or pending
+    if IS_BACKGROUND_WORLD_CACHING or QScanBlizz then
+        return
+    end
 
     SetCVar ("questPOI", 1)        -- Enable or no POI data returned
 
---    self.ScanBlizzChanged = false
-
     self.ScanBlizzMapId = 1
     -- Use delay or some quests won't be ready
-    QScanBlizz = C_Timer.After(1, function() Nx.Quest:ScanBlizzQuestDataTimer() end)
+    QScanBlizz = C_Timer.After(1, function()
+        QScanBlizz = nil
+        Nx.Quest:ScanBlizzQuestDataTimer()
+    end)
 end
 
 function Nx.Quest:IsDaily(checkID)
@@ -7413,7 +7411,7 @@ function Nx.Quest.List:Refresh(event)
         end
 
         Nx.Quest.List:LogUpdate()
-        Nx.Quest:RecordQuests(isInst and 0 or nil)
+        Nx.Quest:RecordQuests(1)
     end
 
     --Nx.Quest.List:LogUpdate()
@@ -8465,13 +8463,16 @@ end
 -- Update map icons (called by map)
 -------------------------------------------------------------------------------
 
--- Cache for World Quest task info (refreshes every second)
+-- Cache for World Quest task info (refreshes every second, retail only)
 local taskInfoCache = nil
-local taskInfoCacheTimer = C_Timer.NewTicker(1, function(self)
-    if Nx.Map and Nx.Map.UpdateMapID then
-        taskInfoCache = C_TaskQuest.GetQuestsOnMap(Nx.Map.UpdateMapID)
-    end
-end)
+local taskInfoCacheTimer = nil
+if C_TaskQuest and C_TaskQuest.GetQuestsOnMap then
+    taskInfoCacheTimer = C_Timer.NewTicker(1, function()
+        if Nx.Map and Nx.Map.UpdateMapID then
+            taskInfoCache = C_TaskQuest.GetQuestsOnMap(Nx.Map.UpdateMapID)
+        end
+    end)
+end
 
 function Nx.Quest:UpdateIcons (map)
     if not Nx.QInit then
