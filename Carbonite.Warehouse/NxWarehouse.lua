@@ -1351,19 +1351,19 @@ function CarboniteWarehouse:EventHandler(event, arg1, arg2, arg3)
     elseif event == "GUILDBANKFRAME_CLOSED" then
         Nx.Warehouse:OnGuildbankframe_closed()
     elseif event == "ITEM_LOCK_CHANGED" then
-        Nx.Warehouse:OnItem_lock_changed()
+        Nx.Warehouse:OnItem_lock_changed(arg1, arg2)
     elseif event == "MAIL_INBOX_UPDATE" then
         Nx.Warehouse:OnMail_inbox_update()
     elseif event == "UNIT_INVENTORY_CHANGED" then
-        Nx.Warehouse:OnUnit_inventory_changed()
+        Nx.Warehouse:OnUnit_inventory_changed(arg1)
     elseif event == "MERCHANT_SHOW" then
         Nx.Warehouse:OnMerchant_show()
     elseif event == "MERCHANT_CLOSED" then
         Nx.Warehouse:OnMerchant_closed()
     elseif event == "LOOT_OPENED" then
-        Nx.Warehouse:OnLoot_opened()
+        Nx.Warehouse:OnLoot_opened(arg1, arg2)
     elseif event == "LOOT_SLOT_CLEARED" then
-        Nx.Warehouse:OnLoot_slot_cleared()
+        Nx.Warehouse:OnLoot_slot_cleared(arg1)
     elseif event == "LOOT_CLOSED" then
         Nx.Warehouse:OnLoot_closed()
     elseif event == "CHAT_MSG_SKILL" then
@@ -3230,7 +3230,7 @@ function Nx.Warehouse.onAuctionHouseUpdate(link, count)
         self:Update()
 end
 
-function Nx.Warehouse.OnItem_lock_changed()
+function Nx.Warehouse.OnItem_lock_changed(_, arg1, arg2)
 
     if type (arg2) ~= "number" then    -- Inventory item?
         return
@@ -3258,7 +3258,7 @@ function Nx.Warehouse.OnItem_lock_changed()
         local tx, count, locked = GetContainerItemInfo (arg1, arg2)
         if tx then
             self.LockCnt = count
-            self.LockLink = GetContainerItemLink (arg1, arg2)
+            self.LockLink = C_Container.GetContainerItemLink (arg1, arg2)
         end
 
         if locked then
@@ -3406,7 +3406,7 @@ end
 
 -------------------------------------------------------------------------------
 
-function Nx.Warehouse.OnUnit_inventory_changed()
+function Nx.Warehouse.OnUnit_inventory_changed(_, arg1)
 
 --    Nx.prt ("OnUNIT_INVENTORY_CHANGED %s", arg1)
     if arg1 == "player" and not UnitAffectingCombat ("player") and Nx.Info and Nx.Info.NeedDurability then
@@ -3630,7 +3630,7 @@ end
 -- Looting
 -------------------------------------------------------------------------------
 
-function Nx.Warehouse.OnLoot_opened()
+function Nx.Warehouse.OnLoot_opened(_, arg1, arg2)
 
     local self = Nx.Warehouse
 
@@ -3647,7 +3647,7 @@ function Nx.Warehouse.OnLoot_opened()
     self:prtdb (L["LOOT_OPENED %s (%s %s)"], self.LootTarget, arg1, arg2 or "nil")
 end
 
-function Nx.Warehouse.OnLoot_slot_cleared()
+function Nx.Warehouse.OnLoot_slot_cleared(_, arg1)
 
     local self = Nx.Warehouse
 
