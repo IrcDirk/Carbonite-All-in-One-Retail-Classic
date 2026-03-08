@@ -1032,8 +1032,10 @@ function Nx.Map.Guide:PatchFolder (folder, parent)
             if not name then
                 break
             end
-            -- Only show nodes appropriate for current game version
-            if Nx:ShouldShowGatherNode(skill) then
+            -- Only show nodes appropriate for current game version.
+            -- WoD+ herbs start at index 64 (Frostweed); classic herbs like Silverleaf/Peacebloom
+            -- also have skill=1 but should always show.
+            if Nx:ShouldShowGatherNode(skill, a >= 64) then
                 local f = {}
                 f.Name = name
                 f.Column2 = format ("%3d", skill)
@@ -1051,8 +1053,10 @@ function Nx.Map.Guide:PatchFolder (folder, parent)
             if not name then
                 break
             end
-            -- Only show nodes appropriate for current game version
-            if Nx:ShouldShowGatherNode(skill) then
+            -- Only show nodes appropriate for current game version.
+            -- WoD+ mines start at index 39 (True Iron Deposit); classic mines like Copper Vein
+            -- also have skill=1 but should always show.
+            if Nx:ShouldShowGatherNode(skill, a >= 39) then
                 local f = {}
                 f.Name = name
                 f.Column2 = format ("%3d", skill)

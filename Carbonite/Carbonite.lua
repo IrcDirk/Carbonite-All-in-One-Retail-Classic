@@ -140,13 +140,15 @@ end
 
 ---
 -- Check if a gathering node should be shown for the current game version
--- Skill level 1 nodes are only shown on retail (expansion-based skills)
--- @param skill  The skill level of the node
--- @return       true if the node should be shown
+-- @param skill           The skill level of the node
+-- @param isExpansionNode true if this is a WoD+ expansion-specific node (skill=1 expansion herbs/mines)
+-- @return                true if the node should be shown
 --
-function Nx:ShouldShowGatherNode(skill)
-    -- Skill level 1 nodes are retail-only (WoD+ expansion-based skills)
-    if skill == 1 then
+function Nx:ShouldShowGatherNode(skill, isExpansionNode)
+    -- WoD+ expansion nodes use skill=1 (expansion-based scaling) and are retail/WoD-only.
+    -- Classic-era nodes like Silverleaf, Peacebloom, Copper Vein also have skill=1
+    -- but should always be shown (isExpansionNode=false for those).
+    if skill == 1 and isExpansionNode then
         return Nx.isRetail or Nx.WODMaps
     end
     -- Other nodes are shown if skill is within the expansion's max
