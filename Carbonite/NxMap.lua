@@ -7875,15 +7875,14 @@ local function GetCompressedTexturePath(textureName, zoneFolder)
         end
     end
 
-    local basePath = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\Conv\\"
+--[[    local basePath = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\Conv\\"
 
     -- Check if locale textures are enabled
     if Nx.db and Nx.db.profile and Nx.db.profile.Map and Nx.db.profile.Map.UseLocaleTextures then
         local locale = GetLocale()
         return basePath .. locale .. "\\" .. zoneFolder .. "\\" .. textureName
     end
-
-    return basePath .. textureName
+    return basePath .. textureName ]] -- Local path is disabled because we no longer store textures in package
 end
 
 --------
