@@ -2159,14 +2159,14 @@ function Nx.Map.Guide:SavePlayerNPCTarget()
     -- local visible = GameTooltip:IsVisible()
     -- GameTooltip:SetOwner(MerchantFrame)
     -- GameTooltip:SetUnit("NPC")
-    local tag = GameTooltipTextLeft2:GetText() or ""
-    local lvl = GameTooltipTextLeft3:GetText() or ""
-    local faction = GameTooltipTextLeft4:GetText() or ""
+    local tag = GameTooltipTextLeft2 and GameTooltipTextLeft2:GetText() or ""
+    local lvl = GameTooltipTextLeft3 and GameTooltipTextLeft3:GetText() or ""
+    local faction = GameTooltipTextLeft4 and GameTooltipTextLeft4:GetText() or ""
     if strfind(tag,"^" .. L["Level"] .. " ") or strfind(tag, "^|c%x%x%x%x%x%x%x%x" .. L["Level"] .. " ") then
         tag=""
         faction=lvl
     end
-    local str=format("%s~%s~%s",tag,GameTooltipTextLeft1:GetText() or "",faction)
+    local str=format("%s~%s~%s",tag,GameTooltipTextLeft1 and GameTooltipTextLeft1:GetText() or "",faction)
     self.PlayerNPCTarget = str
     -- if not visible then
     --     GameTooltip:Hide()

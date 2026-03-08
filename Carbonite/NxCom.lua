@@ -1299,7 +1299,9 @@ function Nx.Com:OnUpdate(elapsed)
     end
 
     -- Handle AFK state changes
-    if UnitIsAFK("player") then
+    local isAFK = false
+    pcall(function() if UnitIsAFK("player") then isAFK = true end end)
+    if isAFK then
         if not self.AFK then
             self:UpdateChannels()
         end

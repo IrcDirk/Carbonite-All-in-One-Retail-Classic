@@ -4106,7 +4106,7 @@ function Nx.Quest:RecordQuestsLog()
                         end
 
                         if Nx.qdb.profile.Quest.AutoTurnInAC and cur.IsAutoComplete then
-                            ShowQuestComplete (GetQuestLogIndexByID(qi))
+                            ShowQuestComplete (qi)
                         end
 
                         if Nx.qdb.profile.QuestWatch.RemoveComplete and not cur.IsAutoComplete then
@@ -4281,7 +4281,7 @@ function Nx.Quest:RecordQuestsLog()
                 end
                 cur.CanShare = GetQuestLogPushable()
                 cur.Complete = isComplete            -- 1 is Done, nil not. Otherwise failed
-                cur.IsAutoComplete = GetQuestLogIsAutoComplete (GetQuestLogIndexByID(qId))
+                cur.IsAutoComplete = GetQuestLogIsAutoComplete (qn)
 
                 local left = GetQuestLogTimeLeft()
                 if left then
@@ -10740,9 +10740,19 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                         else
 
                             local i, cur = Quest:FindCur (qId, qIndex)
-                            if cur and cur.CompleteMerge and cur.IsAutoComplete then
+                            local isComplete = cur and cur.CompleteMerge
+                            local isAC = cur and cur.IsAutoComplete
+                            -- IsAutoComplete may be stale (nil) if RecordQuestsLog ran since frame draw;
+                            -- fall back to C_QuestLog when available
+                            if not isAC and cur and C_QuestLog then
+                                isAC = C_QuestLog.IsComplete and C_QuestLog.IsComplete(qId) and
+                                       GetQuestLogIsAutoComplete(GetQuestLogIndexByID(qId))
+                            end
+                            if isComplete and isAC then
 --                                Nx.prt ("ShowQuestComplete %s", qIndex)
-                                ShowQuestComplete (qIndex)
+                                -- Use fresh log index in case quest log was reshuffled
+                                local qi = GetQuestLogIndexByID(qId)
+                                ShowQuestComplete (qi > 0 and qi or qIndex)
 
                             else
                                 self:Set (data, val2, not IsShiftKeyDown())

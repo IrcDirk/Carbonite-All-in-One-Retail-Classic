@@ -1539,9 +1539,7 @@ function Nx:UnitDTip()
                 local tar = m:SetTargetXY (mapId, x, y, "UnitD " .. id)
                   tar.Radius = 1
             end
-
         else
-
             Nx.prt (L["Unit map error"])
         end
     end
@@ -1566,53 +1564,52 @@ end
 -- Detects gathering spells (herbs/mining) to record nodes
 --
 function Nx:OnUnit_spellcast_sent (event, arg1, arg2, arg3, arg4)
-    if arg1 == "player" then
-        local Nx = Nx
-        if Nx:IsGathering(arg2) == "Herb Gathering" then
-            Nx.GatherTarget = Nx.TooltipLastText
+    pcall(function()
+        if arg1 == "player" then
+            local Nx = Nx
+            if Nx:IsGathering(arg2) == L["Herb Gathering"] then
+                Nx.GatherTarget = Nx.TooltipLastText
 
-            if Nx.db.profile.Debug.DBGather then
-                Nx.prt (L["Gather"] .. ": %s %s", arg2, Nx.GatherTarget or "nil")
-            end
+                if Nx.db.profile.Debug.DBGather then
+                    Nx.prt (L["Gather"] .. ": %s %s", arg2, Nx.GatherTarget or "nil")
+                end
 
-            if Nx.GatherTarget then
-                Nx.UEvents:AddHerb (Nx.GatherTarget)
-                Nx.GatherTarget = nil
-            end
+                if Nx.GatherTarget then
+                    Nx.UEvents:AddHerb (Nx.GatherTarget)
+                    Nx.GatherTarget = nil
+                end
 
-        elseif Nx:IsGathering(arg2) == L["Mining"] then
-            Nx.GatherTarget = Nx.TooltipLastText
+            elseif Nx:IsGathering(arg2) == L["Mining"] then
+                Nx.GatherTarget = Nx.TooltipLastText
 
-            if Nx.db.profile.Debug.DBGather then
-                Nx.prt (L["Gather"] .. ": %s %s", arg2, Nx.GatherTarget)
-            end
+                if Nx.db.profile.Debug.DBGather then
+                    Nx.prt (L["Gather"] .. ": %s %s", arg2, Nx.GatherTarget)
+                end
 
-            if Nx.GatherTarget then
-                Nx.UEvents:AddMine (Nx.GatherTarget)
-                Nx.GatherTarget = nil
-            end
-        elseif arg2 == L["Searching for Artifacts"] then
-            Nx.UEvents:AddOpen ("Art", arg4)
-        elseif arg2 == L["Extract Gas"] then
-            Nx.UEvents:AddOpen ("Gas", L["Extract Gas"])
-        elseif arg2 == L["Logging"] then
-            Nx.GatherTarget = Nx.TooltipLastText
-            if Nx.GatherTarget then
-                Nx.UEvents:AddTimber (Nx.GatherTarget)
-                Nx.GatherTarget = nil
-            end
-        elseif arg2 == L["Opening"] or arg2 == L["Opening - No Text"] then
-            Nx.GatherTarget = Nx.TooltipLastText
-
-            if arg4 == L["Glowcap"] then
-                Nx.UEvents:AddHerb (arg4)
-
-            elseif arg4 == L["Everfrost Chip"] then
-                Nx.UEvents:AddOpen ("Everfrost", arg4)
-
+                if Nx.GatherTarget then
+                    Nx.UEvents:AddMine (Nx.GatherTarget)
+                    Nx.GatherTarget = nil
+                end
+            elseif arg2 == L["Searching for Artifacts"] then
+                Nx.UEvents:AddOpen ("Art", arg4)
+            elseif arg2 == L["Extract Gas"] then
+                Nx.UEvents:AddOpen ("Gas", L["Extract Gas"])
+            elseif arg2 == L["Logging"] then
+                Nx.GatherTarget = Nx.TooltipLastText
+                if Nx.GatherTarget then
+                    Nx.UEvents:AddTimber (Nx.GatherTarget)
+                    Nx.GatherTarget = nil
+                end
+            elseif arg2 == L["Opening"] or arg2 == L["Opening - No Text"] then
+                Nx.GatherTarget = Nx.TooltipLastText
+                if arg4 == L["Glowcap"] then
+                    Nx.UEvents:AddHerb (arg4)
+                elseif arg4 == L["Everfrost Chip"] then
+                    Nx.UEvents:AddOpen ("Everfrost", arg4)
+                end
             end
         end
-    end
+    end)
 end
 
 ---
@@ -1621,7 +1618,6 @@ end
 --
 function Nx:OnZone_changed_new_area (event)
     Nx.UEvents:AddInfo (L["Entered"])
-
     Nx.Com:OnEvent (event)
 end
 
@@ -1631,7 +1627,6 @@ end
 --
 function Nx:OnPlayer_level_up (event, arg1)
     Nx.UEvents:AddInfo (format (L["Level"] .. " %d", arg1))
-
     Nx.Com:OnPlayer_level_up (event, arg1)
 end
 
@@ -1764,7 +1759,9 @@ function Nx:NXOnUpdate (elapsed)
         local slen = 0
         pcall(function() slen = #s end)
         if Nx.Tick % 4 == 1 and GameTooltipTextLeft1:IsVisible() and slen > 5 then
-            if Nx.TooltipLastDiffText ~= s or Nx.TooltipLastDiffNumLines ~= GameTooltip:NumLines() then
+            local textDiff = true
+            pcall(function() textDiff = (Nx.TooltipLastDiffText ~= s) end)
+            if textDiff or Nx.TooltipLastDiffNumLines ~= GameTooltip:NumLines() then
                 if Nx.Quest then
                     Nx.Quest:TooltipProcess()
                 end
@@ -3780,8 +3777,11 @@ function Nx:IsGathering(nodename)
         end
     end
     if type(nodename) ~= "string" then return end
-    if Nx.GatherCache.H[nodename] then return "Herb Gathering" end
-    if Nx.GatherCache.M[nodename] then return L["Mining"] end
+    local isHerb, isMine = false, false
+    pcall(function() isHerb = Nx.GatherCache.H[nodename] end)
+    pcall(function() isMine = Nx.GatherCache.M[nodename] end)
+    if isHerb then return L["Herb Gathering"] end
+    if isMine then return L["Mining"] end
 end
 
 ---
