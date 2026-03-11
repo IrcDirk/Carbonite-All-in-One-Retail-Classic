@@ -6469,10 +6469,71 @@ end
 -- Draw group (raid or party)
 -- (player world pos)
 
-function Nx.Map:UpdateGroup (plX, plY)
+function Nx.Map:UpdateGroup(plX, plY)
+
+    local function IsUsableNumber(v)
+        if type(v) ~= "number" then
+            return false
+        end
+
+        return pcall(function()
+            return v + 0
+        end)
+    end
+
+    local function IsValidUnitToken(unit)
+        return type(unit) == "string" and unit ~= "" and UnitExists(unit)
+    end
+
+    local function GetSafeUnitHealth(unit)
+        if not IsValidUnitToken(unit) then
+            return nil, nil, nil
+        end
+
+        local h = UnitHealth(unit)
+        local m = UnitHealthMax(unit)
+
+        if not IsUsableNumber(h) then
+            return nil, nil, nil
+        end
+
+        if UnitIsDeadOrGhost(unit) then
+            return 0, 1, 0
+        end
+
+        if not IsUsableNumber(m) or m <= 0 then
+            return nil, nil, nil
+        end
+
+        local per = min(Nx.Util_NanToZero(h / m), 1)
+        return h, m, per
+    end
+
+    local function HasDebuffByName(unit, debuffName)
+        if not IsValidUnitToken(unit) or not debuffName then
+            return false
+        end
+
+        local index = 1
+
+        while true do
+            local aura = C_UnitAuras.GetDebuffDataByIndex(unit, index)
+            if not aura then
+                break
+            end
+
+            if aura.name == debuffName then
+                return true
+            end
+
+            index = index + 1
+        end
+
+        return false
+    end
 
     local alt = IsAltKeyDown()
-    local redGlow = abs (GetTime() * 400 % 200 - 100) / 200 + .5
+    local redGlow = abs(GetTime() * 400 % 200 - 100) / 200 + .5
 
     local members = MAX_PARTY_MEMBERS
     local unitName = "party"
@@ -6499,241 +6560,225 @@ function Nx.Map:UpdateGroup (plX, plY)
     for i = 1, members do
 
         local unit = unitName .. i
-        local name, unitRealm = UnitName (unit)
 
-        local mapId = self.MapId
+        if UnitExists(unit) and not UnitIsUnit(unit, "player") then
 
-        local pX, pY = Nx.Map.GetPlayerMapPosition (unit)
+            local name, unitRealm = UnitName(unit)
 
-        if pX <= 0 and pY <= 0 then
+            if name then
 
-            local info = palsInfo[name]
-            if info and info.EntryMId == mapId then
-                mapId = info.MId
-                pX = info.X + .00001
-                pY = info.Y
-            end
+                local mapId = self.MapId
+                local pX, pY = Nx.Map.GetPlayerMapPosition(unit)
 
-        else
-            pX = pX * 100
-            pY = pY * 100
-            local lvl = max (Nx.Map:GetCurrentMapDungeonLevel(), 1)
-            if Nx.Map:GetCurrentMapAreaID() == 520 then
-                if Nx.Map:GetCurrentMapDungeonLevel() == 0 then
-                    lvl = 1
-                else
-                    lvl = 2
-                end
-            end
---            pY = pY + (((lvl - 1) * 668) / 256)
-            pY = pY + (lvl - 1) * 100
-        end
-        if (pX ~= 0 or pY ~= 0) and not UnitIsUnit (unit, "player") then
+                if pX <= 0 and pY <= 0 then
 
-            local fullName = unitRealm and #unitRealm > 0 and (name .. "-" .. unitRealm) or name
-
-            local wx, wy = self:GetWorldPos (mapId, pX, pY)
-
-            local sz = 16 * self.DotRaidScale
-            if UnitInParty (unit) then
-                sz = 18 * self.DotPartyScale
-            end
-
-            local cls = UnitClass (unit) or ""
-            local inCombat
---PAIDS!
-            inCombat = UnitAffectingCombat (unit)
---PAIDE!
-            local h = UnitHealth (unit)
-            if type(h) ~= "number" then
-                h = 0  -- Handle secret/hidden health values
-            end
-            if UnitIsDeadOrGhost (unit) then
-                h = 0
-            end
-            local m = UnitHealthMax (unit)
-            if type(m) ~= "number" or m == 0 then
-                m = 1  -- Avoid division by zero or secret value
-            end
-            local per = min (Nx.Util_NanToZero(h / m), 1)            -- Can overflow?
-
-            if per > 0 then
-
-                if pals[name] ~= nil or self.TrackPlyrs[name] then
-
---                    Nx.prtCtrl ("Pal %s", name)
-
-                    sz = 20 * self.DotPalScale
-
-                    if self.TrackPlyrs[name] then
-                        sz = 25 * self.DotPalScale
+                    local info = palsInfo[name]
+                    if info and info.EntryMId == mapId then
+                        mapId = info.MId
+                        pX = info.X + .00001
+                        pY = info.Y
                     end
-
-                    local dist = (plX - wx) ^ 2 + (plY - wy) ^ 2
-                    if dist < palDist then
-                        palName = name
-                        palDist = dist
-                        palX, palY = wx, wy
-
---                        Nx.prtCtrl ("Pal %s %s", name, dist)
-                    end
-                end
-
-                if inCombat then
-
-                    local dist = (plX - wx) ^ 2 + (plY - wy) ^ 2
-                    if dist < combatDist then
-                        combatName = name
-                        combatUnit = unit
-                        combatHealth = per
-                        combatDist = dist
-                        combatX, combatY = wx, wy
-                    end
-                end
-            end
-
-            local f1 = self:GetIcon (1)
-
-            if self:ClipFrameByMapType (f1, wx, wy, sz, sz, 0) then
-
-                f1.NXType = 1000
-                f1.NXData = unit
-                f1.NXData2 = fullName
-
-                local inactive
-                for n = 1, MAX_TARGET_DEBUFFS do
-                    if UnitDebuff (unit, n) == "Inactive" then
-                        inactive = true
-                        per = 0
-                        break
-                    end
-                end
-
-                local txName = "IconPlyrP"
-
-                if pals[name] == false then
-                    txName = "IconPlyrF"
-                elseif pals[name] == true then
-                    txName = "IconPlyrG"
-                end
-
-                if inCombat then
-                    txName = txName.."C"
-                end
-
-                f1.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\"..txName)
-
---                Nx.prt ("#%d %.1f %.1f", i, pX, pY)
-
-                -- Show health
-
-                local tStr = ""
---PAIDS!
-                f = self:GetIconNI (2)
-
-                if per > .33 then
-
-                    -- Horizontal bar at top left
-
-                    local sc = self.ScaleDraw
-                    self:ClipFrameTL (f, wx - 9 / sc, wy - 10 / sc, 16 * per / sc, 1 / sc)
---                    self:ClipFrameZTLO (f, pX, pY, 12 * per / self.ScaleDraw, .9 / self.ScaleDraw, -7, -7)
-                    f.texture:SetColorTexture (1, 1, 1, 1)
 
                 else
-                    self:ClipFrameByMapType (f, wx, wy, 7, 7, 0)
---                    self:ClipFrameZ (f, pX, pY, 7, 7, 0)
+                    pX = pX * 100
+                    pY = pY * 100
 
-                    if per > 0 then
-                        f.texture:SetColorTexture (1, .1, .1, 1 - per * 2)
-                    else
-                        if inactive then
-                            f.texture:SetColorTexture (1, 0, 1, .7)    -- Punk
+                    local lvl = max(Nx.Map:GetCurrentMapDungeonLevel(), 1)
+                    if Nx.Map:GetCurrentMapAreaID() == 520 then
+                        if Nx.Map:GetCurrentMapDungeonLevel() == 0 then
+                            lvl = 1
                         else
-                            f.texture:SetColorTexture (0, 0, 0, .5)    -- Dead
+                            lvl = 2
                         end
                     end
+
+                    pY = pY + (lvl - 1) * 100
                 end
 
-                -- Show target info
+                if pX ~= 0 or pY ~= 0 then
 
-                local unitTarget = unit.."target"
-                local tName = UnitName (unitTarget)
-                local tEnPlayer
+                    local fullName = unitRealm and #unitRealm > 0 and (name .. "-" .. unitRealm) or name
+                    local wx, wy = self:GetWorldPos(mapId, pX, pY)
 
-                if tName then
-
-                    local tLvl = UnitLevel (unitTarget)
-                    local tCls = UnitClass (unitTarget) or ""
-                    if tName == tCls then
-                        tCls = ""
+                    local sz = 16 * self.DotRaidScale
+                    if UnitInParty(unit) then
+                        sz = 18 * self.DotPartyScale
                     end
 
-                    local th = UnitHealth (unitTarget)
-                    if UnitIsDeadOrGhost (unitTarget) then
-                        th = 0
-                    end
-                    local tm = max (UnitHealthMax (unitTarget), 1)
-                    local per = min (Nx.Util_NanToZero(th / tm), 1)
+                    local cls = UnitClass(unit) or ""
+                    local inCombat = UnitAffectingCombat(unit)
 
---                    Nx.prt ("H %d", th)
+                    local h, m, per = GetSafeUnitHealth(unit)
+                    local hasHealth = per ~= nil
 
-                    local f = self:GetIconNI (2)
-                    local sc = self.ScaleDraw
+                    if pals[name] ~= nil or self.TrackPlyrs[name] then
+                        sz = 20 * self.DotPalScale
 
-                    if UnitIsFriend ("player", unitTarget) then
-
-                        -- Horizontal green bar
-                        self:ClipFrameTL (f, wx - 9 / sc, wy - 2 / sc, 16 * per / sc, 1 / sc)
-                        f.texture:SetColorTexture (0, 1, 0, 1)
-
-                        tStr = format ("\n|cff80ff80%s %d %s %.f", tName, tLvl, tCls, th)
-
-                        if not UnitIsPlayer (unitTarget) then    -- NPC?
-                            tStr = tStr .. "%"
+                        if self.TrackPlyrs[name] then
+                            sz = 25 * self.DotPalScale
                         end
-                    else
-                        self:ClipFrameTL (f, wx - 9 / sc, wy - 9 / sc, 1 / sc, 15 * per / sc)
 
-                        if UnitIsPlayer (unitTarget) then
+                        local dist = (plX - wx) ^ 2 + (plY - wy) ^ 2
+                        if dist < palDist then
+                            palName = name
+                            palDist = dist
+                            palX, palY = wx, wy
+                        end
+                    end
 
-                            tEnPlayer = true
-                            tStr = format ("\n|cffff4040%s %d %s %.f%%", tName, tLvl, tCls, th)
-                            f.texture:SetColorTexture (redGlow, .1, 0, 1)
+                    if inCombat then
+                        local dist = (plX - wx) ^ 2 + (plY - wy) ^ 2
+                        if dist < combatDist then
+                            combatName = name
+                            combatUnit = unit
+                            combatHealth = hasHealth and per or nil
+                            combatDist = dist
+                            combatX, combatY = wx, wy
+                        end
+                    end
 
-                        elseif UnitIsEnemy ("player", unitTarget) then
+                    local f1 = self:GetIcon(1)
 
-                            tStr = format ("\n|cffffff40%s %d %s %.f%%", tName, tLvl, tCls, th)
+                    if self:ClipFrameByMapType(f1, wx, wy, sz, sz, 0) then
 
-                            if Nx:UnitIsPlusMob (unitTarget) then
-                                f.texture:SetColorTexture (1, .4, 1, 1)
+                        f1.NXType = 1000
+                        f1.NXData = unit
+                        f1.NXData2 = fullName
+
+                        local inactive
+                        if HasDebuffByName(unit, "Inactive") then
+                            inactive = true
+                            if hasHealth then
+                                per = 0
+                            end
+                        end
+
+                        local txName = "IconPlyrP"
+
+                        if pals[name] == false then
+                            txName = "IconPlyrF"
+                        elseif pals[name] == true then
+                            txName = "IconPlyrG"
+                        end
+
+                        if inCombat then
+                            txName = txName .. "C"
+                        end
+
+                        f1.texture:SetTexture("Interface\\AddOns\\Carbonite\\Gfx\\Map\\" .. txName)
+
+                        local tStr = ""
+                        local f = self:GetIconNI(2)
+
+                        if hasHealth then
+                            if per > .33 then
+                                local sc = self.ScaleDraw
+                                self:ClipFrameTL(f, wx - 9 / sc, wy - 10 / sc, 16 * per / sc, 1 / sc)
+                                f.texture:SetColorTexture(1, 1, 1, 1)
                             else
-                                f.texture:SetColorTexture (1, 1, 0, 1)
+                                self:ClipFrameByMapType(f, wx, wy, 7, 7, 0)
+
+                                if per > 0 then
+                                    f.texture:SetColorTexture(1, .1, .1, 1 - per * 2)
+                                else
+                                    if inactive then
+                                        f.texture:SetColorTexture(1, 0, 1, .7)
+                                    else
+                                        f.texture:SetColorTexture(0, 0, 0, .5)
+                                    end
+                                end
+                            end
+                        else
+                            f:Hide()
+                        end
+
+                        local unitTarget = unit .. "target"
+                        local tName = UnitExists(unitTarget) and UnitName(unitTarget) or nil
+                        local tEnPlayer
+
+                        if tName then
+
+                            local tLvl = UnitLevel(unitTarget)
+                            local tCls = UnitClass(unitTarget) or ""
+                            if tName == tCls then
+                                tCls = ""
                             end
 
-                        else
-                            tStr = format ("\n|cffc0c0ff%s %d %s %.f%%", tName, tLvl, tCls, th)
-                            f.texture:SetColorTexture (.7, .7, 1, 1)
+                            local th, tm, tPer = GetSafeUnitHealth(unitTarget)
+
+                            if tPer then
+                                local tf = self:GetIconNI(2)
+                                local sc = self.ScaleDraw
+
+                                if UnitIsFriend("player", unitTarget) then
+
+                                    self:ClipFrameTL(tf, wx - 9 / sc, wy - 2 / sc, 16 * tPer / sc, 1 / sc)
+                                    tf.texture:SetColorTexture(0, 1, 0, 1)
+
+                                    tStr = format("\n|cff80ff80%s %d %s %.f", tName, tLvl, tCls, th)
+
+                                    if not UnitIsPlayer(unitTarget) then
+                                        tStr = tStr .. "%"
+                                    end
+                                else
+                                    self:ClipFrameTL(tf, wx - 9 / sc, wy - 9 / sc, 1 / sc, 15 * tPer / sc)
+
+                                    if UnitIsPlayer(unitTarget) then
+
+                                        tEnPlayer = true
+                                        tStr = format("\n|cffff4040%s %d %s %.f%%", tName, tLvl, tCls, th)
+                                        tf.texture:SetColorTexture(redGlow, .1, 0, 1)
+
+                                    elseif UnitIsEnemy("player", unitTarget) then
+
+                                        tStr = format("\n|cffffff40%s %d %s %.f%%", tName, tLvl, tCls, th)
+
+                                        if Nx:UnitIsPlusMob(unitTarget) then
+                                            tf.texture:SetColorTexture(1, .4, 1, 1)
+                                        else
+                                            tf.texture:SetColorTexture(1, 1, 0, 1)
+                                        end
+
+                                    else
+                                        tStr = format("\n|cffc0c0ff%s %d %s %.f%%", tName, tLvl, tCls, th)
+                                        tf.texture:SetColorTexture(.7, .7, 1, 1)
+                                    end
+                                end
+                            else
+                                tStr = format("\n|cff808080%s %d %s ?", tName, tLvl, tCls)
+                            end
                         end
+
+                        local lvl = UnitLevel(unit)
+                        local qStr = Nx.Com:GetPlyrQStr(name)
+
+                        if raid then
+                            local _, _, grp = GetRaidRosterInfo(i)
+                            cls = cls .. " G" .. grp
+                        end
+
+                        local healthText = hasHealth and format("%d%%", per * 100) or "?"
+
+                        f1.NxTip = format(
+                            "%s %d %s %s\n(%d,%d) %s %s%s",
+                            fullName,
+                            lvl,
+                            cls,
+                            healthText,
+                            pX,
+                            pY,
+                            inactive and "Inactive" or "",
+                            tStr,
+                            qStr or ""
+                        )
+
+--                        if alt then
+--                            local s = tEnPlayer and (name .. tStr) or name
+--                            local txt = self:GetText(s)
+--                            self:MoveTextToIcon(txt, f1, 15, 1)
+--                        end
                     end
                 end
---PAIDE!
-                local lvl = UnitLevel (unit)
-                local qStr = Nx.Com:GetPlyrQStr (name)
-
-                if raid then
-                    local name, rank, grp = GetRaidRosterInfo (i)
-                    cls = cls .. " G" .. grp
-                end
-
-                f1.NxTip = format ("%s %d %s %d%%\n(%d,%d) %s %s%s", fullName, lvl, cls, per * 100, pX, pY, inactive and "Inactive" or "", tStr, qStr or "")
-
---                if alt then
-                    -- tStr has \n
---                    local s = tEnPlayer and (name .. tStr) or name
---                    local txt = self:GetText (s)
---                    self:MoveTextToIcon (txt, f1, 15, 1)
---                end
             end
         end
     end
@@ -6748,10 +6793,14 @@ function Nx.Map:UpdateGroup (plX, plY)
     end
 
     if combatName then
-
         if not self.InCombat or combatDist > 35 then
             self.TrackPlayer = combatName
-            return format ("Combat, %s %d%%", combatName, combatHealth * 100), combatX, combatY
+
+            if combatHealth ~= nil then
+                return format("Combat, %s %d%%", combatName, combatHealth * 100), combatX, combatY
+            end
+
+            return format("Combat, %s", combatName), combatX, combatY
         end
     end
 end
