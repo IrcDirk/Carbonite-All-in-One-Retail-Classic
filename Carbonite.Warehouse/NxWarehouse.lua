@@ -3242,12 +3242,13 @@ function Nx.Warehouse.OnItem_lock_changed(_, arg1, arg2)
         return
     end
 
+    local numBankBagSlots = NUM_BANKBAGSLOTS or 7
     if arg1 == KEYRING_CONTAINER or arg1 == BACKPACK_CONTAINER or (arg1 >= 1 and arg1 <= NUM_BAG_SLOTS) or
-            arg1 == BANK_CONTAINER or arg1 == REAGENTBANK_CONTAINER or (arg1 >= NUM_BAG_SLOTS + 1 and arg1 <= NUM_BAG_SLOTS + NUM_BANKBAGSLOTS) then
+            arg1 == BANK_CONTAINER or arg1 == REAGENTBANK_CONTAINER or (arg1 >= NUM_BAG_SLOTS + 1 and arg1 <= NUM_BAG_SLOTS + numBankBagSlots) then
 
         self.LockBank = nil
 
-        if arg1 == BANK_CONTAINER or arg1 == REAGENTBANK_CONTAINER or (arg1 >= NUM_BAG_SLOTS + 1 and arg1 <= NUM_BAG_SLOTS + NUM_BANKBAGSLOTS) then
+        if arg1 == BANK_CONTAINER or arg1 == REAGENTBANK_CONTAINER or (arg1 >= NUM_BAG_SLOTS + 1 and arg1 <= NUM_BAG_SLOTS + numBankBagSlots) then
             self.LockBank = true
         end
 
