@@ -4069,6 +4069,7 @@ function Nx.Quest:RecordQuestsLog()
 
     local opts = self.GOpts
     local curq = self.CurQ
+    if not curq then return end
     local oldSel = GetQuestLogSelection()
 
 --    Nx.prt ("RecordQuestsLog %s, %s", qcnt, #curq)
