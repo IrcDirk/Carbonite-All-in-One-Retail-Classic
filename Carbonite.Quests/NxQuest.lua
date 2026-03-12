@@ -4065,13 +4065,50 @@ end
 
 function Nx.Quest:RecordQuestsLog()
 
-    local qcnt = GetNumQuestLogEntries()
+    local qcnt = 0
+    if type(GetNumQuestLogEntries) == "function" then
+        qcnt = GetNumQuestLogEntries() or 0
+    elseif C_QuestLog and type(C_QuestLog.GetNumQuestLogEntries) == "function" then
+        qcnt = C_QuestLog.GetNumQuestLogEntries() or 0
+    end
+
+    if type(qcnt) ~= "number" or qcnt < 0 then
+        qcnt = 0
+    end
+
+    if type(self.GOpts) ~= "table" then
+        self.GOpts = {}
+    end
+    if type(self.CurQ) ~= "table" then
+        self.CurQ = {}
+    end
+    if type(self.QIdsNew) ~= "table" then
+        self.QIdsNew = {}
+    end
+    if type(self.Tracking) ~= "table" then
+        self.Tracking = {}
+    end
+    if type(self.PartyQ) ~= "table" then
+        self.PartyQ = {}
+    end
+    if type(self.RealQ) ~= "table" then
+        self.RealQ = {}
+    end
+    if type(self.RealQEntries) ~= "number" then
+        self.RealQEntries = 0
+    end
 
     local opts = self.GOpts
     local curq = self.CurQ
-    local oldSel = GetQuestLogSelection()
 
---    Nx.prt ("RecordQuestsLog %s, %s", qcnt, #curq)
+    local oldSel = 0
+    if type(GetQuestLogSelection) == "function" then
+        oldSel = GetQuestLogSelection() or 0
+    elseif C_QuestLog and type(C_QuestLog.GetSelectedQuest) == "function" then
+        oldSel = C_QuestLog.GetSelectedQuest() or 0
+    end
+
+--    Nx.prt ("RecordQuestsLog %s, %s", qcnt, curq and #curq or 0)
 
     local lastChanged
 
@@ -4084,13 +4121,13 @@ function Nx.Quest:RecordQuestsLog()
 
     if self.RealQEntries == qcnt then    -- No quests added or removed?
 
-        for curi, cur in ipairs (curq) do
+        for curi, cur in ipairs(curq) do
 
-            local qi = cur.QI
+            local qi = cur and cur.QI or 0
             if qi > 0 then
 
-                local title, level, groupCnt, isHeader, isCollapsed, isComplete, _, questID = GetQuestLogTitle (qi)
-                title = self:ExtractTitle (title)
+                local title, level, groupCnt, isHeader, isCollapsed, isComplete, _, questID = GetQuestLogTitle(qi)
+                title = self:ExtractTitle(title)
 
 --                Nx.prt ("QD %s %s %s %s", title, qi, isHeader and "H1" or "H0", isComplete and "C1" or "C0")
 
@@ -4099,31 +4136,38 @@ function Nx.Quest:RecordQuestsLog()
                     local change
 
                     if isComplete == 1 and not cur.Complete then
-                        Nx.prt (L["Quest Complete '%s'"], title)
+                        Nx.prt(L["Quest Complete '%s'"], title)
 
-                        if Nx.qdb.profile.Quest.SndPlayCompleted then
+                        if Nx.qdb and Nx.qdb.profile and Nx.qdb.profile.Quest and Nx.qdb.profile.Quest.SndPlayCompleted then
                             self:PlaySound()
                         end
 
-                        if Nx.qdb.profile.Quest.AutoTurnInAC and cur.IsAutoComplete then
-                            ShowQuestComplete (qi)
+                        if Nx.qdb and Nx.qdb.profile and Nx.qdb.profile.Quest and Nx.qdb.profile.Quest.AutoTurnInAC and cur.IsAutoComplete then
+                            if type(ShowQuestComplete) == "function" then
+                                ShowQuestComplete(qi)
+                            end
                         end
 
-                        if Nx.qdb.profile.QuestWatch.RemoveComplete and not cur.IsAutoComplete then
-                            self.Watch:RemoveWatch (cur.QId, cur.QI)
-                            self.Watch:Update()
-                            self.WQList:Update()
+                        if Nx.qdb and Nx.qdb.profile and Nx.qdb.profile.QuestWatch and Nx.qdb.profile.QuestWatch.RemoveComplete and not cur.IsAutoComplete then
+                            if self.Watch and type(self.Watch.RemoveWatch) == "function" then
+                                self.Watch:RemoveWatch(cur.QId, cur.QI)
+                            end
+                            if self.Watch and type(self.Watch.Update) == "function" then
+                                self.Watch:Update()
+                            end
+                            if self.WQList and type(self.WQList.Update) == "function" then
+                                self.WQList:Update()
+                            end
                             change = false
                         else
                             change = true
                         end
-
                     end
 
-                    local lbCnt = GetNumQuestLeaderBoards (qi)
+                    local lbCnt = GetNumQuestLeaderBoards(qi) or 0
                     for n = 1, lbCnt do
 
-                        local desc, _, done = GetQuestLogLeaderBoard (n, qi)
+                        local desc, _, done = GetQuestLogLeaderBoard(n, qi)
 
                         --V4
 
@@ -4131,42 +4175,42 @@ function Nx.Quest:RecordQuestsLog()
 
 --                            Nx.prt ("Q Change %s->%s", desc, cur[n] or "nil")
 
-                            if Nx.qdb.profile.QuestWatch.AddChanged then
+                            if Nx.qdb and Nx.qdb.profile and Nx.qdb.profile.QuestWatch and Nx.qdb.profile.QuestWatch.AddChanged then
                                 if change == nil then
                                     change = true
                                 end
                             end
 
-                            local s1, _, oldCnt = strfind (cur[n] or "", "(%d+)/%d+ ")
+                            local s1, _, oldCnt = strfind(cur[n] or "", "(%d+)/%d+ ")
                             if s1 then
-                                oldCnt = tonumber (oldCnt)
+                                oldCnt = tonumber(oldCnt)
                             end
 
-                            local s1, _, newCnt = strfind (desc, "(%d+)/%d+ ")
-                            if s1 then
+                            local s2, _, newCnt = strfind(desc, "(%d+)/%d+ ")
+                            if s2 then
 --                                Nx.prt ("%s %s", i, total)
-                                newCnt = tonumber (newCnt)
+                                newCnt = tonumber(newCnt)
                             end
 
                             if done or (oldCnt and newCnt and newCnt > oldCnt) then
-                                self:Capture (curi, n)
+                                self:Capture(curi, n)
                             end
 
                             lastChanged = cur
-
                             partySend = true
                         end
                     end
 
-                    if change and Nx.qdb.profile.QuestWatch.AddChanged then
-                        self.Watch:Add (curi)
+                    if change and Nx.qdb and Nx.qdb.profile and Nx.qdb.profile.QuestWatch and Nx.qdb.profile.QuestWatch.AddChanged then
+                        if self.Watch and type(self.Watch.Add) == "function" then
+                            self.Watch:Add(curi)
+                        end
                     end
                 end
             end
         end
 
     else
-
         partySend = true
     end
 
@@ -4180,7 +4224,7 @@ function Nx.Quest:RecordQuestsLog()
         local cur = curq[n]
         if not cur.Goto or cur.Party then
 --            Nx.prt ("RecordQuests RemoveQ %s - %s", cur.Title, cur.QI)
-            table.remove (curq, n)
+            table.remove(curq, n)
         else
             fakeq[cur.Q] = cur
             n = n + 1
@@ -4199,7 +4243,16 @@ function Nx.Quest:RecordQuestsLog()
 
     for qn = 1, qcnt do
         local title, level, groupCnt, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isBounty, isStory, isHidden = GetQuestLogTitle(qn)
-        local questTagInfo = GetQuestTagInfoCompat(questID)
+
+        local questTagInfo
+        if type(GetQuestTagInfoCompat) == "function" then
+            questTagInfo = GetQuestTagInfoCompat(questID)
+        elseif C_QuestLog and type(C_QuestLog.GetQuestTagInfo) == "function" and questID then
+            questTagInfo = C_QuestLog.GetQuestTagInfo(questID)
+        elseif type(GetQuestTagInfo) == "function" and questID then
+            questTagInfo = GetQuestTagInfo(questID)
+        end
+
         local tagID = questTagInfo and questTagInfo.tagID
         local tag = questTagInfo and questTagInfo.tagName
         local worldQuestType = questTagInfo and questTagInfo.worldQuestType
@@ -4218,19 +4271,25 @@ function Nx.Quest:RecordQuestsLog()
 --                Nx.prt ("Q %s collapsed!", title)
 --            end
         else
-            title = self:ExtractTitle (title)
-            SelectQuestLogEntry (qn)
-            local qDesc, qObj = GetQuestLogQuestText()
-            --local qId, qLevel = self:GetLogIdLevel (qn)
+            title = self:ExtractTitle(title)
+
+            if type(SelectQuestLogEntry) == "function" then
+                SelectQuestLogEntry(qn)
+            elseif C_QuestLog and type(C_QuestLog.SetSelectedQuest) == "function" then
+                C_QuestLog.SetSelectedQuest(qn)
+            end
+
+            local qDesc, qObj = "", ""
+            if type(GetQuestLogQuestText) == "function" then
+                qDesc, qObj = GetQuestLogQuestText()
+            end
 
             local qId = questID
             local qLevel = level
 
-            --Nx.prt ("%d",GetQuestLogQuestType(qn)) -- Seeing what quest type function returns
-            --Nx.prt("%s", qDesc)
             if qId and not isHidden then
-                local quest = Nx.Quests[qId]
-                local lbCnt = GetNumQuestLeaderBoards (qn)
+                local quest = Nx.Quests and Nx.Quests[qId]
+                local lbCnt = GetNumQuestLeaderBoards(qn) or 0
                 local cur = quest and fakeq[quest]
                 if not cur then
                     cur = {}
@@ -4242,7 +4301,9 @@ function Nx.Quest:RecordQuestsLog()
                     cur.Index = index
                     if quest then
                         self.Tracking[qId] = 0
-                        self:TrackOnMap (qId, 0, true)
+                        if type(self.TrackOnMap) == "function" then
+                            self:TrackOnMap(qId, 0, true)
+                        end
                     end
                 end
 
@@ -4260,9 +4321,12 @@ function Nx.Quest:RecordQuestsLog()
                 cur.NewTime = self.QIdsNew[qId]                -- Copy new time
 
                 cur.Tag = tag
+                cur.TagID = tagID
+                cur.WorldQuestType = worldQuestType
+                cur.Rarity = rarity
+                cur.IsElite = isElite
+                cur.TradeskillLineIndex = tradeskillLineIndex
                 cur.GCnt = groupCnt or 0
-
-                --Nx.prt("%s", cur.Title)
 
                 cur.PartySize = groupCnt or 1
 --            if cur.Tag then Nx.prt ("%s %s", cur.Tag, cur.GCnt) end
@@ -4270,7 +4334,7 @@ function Nx.Quest:RecordQuestsLog()
                     cur.PartySize = 5
                 end
 
-                cur.TagShort = self.TagNames[tag] or ""
+                cur.TagShort = (self.TagNames and self.TagNames[tag]) or ""
 
                 cur.Daily = isDaily
                 if isDaily == LE_QUEST_FREQUENCY_DAILY then
@@ -4279,17 +4343,38 @@ function Nx.Quest:RecordQuestsLog()
                 if isDaily == LE_QUEST_FREQUENCY_WEEKLY then
                     cur.TagShort = "#" .. cur.TagShort
                 end
-                cur.CanShare = GetQuestLogPushable()
-                cur.Complete = isComplete            -- 1 is Done, nil not. Otherwise failed
-                cur.IsAutoComplete = GetQuestLogIsAutoComplete (qn)
 
-                local left = GetQuestLogTimeLeft()
+                if type(GetQuestLogPushable) == "function" then
+                    cur.CanShare = GetQuestLogPushable()
+                else
+                    cur.CanShare = nil
+                end
+
+                cur.Complete = isComplete            -- 1 is Done, nil not. Otherwise failed
+
+                if type(GetQuestLogIsAutoComplete) == "function" then
+                    cur.IsAutoComplete = GetQuestLogIsAutoComplete(qn)
+                else
+                    cur.IsAutoComplete = nil
+                end
+
+                local left
+                if type(GetQuestLogTimeLeft) == "function" then
+                    left = GetQuestLogTimeLeft()
+                end
                 if left then
                     cur.TimeExpire = time() + left
                     cur.HighPri = true
+                else
+                    cur.TimeExpire = nil
+                    cur.HighPri = nil
                 end
 
-                cur.ItemLink, cur.ItemImg, cur.ItemCharges = GetQuestLogSpecialItemInfo (qn)
+                if type(GetQuestLogSpecialItemInfo) == "function" then
+                    cur.ItemLink, cur.ItemImg, cur.ItemCharges = GetQuestLogSpecialItemInfo(qn)
+                else
+                    cur.ItemLink, cur.ItemImg, cur.ItemCharges = nil, nil, nil
+                end
 
                 --Nx.prt("Q num: %d itmLink: %s item: %s charges: %d", qn, cur.ItemLink or " ", cur.ItemImg or " ", cur.ItemCharges)
                 if cur.ItemLink then
@@ -4300,13 +4385,16 @@ function Nx.Quest:RecordQuestsLog()
                     else
                         cur.ItemID = 0
                     end
+                else
+                    cur.ItemID = nil
                 end
+
                 cur.Priority = 1
                 cur.Distance = 999999999
                 cur.LBCnt = lbCnt
 
                 for n = 1, lbCnt do
-                    local desc, _, done = GetQuestLogLeaderBoard (n, qn)
+                    local desc, _, done = GetQuestLogLeaderBoard(n, qn)
                     cur[n] = desc or "?"        --V4
                     cur[n + 100] = done
                 end
@@ -4314,9 +4402,8 @@ function Nx.Quest:RecordQuestsLog()
                 local mask = 0
                 local ender = quest and (quest["End"] or quest["Start"])
 
-                if (isComplete and ender) or lbCnt == 0 or (cur.Goto and quest["Start"]) then
+                if (isComplete and ender) or lbCnt == 0 or (cur.Goto and quest and quest["Start"]) then
                     mask = 1
-
                 else
                     for n = 1, 99 do
                         local done
@@ -4324,18 +4411,18 @@ function Nx.Quest:RecordQuestsLog()
                             done = cur[n + 100]
                         end
 
-                        local obj = quest and quest["Objectives"]
-
-                        if not obj then
-                            break
-                        else obj = quest and quest["Objectives"][n]
-                        end
-                        if not obj then
+                        local objectives = quest and quest["Objectives"]
+                        if not objectives then
                             break
                         end
 
-                        if obj and not done then
-                            mask = mask + bit_lshift (1, n)
+                        local obj = objectives[n]
+                        if not obj then
+                            break
+                        end
+
+                        if not done then
+                            mask = mask + bit_lshift(1, n)
                         end
                     end
                 end
@@ -4348,28 +4435,38 @@ function Nx.Quest:RecordQuestsLog()
             -- Calc total number in quest chain
 
                 if quest then
-                    self:CalcCNumMax (cur, quest)
+                    self:CalcCNumMax(cur, quest)
                 end
             end
         end
     end
 
+    local showParty = false
+    if Nx.qdb
+        and Nx.qdb.profile
+        and Nx.qdb.profile.Quest
+        and Nx.qdb.profile.Quest.PartyShare
+        and self.Watch
+        and self.Watch.ButShowParty
+        and type(self.Watch.ButShowParty.GetPressed) == "function" then
+        showParty = self.Watch.ButShowParty:GetPressed() and true or false
+    end
 
-    if Nx.qdb.profile.Quest.PartyShare and self.Watch.ButShowParty:GetPressed() then
+    if showParty then
 
 --        Nx.prt ("-PQuest-")
 
         local pq = self.PartyQ
 
-        for plName, pdata in pairs (pq) do
+        for plName, pdata in pairs(pq) do
 
         --Nx.prt ("PQuest %s", plName)
-            for qId, qT in pairs (pdata) do
-                local quest = Nx.Quests[qId]
+            for qId, qT in pairs(pdata) do
+                local quest = Nx.Quests and Nx.Quests[qId]
                 local cur = qIds[qId]
 
                 if cur then        -- We have the quest?
-                    local s = format ("\n|cff8080f0%s|r", plName)
+                    local s = format("\n|cff8080f0%s|r", plName)
 
                     if not cur.PartyDesc then
 
@@ -4378,7 +4475,7 @@ function Nx.Quest:RecordQuestsLog()
                         cur.PartyCnt = 0
                         cur.PartyComplete = cur.Complete
 
-                        for n, cnt in ipairs (qT) do
+                        for n, cnt in ipairs(qT) do
                             cur[n + 200] = cur[n + 100]
                             cur[n + 400] = "\n|cfff080f0Me" .. s
                         end
@@ -4391,13 +4488,13 @@ function Nx.Quest:RecordQuestsLog()
 
                     local mask = (cur.PartyComplete or #qT == 0) and 1 or 0
 
-                    for n, cnt in ipairs (qT) do
+                    for n, cnt in ipairs(qT) do
 
                         local total = qT[n + 100]
 
                         --local desc, done = self:CalcDesc (qId, n, cnt, total)
 
-                        desc = qT[n + 200]
+                        local desc = qT[n + 200]
                         cur[n] = desc
 
                         local done = qT[n + 300]
@@ -4409,7 +4506,7 @@ function Nx.Quest:RecordQuestsLog()
                         cur[n + 400] = cur[n + 400] .. " " .. desc
 
                         if not done then
-                            mask = mask + bit_lshift (1, n)
+                            mask = mask + bit_lshift(1, n)
                         end
                     end
 
@@ -4417,71 +4514,70 @@ function Nx.Quest:RecordQuestsLog()
 
                 elseif quest then
 
-                    local name, side, lvl = self:Unpack (quest["Quest"])
+                    local name, side, lvl = self:Unpack(quest["Quest"])
 
 --                    Nx.prt ("PartyQ %s", name)
 
-                    local cur = {}
-                    cur.Goto = true
-                    cur.Party = plName
-                    cur.PartyDesc = format ("\n|cff8080f0%s|r", plName)
-                    cur.PartyNames = cur.PartyDesc
-                    cur.Q = quest
-                    cur.QI = 0
-                    cur.QId = qId
-                    cur.Header = "Party, " .. plName
-                    cur.Title = name
-                    cur.ObjText = ""
-                    cur.Level = lvl
-                    cur.PartySize = 1
-                    cur.TagShort = ""
-                    cur.Complete = qT.Complete
-                    cur.Priority = 1
-                    cur.Distance = 999999999
+                    local pcur = {}
+                    pcur.Goto = true
+                    pcur.Party = plName
+                    pcur.PartyDesc = format("\n|cff8080f0%s|r", plName)
+                    pcur.PartyNames = pcur.PartyDesc
+                    pcur.Q = quest
+                    pcur.QI = 0
+                    pcur.QId = qId
+                    pcur.Header = "Party, " .. plName
+                    pcur.Title = name
+                    pcur.ObjText = ""
+                    pcur.Level = lvl
+                    pcur.PartySize = 1
+                    pcur.TagShort = ""
+                    pcur.Complete = qT.Complete
+                    pcur.Priority = 1
+                    pcur.Distance = 999999999
 
-                    self:CalcCNumMax (cur, quest)
+                    self:CalcCNumMax(pcur, quest)
 
-                    tinsert (curq, cur)
-                    cur.Index = #curq
+                    tinsert(curq, pcur)
+                    pcur.Index = #curq
 
-                    cur.LBCnt = #qT
+                    pcur.LBCnt = #qT
 
                     local mask = (qT.Complete or #qT == 0) and 1 or 0
 
-                    for n, cnt in ipairs (qT) do
+                    for n, cnt in ipairs(qT) do
 
                         local total = qT[n + 100]
 
-                        --cur[n], cur[n + 100] = self:CalcDesc (qId, n, cnt, total)
+                        --pcur[n], pcur[n + 100] = self:CalcDesc (qId, n, cnt, total)
 
-                        cur[n] = qT[n + 200]
-                        cur[n + 100] = qT[n + 300]
+                        pcur[n] = qT[n + 200]
+                        pcur[n + 100] = qT[n + 300]
 
-                        cur[n + 400] = cur.PartyNames
+                        pcur[n + 400] = pcur.PartyNames
 
-                        if not cur[n + 100] then
-                            mask = mask + bit_lshift (1, n)
+                        if not pcur[n + 100] then
+                            mask = mask + bit_lshift(1, n)
                         end
                     end
 
-                    cur.TrackMask = mask
+                    pcur.TrackMask = mask
                 end
             end
         end
     end
 
-    for curi, cur in ipairs (curq) do
+    for curi, cur in ipairs(curq) do
         if cur.PartyCnt then
             cur.CompleteMerge = cur.PartyComplete
 
-            for n, desc in ipairs (cur) do
+            for n, desc in ipairs(cur) do
                 cur[n + 300] = cur[n + 200]
             end
-
         else
             cur.CompleteMerge = cur.Complete
 
-            for n, desc in ipairs (cur) do
+            for n, desc in ipairs(cur) do
                 cur[n + 300] = cur[n + 100]
             end
         end
@@ -4490,10 +4586,14 @@ function Nx.Quest:RecordQuestsLog()
     --
 
     if lastChanged then
-        self.QLastChanged = self:FindCurFromOld (lastChanged)
+        self.QLastChanged = self:FindCurFromOld(lastChanged)
     end
 
-    SelectQuestLogEntry (oldSel)
+    if type(SelectQuestLogEntry) == "function" then
+        SelectQuestLogEntry(oldSel)
+    elseif C_QuestLog and type(C_QuestLog.SetSelectedQuest) == "function" then
+        C_QuestLog.SetSelectedQuest(oldSel)
+    end
 
 --    Nx.prt ("CurQ %d", #curq)
 
@@ -4504,7 +4604,9 @@ function Nx.Quest:RecordQuestsLog()
     end
 
 --    local map = Nx.Map:GetMap (1)
-    self.Map.Guide:UpdateMapIcons()
+    if self.Map and self.Map.Guide and type(self.Map.Guide.UpdateMapIcons) == "function" then
+        self.Map.Guide:UpdateMapIcons()
+    end
 end
 
 -------------------------------------------------------------------------------
