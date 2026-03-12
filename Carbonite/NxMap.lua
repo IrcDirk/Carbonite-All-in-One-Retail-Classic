@@ -6469,290 +6469,417 @@ end
 -- Draw group (raid or party)
 -- (player world pos)
 
-function Nx.Map:UpdateGroup (plX, plY)
+function Nx.Map:UpdateGroup(plX, plY)
+    local Nx = Nx
+    local Map = Nx.Map
 
-    local alt = IsAltKeyDown()
-    local redGlow = abs (GetTime() * 400 % 200 - 100) / 200 + .5
-
-    local members = MAX_PARTY_MEMBERS
-    local unitName = "party"
-    local raid
-
-    if IsInRaid() then
-        members = MAX_RAID_MEMBERS
-        unitName = "raid"
-        raid = true
+    local function IsNumber(v)
+        return type(v) == "number"
     end
 
-    local pals = Nx.Com.PalNames
-    local palName
-    local palDist = 99999999
-    local palX, palY
-    local combatName
-    local combatUnit
-    local combatHealth
-    local combatDist = 99999999
-    local combatX, combatY
-
-    local palsInfo = Nx.Com.PalsInfo
-
-    for i = 1, members do
-
-        local unit = unitName .. i
-        local name, unitRealm = UnitName (unit)
-
-        local mapId = self.MapId
-
-        local pX, pY = Nx.Map.GetPlayerMapPosition (unit)
-
-        if pX <= 0 and pY <= 0 then
-
-            local info = palsInfo[name]
-            if info and info.EntryMId == mapId then
-                mapId = info.MId
-                pX = info.X + .00001
-                pY = info.Y
-            end
-
-        else
-            pX = pX * 100
-            pY = pY * 100
-            local lvl = max (Nx.Map:GetCurrentMapDungeonLevel(), 1)
-            if Nx.Map:GetCurrentMapAreaID() == 520 then
-                if Nx.Map:GetCurrentMapDungeonLevel() == 0 then
-                    lvl = 1
-                else
-                    lvl = 2
-                end
-            end
---            pY = pY + (((lvl - 1) * 668) / 256)
-            pY = pY + (lvl - 1) * 100
+    local function Clamp(v, lo, hi)
+        if v < lo then
+            return lo
         end
-        if (pX ~= 0 or pY ~= 0) and not UnitIsUnit (unit, "player") then
+        if v > hi then
+            return hi
+        end
+        return v
+    end
 
-            local fullName = unitRealm and #unitRealm > 0 and (name .. "-" .. unitRealm) or name
+    local function UnitTokenExists(unit)
+        return type(unit) == "string" and unit ~= "" and UnitExists(unit)
+    end
 
-            local wx, wy = self:GetWorldPos (mapId, pX, pY)
+    local function GetUnitFullName(unit)
+        if not UnitTokenExists(unit) then
+            return nil
+        end
 
-            local sz = 16 * self.DotRaidScale
-            if UnitInParty (unit) then
-                sz = 18 * self.DotPartyScale
-            end
+        local name, realm = UnitName(unit)
+        if not name or name == "" then
+            return nil
+        end
 
-            local cls = UnitClass (unit) or ""
-            local inCombat
---PAIDS!
-            inCombat = UnitAffectingCombat (unit)
---PAIDE!
-            local h = UnitHealth (unit)
-            if type(h) ~= "number" then
-                h = 0  -- Handle secret/hidden health values
-            end
-            if UnitIsDeadOrGhost (unit) then
-                h = 0
-            end
-            local m = UnitHealthMax (unit)
-            if type(m) ~= "number" or m == 0 then
-                m = 1  -- Avoid division by zero or secret value
-            end
-            local per = min (Nx.Util_NanToZero(h / m), 1)            -- Can overflow?
+        if realm and realm ~= "" then
+            return name .. "-" .. realm
+        end
 
-            if per > 0 then
+        return name
+    end
 
-                if pals[name] ~= nil or self.TrackPlyrs[name] then
+    local function IsUnitDead(unit)
+        if not UnitTokenExists(unit) then
+            return false
+        end
 
---                    Nx.prtCtrl ("Pal %s", name)
+        return UnitIsDeadOrGhost(unit) and true or false
+    end
 
-                    sz = 20 * self.DotPalScale
+    local function GetClassColor(unit)
+        local _, classTag = UnitClass(unit)
+        if classTag and RAID_CLASS_COLORS and RAID_CLASS_COLORS[classTag] then
+            local c = RAID_CLASS_COLORS[classTag]
+            return c.r or 1, c.g or 1, c.b or 1, classTag
+        end
 
-                    if self.TrackPlyrs[name] then
-                        sz = 25 * self.DotPalScale
-                    end
+        return 1, 1, 1, nil
+    end
 
-                    local dist = (plX - wx) ^ 2 + (plY - wy) ^ 2
-                    if dist < palDist then
-                        palName = name
-                        palDist = dist
-                        palX, palY = wx, wy
+    local function GetMapPos(unit)
+        if not UnitTokenExists(unit) then
+            return nil, nil, nil
+        end
 
---                        Nx.prtCtrl ("Pal %s %s", name, dist)
-                    end
-                end
-
-                if inCombat then
-
-                    local dist = (plX - wx) ^ 2 + (plY - wy) ^ 2
-                    if dist < combatDist then
-                        combatName = name
-                        combatUnit = unit
-                        combatHealth = per
-                        combatDist = dist
-                        combatX, combatY = wx, wy
+        if C_Map and C_Map.GetBestMapForUnit and C_Map.GetPlayerMapPosition then
+            local mapId = C_Map.GetBestMapForUnit(unit)
+            if mapId then
+                local pos = C_Map.GetPlayerMapPosition(mapId, unit)
+                if pos then
+                    local px, py = pos:GetXY()
+                    if IsNumber(px) and IsNumber(py) then
+                        return mapId, px, py
                     end
                 end
             end
+        end
 
-            local f1 = self:GetIcon (1)
+        return nil, nil, nil
+    end
 
-            if self:ClipFrameByMapType (f1, wx, wy, sz, sz, 0) then
+    local function GetWorldPosFromMap(unit)
+        local mapId, px, py = GetMapPos(unit)
+        if not mapId or not px or not py then
+            return nil, nil, nil, nil, nil
+        end
 
-                f1.NXType = 1000
-                f1.NXData = unit
-                f1.NXData2 = fullName
+        if type(Map.GetWorldPos) == "function" then
+            local ok, wx, wy = pcall(Map.GetWorldPos, Map, mapId, px * 100, py * 100)
+            if ok and IsNumber(wx) and IsNumber(wy) then
+                return mapId, px, py, wx, wy
+            end
+        end
 
-                local inactive
-                for n = 1, MAX_TARGET_DEBUFFS do
-                    if UnitDebuff (unit, n) == "Inactive" then
-                        inactive = true
-                        per = 0
-                        break
-                    end
-                end
+        if type(Map.GetWorldPos2) == "function" then
+            local ok, wx, wy = pcall(Map.GetWorldPos2, Map, mapId, px * 100, py * 100)
+            if ok and IsNumber(wx) and IsNumber(wy) then
+                return mapId, px, py, wx, wy
+            end
+        end
 
-                local txName = "IconPlyrP"
+        return mapId, px, py, px * 100, py * 100
+    end
 
-                if pals[name] == false then
-                    txName = "IconPlyrF"
-                elseif pals[name] == true then
-                    txName = "IconPlyrG"
-                end
+    local function GetDistance(wx, wy)
+        if not IsNumber(plX) or not IsNumber(plY) or not IsNumber(wx) or not IsNumber(wy) then
+            return 99999999
+        end
 
-                if inCombat then
-                    txName = txName.."C"
-                end
+        local dx = wx - plX
+        local dy = wy - plY
+        return sqrt(dx * dx + dy * dy)
+    end
 
-                f1.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\"..txName)
+    local alt = IsAltKeyDown and IsAltKeyDown() or false
+    local redGlow = 1
+    local members = 0
+    local unitName = "party"
+    local raid = IsInRaid and IsInRaid() or false
 
---                Nx.prt ("#%d %.1f %.1f", i, pX, pY)
+    local pals = self.TrackPlyrs or {}
+    local palName = nil
+    local palDist = 99999999
+    local palX = nil
+    local palY = nil
 
-                -- Show health
+    local combatName = nil
+    local combatUnit = nil
+    local combatHealth = nil
+    local combatDist = 99999999
+    local combatX = nil
+    local combatY = nil
 
-                local tStr = ""
---PAIDS!
-                f = self:GetIconNI (2)
+    local palsInfo = {}
 
-                if per > .33 then
+    self.TrackPlyrs = self.TrackPlyrs or {}
+    self.PalsInfo = self.PalsInfo or {}
+    self.GroupInfo = self.GroupInfo or {}
 
-                    -- Horizontal bar at top left
+    if raid then
+        members = GetNumGroupMembers and (GetNumGroupMembers() or 0) or 0
+        unitName = "raid"
+    else
+        members = GetNumSubgroupMembers and (GetNumSubgroupMembers() or 0) or 0
+        unitName = "party"
+    end
 
-                    local sc = self.ScaleDraw
-                    self:ClipFrameTL (f, wx - 9 / sc, wy - 10 / sc, 16 * per / sc, 1 / sc)
---                    self:ClipFrameZTLO (f, pX, pY, 12 * per / self.ScaleDraw, .9 / self.ScaleDraw, -7, -7)
-                    f.texture:SetColorTexture (1, 1, 1, 1)
+    do
+        local fullName = GetUnitFullName("player")
+        local key = "player"
 
-                else
-                    self:ClipFrameByMapType (f, wx, wy, 7, 7, 0)
---                    self:ClipFrameZ (f, pX, pY, 7, 7, 0)
+        if fullName then
+            local _, px, py, wx, wy = GetWorldPosFromMap("player")
+            local healthPer
+            local r, g, b, cls = GetClassColor("player")
 
-                    if per > 0 then
-                        f.texture:SetColorTexture (1, .1, .1, 1 - per * 2)
-                    else
-                        if inactive then
-                            f.texture:SetColorTexture (1, 0, 1, .7)    -- Punk
-                        else
-                            f.texture:SetColorTexture (0, 0, 0, .5)    -- Dead
-                        end
-                    end
-                end
-
-                -- Show target info
-
-                local unitTarget = unit.."target"
-                local tName = UnitName (unitTarget)
-                local tEnPlayer
-
-                if tName then
-
-                    local tLvl = UnitLevel (unitTarget)
-                    local tCls = UnitClass (unitTarget) or ""
-                    if tName == tCls then
-                        tCls = ""
-                    end
-
-                    local th = UnitHealth (unitTarget)
-                    if UnitIsDeadOrGhost (unitTarget) then
-                        th = 0
-                    end
-                    local tm = max (UnitHealthMax (unitTarget), 1)
-                    local per = min (Nx.Util_NanToZero(th / tm), 1)
-
---                    Nx.prt ("H %d", th)
-
-                    local f = self:GetIconNI (2)
-                    local sc = self.ScaleDraw
-
-                    if UnitIsFriend ("player", unitTarget) then
-
-                        -- Horizontal green bar
-                        self:ClipFrameTL (f, wx - 9 / sc, wy - 2 / sc, 16 * per / sc, 1 / sc)
-                        f.texture:SetColorTexture (0, 1, 0, 1)
-
-                        tStr = format ("\n|cff80ff80%s %d %s %.f", tName, tLvl, tCls, th)
-
-                        if not UnitIsPlayer (unitTarget) then    -- NPC?
-                            tStr = tStr .. "%"
-                        end
-                    else
-                        self:ClipFrameTL (f, wx - 9 / sc, wy - 9 / sc, 1 / sc, 15 * per / sc)
-
-                        if UnitIsPlayer (unitTarget) then
-
-                            tEnPlayer = true
-                            tStr = format ("\n|cffff4040%s %d %s %.f%%", tName, tLvl, tCls, th)
-                            f.texture:SetColorTexture (redGlow, .1, 0, 1)
-
-                        elseif UnitIsEnemy ("player", unitTarget) then
-
-                            tStr = format ("\n|cffffff40%s %d %s %.f%%", tName, tLvl, tCls, th)
-
-                            if Nx:UnitIsPlusMob (unitTarget) then
-                                f.texture:SetColorTexture (1, .4, 1, 1)
-                            else
-                                f.texture:SetColorTexture (1, 1, 0, 1)
+            if IsUnitDead("player") then
+                healthPer = 0
+            elseif type(UnitHealthPercent) == "function" then
+                local ok, per = pcall(UnitHealthPercent, "player")
+                if ok and per ~= nil then
+                    if type(issecretvalue) ~= "function" or not issecretvalue(per) then
+                        if type(per) == "number" then
+                            if per > 1 then
+                                per = per / 100
                             end
 
-                        else
-                            tStr = format ("\n|cffc0c0ff%s %d %s %.f%%", tName, tLvl, tCls, th)
-                            f.texture:SetColorTexture (.7, .7, 1, 1)
+                            if per < 0 then
+                                per = 0
+                            elseif per > 1 then
+                                per = 1
+                            end
+
+                            healthPer = per
                         end
                     end
                 end
---PAIDE!
-                local lvl = UnitLevel (unit)
-                local qStr = Nx.Com:GetPlyrQStr (name)
+            else
+                local okH, h = pcall(UnitHealth, "player")
+                local okM, m = pcall(UnitHealthMax, "player")
 
-                if raid then
-                    local name, rank, grp = GetRaidRosterInfo (i)
-                    cls = cls .. " G" .. grp
+                if okH and okM and h ~= nil and m ~= nil then
+                    if (type(issecretvalue) ~= "function" or not issecretvalue(h)) and
+                       (type(issecretvalue) ~= "function" or not issecretvalue(m)) and
+                       type(h) == "number" and type(m) == "number" and m > 0 then
+                        healthPer = h / m
+
+                        if healthPer < 0 then
+                            healthPer = 0
+                        elseif healthPer > 1 then
+                            healthPer = 1
+                        end
+                    end
+                end
+            end
+
+            self.GroupInfo[key] = self.GroupInfo[key] or {}
+            local info = self.GroupInfo[key]
+
+            info.Unit = "player"
+            info.Name = fullName
+            info.X = wx
+            info.Y = wy
+            info.MapX = px
+            info.MapY = py
+            info.InCombat = UnitAffectingCombat("player") and true or false
+            info.HealthPer = healthPer or 1
+            info.Health = nil
+            info.HealthMax = nil
+            info.Class = cls
+            info.CR = r
+            info.CG = g
+            info.CB = b
+            info.Dead = IsUnitDead("player")
+            info.IsPlayer = true
+        end
+    end
+
+    for i = 1, members do
+        local unit = unitName .. i
+
+        if UnitTokenExists(unit) and UnitIsConnected(unit) and not UnitIsUnit(unit, "player") then
+            local name = UnitName(unit)
+            local fullName = GetUnitFullName(unit)
+            local key = unit
+
+            if name and fullName then
+                local mapId, pX, pY, wx, wy = GetWorldPosFromMap(unit)
+                local sz = 18
+                local r, g, b, cls = GetClassColor(unit)
+                local inCombat = UnitAffectingCombat(unit) and true or false
+                local healthPer
+                local dist = GetDistance(wx, wy)
+
+                if IsUnitDead(unit) then
+                    healthPer = 0
+                elseif type(UnitHealthPercent) == "function" then
+                    local ok, per = pcall(UnitHealthPercent, unit)
+                    if ok and per ~= nil then
+                        if type(issecretvalue) ~= "function" or not issecretvalue(per) then
+                            if type(per) == "number" then
+                                if per > 1 then
+                                    per = per / 100
+                                end
+
+                                if per < 0 then
+                                    per = 0
+                                elseif per > 1 then
+                                    per = 1
+                                end
+
+                                healthPer = per
+                            end
+                        end
+                    end
+                else
+                    local okH, h = pcall(UnitHealth, unit)
+                    local okM, m = pcall(UnitHealthMax, unit)
+
+                    if okH and okM and h ~= nil and m ~= nil then
+                        if (type(issecretvalue) ~= "function" or not issecretvalue(h)) and
+                           (type(issecretvalue) ~= "function" or not issecretvalue(m)) and
+                           type(h) == "number" and type(m) == "number" and m > 0 then
+                            healthPer = h / m
+
+                            if healthPer < 0 then
+                                healthPer = 0
+                            elseif healthPer > 1 then
+                                healthPer = 1
+                            end
+                        end
+                    end
                 end
 
-                f1.NxTip = format ("%s %d %s %d%%\n(%d,%d) %s %s%s", fullName, lvl, cls, per * 100, pX, pY, inactive and "Inactive" or "", tStr, qStr or "")
+                if healthPer == nil then
+                    healthPer = 1
+                end
 
---                if alt then
-                    -- tStr has \n
---                    local s = tEnPlayer and (name .. tStr) or name
---                    local txt = self:GetText (s)
---                    self:MoveTextToIcon (txt, f1, 15, 1)
---                end
+                if healthPer < redGlow then
+                    redGlow = healthPer
+                end
+
+                self.GroupInfo[key] = self.GroupInfo[key] or {}
+                local info = self.GroupInfo[key]
+
+                info.Unit = unit
+                info.Name = fullName
+                info.MapId = mapId or self.MapId
+                info.MapX = pX
+                info.MapY = pY
+                info.X = wx
+                info.Y = wy
+                info.Size = sz
+                info.Class = cls
+                info.CR = r
+                info.CG = g
+                info.CB = b
+                info.InCombat = inCombat
+                info.HealthPer = healthPer
+                info.Health = nil
+                info.HealthMax = nil
+                info.Dead = IsUnitDead(unit)
+                info.Distance = dist
+                info.IsPlayer = false
+
+                palsInfo[key] = true
+
+                if (pals[key] or pals[fullName]) and dist < palDist then
+                    palName = fullName
+                    palDist = dist
+                    palX = wx
+                    palY = wy
+                end
+
+                if inCombat and dist < combatDist then
+                    combatName = fullName
+                    combatUnit = unit
+                    combatDist = dist
+                    combatHealth = healthPer
+                    combatX = wx
+                    combatY = wy
+                end
             end
         end
     end
 
-    self.Level = self.Level + 3
+    if UnitTokenExists("pet") then
+        local fullName = GetUnitFullName("pet")
+        local key = "pet"
 
-    if palName and Nx.db.profile.Track.ATBGPal then
-        if not combatName or combatDist > palDist then
-            self.TrackPlayer = palName
-            return palName, palX, palY
+        if fullName then
+            local mapId, pX, pY, wx, wy = GetWorldPosFromMap("pet")
+            local healthPer
+
+            if IsUnitDead("pet") then
+                healthPer = 0
+            elseif type(UnitHealthPercent) == "function" then
+                local ok, per = pcall(UnitHealthPercent, "pet")
+                if ok and per ~= nil then
+                    if type(issecretvalue) ~= "function" or not issecretvalue(per) then
+                        if type(per) == "number" then
+                            if per > 1 then
+                                per = per / 100
+                            end
+
+                            if per < 0 then
+                                per = 0
+                            elseif per > 1 then
+                                per = 1
+                            end
+
+                            healthPer = per
+                        end
+                    end
+                end
+            else
+                local okH, h = pcall(UnitHealth, "pet")
+                local okM, m = pcall(UnitHealthMax, "pet")
+
+                if okH and okM and h ~= nil and m ~= nil then
+                    if (type(issecretvalue) ~= "function" or not issecretvalue(h)) and
+                       (type(issecretvalue) ~= "function" or not issecretvalue(m)) and
+                       type(h) == "number" and type(m) == "number" and m > 0 then
+                        healthPer = h / m
+
+                        if healthPer < 0 then
+                            healthPer = 0
+                        elseif healthPer > 1 then
+                            healthPer = 1
+                        end
+                    end
+                end
+            end
+
+            self.GroupInfo[key] = self.GroupInfo[key] or {}
+            local info = self.GroupInfo[key]
+
+            info.Unit = "pet"
+            info.Name = fullName
+            info.MapId = mapId or self.MapId
+            info.MapX = pX
+            info.MapY = pY
+            info.X = wx
+            info.Y = wy
+            info.HealthPer = healthPer or 1
+            info.Health = nil
+            info.HealthMax = nil
+            info.InCombat = UnitAffectingCombat("pet") and true or false
+            info.Dead = IsUnitDead("pet")
+            info.IsPet = true
         end
     end
 
-    if combatName then
+    self.PalsInfo = palsInfo
+    self.NearPalName = palName
+    self.NearPalX = palX
+    self.NearPalY = palY
+    self.NearPalDist = palDist
 
-        if not self.InCombat or combatDist > 35 then
-            self.TrackPlayer = combatName
-            return format ("Combat, %s %d%%", combatName, combatHealth * 100), combatX, combatY
-        end
+    self.NearCombatName = combatName
+    self.NearCombatUnit = combatUnit
+    self.NearCombatX = combatX
+    self.NearCombatY = combatY
+    self.NearCombatDist = combatDist
+    self.NearCombatHealth = combatHealth
+
+    self.GroupRedGlow = 1 - Clamp(redGlow or 1, 0, 1)
+
+    if type(self.UpdateTargets) == "function" then
+        pcall(self.UpdateTargets, self)
+    end
+
+    if type(self.UpdateIcons) == "function" and not alt then
+        pcall(self.UpdateIcons, self)
     end
 end
 
