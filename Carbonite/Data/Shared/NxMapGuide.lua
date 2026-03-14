@@ -944,20 +944,20 @@ function Nx.Map.Guide:PatchFolder (folder, parent)
             ["Tram"] = "INV_Misc_MissileSmall_White",
             ["Zeppelin"] = "INV_Misc_MissileSmall_Red",
         }
-                local txN = {
-                        [2] = "Boat",
+        local txN = {
+            [2] = "Boat",
             [0] = "Portal",
             [3] = "Tram",
             [5] = "Zeppelin",
-                }
+        }
         local portalT = {
-            ["Blasted Lands"] = "Spell_Arcane_TeleportStonard",
+            ["Blasted Lands"] = "Achievement_Dungeon_Outland_DungeonMaster",
             ["Darnassus"] = "Spell_Arcane_TeleportDarnassus",
             ["Teldrassil"] = "Spell_Arcane_TeleportDarnassus",
             ["The Exodar"] = "Spell_Arcane_TeleportExodar",
             --["Hellfire Peninsula"] = "Spell_Arcane_TeleportStonard",
             ["Ironforge"] = "Spell_Arcane_TeleportIronForge",
-            ["Isle of Quel'Danas"] = "Achievement_Zone_IsleOfQuelDanas",
+            ["Isle of Quel'Danas"] = "Interface\\AddOns\\Carbonite\\Gfx\\Icons\\Achievement_Zone_IsleOfQuelDanas",
             ["Lake Wintergrasp"] = "Ability_WIntergrasp_rank1",
             ["Orgrimmar"] = "Spell_Arcane_TeleportOrgrimmar",
             ["Shattrath"] = "Spell_Arcane_TeleportShattrath",
@@ -970,26 +970,26 @@ function Nx.Map.Guide:PatchFolder (folder, parent)
             --["The Jade Forest"] = "Spell_Arcane_TeleportShattrath",
         }
                 -- Version-specific zone IDs for portal icons
-                local portalN = {
-            [PortalZoneIDs.BlastedLands] = "Spell_Arcane_TeleportStonard",
-            [PortalZoneIDs.BlastedLands2] = "Spell_Arcane_TeleportStonard",
+        local portalN = {
+            [PortalZoneIDs.BlastedLands] = "Achievement_Dungeon_Outland_DungeonMaster",
+            [PortalZoneIDs.BlastedLands2] = "Achievement_Dungeon_Outland_DungeonMaster",
             [PortalZoneIDs.Teldrassil] = "Spell_Arcane_TeleportDarnassus",
             [PortalZoneIDs.Darnassus] = "Spell_Arcane_TeleportDarnassus",
             [PortalZoneIDs.Exodar] = "Spell_Arcane_TeleportExodar",
             [PortalZoneIDs.Ironforge] = "Spell_Arcane_TeleportIronForge",
-            [PortalZoneIDs.IsleOfQuelDanas] = "Achievement_Zone_IsleOfQuelDanas",
+            [PortalZoneIDs.IsleOfQuelDanas] = "Interface\\AddOns\\Carbonite\\Gfx\\Icons\\achievement_zone_isleofqueldanas",
             [PortalZoneIDs.Orgrimmar] = "Spell_Arcane_TeleportOrgrimmar",
             [PortalZoneIDs.Silvermoon] = "Spell_Arcane_TeleportSilvermoon",
             [PortalZoneIDs.Stormwind] = "Spell_Arcane_TeleportStormWind",
             [PortalZoneIDs.ThunderBluff] = "Spell_Arcane_TeleportThunderBluff",
             [PortalZoneIDs.Undercity] = "Spell_Arcane_TeleportUnderCity",
             [PortalZoneIDs.Shattrath] = "Spell_Arcane_TeleportShattrath",
-            [PortalZoneIDs.Tanaris] = "Achievement_Zone_Tanaris_01",
-                }
-                if isMoP then
+            [PortalZoneIDs.Tanaris] = "Interface\\AddOns\\Carbonite\\Gfx\\Icons\\Achievement_Zone_Tanaris_01",
+        }
+        if isMoP then
             portalN[125] = "Spell_Arcane_TeleportDalaran"
             portalN[PortalZoneIDs.TolBarad] = "Spell_Arcane_TeleportTolBarad"
-                end
+        end
         for i, str in ipairs (Nx.ZoneConnections) do
             local flags, conTime, name1, mapId1, x1, y1, level1, name2, mapId2, x2, y2, level2 = Nx.Map:ConnectionUnpack (str)
             if conTime ~= 1 then
@@ -1004,7 +1004,7 @@ function Nx.Map.Guide:PatchFolder (folder, parent)
                     f.ConIndex = i
                     f.T = "*" .. i .. facStr
                     local typ = txN[conTime]
-                                        f.Tx = typ == "Portal" and portalN[mapId2] or txT[typ]
+                    f.Tx = typ == "Portal" and portalN[mapId2] or txT[typ]
                     --local typ, locName = strmatch (name1, "(%S+) to (.+)")
                     --f.Tx = typ == "Portal" and portalT[locName] or txT[typ]
                 end
@@ -1018,7 +1018,7 @@ function Nx.Map.Guide:PatchFolder (folder, parent)
                     f.Con2 = true
                     f.T = "*b" .. i .. facStr
                     local typ = txN[conTime]
-                                        f.Tx = typ == "Portal" and portalN[mapId1] or txT[typ]
+                    f.Tx = typ == "Portal" and portalN[mapId1] or txT[typ]
                     --local typ, locName = strmatch (name2, "(%S+) to (.+)")
                     --f.Tx = typ == "Portal" and portalT[locName] or txT[typ]
                 end
@@ -1468,7 +1468,7 @@ function Nx.Map.Guide:UpdateMapIcons()
             local tx = "Interface\\Icons\\" .. (folder.Tx or "")
         end
 
-            if mode == 36 then
+        if mode == 36 then
             local typ = strsub (showType, 2, 2)
             local longType
             if typ == "H" then
@@ -1741,10 +1741,10 @@ function Nx.Map.Guide:UpdateMapGeneralIcons (cont, showType, hideFac, tx, name, 
                                     --if showType == "Lightforged Beacon" then
                                     --    icon = map:AddIconPt (iconType, wx, wy, level, nil, "atlas:FlightMaster_Argus-TaxiNode_Neutral")
                                     --else
-                                        if string.find(tx, "Gfx") == nil and string.find(tx, "Icons") == nil then
-                                            tx = "Interface\\Icons\\" .. tx
-                                        end
-                                        icon = map:AddIconPt (iconType, wx, wy, level, nil, tx)
+                                    if string.find(tx, "Gfx") == nil and string.find(tx, "Icons") == nil then
+                                        tx = "Interface\\Icons\\" .. tx
+                                    end
+                                    icon = map:AddIconPt (iconType, wx, wy, level, nil, tx)
                                     --end
                                     if not map:GetMapNameByID(mapId) then
                                         Nx.prt("Guide Icon Err mapID: " .. mapId)
@@ -1907,7 +1907,16 @@ function Nx.Map.Guide:UpdateTravelIcons (hideFac)
             end
             local wx, wy = Map:GetWorldPos (mapId1, x1, y1)
             if mapId1 == 321 then level1 = (level1 or 0) + 1 end -- Fixing Orgimmar icons
-            local icon = map:AddIconPt ("!POI", wx, wy, level1, nil, "Interface\\Icons\\" .. (folder.Tx or "INV_Misc_Note_02"))
+            local tx
+            if folder.Tx then
+                tx = folder.Tx
+                if string.find(tx, "Gfx") == nil then
+                        tx = "Interface\\Icons\\" .. tx
+                end
+            else
+                tx = "Interface\\Icons\\INV_Misc_Note_02"
+            end
+            local icon = map:AddIconPt ("!POI", wx, wy, level1, nil, tx)
             map:SetIconTip (icon, format ("%s\n%s %.1f %.1f", name1, map:GetMapNameByID(mapId1), x1, y1))
         end
     end
@@ -1916,6 +1925,7 @@ function Nx.Map.Guide:UpdateTravelIcons (hideFac)
         if winfo.Connections then
             for id, zcon in pairs (winfo.Connections) do
                 for n, con in ipairs (zcon) do
+                    if not con.Transport then
                     local endInfo = Map.MapWorldInfo[con.EndMapId]
                     local startInfo = Map.MapWorldInfo[con.StartMapId]
                     if endInfo then
@@ -1928,6 +1938,7 @@ function Nx.Map.Guide:UpdateTravelIcons (hideFac)
                         local icon = map:AddIconPt ("!POI", wx, wy, 0, nil, "Interface\\Icons\\Spell_Nature_FarSight")
                         map:SetIconTip (icon, L["Connection to"] .. " " .. startInfo.Name)
                     end
+                    end -- not con.Transport
                 end
             end
         end

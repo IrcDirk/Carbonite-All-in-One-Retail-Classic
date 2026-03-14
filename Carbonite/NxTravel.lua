@@ -39,6 +39,68 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
 local DoesSpellExist = C_Spell.DoesSpellExist or DoesSpellExist
 
+--- Icon lookup table: destination zone ID -> portal icon
+--- Mirrors the portalN table in NxMapGuide.lua, using the same OldMapIDs check
+local PortalIcons
+if Nx.OldMapIDs then
+    PortalIcons = {
+        [1419] = "Achievement_Dungeon_Outland_DungeonMaster",    -- Blasted Lands (Dark Portal)
+        [1944] = "Achievement_Dungeon_Outland_DungeonMaster",    -- Hellfire Peninsula (Dark Portal)
+        [1438] = "Spell_Arcane_TeleportDarnassus",  -- Teldrassil
+        [1457] = "Spell_Arcane_TeleportDarnassus",  -- Darnassus
+        [1947] = "Spell_Arcane_TeleportExodar",     -- Exodar
+        [1455] = "Spell_Arcane_TeleportIronForge",  -- Ironforge
+        [1957] = "Interface\\AddOns\\Carbonite\\Gfx\\Icons\\Achievement_Zone_IsleOfQuelDanas",
+        [1454] = "Spell_Arcane_TeleportOrgrimmar",  -- Orgrimmar
+        [1954] = "Spell_Arcane_TeleportSilvermoon", -- Silvermoon City
+        [1453] = "Spell_Arcane_TeleportStormWind",  -- Stormwind City
+        [1456] = "Spell_Arcane_TeleportThunderBluff",
+        [1458] = "Spell_Arcane_TeleportUnderCity",  -- Undercity
+        [1955] = "Spell_Arcane_TeleportShattrath",  -- Shattrath
+        [1446] = "Interface\\AddOns\\Carbonite\\Gfx\\Icons\\Achievement_Zone_Tanaris_01",
+    }
+else
+    PortalIcons = {
+        [17]  = "Achievement_Dungeon_Outland_DungeonMaster",    -- Blasted Lands (Dark Portal)
+        [100] = "Achievement_Dungeon_Outland_DungeonMaster",    -- Hellfire Peninsula (Dark Portal)
+        [57]  = "Spell_Arcane_TeleportDarnassus",   -- Teldrassil
+        [89]  = "Spell_Arcane_TeleportDarnassus",   -- Darnassus
+        [103] = "Spell_Arcane_TeleportExodar",      -- Exodar
+        [87]  = "Spell_Arcane_TeleportIronForge",   -- Ironforge
+        [122] = "Achievement_Zone_IsleOfQuelDanas",
+        [85]  = "Spell_Arcane_TeleportOrgrimmar",   -- Orgrimmar
+        [110] = "Spell_Arcane_TeleportSilvermoon",  -- Silvermoon City
+        [84]  = "Spell_Arcane_TeleportStormWind",   -- Stormwind City
+        [88]  = "Spell_Arcane_TeleportThunderBluff",
+        [90]  = "Spell_Arcane_TeleportUnderCity",   -- Undercity
+        [111] = "Spell_Arcane_TeleportShattrath",   -- Shattrath
+        [71]  = "Achievement_Zone_Tanaris_01",
+        [125] = "Spell_Arcane_TeleportDalaran",
+        [244] = "Spell_Arcane_TeleportTolBarad",
+    }
+end
+
+--- Return the icon texture path for a transport connection
+local function GetTransportTex(con)
+    local ct = con and con.ConTime or 2
+    if ct == 0 then
+        -- Look up destination zone for a specific portal icon; fall back to generic
+        local icon = con and PortalIcons[con.EndMapId]
+        if icon then
+            if string.find(icon, "Gfx") == nil then
+                return "Interface\\Icons\\" .. icon
+            else
+                return icon
+            end
+        end
+        return "Interface\\Icons\\Achievement_Dungeon_Outland_DungeonMaster"    -- Generic portal fallback
+    elseif ct == 5 then
+        return "Interface\\Icons\\Ability_Mount_Zepplin01"         -- Zeppelin (TBC)
+    else
+        return "Interface\\Icons\\Ability_Vehicles_ShipCannonFire" -- Boat / Tram
+    end
+end
+
 --- Initialize the travel system
 -- Sets up taxi hooks, flight master data, and flying skill detection
 function Nx.Travel:Init()
@@ -407,6 +469,140 @@ end
 --  ************************
 ---------------------------------------------------------------------------------------
 
+--- Find the best cross-continent transport connection (boat, zeppelin) between two continents
+-- Searches all transport connections that bridge the source and destination continents,
+-- and returns the one with the lowest estimated total travel cost.
+-- @param cont1 Source continent ID
+-- @param srcMapId Source map ID
+-- @param srcX Source world X coordinate
+-- @param srcY Source world Y coordinate
+-- @param cont2 Destination continent ID
+-- @param dstMapId Destination map ID
+-- @param dstX Destination world X coordinate
+-- @param dstY Destination world Y coordinate
+-- @return Best total distance and connection data, or nil if none found
+function Nx.Travel:FindCrossContinent(cont1, srcMapId, srcX, srcY, cont2, dstMapId, dstX, dstY)
+    local Map = Nx.Map
+    local winfo = Map.MapWorldInfo
+
+    local bestDirect = nil
+    local bestDirectDist = 9000111222333444
+    local bestIndirect = nil
+    local bestIndirectDist = 9000111222333444
+
+    for mapId, mapInfo in pairs(winfo) do
+        if Map:IdToContZone(mapId) == cont1 and mapInfo.Connections then
+            for otherMapId, conList in pairs(mapInfo.Connections) do
+                local otherCont = Map:IdToContZone(otherMapId)
+                if otherCont ~= cont1 then
+                    for _, con in ipairs(conList) do
+                        if con.Transport then
+                            local d1
+                            if srcMapId == con.StartMapId then
+                                d1 = ((con.StartX - srcX) ^ 2 + (con.StartY - srcY) ^ 2) ^ .5
+                            else
+                                d1 = self:FindConnection(srcMapId, srcX, srcY, con.StartMapId, con.StartX, con.StartY) or 9000111222333444
+                            end
+
+                            if otherCont == cont2 then
+                                -- Direct bridge: cont1 -> cont2
+                                local d2 = dstX and ((con.EndX - dstX) ^ 2 + (con.EndY - dstY) ^ 2) ^ .5 or 0
+                                local total = d1 + con.Dist + d2
+                                if total < bestDirectDist then
+                                    bestDirectDist = total
+                                    bestDirect = con
+                                end
+                            else
+                                -- Indirect first-hop: cont1 -> contM; only useful if contM can reach cont2
+                                local canReachCont2 = false
+                                for mId, mInfo in pairs(winfo) do
+                                    if Map:IdToContZone(mId) == otherCont and mInfo.Connections then
+                                        for nextId in pairs(mInfo.Connections) do
+                                            if Map:IdToContZone(nextId) == cont2 then
+                                                canReachCont2 = true
+                                                break
+                                            end
+                                        end
+                                    end
+                                    if canReachCont2 then break end
+                                end
+
+                                if canReachCont2 then
+                                    local total = d1 + con.Dist
+                                    if total < bestIndirectDist then
+                                        bestIndirectDist = total
+                                        bestIndirect = con
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    -- Prefer direct bridge; fall back to indirect first-hop when no direct route exists
+    if bestDirect then
+        return bestDirectDist, bestDirect
+    elseif bestIndirect then
+        return bestIndirectDist, bestIndirect
+    end
+end
+
+--- Update self.FlyingMount and self.Speed for the given continent and riding skill
+-- Called at the start of routing and again when the path crosses into a new continent
+function Nx.Travel:UpdateFlyingForCont(cont, riding)
+    self.FlyingMount = false
+
+    if riding >= 225 then
+        if cont == 1 or cont == 2 or cont == 5 then
+            if DoesSpellExist(90267) then
+                self.FlyingMount = self.AzerothFlyName
+            end
+        elseif cont == 3 then
+            self.FlyingMount = true                         -- Outland: always flyable
+        elseif cont == 4 then
+            if DoesSpellExist(54197) then
+                self.FlyingMount = self.WrathFlyName
+            end
+        elseif cont == 6 then
+            if DoesSpellExist(115913) then
+                self.FlyingMount = self.PandariaFlyName
+            end
+        elseif cont == 7 then
+            local _,_,_,complete = GetAchievementInfo(10018)
+            if complete and DoesSpellExist(191645) then
+                self.FlyingMount = self.DraenorFlyName
+            end
+        elseif cont == 8 then
+            local _,_,_,complete = GetAchievementInfo(11446)
+            if complete and DoesSpellExist(233368) then
+                self.FlyingMount = self.LegionFlyName
+            end
+        elseif cont == 11 then
+            local _,_,_,complete = GetAchievementInfo(13250)
+            if complete and DoesSpellExist(278833) then
+                self.FlyingMount = self.BattleFlyName
+            end
+        end
+    end
+
+    if C_QuestLog.IsQuestFlaggedCompleted(68795) then
+        self.FlyingMount = self.SkyRidingName
+    end
+
+    local speed = 2 / 4.5
+    if riding < 75 then
+        speed = 1 / 4.5
+    elseif riding < 150 then
+        speed = 1.6 / 4.5
+    elseif self.FlyingMount then
+        speed = 2.5 / 4.5
+    end
+    self.Speed = speed
+end
+
 --- Create an optimal path between two points
 -- Analyzes zone connections and flight paths to find the best route
 -- @param tracking Table to store path waypoints
@@ -459,69 +655,12 @@ function Nx.Travel:MakePath(tracking, srcMapId, srcX, srcY, dstMapId, dstX, dstY
     local cont2 = Map:IdToContZone(dstMapId)
     local lvl = UnitLevel("player")
 
-    -- Determine if player can fly in this zone
-    self.FlyingMount = false
+    -- Set flying mount and speed for a given continent, storing results in self
+    self:UpdateFlyingForCont(cont1, riding)
 
-    if riding >= 225 then
-        if cont1 == 1 or cont1 == 2 or cont1 == 5 then
-            -- Kalimdor, Eastern Kingdoms, or Maelstrom
-            if DoesSpellExist(90267) then
-                self.FlyingMount = self.AzerothFlyName
-            end
-        elseif cont1 == 3 then
-            -- Outland - always flyable
-            self.FlyingMount = true
-        elseif cont1 == 4 then
-            -- Northrend
-            if DoesSpellExist(54197) then
-                self.FlyingMount = self.WrathFlyName
-            end
-        elseif cont1 == 6 then
-            -- Pandaria
-            if DoesSpellExist(115913) then
-                self.FlyingMount = self.PandariaFlyName
-            end
-        elseif cont1 == 7 then
-            local _,_,_,complete = GetAchievementInfo(10018)
-            if complete then
-                if DoesSpellExist(191645) then
-                    self.FlyingMount = self.DraenorFlyName
-                end
-            end
-        elseif cont1 == 8 then
-            local _,_,_,complete = GetAchievementInfo(11446)
-            if complete then
-                if DoesSpellExist(233368) then
-                    self.FlyingMount = self.LegionFlyName
-                end
-            end
-        elseif cont1 == 11 then
-            local _,_,_,complete = GetAchievementInfo(13250)
-            if complete then
-                if DoesSpellExist(278833) then
-                    self.FlyingMount = self.BattleFlyName
-                end
-            end
-        end
-    end
+    local speed = self.Speed
 
-    if C_QuestLog.IsQuestFlaggedCompleted(68795) then
-        self.FlyingMount = self.SkyRidingName
-    end
-
-    -- Calculate travel speed based on riding skill
-    local speed = 2 / 4.5      -- Default: 100% mount speed
-    if riding < 75 then
-        speed = 1 / 4.5        -- No mount: walking speed
-    elseif riding < 150 then
-        speed = 1.6 / 4.5      -- Slow mount: 60% speed
-    elseif self.FlyingMount then
-        speed = 2.5 / 4.5      -- Flying mount: 150% speed
-    end
-
-    self.Speed = speed
-
-    -- Only calculate paths within the same continent
+    -- Calculate path, handling both same-continent and cross-continent travel
     if cont1 == cont2 then
         -- Epic flyers in flyable areas don't need routing
         if riding >= 300 and self.FlyingMount then
@@ -578,18 +717,22 @@ function Nx.Travel:MakePath(tracking, srcMapId, srcX, srcY, dstMapId, dstX, dstY
                                 local name = format(L["Connection: %s to %s"], Map.MapWorldInfo[con.StartMapId].Name, Map.MapWorldInfo[con.EndMapId].Name)
 
                                 -- Insert connection start point
+                                local nodeTex = con.Transport and GetTransportTex(con) or "Interface\\Icons\\Spell_Nature_FarSight"
                                 local node = {}
                                 node.NoSplit = true
                                 node.MapId = con.StartMapId
                                 node.X = con.StartX
                                 node.Y = con.StartY
                                 node.Name = name
-                                node.Tex = "Interface\\Icons\\Spell_Nature_FarSight"
+                                node.Tex = nodeTex
                                 tinsert(path, n + 1, node)
 
                                 self.VisitedMapIds[con.StartMapId] = true
 
-                                if ang > 90 then
+                                -- Transport departure points (boats, zeppelins, portals) must
+                                -- always be shown so the player knows to board there.
+                                -- Only apply the angle/backtrack heuristic for plain zone edges.
+                                if ang > 90 and not con.Transport then
                                     node.Die = true
                                 end
 
@@ -599,7 +742,7 @@ function Nx.Travel:MakePath(tracking, srcMapId, srcX, srcY, dstMapId, dstX, dstY
                                 node.X = con.EndX
                                 node.Y = con.EndY
                                 node.Name = name
-                                node.Tex = "Interface\\Icons\\Spell_Nature_FarSight"
+                                node.Tex = nodeTex
                                 tinsert(path, n + 2, node)
                             end
                         else
@@ -651,6 +794,182 @@ function Nx.Travel:MakePath(tracking, srcMapId, srcX, srcY, dstMapId, dstX, dstY
                 end
 
                 tinsert(tracking, t1)
+            end
+        end
+
+    else
+        -- Cross-continent routing via boats/zeppelins
+        self.VisitedMapIds = {}
+
+        local bridgeDist, bridge = self:FindCrossContinent(cont1, srcMapId, srcX, srcY, cont2, dstMapId, dstX, dstY)
+
+        if bridge then
+            -- Build 4-node path: source -> transport departure -> transport arrival -> destination
+            local path = {}
+
+            local srcNode = {}
+            srcNode.MapId = srcMapId
+            srcNode.X = srcX
+            srcNode.Y = srcY
+            tinsert(path, srcNode)
+
+            -- Transport departure (on cont1): mark NoSplit so the water crossing is not re-routed
+            local bridgeTex = GetTransportTex(bridge)
+            local departNode = {}
+            departNode.NoSplit = true
+            departNode.MapId = bridge.StartMapId
+            departNode.X = bridge.StartX
+            departNode.Y = bridge.StartY
+            departNode.Name = format(L["Connection: %s to %s"], winfo[bridge.StartMapId].Name, winfo[bridge.EndMapId].Name)
+            departNode.Tex = bridgeTex
+            tinsert(path, departNode)
+
+            -- Transport arrival (on cont2): routing continues from here to destination
+            local arriveNode = {}
+            arriveNode.MapId = bridge.EndMapId
+            arriveNode.X = bridge.EndX
+            arriveNode.Y = bridge.EndY
+            arriveNode.Name = departNode.Name
+            arriveNode.Tex = bridgeTex
+            tinsert(path, arriveNode)
+
+            local dstNode = {}
+            dstNode.MapId = dstMapId
+            dstNode.X = dstX
+            dstNode.Y = dstY
+            tinsert(path, dstNode)
+
+            -- Iteratively refine the two sub-segments:
+            -- cont1: srcNode -> departNode  (refined by zone connections / flights on cont1)
+            -- cont2: arriveNode -> dstNode  (refined by zone connections / flights on cont2)
+            local watchdog = 10
+
+            repeat
+                local nodeCnt = #path
+
+                for n = 1, #path - 1 do
+                    local node1 = path[n]
+                    local node2 = path[n + 1]
+
+                    if not node1.NoSplit then
+                        if node1.MapId ~= node2.MapId then
+                            local n1Cont = Map:IdToContZone(node1.MapId)
+                            local n2Cont = Map:IdToContZone(node2.MapId)
+
+                            if n1Cont ~= n2Cont then
+                                -- Cross-continent sub-segment: find the next transport bridge
+                                local bDist, b = self:FindCrossContinent(n1Cont, node1.MapId, node1.X, node1.Y, n2Cont, node2.MapId, node2.X, node2.Y)
+                                if b then
+                                    local bTex = GetTransportTex(b)
+                                    local bName = format(L["Connection: %s to %s"], winfo[b.StartMapId].Name, winfo[b.EndMapId].Name)
+
+                                    local depNode = {}
+                                    depNode.NoSplit = true
+                                    depNode.MapId = b.StartMapId
+                                    depNode.X = b.StartX
+                                    depNode.Y = b.StartY
+                                    depNode.Name = bName
+                                    depNode.Tex = bTex
+                                    tinsert(path, n + 1, depNode)
+
+                                    self.VisitedMapIds[b.StartMapId] = true
+
+                                    local arrNode = {}
+                                    arrNode.MapId = b.EndMapId
+                                    arrNode.X = b.EndX
+                                    arrNode.Y = b.EndY
+                                    arrNode.Name = bName
+                                    arrNode.Tex = bTex
+                                    tinsert(path, n + 2, arrNode)
+                                end
+                            else
+                            -- Re-evaluate flying for this sub-segment's continent
+                            if n1Cont ~= cont1 then
+                                self:UpdateFlyingForCont(n1Cont, riding)
+                            end
+                            -- If flying is available on this continent, fly straight — no routing needed
+                            if not self.FlyingMount then
+                                local conDist, con = self:FindConnection(node1.MapId, node1.X, node1.Y, node2.MapId, node2.X, node2.Y)
+                                local flyDist, fpath = self:FindFlight(node1.MapId, node1.X, node1.Y, node2.MapId, node2.X, node2.Y)
+
+                                if conDist and (not fpath or conDist < flyDist) then
+                                    if con then
+                                        if con.StartMapId ~= node1.MapId then
+                                            node1.NoSplit = true
+                                        end
+
+                                        local name = format(L["Connection: %s to %s"], Map.MapWorldInfo[con.StartMapId].Name, Map.MapWorldInfo[con.EndMapId].Name)
+                                        local subTex = con.Transport and GetTransportTex(con) or "Interface\\Icons\\Spell_Nature_FarSight"
+
+                                        local node = {}
+                                        node.NoSplit = true
+                                        node.MapId = con.StartMapId
+                                        node.X = con.StartX
+                                        node.Y = con.StartY
+                                        node.Name = name
+                                        node.Tex = subTex
+                                        tinsert(path, n + 1, node)
+
+                                        self.VisitedMapIds[con.StartMapId] = true
+
+                                        local node = {}
+                                        node.MapId = con.EndMapId
+                                        node.X = con.EndX
+                                        node.Y = con.EndY
+                                        node.Name = name
+                                        node.Tex = subTex
+                                        tinsert(path, n + 2, node)
+                                    end
+                                else
+                                    if fpath then
+                                        tinsert(path, n + 1, fpath[1])
+                                        tinsert(path, n + 2, fpath[2])
+                                    end
+                                end
+                            end
+                            end -- n1Cont ~= n2Cont
+                        else
+                            local directDist = ((node1.X - node2.X) ^ 2 + (node1.Y - node2.Y) ^ 2) ^ .5
+                            local flyDist, fpath = self:FindFlight(node1.MapId, node1.X, node1.Y, node2.MapId, node2.X, node2.Y)
+
+                            if fpath and flyDist < directDist then
+                                tinsert(path, n + 1, fpath[1])
+                                tinsert(path, n + 2, fpath[2])
+                            end
+                        end
+                    end
+                end
+
+                watchdog = watchdog - 1
+                if watchdog < 0 then
+                    break
+                end
+            until nodeCnt == #path
+
+            -- Build final waypoints (skip first and last nodes)
+            for n = 2, #path - 1 do
+                local node1 = path[n]
+
+                if not node1.Die then
+                    local x, y = node1.X, node1.Y
+
+                    local t1 = {}
+                    t1.TargetType = targetType
+                    t1.TargetX1 = x
+                    t1.TargetY1 = y
+                    t1.TargetX2 = x
+                    t1.TargetY2 = y
+                    t1.TargetMX = x
+                    t1.TargetMY = y
+                    t1.TargetTex = node1.Tex
+                    t1.TargetName = node1.Name
+
+                    if node1.Flight then
+                        t1.Mode = "F"
+                    end
+
+                    tinsert(tracking, t1)
+                end
             end
         end
     end

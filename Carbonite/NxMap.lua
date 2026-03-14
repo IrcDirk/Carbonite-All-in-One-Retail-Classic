@@ -11307,6 +11307,49 @@ function Nx.Map:InitTables()
 --                    else
 --                        Nx.prt ("%s to %s", mapId1, mapId2)
                     end
+
+                elseif (conTime == 0 or conTime == 2 or conTime == 3 or conTime == 5) and (mapId == mapId1 or (mapId == mapId2 and bit.band (flags, 1) == 1)) then
+                    -- Transport connections:
+                    --   conTime=0: portals
+                    --   conTime=2: boats, zeppelins, trams (classic/retail)
+                    --   conTime=3: trams (TBC)
+                    --   conTime=5: zeppelins (TBC)
+                    -- flags bit 1 = Alliance, bit 2 = Horde; both set = neutral/all factions
+                    local factionBits = bit.band (flags, 6)
+                    local playerFaction = UnitFactionGroup ("player") or ""
+                    local accessible = (factionBits == 6) or
+                                       (factionBits == 2 and playerFaction == "Alliance") or
+                                       (factionBits == 4 and playerFaction == "Horde") or
+                                       (factionBits == 0)
+
+                    -- Both endpoints must have valid coordinates
+                    if accessible and x1 ~= 0 and y1 ~= 0 and x2 ~= 0 and y2 ~= 0 then
+                        if mapId == mapId2 then        -- Swap?
+                            mapId1, mapId2 = mapId2, mapId1
+                            x1, y1, x2, y2 = x2, y2, x1, y1
+                        end
+
+                        local zcons = cons[mapId2] or {}
+                        cons[mapId2] = zcons
+
+                        local con = {}
+                        tinsert (zcons, con)
+
+                        x1, y1 = self:GetWorldPos (mapId1, x1, y1)
+                        x2, y2 = self:GetWorldPos (mapId2, x2, y2)
+
+                        con.StartMapId = mapId1
+                        con.StartX = x1
+                        con.StartY = y1
+                        con.EndMapId = mapId2
+                        con.EndX = x2
+                        con.EndY = y2
+                        -- Portals are instant; boats/zeppelins/trams use actual distance
+                        con.Dist = conTime == 0 and 0 or ((x1 - x2) ^ 2 + (y1 - y2) ^ 2) ^ .5
+                        con.Transport = true    -- Portal, boat, zeppelin, or tram
+                        con.ConTime = conTime   -- Store type for icon selection
+                        con.Flags = tonumber(flags)  -- Store flags for icon selection
+                    end
                 end
             end
             end
