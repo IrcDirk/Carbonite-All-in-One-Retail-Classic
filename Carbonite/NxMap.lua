@@ -9972,11 +9972,6 @@ function Nx.Map:GetIconWQ (levelAdd)
 
         f:SetFlattensRenderLayers(true);
 
-        --[[f:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-        f:SetScript("OnEnter", TaskPOI_OnEnter);
-        f:SetScript("OnLeave", TaskPOI_OnLeave);
-        f:SetScript("OnClick", TaskPOI_OnClick);]]--
-
         f.Texture = f:CreateTexture(f:GetName().."Texture", "BACKGROUND");
 
         f.Glow = f:CreateTexture(f:GetName().."Glow", "BACKGROUND");
