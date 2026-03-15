@@ -1928,7 +1928,7 @@ function Nx.Map:UpdateWorldMap()
     if not InCombatLockdown() and Nx.BlobsAvailable then
         -- Skip blob drawing for instance maps as they cause rendering issues with UnitPositionFrame
         local isInstanceMap = self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)
-        
+
         self.Arch:DrawNone();
         -- Hide arch blobs during zoom animation or manual scrolling to prevent position/scale mismatch
         -- Note: We check for scale change rather than StepTime != 0, because StepTime is also set
@@ -4930,7 +4930,7 @@ function Nx.Map:Update (elapsed)
     end
     local Nx = Nx
     local Map = Nx.Map
-    
+
     -- Debug profiling for stutter detection
     local debugProfile = Nx.db.profile.Debug.DebugMap
     local profileStart, profileSection
@@ -4943,7 +4943,7 @@ function Nx.Map:Update (elapsed)
     --if self.NeedWorldUpdate then
         self:UpdateWorld()
     --end
-    
+
     if debugProfile then
         local now = debugprofilestop()
         if (now - profileStart) > 5 then -- More than 5ms
@@ -4992,7 +4992,7 @@ function Nx.Map:Update (elapsed)
         if Nx.Quest and Nx.Quest.ClearQuestOfferCache then
             Nx.Quest:ClearQuestOfferCache()
         end
-        
+
         -- Clear POI cache on map change (POI_Cache is accessed via local reference)
         POI_Cache.mapID = nil
         POI_Cache.data = nil
@@ -6154,6 +6154,11 @@ function Nx.Map:ScanContinents()
 
         local mapId2 = mapId
 
+        if Nx.OldMapIDs then
+            if mapId2 == 12 then mapId2 = 1414 end      -- Kalimdor
+            if mapId2 == 13 then mapId2 = 1415 end      -- Eastern Kingdoms
+        end
+
         local name, description, txIndex, pX, pY
         local txX1, txX2, txY1, txY2
 
@@ -6381,23 +6386,23 @@ local GarrisonPlotCache = {
 local function GetCachedGarrisonPlots(map, mapId)
     local now = GetTime()
     local lastCheck = GarrisonPlotCache.lastCheck[mapId] or 0
-    
+
     -- Only refresh garrison plots every 5 seconds (plot data doesn't change often)
     if (now - lastCheck) < 5 and GarrisonPlotCache.plots[mapId] then
         return GarrisonPlotCache.plots[mapId]
     end
-    
+
     -- Check if the API exists
     if not C_Garrison or not C_Garrison.GetGarrisonPlotsInstancesForMap then
         return nil
     end
-    
+
     -- Get the garrison plots for current map
     local plots = C_Garrison.GetGarrisonPlotsInstancesForMap(mapId)
     if not plots or #plots == 0 then
         return nil
     end
-    
+
     -- Pre-calculate world coordinates for each plot
     local cachedPlots = {}
     for _, plot in ipairs(plots) do
@@ -6407,7 +6412,7 @@ local function GetCachedGarrisonPlots(map, mapId)
             local zoneY = plot.position.y * 100
             -- Convert to world coordinates
             local wx, wy = map:GetWorldPos(mapId, zoneX, zoneY)
-            
+
             cachedPlots[#cachedPlots + 1] = {
                 wx = wx,
                 wy = wy,
@@ -6416,7 +6421,7 @@ local function GetCachedGarrisonPlots(map, mapId)
             }
         end
     end
-    
+
     GarrisonPlotCache.plots[mapId] = cachedPlots
     GarrisonPlotCache.lastCheck[mapId] = now
     return cachedPlots
@@ -7233,7 +7238,7 @@ function Nx.Map:MoveContinents()
     -- Skip continent tiles for instance maps with NXInstanceMaps enabled
     -- These maps are rendered via MoveWorldMap instead
     local isInstanceWithOverlay = (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps
-    
+
     if self.CurOpts and self.CurOpts.NXWorldShow and not isInstanceWithOverlay then
         -- Draw all continent tiles
         for contN = 1, Nx.Map.ContCnt do
@@ -7499,11 +7504,11 @@ function Nx.Map:MoveCurZoneTiles (clear)
     if not wzone then
         wzone = {}
     end
-    
+
     -- Skip drawing zone tiles for instance maps when NXInstanceMaps option is enabled
     -- These maps are drawn by MoveWorldMap/UpdateWorldMap instead to avoid duplicate textures
     local isInstanceWithOverlay = (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps
-    
+
     if not clear and not isInstanceWithOverlay and
             (not wzone or wzone.City or (wzone.StartZone and Nx.Map.RMapId == mapId) or
             self:IsBattleGroundMap (Nx.Map.RMapId)) or self:IsMicroDungeon(Nx.Map.RMapId) then
@@ -7826,7 +7831,7 @@ function Nx.Map:UpdateZones()
     local s = self.LOpts.NXDetailScale
 
     local freeOrScale = self.ScaleDraw <= s
-    
+
     -- Skip zone tile updates for instance maps when NXInstanceMaps option is enabled
     -- These are rendered via MoveWorldMap to prevent duplicate moving textures
     local isInstanceWithOverlay = (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps
@@ -8310,7 +8315,7 @@ function Nx.Map:UpdateMiniFrames()
     -- Check if player is in an old Blood Elf zone - if so, use BloodelfMapBlks
     local playerMapId = C_Map.GetBestMapForUnit("player")
     local useBloodElfOverlay = playerMapId and OldBloodElfZones[playerMapId]
-    
+
     -- If player is in old Blood Elf zone and we're viewing Eastern Kingdoms area,
     -- use the BloodelfMapBlks (MiniMapBlks[94]) instead of normal EK blocks
     local miniT, basex, basey
@@ -8318,7 +8323,7 @@ function Nx.Map:UpdateMiniFrames()
         -- Try to get BloodelfMapBlks overlay
         miniT, basex, basey = self:GetMiniInfo(94)
     end
-    
+
     -- If no Blood Elf overlay or not applicable, use normal lookup
     if not miniT then
         miniT, basex, basey = self:GetMiniInfo(mapId)
@@ -9875,7 +9880,7 @@ function Nx.Map:HideExtraIcons()
     for n = data.Next, data.Used do        -- Hide up to last used amount
         data[n]:Hide()
     end
-    
+
     -- Also hide any icons beyond Used that might be visible (fixes stale icons on window activation)
     -- This covers edge cases where icons were shown outside the normal update cycle
     local maxWQ = data.MaxUsed or data.Used
@@ -10799,7 +10804,7 @@ function Nx.Map:UpdateInstanceMap()
     if not mapId or not Nx.Initialized then
         return
     end
-    
+
     -- Skip drawing tiles when NXInstanceMaps is enabled
     -- MoveWorldMap() handles rendering in that case, so we don't want duplicates
     if (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
