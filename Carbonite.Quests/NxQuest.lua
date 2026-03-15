@@ -9000,7 +9000,7 @@ function Nx.Quest:UpdateIcons (map)
                                 end -- Close hideOutside else block
                             end
                         else
-                            f.NxTip = L["|cffffd100--Bonus Task:\n"] .. title:gsub("Bonus Objective: ", "") .. objTxt
+                            f.NxTip = L["|cffffd100Bonus Task:\n"] .. title:gsub("Bonus Objective: ", "") .. objTxt
                             f.texture:SetTexture("Interface\\Minimap\\ObjectIconsAtlas")
                             if map:ClipFrameZ(f, x, y, 22, 22, 0, true) then
                                 f.texture:SetTexCoord(C_Minimap.GetObjectIconTextureCoords(4734))

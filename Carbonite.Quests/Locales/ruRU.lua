@@ -268,7 +268,7 @@ L["BONUS TASK"] = "Бонусное задание"
 L["WORLD QUEST"] = "Мировое задание"
 L["Progress: "] = "Прогресс: "
 L["|cffffd100Daily Task:\n"] = "|cffffd100Ежедневное задание:\n"
-L["|cffffd100--Bonus Task:\n"] = "|cffffd100--Бонусное задание:\n"
+L["|cffffd100Bonus Task:\n"] = "|cffffd100Бонусное задание:\n"
 
 L["Link Quest (shift right click)"] = "Создать ссылку на задание (шифт и правый клик)"
 L["Show Quest Log (alt right click)"] = "Показать журнал заданий (альт и правый клик)"

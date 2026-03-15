@@ -267,7 +267,7 @@ L["BONUS TASK"] = "奖励目标"
 L["WORLD QUEST"] = "世界任务"
 L["Progress: "] = "进度："
 L["|cffffd100Daily Task:\n"] = true
-L["|cffffd100--Bonus Task:\n"] = true
+L["|cffffd100Bonus Task:\n"] = true
 
 L["Link Quest (shift right click)"] = "任务链接 (Shift-右键)"
 L["Show Quest Log (alt right click)"] = "显示任务日志 (Alt-右键)"
