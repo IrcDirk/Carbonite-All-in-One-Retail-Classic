@@ -2152,7 +2152,7 @@ Map.MapWorldInfo = {
         X = 586.666796875,
         Y = -2393.333203125,
         Name = L["Quel'Danas"],
-        Overlay = "newqueldanas"
+        Overlay = "newqueldanas",
         MId = 2424,
         UseAId = true,
     },
