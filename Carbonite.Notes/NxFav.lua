@@ -1997,7 +1997,8 @@ function Nx.Notes:RareScanner(mapId)
             if not WorldMapFrame:IsShown() then
                 self.RSNeedsRefresh = false
                 -- Refresh to populate RareScanner pins
-                WorldMapFrame:RefreshAll(true)
+                -- pcall: dataProviders may be nil if WorldMapFrame hasn't been shown yet
+                pcall(function() WorldMapFrame:RefreshAll(true) end)
             end
         end
 
