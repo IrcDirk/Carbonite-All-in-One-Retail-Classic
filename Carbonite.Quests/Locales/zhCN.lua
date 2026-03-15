@@ -55,7 +55,7 @@ L["When enabled, will use one specific color per quest area"] = "启用时，每
 L["Total Colors To Use"] = "可使用的所有颜色"
 L["Sets the number of possible colors to use for quest watching"] = "设置可用于任务监视区域的总颜色数目。"
 L["Watch Color 1"] = "颜色 1"
-L["Watch Color 2"] = "颜色 2"
+7L["Watch Color 2"] = "颜色 2"
 L["Watch Color 3"] = "颜色 3"
 L["Watch Color 4"] = "颜色 4"
 L["Watch Color 5"] = "颜色 5"
@@ -266,6 +266,8 @@ L["Remove Watch"] = "移除监视"
 L["BONUS TASK"] = "奖励目标"
 L["WORLD QUEST"] = "世界任务"
 L["Progress: "] = "进度："
+L["|cffffd100Daily Task:\n"] = true
+L["|cffffd100--Bonus Task:\n"] = true
 
 L["Link Quest (shift right click)"] = "任务链接 (Shift-右键)"
 L["Show Quest Log (alt right click)"] = "显示任务日志 (Alt-右键)"

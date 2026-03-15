@@ -267,6 +267,8 @@ L["Remove Watch"] = "Verfolgung beenden"
 L["BONUS TASK"] = "BONUSZIELE"
 L["WORLD QUEST"] = "WELTQUESTS"
 L["Progress: "] = "Fortschritt: "
+L["|cffffd100Daily Task:\n"] = true
+L["|cffffd100--Bonus Task:\n"] = true
 
 L["Link Quest (shift right click)"] = "Quest verlinken (Shift-Rechtsklick)"
 L["Show Quest Log (alt right click)"] = "Quest-Log zeigen (Alt-Rechtsklick)"

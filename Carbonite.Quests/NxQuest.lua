@@ -8980,7 +8980,7 @@ function Nx.Quest:UpdateIcons (map)
                         if taskInfo[i].isCombatAllyQuest or taskInfo[i].isDaily then
                             if not taskInfo[i].inProgress then
                                 f.questID = taskInfo[i].questID
-                                f.NxTip = "|cffffd100Daily Task:\n" .. title:gsub("Daily Objective: ", "") .. objTxt .. "\n" .. GREEN_FONT_COLOR:GenerateHexColorMarkup() .. GRANTS_FOLLOWER_XP
+                                f.NxTip = L["|cffffd100Daily Task:\n"] .. title:gsub("Daily Objective: ", "") .. objTxt .. "\n" .. GREEN_FONT_COLOR:GenerateHexColorMarkup() .. GRANTS_FOLLOWER_XP
                                 f.texture:SetTexture("Interface\\Minimap\\ObjectIconsAtlas")
                                 if not map:ClipFrameZ(f, x, y, 22, 22, 0, true) then
                                     f:Hide()
@@ -9000,7 +9000,7 @@ function Nx.Quest:UpdateIcons (map)
                                 end -- Close hideOutside else block
                             end
                         else
-                            f.NxTip = "|cffffd100Bonus Task:\n" .. title:gsub("Bonus Objective: ", "") .. objTxt
+                            f.NxTip = L["|cffffd100--Bonus Task:\n"] .. title:gsub("Bonus Objective: ", "") .. objTxt
                             f.texture:SetTexture("Interface\\Minimap\\ObjectIconsAtlas")
                             if map:ClipFrameZ(f, x, y, 22, 22, 0, true) then
                                 f.texture:SetTexCoord(C_Minimap.GetObjectIconTextureCoords(4734))

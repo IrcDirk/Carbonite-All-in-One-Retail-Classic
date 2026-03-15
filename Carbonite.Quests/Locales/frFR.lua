@@ -266,6 +266,8 @@ L["Remove Watch"] = "Enlever suivi"
 L["BONUS TASK"] = "T\195\162che Bonus"
 L["WORLD QUEST"] = "Qu\195\170te Mondiale"
 L["Progress: "] = "Progression"
+L["|cffffd100Daily Task:\n"] = true
+L["|cffffd100--Bonus Task:\n"] = true
 
 L["Link Quest (shift right click)"] = "Linker la Qu\195\170te (Maj+clic droit)"
 L["Show Quest Log (alt right click)"] = "Afficher log de Qu\195\170tes (Alt+clic droit)"

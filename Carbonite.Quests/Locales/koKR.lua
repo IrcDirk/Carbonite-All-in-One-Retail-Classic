@@ -266,6 +266,8 @@ L["Remove Watch"] = true
 L["BONUS TASK"] = true
 L["WORLD QUEST"] = true
 L["Progress: "] = true
+L["|cffffd100Daily Task:\n"] = true
+L["|cffffd100--Bonus Task:\n"] = true
 
 L["Link Quest (shift right click)"] = true
 L["Show Quest Log (alt right click)"] = true
