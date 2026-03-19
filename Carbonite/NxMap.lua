@@ -6870,12 +6870,99 @@ function Nx.Map:UpdateGroup(plX, plY)
 
     self.GroupRedGlow = 1 - Clamp(redGlow or 1, 0, 1)
 
-    if type(self.UpdateTargets) == "function" then
-        pcall(self.UpdateTargets, self)
+    -- Draw group member icons on map
+    if not alt then
+        local pals = Nx.Com.PalNames or {}
+        local sc = self.ScaleDraw
+
+        for i = 1, members do
+            local unit = unitName .. i
+            local info = self.GroupInfo[unit]
+
+            if info and info.X and info.Y then
+                local wx, wy = info.X, info.Y
+                local fullName = info.Name
+                local name = fullName and fullName:match("^([^%-]+)") or fullName
+                local per = info.HealthPer or 1
+                local inCombat = info.InCombat
+
+                local sz = 16 * (self.DotRaidScale or 1)
+                if UnitExists(unit) and UnitInParty(unit) then
+                    sz = 18 * (self.DotPartyScale or 1)
+                end
+                if name and (pals[name] ~= nil or (self.TrackPlyrs and self.TrackPlyrs[name])) then
+                    sz = 20 * (self.DotPalScale or 1)
+                    if self.TrackPlyrs and self.TrackPlyrs[name] then
+                        sz = 25 * (self.DotPalScale or 1)
+                    end
+                end
+
+                local f1 = self:GetIcon(1)
+                if self:ClipFrameByMapType(f1, wx, wy, sz, sz, 0) then
+                    f1.NXType = 1000
+                    f1.NXData = unit
+                    f1.NXData2 = fullName
+
+                    local txName = "IconPlyrP"
+                    if name then
+                        if pals[name] == false then
+                            txName = "IconPlyrF"
+                        elseif pals[name] == true then
+                            txName = "IconPlyrG"
+                        end
+                    end
+                    if inCombat then
+                        txName = txName .. "C"
+                    end
+                    f1.texture:SetTexture("Interface\\AddOns\\Carbonite\\Gfx\\Map\\" .. txName)
+
+                    -- Health bar
+                    local f = self:GetIconNI(2)
+                    if per > .33 then
+                        self:ClipFrameTL(f, wx - 9 / sc, wy - 10 / sc, 16 * per / sc, 1 / sc)
+                        f.texture:SetColorTexture(1, 1, 1, 1)
+                    else
+                        self:ClipFrameByMapType(f, wx, wy, 7, 7, 0)
+                        if per > 0 then
+                            f.texture:SetColorTexture(1, .1, .1, 1 - per * 2)
+                        else
+                            f.texture:SetColorTexture(0, 0, 0, .5)
+                        end
+                    end
+
+                    -- Tooltip
+                    local lvl = UnitExists(unit) and (UnitLevel(unit) or 0) or 0
+                    local clsDisplay = (UnitExists(unit) and UnitClass(unit)) or (info.Class or "")
+                    local pX = (info.MapX or 0) * 100
+                    local pY = (info.MapY or 0) * 100
+                    local qStr = Nx.Com and Nx.Com.GetPlyrQStr and Nx.Com:GetPlyrQStr(name) or ""
+                    if raid and UnitExists(unit) then
+                        local _, _, grp = GetRaidRosterInfo(i)
+                        if grp then
+                            clsDisplay = clsDisplay .. " G" .. grp
+                        end
+                    end
+                    f1.NxTip = format("%s %d %s %d%%\n(%d,%d)%s", fullName, lvl, clsDisplay, per * 100, pX, pY, qStr or "")
+                end
+            end
+        end
     end
 
-    if type(self.UpdateIcons) == "function" and not alt then
-        pcall(self.UpdateIcons, self)
+    self.Level = self.Level + 3
+
+    -- Return tracking info for pal/combat tracking
+    if palName and Nx.db.profile.Track.ATBGPal then
+        if not combatName or combatDist > palDist then
+            self.TrackPlayer = palName
+            return palName, palX, palY
+        end
+    end
+
+    if combatName then
+        if not self.InCombat or combatDist > 35 then
+            self.TrackPlayer = combatName
+            return format("Combat, %s %d%%", combatName, combatHealth * 100), combatX, combatY
+        end
     end
 end
 
