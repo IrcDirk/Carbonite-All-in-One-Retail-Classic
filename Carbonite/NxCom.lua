@@ -1652,7 +1652,7 @@ function Nx.Com:UpdatePlyrIcons(info, map, iconName)
         if t - pl.T > 35 then
             info[name] = nil
 
-        elseif not memberNames[name] and (not inBG or map.MapId ~= pl.MId) and pl.Y then
+        elseif not memberNames[name] and not memberNames[name:match("^([^%-]+)")] and (not inBG or map.MapId ~= pl.MId) and pl.Y then
             if pl.MId >= 10000 then
                 return
             end
