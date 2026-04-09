@@ -9891,12 +9891,12 @@ local function WatchList_EmmFunc(id)
 end
 
 -- Add objectives to tooltip (static function)
-local function WatchList_AddObjectives(questID, numObjectives)
+local function WatchList_AddObjectives(tip, questID, numObjectives)
     for objectiveIndex = 1, numObjectives do
         local objectiveText, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
         if objectiveText and #objectiveText > 0 then
             local color = finished and GRAY_FONT_COLOR or HIGHLIGHT_FONT_COLOR
-            GameTooltip:AddLine(QUEST_DASH .. objectiveText, color.r, color.g, color.b, true)
+            tip:AddLine(QUEST_DASH .. objectiveText, color.r, color.g, color.b, true)
         end
     end
 end
@@ -9909,45 +9909,57 @@ local function WatchList_ScanTip(bounty)
     local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle(questIndex)
 
     if title and not tipVisible then
-        GameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-        GameTooltip.ItemTooltip:Hide()
+        -- Use Nx.TooltipText as scratchpad to avoid tainting GameTooltip
+        local scanTip = Nx.TooltipText
+        scanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+        if scanTip.ItemTooltip then scanTip.ItemTooltip:Hide() end
 
-        GameTooltip:SetText(title, HIGHLIGHT_FONT_COLOR:GetRGB())
+        scanTip:SetText(title, HIGHLIGHT_FONT_COLOR:GetRGB())
         WorldMap_AddQuestTimeToTooltip(bounty.questID)
 
         local _, questDescription = GetQuestLogQuestText(questIndex)
-        GameTooltip:AddLine(questDescription, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+        scanTip:AddLine(questDescription, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
 
-        WatchList_AddObjectives(bounty.questID, bounty.numObjectives)
+        WatchList_AddObjectives(scanTip, bounty.questID, bounty.numObjectives)
 
         if bounty.turninRequirementText then
-            GameTooltip:AddLine(bounty.turninRequirementText, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
+            scanTip:AddLine(bounty.turninRequirementText, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
         end
 
-        GameTooltip_AddQuestRewardsToTooltip(GameTooltip, bounty.questID, TOOLTIP_QUEST_REWARDS_STYLE_EMISSARY_REWARD)
+        if GameTooltip_AddQuestRewardsToTooltip then
+            GameTooltip_AddQuestRewardsToTooltip(scanTip, bounty.questID, TOOLTIP_QUEST_REWARDS_STYLE_EMISSARY_REWARD)
+        end
 
-        local numLines = GameTooltip:NumLines()
+        local numLines = scanTip:NumLines()
         for i = 1, numLines do
-            local lineText = _G["GameTooltipTextLeft"..i]:GetText()
-            if i == 2 or i == 3 or strfind(lineText, "Rewards") then
-                tipText = tipText .. format("|cff%02x%02x%02x%s", NORMAL_FONT_COLOR.r * 255, NORMAL_FONT_COLOR.g * 255, NORMAL_FONT_COLOR.b * 255, lineText) .. "|r\n"
-            else
-                if i == numLines then
-                    local money = GetQuestLogRewardMoney(bounty.questID)
-                    if money > 0 then
-                        tipText = tipText .. GetCoinTextureString(money)
+            local lineText = scanTip["TextLeft"..i] and scanTip["TextLeft"..i]:GetText() or ""
+            if lineText then
+                if i == 2 or i == 3 or strfind(lineText, "Rewards") then
+                    tipText = tipText .. format("|cff%02x%02x%02x%s", NORMAL_FONT_COLOR.r * 255, NORMAL_FONT_COLOR.g * 255, NORMAL_FONT_COLOR.b * 255, lineText) .. "|r\n"
+                else
+                    if i == numLines then
+                        local money = GetQuestLogRewardMoney(bounty.questID)
+                        if money > 0 then
+                            tipText = tipText .. GetCoinTextureString(money)
+                        end
                     end
+                    tipText = tipText .. lineText .. "\n"
                 end
-                tipText = tipText .. lineText .. "\n"
             end
         end
-        for i = 1, GameTooltipTooltip:NumLines() do
-            local tipTexture = GameTooltip.ItemTooltip.Icon:GetTexture()
-            local r, g, b = _G["GameTooltipTooltipTextLeft"..i]:GetTextColor()
-            tipText = tipText .. ((i == 1 and tipTexture) and "|T"..tipTexture..":33|t " or "\n") .. format("|cff%02x%02x%02x%s", r * 255, g * 255, b * 255, _G["GameTooltipTooltipTextLeft"..i]:GetText()) .. "|r\n"
+        local itemTip = scanTip.ItemTooltip
+        if itemTip and itemTip.NumLines then
+            for i = 1, itemTip:NumLines() do
+                local tipTexture = itemTip.Icon and itemTip.Icon:GetTexture()
+                local textFrame = itemTip["TextLeft"..i]
+                if textFrame then
+                    local r, g, b = textFrame:GetTextColor()
+                    tipText = tipText .. ((i == 1 and tipTexture) and "|T"..tipTexture..":33|t " or "\n") .. format("|cff%02x%02x%02x%s", r * 255, g * 255, b * 255, textFrame:GetText()) .. "|r\n"
+                end
+            end
         end
+        scanTip:Hide()
     end
-    if not tipVisible then GameTooltip:Hide() end
 
     return tipText
 end

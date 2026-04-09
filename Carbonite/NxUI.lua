@@ -53,6 +53,13 @@ function Nx:UIInit()
 
     qc[1] = "|cffe7e7e7"    -- Dim the white (Common quality)
 
+    -- Create a dedicated tooltip frame for Carbonite UI text/item tooltips.
+    -- Using a separate frame (instead of GameTooltip) prevents Carbonite from
+    -- tainting GameTooltip's width, which would break Blizzard's own tooltip
+    -- and loot-money layout code.
+    Nx.TooltipText = CreateFrame("GameTooltip", "NxTooltipText", UIParent, "GameTooltipTemplate")
+    Nx.TooltipText:SetOwner(UIParent, "ANCHOR_NONE")
+
     -- Initialize UI subsystems in order
     Nx.Font:Init()
     Nx.Skin:Init()
@@ -970,8 +977,7 @@ function Nx:SetTooltipText(str)
     -- Handle enchant links (prefix: #)
     elseif strbyte(str) == 35 then
         str = strsub(str, 2)
-        GameTooltip:SetHyperlink(str)
-        GameTooltip_ShowCompareItem()
+        Nx.TooltipText:SetHyperlink(str)
         return
     end
 
@@ -980,24 +986,24 @@ function Nx:SetTooltipText(str)
     if s1 then
         local t = { Nx.Split("\n", str) }
 
-        GameTooltip:SetText(t[1], 1, 1, 1, 1, true)  -- First line with wrap
+        Nx.TooltipText:SetText(t[1], 1, 1, 1, 1, true)  -- First line with wrap
         tremove(t, 1)
 
         for _, line in ipairs(t) do
             -- Check for tab-separated double columns
             local s1, s2 = Nx.Split("\t", line)
             if s2 then
-                GameTooltip:AddDoubleLine(s1, s2, 1, 1, 1, 1, 1, 1)
+                Nx.TooltipText:AddDoubleLine(s1, s2, 1, 1, 1, 1, 1, 1)
             else
-                GameTooltip:AddLine(line, 1, 1, 1, true)  -- Wrap text
+                Nx.TooltipText:AddLine(line, 1, 1, 1, true)  -- Wrap text
             end
         end
     else
-        GameTooltip:SetText(str, 1, 1, 1, 1, true)  -- Single line with wrap
+        Nx.TooltipText:SetText(str, 1, 1, 1, 1, true)  -- Single line with wrap
     end
 
     -- Always call Show() to ensure tooltip is properly sized and displayed
-    GameTooltip:Show()
+    Nx.TooltipText:Show()
 end
 
 -------------------------------------------------------------------------------
@@ -3419,7 +3425,7 @@ function Nx.Window:OnCloseBut (but, id, click)
 
         self:Show (false)
         self:RecordLayoutData()
-        GameTooltip:Hide()
+        Nx.TooltipText:Hide()
         self:Notify ("Close")
 
     else
@@ -3978,7 +3984,7 @@ function Nx.Button:OnEnter (motion)
 
     local owner = this.NXTipFrm or this
 
-    if GameTooltip:IsOwned (owner) then
+    if Nx.TooltipText:IsOwned (owner) then
         return
     end
 
@@ -3989,9 +3995,9 @@ function Nx.Button:OnEnter (motion)
         Nx.TooltipOwner = owner
 
         if this.NXTipFrm then
-            GameTooltip:SetOwner (owner, "ANCHOR_TOPLEFT", 0, 0)
+            Nx.TooltipText:SetOwner (owner, "ANCHOR_TOPLEFT", 0, 0)
         else
-            GameTooltip:SetOwner (owner, "ANCHOR_LEFT", 0, 5)
+            Nx.TooltipText:SetOwner (owner, "ANCHOR_LEFT", 0, 5)
         end
 
         Nx:SetTooltipText (tip)
@@ -4016,8 +4022,8 @@ function Nx.Button:OnLeave (motion)
 
     local owner = this.NXTipFrm or this
 
-    if GameTooltip:IsOwned (owner) then
-        GameTooltip:Hide()
+    if Nx.TooltipText:IsOwned (owner) then
+        Nx.TooltipText:Hide()
     end
 end
 
@@ -8142,18 +8148,18 @@ function Nx.Graph:OnEnter (motion)
 
     local this = self            -- V4
 
-    if not GameTooltip:IsOwned (this) and this.NxGraphPos then
+    if not Nx.TooltipText:IsOwned (this) and this.NxGraphPos then
 
         local self = this.NxGraph
 
         Nx.TooltipOwner = this
 
-        GameTooltip:SetOwner (this, "ANCHOR_CURSOR")
+        Nx.TooltipText:SetOwner (this, "ANCHOR_CURSOR")
         local v = self.Values
         local str = format ("%.2f: %s", v[-this.NxGraphPos], v[this.NxGraphPos + 0x2000000])
 --        Nx.prt (str)
-        GameTooltip:SetText (str)
-        GameTooltip:Show()
+        Nx.TooltipText:SetText (str)
+        Nx.TooltipText:Show()
     end
 end
 
@@ -8165,8 +8171,8 @@ function Nx.Graph:OnLeave (motion)
 
     -- V4 this
 
-    if GameTooltip:IsOwned (self) then
-        GameTooltip:Hide()
+    if Nx.TooltipText:IsOwned (self) then
+        Nx.TooltipText:Hide()
     end
 end
 

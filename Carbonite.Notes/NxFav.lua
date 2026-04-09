@@ -1994,7 +1994,7 @@ function Nx.Notes:RareScanner(mapId)
         -- Refresh WorldMapFrame when needed (zone change or after Blizzard map was closed)
         -- Only refresh when Blizzard map is NOT shown to avoid flickering
         if self.RSNeedsRefresh or self.RSLastMapId ~= mapId then
-            if not WorldMapFrame:IsShown() then
+            if not WorldMapFrame:IsShown() and not InCombatLockdown() then
                 self.RSNeedsRefresh = false
                 -- Refresh to populate RareScanner pins
                 -- pcall: dataProviders may be nil if WorldMapFrame hasn't been shown yet

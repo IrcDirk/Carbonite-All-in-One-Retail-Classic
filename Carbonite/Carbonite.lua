@@ -1076,8 +1076,8 @@ function Nx.slashCommand (txt)
 
     elseif cmd == "item" then
         local id = format ("Hitem:%s", a1)
-        GameTooltip:SetOwner (UIParent, "ANCHOR_LEFT", 0, 0)
-        GameTooltip:SetHyperlink (id)
+        Nx.TooltipText:SetOwner (UIParent, "ANCHOR_LEFT", 0, 0)
+        Nx.TooltipText:SetHyperlink (id)
         local name, iLink, iRarity, lvl, minLvl, type, subType, stackCount, equipLoc, tx = C_Item.GetItemInfo (id)
         Nx.prt ("Item: %s %s", name or "nil", iLink or "")
 
@@ -1774,8 +1774,8 @@ function Nx:NXOnUpdate (elapsed)
 
     if Nx.TooltipOwner then
         if not Nx.TooltipOwner:IsVisible() then
-            if GameTooltip:IsOwned (Nx.TooltipOwner) then
-                GameTooltip:Hide()
+            if Nx.TooltipText:IsOwned (Nx.TooltipOwner) then
+                Nx.TooltipText:Hide()
             end
             Nx.TooltipOwner = nil
         end
@@ -4594,11 +4594,7 @@ function Nx.Item:ShowTooltip (id, compare)
         end
     end
 
-    GameTooltip:SetHyperlink (id)
-
-    if compare then
-        GameTooltip_ShowCompareItem()
-    end
+    Nx.TooltipText:SetHyperlink (id)
 end
 
 function Nx.Item:DrawTimer()
@@ -4715,7 +4711,7 @@ end
 function Nx.NXMiniMapBut:NXOnEnter (frm)
 
     local mmown = Nx.db.profile.MiniMap.ButOwn
-    local tip = GameTooltip
+    local tip = Nx.TooltipText
 
     --V4 this
     tip:SetOwner (frm, "ANCHOR_LEFT")

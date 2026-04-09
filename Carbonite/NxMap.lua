@@ -3793,7 +3793,7 @@ function Nx.Map:ToggleSize(szmode)
 
     -- Clear tooltip if owned by this window
     if Nx.TooltipOwner == win.Frm then
-        GameTooltip:Hide()
+        Nx.TooltipText:Hide()
         Nx.TooltipOwner = nil
     end
 end
@@ -4556,7 +4556,7 @@ function Nx.Map.OnUpdate(this, elapsed)
                         map.InstanceGroupMemberHover = groupMember
                         map.InstanceGroupMemberUnit = groupUnit
 
-                        GameTooltip:SetOwner(this, "ANCHOR_CURSOR")
+                        Nx.TooltipText:SetOwner(this, "ANCHOR_CURSOR")
                         local className = UnitClass(groupUnit) or ""
                         local level = UnitLevel(groupUnit)
                         local health = UnitHealth(groupUnit)
@@ -4567,25 +4567,25 @@ function Nx.Map.OnUpdate(this, elapsed)
                         if classColorObj then
                             r, g, b = classColorObj.r, classColorObj.g, classColorObj.b
                         end
-                        GameTooltip:AddLine(groupMember, r, g, b)
+                        Nx.TooltipText:AddLine(groupMember, r, g, b)
                         if level and level > 0 then
-                            GameTooltip:AddLine(format("%s %s %d", L["Level"], className, level), 1, 1, 1)
+                            Nx.TooltipText:AddLine(format("%s %s %d", L["Level"], className, level), 1, 1, 1)
                         else
-                            GameTooltip:AddLine(className, 1, 1, 1)
+                            Nx.TooltipText:AddLine(className, 1, 1, 1)
                         end
                         if healthPct < 100 then
                             local healthColor = healthPct > 50 and "|cff00ff00" or (healthPct > 25 and "|cffffff00" or "|cffff0000")
-                            GameTooltip:AddLine(format("%s: %s%d%%", L["Health"] or "Health", healthColor, healthPct), 1, 1, 1)
+                            Nx.TooltipText:AddLine(format("%s: %s%d%%", L["Health"] or "Health", healthColor, healthPct), 1, 1, 1)
                         end
-                        GameTooltip:Show()
+                        Nx.TooltipText:Show()
                     end
                 else
                     -- Hide tooltip when no longer over a group member
                     if map.InstanceGroupMemberHover then
                         map.InstanceGroupMemberHover = nil
                         map.InstanceGroupMemberUnit = nil
-                        if GameTooltip:IsOwned(this) then
-                            GameTooltip:Hide()
+                        if Nx.TooltipText:IsOwned(this) then
+                            Nx.TooltipText:Hide()
                         end
                     end
                 end
@@ -10564,7 +10564,7 @@ function Nx.Map:IconOnEnter(motion)
 
     --        Nx.prt ("MapIconEnter %s %s", this:GetName() or "nil", this.NxTip)
 
-    local tt = GameTooltip
+    local tt = Nx.TooltipText
     local owner = this
     local tippos = "ANCHOR_CURSOR"
 
@@ -10578,7 +10578,7 @@ function Nx.Map:IconOnEnter(motion)
 --        Nx.TooltipOwner = owner
 --        map.TooltipType = 2
 
-    GameTooltip:SetOwner (owner, tippos, 0, 0)
+    Nx.TooltipText:SetOwner (owner, tippos, 0, 0)
     owner["UpdateTooltip"] = Nx.Map.IconOnUpdateTooltip
 
     local target = this.NxTarget;
@@ -10617,12 +10617,12 @@ function Nx.Map:IconOnEnter(motion)
             local hasWidgetSet = poiInfo.tooltipWidgetSet ~= nil
 
             if hasDescription or showTimer or hasWidgetSet then
-                -- Use enhanced POI tooltip
-                GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-                GameTooltip_SetTitle(GameTooltip, poiInfo.name or this.NxTip, HIGHLIGHT_FONT_COLOR)
+                -- Use enhanced POI tooltip via Nx.TooltipText to avoid tainting GameTooltip
+                Nx.TooltipText:SetOwner(this, "ANCHOR_RIGHT")
+                GameTooltip_SetTitle(Nx.TooltipText, poiInfo.name or this.NxTip, HIGHLIGHT_FONT_COLOR)
 
                 if hasDescription then
-                    GameTooltip_AddNormalLine(GameTooltip, poiInfo.description)
+                    GameTooltip_AddNormalLine(Nx.TooltipText, poiInfo.description)
                 end
 
                 if showTimer then
@@ -10636,24 +10636,24 @@ function Nx.Map:IconOnEnter(motion)
                             timeString = HIGHLIGHT_FONT_COLOR:WrapTextInColorCode(timeString)
                         end
                         if MAP_TOOLTIP_TIME_LEFT then
-                            GameTooltip_AddNormalLine(GameTooltip, MAP_TOOLTIP_TIME_LEFT:format(timeString))
+                            GameTooltip_AddNormalLine(Nx.TooltipText, MAP_TOOLTIP_TIME_LEFT:format(timeString))
                         else
-                            GameTooltip_AddNormalLine(GameTooltip, "Time left: " .. timeString)
+                            GameTooltip_AddNormalLine(Nx.TooltipText, "Time left: " .. timeString)
                         end
                     end
                 end
 
                 if hasWidgetSet and GameTooltip_AddWidgetSet then
-                    GameTooltip_AddWidgetSet(GameTooltip, poiInfo.tooltipWidgetSet, poiInfo.addPaddingAboveTooltipWidgets and 10)
+                    GameTooltip_AddWidgetSet(Nx.TooltipText, poiInfo.tooltipWidgetSet, poiInfo.addPaddingAboveTooltipWidgets and 10)
                 end
 
                 -- Add Quest Hub related quests if this is a Quest Hub POI
                 if poiInfo.areaPoiID and Nx.Quest and Nx.Quest.AddQuestHubTooltipData then
                     local mapID = Nx.Map:GetCurrentMapAreaID()
-                    Nx.Quest:AddQuestHubTooltipData(GameTooltip, mapID, poiInfo.areaPoiID)
+                    Nx.Quest:AddQuestHubTooltipData(Nx.TooltipText, mapID, poiInfo.areaPoiID)
                 end
 
-                GameTooltip:Show()
+                Nx.TooltipText:Show()
                 return  -- Skip default tooltip handling
             end
         end
@@ -10685,7 +10685,7 @@ function Nx.Map:IconOnUpdateTooltip()
             if callbacks then
                 local onUpdate = callbacks.OnTooltipUpdate
                 if onUpdate then
-                    onUpdate(GameTooltip, target, f)
+                    onUpdate(Nx.TooltipText, target, f)
                 elseif onUpdate ~= false then
                     local map = f.NxMap
                     map:BuildPlyrLists()
@@ -10722,11 +10722,11 @@ function Nx.Map:IconOnUpdateTooltip()
                 local hasWidgetSet = poiInfo.tooltipWidgetSet ~= nil
 
                 if hasDescription or showTimer or hasWidgetSet then
-                    -- Use enhanced POI tooltip
-                    GameTooltip_SetTitle(GameTooltip, poiInfo.name or f.NxTip, HIGHLIGHT_FONT_COLOR)
+                    -- Use enhanced POI tooltip via Nx.TooltipText to avoid tainting GameTooltip
+                    GameTooltip_SetTitle(Nx.TooltipText, poiInfo.name or f.NxTip, HIGHLIGHT_FONT_COLOR)
 
                     if hasDescription then
-                        GameTooltip_AddNormalLine(GameTooltip, poiInfo.description)
+                        GameTooltip_AddNormalLine(Nx.TooltipText, poiInfo.description)
                     end
 
                     if showTimer then
@@ -10740,24 +10740,24 @@ function Nx.Map:IconOnUpdateTooltip()
                                 timeString = HIGHLIGHT_FONT_COLOR:WrapTextInColorCode(timeString)
                             end
                             if MAP_TOOLTIP_TIME_LEFT then
-                                GameTooltip_AddNormalLine(GameTooltip, MAP_TOOLTIP_TIME_LEFT:format(timeString))
+                                GameTooltip_AddNormalLine(Nx.TooltipText, MAP_TOOLTIP_TIME_LEFT:format(timeString))
                             else
-                                GameTooltip_AddNormalLine(GameTooltip, "Time left: " .. timeString)
+                                GameTooltip_AddNormalLine(Nx.TooltipText, "Time left: " .. timeString)
                             end
                         end
                     end
 
                     if hasWidgetSet and GameTooltip_AddWidgetSet then
-                        GameTooltip_AddWidgetSet(GameTooltip, poiInfo.tooltipWidgetSet, poiInfo.addPaddingAboveTooltipWidgets and 10)
+                        GameTooltip_AddWidgetSet(Nx.TooltipText, poiInfo.tooltipWidgetSet, poiInfo.addPaddingAboveTooltipWidgets and 10)
                     end
 
                     -- Add Quest Hub related quests if this is a Quest Hub POI
                     if poiInfo.areaPoiID and Nx.Quest and Nx.Quest.AddQuestHubTooltipData then
                         local mapID = Nx.Map:GetCurrentMapAreaID()
-                        Nx.Quest:AddQuestHubTooltipData(GameTooltip, mapID, poiInfo.areaPoiID)
+                        Nx.Quest:AddQuestHubTooltipData(Nx.TooltipText, mapID, poiInfo.areaPoiID)
                     end
 
-                    GameTooltip:Show()
+                    Nx.TooltipText:Show()
                 else
                     -- No enhanced content, use default
                     local str = Nx.Split("~", f.NxTip)
@@ -10805,8 +10805,8 @@ function Nx.Map:IconOnLeave(motion)
     end
 
     -- Hide tooltip if owned by this icon
-    if GameTooltip:IsOwned(this) or GameTooltip:IsOwned(this.NxMap.Win.Frm) then
-        GameTooltip:Hide()
+    if Nx.TooltipText:IsOwned(this) or Nx.TooltipText:IsOwned(this.NxMap.Win.Frm) then
+        Nx.TooltipText:Hide()
     end
 end
 
@@ -13794,13 +13794,13 @@ function Nx.Map:EditModeCreateFinishButton()
         map:EditModeFinish()
     end)
     f:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:AddLine("Output all rectangles to chat")
-        GameTooltip:AddLine("and clear the editor", 0.7, 0.7, 0.7)
-        GameTooltip:Show()
+        Nx.TooltipText:SetOwner(self, "ANCHOR_LEFT")
+        Nx.TooltipText:AddLine("Output all rectangles to chat")
+        Nx.TooltipText:AddLine("and clear the editor", 0.7, 0.7, 0.7)
+        Nx.TooltipText:Show()
     end)
     f:SetScript("OnLeave", function()
-        GameTooltip:Hide()
+        Nx.TooltipText:Hide()
     end)
 
     -- Add a "Clear All" button next to it
@@ -13814,13 +13814,13 @@ function Nx.Map:EditModeCreateFinishButton()
         Nx.prt("|cffff8000All rectangles cleared|r")
     end)
     clearBtn:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:AddLine("Clear all rectangles")
-        GameTooltip:AddLine("without outputting", 0.7, 0.7, 0.7)
-        GameTooltip:Show()
+        Nx.TooltipText:SetOwner(self, "ANCHOR_LEFT")
+        Nx.TooltipText:AddLine("Clear all rectangles")
+        Nx.TooltipText:AddLine("without outputting", 0.7, 0.7, 0.7)
+        Nx.TooltipText:Show()
     end)
     clearBtn:SetScript("OnLeave", function()
-        GameTooltip:Hide()
+        Nx.TooltipText:Hide()
     end)
 
     -- Rectangle count label
