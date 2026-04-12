@@ -1257,10 +1257,30 @@ function Nx.Map.Guide:ClearShowFolders()
         self:AddShowFolders (folder)
     end
 end
+
 function Nx.Map.Guide:UpdateGatherFolders()
-    self:ClearShowFolders()
-    self:Update()
+--    self:ClearShowFolders()
+--    self:Update()
+
+    local gFolder = self:FindFolder(L["Gather"])
+
+    local function updateGatherType(settingName, folderName)
+        local folder = self:FindFolder(folderName, gFolder)
+        if not folder then return end
+        self:AddShowFolders(folder, true)   -- remove existing entries
+        if Nx.db.char.Map[settingName] then
+            self:AddShowFolders(folder)     -- re-add if enabled
+        end
+    end
+
+    updateGatherType("ShowGatherH", L["Herb"])
+    updateGatherType("ShowGatherM", L["Ore"])
+    updateGatherType("ShowGatherL", L["Timber"])
+    updateGatherType("ShowGatherA", L["Artifacts"])
+
+    self:UpdateMapIcons()
 end
+
 function Nx.Map.Guide:AddShowFolders (folder, remove, filter)
     if type (folder) == "table" then
         local typ, filt = self:CalcType (folder)
@@ -1328,6 +1348,7 @@ function Nx.Map.Guide:Update()
     self:UpdateList (self.List2, i, 2)
     self:UpdateMapIcons()
 end
+
 function Nx.Map.Guide:UpdateList (list, pathI, listSide)
     list:Empty()
     local curFolder = self.PathHistory[pathI]
@@ -1679,6 +1700,7 @@ function Nx.Map.Guide:UpdateMapIcons()
         end
     end
 end
+
 function Nx.Map.Guide:UpdateMapGeneralIcons (cont, showType, hideFac, tx, name, iconType, showMapId)
     if cont > Nx.Map.ContCnt then
         return

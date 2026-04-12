@@ -65,7 +65,7 @@
 			Nx.NXMiniMapBut:NXOnEnter (self)
 		</OnEnter>
 		<OnLeave>
-			GameTooltip:Hide()
+			if Nx and Nx.TooltipText then Nx.TooltipText:Hide() end
 		</OnLeave>
 		<OnLoad>
 			self:RegisterForClicks ("LeftButtonUp", "MiddleButtonUp", "RightButtonUp")

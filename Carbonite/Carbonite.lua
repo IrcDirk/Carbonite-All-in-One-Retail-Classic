@@ -647,31 +647,6 @@ local defaults = {
                 [125] = true,
                 [126] = true,
                 [127] = true,
-                [128] = true,
-                [129] = true,
-                [130] = true,
-                [131] = true,
-                [132] = true,
-                [133] = true,
-                [134] = true,
-                [135] = true,
-                [136] = true,
-                [137] = true,
-                [138] = true,
-                [139] = true,
-                [140] = true,
-                [141] = true,
-                [142] = true,
-                [143] = true,
-                [144] = true,
-                [145] = true,
-                [146] = true,
-                [147] = true,
-                [148] = true,
-                [149] = true,
-                [150] = true,
-                [151] = true,
-                [152] = true,
             },
             ShowTimber = {
                 [1] = true,
@@ -3550,36 +3525,11 @@ Nx.GatherInfo = {
         { 1,    "inv_misc_herb_orbinid",L["Lush Orbinid"], 210797},
         { 1,    "inv_misc_herb_orbinid",L["Sporefused Orbinid"], 210797},
         -- Midnight Herbs
-        { 1,    "inv_misc_herb_argentleaf",L["Argentleaf"], 256963},
-        { 1,    "inv_misc_herb_argentleaf",L["Lush Argentleaf"], 256963},
-        { 1,    "inv_misc_herb_argentleaf",L["Lightfused Argentleaf"], 256963},
-        { 1,    "inv_misc_herb_argentleaf",L["Primal Argentleaf"], 256963},
-        { 1,    "inv_misc_herb_argentleaf",L["Voidbound Argentleaf"], 256963},
-        { 1,    "inv_misc_herb_argentleaf",L["Wild Argentleaf"], 256963},
-        { 1,    "inv_misc_herb_azeroot",L["Azeroot"], 256964},
-        { 1,    "inv_misc_herb_azeroot",L["Lush Azeroot"], 256964},
-        { 1,    "inv_misc_herb_azeroot",L["Lightfused Azeroot"], 256964},
-        { 1,    "inv_misc_herb_azeroot",L["Primal Azeroot"], 256964},
-        { 1,    "inv_misc_herb_azeroot",L["Voidbound Azeroot"], 256964},
-        { 1,    "inv_misc_herb_azeroot",L["Wild Azeroot"], 256964},
-        { 1,    "inv_misc_herb_manalily",L["Mana Lily"], 256965},
-        { 1,    "inv_misc_herb_manalily",L["Lush Mana Lily"], 256965},
-        { 1,    "inv_misc_herb_manalily",L["Lightfused Mana Lily"], 256965},
-        { 1,    "inv_misc_herb_manalily",L["Primal Mana Lily"], 256965},
-        { 1,    "inv_misc_herb_manalily",L["Voidbound Mana Lily"], 256965},
-        { 1,    "inv_misc_herb_manalily",L["Wild Mana Lily"], 256965},
-        { 1,    "inv_misc_herb_sanguithorn",L["Sanguithorn"], 256966},
-        { 1,    "inv_misc_herb_sanguithorn",L["Lush Sanguithorn"], 256966},
-        { 1,    "inv_misc_herb_sanguithorn",L["Lightfused Sanguithorn"], 256966},
-        { 1,    "inv_misc_herb_sanguithorn",L["Primal Sanguithorn"], 256966},
-        { 1,    "inv_misc_herb_sanguithorn",L["Voidbound Sanguithorn"], 256966},
-        { 1,    "inv_misc_herb_sanguithorn",L["Wild Sanguithorn"], 256966},
-        { 1,    "inv_misc_herb_tranquilitybloom",L["Tranquility Bloom"], 256967},
-        { 1,    "inv_misc_herb_tranquilitybloom",L["Lush Tranquility Bloom"], 256967},
-        { 1,    "inv_misc_herb_tranquilitybloom",L["Lightfused Tranquility Bloom"], 256967},
-        { 1,    "inv_misc_herb_tranquilitybloom",L["Primal Tranquility Bloom"], 256967},
-        { 1,    "inv_misc_herb_tranquilitybloom",L["Voidbound Tranquility Bloom"], 256967},
-        { 1,    "inv_misc_herb_tranquilitybloom",L["Wild Tranquility Bloom"], 256967},
+        { 1,    "inv_misc_herb_silverleaf",L["Argentleaf"], 256963},
+        { 1,    "inv_misc_herb_earthroot",L["Azeroot"], 256964},
+        { 1,    "inv_misc_herb_mageroyal",L["Mana Lily"], 256965},
+        { 1,    "inv_herb_bloodthistle",L["Sanguithorn"], 256966},
+        { 1,    "inv_misc_herb_peacebloom",L["Tranquility Bloom"], 256967},
     },
     ["M"] = {    -- Mine node (4th element is itemId for localization)
         { 325,    "inv_ore_adamantium",L["Adamantite Deposit"], 23425},
@@ -3692,23 +3642,8 @@ Nx.GatherInfo = {
         { 1,    "ui_profession_mining",L["Webbed Ore Deposit"], 210933},
         -- Midnight Mining
         { 1,    "inv_ore_brilliantsilver",L["Brilliant Silver"], 256970},
-        { 1,    "inv_ore_brilliantsilver",L["Rich Brilliant Silver"], 256970},
-        { 1,    "inv_ore_brilliantsilver",L["Lightfused Brilliant Silver"], 256970},
-        { 1,    "inv_ore_brilliantsilver",L["Primal Brilliant Silver"], 256970},
-        { 1,    "inv_ore_brilliantsilver",L["Voidbound Brilliant Silver"], 256970},
-        { 1,    "inv_ore_brilliantsilver",L["Wild Brilliant Silver"], 256970},
         { 1,    "inv_ore_refulgentcopper",L["Refulgent Copper"], 256971},
-        { 1,    "inv_ore_refulgentcopper",L["Rich Refulgent Copper"], 256971},
-        { 1,    "inv_ore_refulgentcopper",L["Lightfused Refulgent Copper"], 256971},
-        { 1,    "inv_ore_refulgentcopper",L["Primal Refulgent Copper"], 256971},
-        { 1,    "inv_ore_refulgentcopper",L["Voidbound Refulgent Copper"], 256971},
-        { 1,    "inv_ore_refulgentcopper",L["Wild Refulgent Copper"], 256971},
         { 1,    "inv_ore_umbraltin",L["Umbral Tin"], 256972},
-        { 1,    "inv_ore_umbraltin",L["Rich Umbral Tin"], 256972},
-        { 1,    "inv_ore_umbraltin",L["Lightfused Umbral Tin"], 256972},
-        { 1,    "inv_ore_umbraltin",L["Primal Umbral Tin"], 256972},
-        { 1,    "inv_ore_umbraltin",L["Voidbound Umbral Tin"], 256972},
-        { 1,    "inv_ore_umbraltin",L["Wild Umbral Tin"], 256972},
     }
 }
 
@@ -4009,9 +3944,16 @@ function Nx:GatherConvert (id)
     return floor(id/1000000)/10000, floor(id % 1000000 / 100)/10000, id % 100
 end
 
+-- Cached lookup table (built once, reused across all import calls)
+local GatherNodeToCarbCache = nil
+
 function Nx:GatherNodeToCarb (id)
 
-    local gatherIDs = {
+    if GatherNodeToCarbCache then
+        return GatherNodeToCarbCache[id]
+    end
+
+    GatherNodeToCarbCache = {
     -- Mining Node Conversions (GatherMate ID -> Carbonite GatherInfo["M"] index)
     -- Classic
         [201] = 3,   -- Copper Vein
@@ -4159,6 +4101,13 @@ function Nx:GatherNodeToCarb (id)
         [1242] = 102, -- Webbed Ore Deposit
         [1243] = 87, -- Desolate Deposit
         [1244] = 87, -- Rich Desolate Deposit
+    -- Midnight Mining (GatherMate IDs 1245-1250)
+        [1245] = 103, -- Brilliant Silver
+        [1246] = 103, -- Brilliant Silver Seam
+        [1247] = 104, -- Refulgent Copper
+        [1248] = 104, -- Refulgent Copper Seam
+        [1249] = 105, -- Umbral Tin
+        [1250] = 105, -- Umbral Tin Seam
     -- Herbalism Nodes (GatherMate ID -> Carbonite GatherInfo["H"] index)
     -- Classic
         [401] = 30,  -- Peacebloom
@@ -4352,19 +4301,12 @@ function Nx:GatherNodeToCarb (id)
         [1480] = 95,  -- Lush Phantom Bloom
     -- Midnight Herbs (GatherMate IDs 1481-1485)
         [1481] = 123, -- Argentleaf
-        [1482] = 129, -- Azeroot
-        [1483] = 135, -- Mana Lily
-        [1484] = 141, -- Sanguithorn
-        [1485] = 147, -- Tranquility Bloom
-    -- Midnight Mining (GatherMate IDs 1245-1250)
-        [1245] = 103, -- Brilliant Silver
-        [1246] = 103, -- Brilliant Silver Seam
-        [1247] = 109, -- Refulgent Copper
-        [1248] = 109, -- Refulgent Copper Seam
-        [1249] = 115, -- Umbral Tin
-        [1250] = 115, -- Umbral Tin Seam
+        [1482] = 124, -- Azeroot
+        [1483] = 125, -- Mana Lily
+        [1484] = 126, -- Sanguithorn
+        [1485] = 127, -- Tranquility Bloom
     }
-    return gatherIDs[id]
+    return GatherNodeToCarbCache[id]
 end
 
 -- Batched import state
@@ -4502,6 +4444,10 @@ function Nx:GatherImportBatch()
         Nx.prt(L["Imported"] .. " %d " .. L["nodes from Carbonite.Gathermate2_Data"], state.importedCount)
         Nx.GatherImportState = nil
         Nx:CancelTimer("GatherImportBatch")
+        -- Refresh map icons so newly imported nodes appear immediately
+        if Nx.Map and Nx.Map.Guide then
+            Nx.Map.Guide:UpdateMapIcons()
+        end
     elseif state.currentIndex % 5000 < state.batchSize then
         -- Progress update every 5000 nodes
         local progress = floor(state.currentIndex / state.totalCount * 100)
