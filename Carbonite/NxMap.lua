@@ -2746,7 +2746,11 @@ function Nx.Map:MinimapUpdate()
             local _, instanceType = GetInstanceInfo()
             if self:IsInstanceMap(Nx.Map.RMapId) or (instanceType ~= nil and instanceType ~= "none") then
                 lOpts.NXMMFull = true
+            else
+                lOpts.NXMMFull = false
             end
+            self.MMMenuIFull:SetChecked(lOpts.NXMMFull)
+            Nx.Menu:CheckUpdate(self.MMMenuIFull)
         end
 
         if zoomType == 0 then
@@ -9497,6 +9501,19 @@ function Nx.Map:SetIconTypeChop (iconType, on)
 end
 
 ---
+-- Hide icons of this type when they would overlap the docked minimap
+-- @param iconType  String identifier for the icon type
+-- @param on        Boolean to enable/disable docked-minimap exclusion
+--
+function Nx.Map:SetIconTypeNoDockMinimap (iconType, on)
+
+    local d = self.Data
+    assert (d[iconType])
+
+    d[iconType].NoDockMinimap = on
+end
+
+---
 -- Add a point icon to map data
 -- @param iconType  String identifier for the icon type (must be initialized)
 -- @param x         World X coordinate
@@ -9739,6 +9756,18 @@ function Nx.Map:UpdateIcons (drawNonGuide)
                     h = Nx.db.profile.Map.InstanceScale
                 end
 
+                -- Compute docked-minimap exclusion rect in map-frame pixels for icon types that opt in
+                local mmSX1, mmSY1, mmSX2, mmSY2
+                if v.NoDockMinimap and self.MMOwn and self.MMZoomType == 0 then
+                    local mmSz = 140 * self.MMFScale
+                    local mmX = Nx.db.profile.MiniMap.DockRight and (clipW - mmSz) or 0
+                    local mmY = Nx.db.profile.MiniMap.DockBottom and (clipH - mmSz) or 0
+                    mmSX1 = mmX + (Nx.db.profile.MiniMap.DXO or 0)
+                    mmSY1 = mmY + (Nx.db.profile.MiniMap.DYO or 0)
+                    mmSX2 = mmSX1 + mmSz
+                    mmSY2 = mmSY1 + mmSz
+                end
+
                 if v.AlphaNear then
 
                     local aNear = v.AlphaNear * (abs (GetTime() % .7 - .35) / .7 + .5)    -- 50% to 100% pulse
@@ -9755,7 +9784,13 @@ function Nx.Map:UpdateIcons (drawNonGuide)
                         -- Quick visibility cull before allocating frame
                         local iconX, iconY = vn.X, vn.Y
                         if iconX >= visMinX and iconX <= visMaxX and iconY >= visMinY and iconY <= visMaxY then
-                        if (not vn.Level and mapDungeonLevel == 0) or (vn.Level and vn.Level == mapDungeonLevel) then
+                        local skipForDockedMM = false
+                        if mmSX1 then
+                            local sx = (iconX - self.MapPosXDraw) * scaleDraw + clipW * .5
+                            local sy = (iconY - self.MapPosYDraw) * scaleDraw + clipH * .5
+                            skipForDockedMM = sx >= mmSX1 and sx <= mmSX2 and sy >= mmSY1 and sy <= mmSY2
+                        end
+                        if not skipForDockedMM and ((not vn.Level and mapDungeonLevel == 0) or (vn.Level and vn.Level == mapDungeonLevel)) then
                             local icon = vn
                             local f = self:GetIconStatic(vLvl)
                             if self:ClipFrameByMapType (f, icon.X, icon.Y, w, h, 0) then
@@ -9814,7 +9849,13 @@ function Nx.Map:UpdateIcons (drawNonGuide)
                         local iconX, iconY = vn.X, vn.Y
                         if iconX >= visMinX and iconX <= visMaxX and iconY >= visMinY and iconY <= visMaxY then
                         local Level = vn.Level
-                        if (not Level and mapDungeonLevel == 0) or (Level and Level == mapDungeonLevel) then
+                        local skipForDockedMM = false
+                        if mmSX1 then
+                            local sx = (iconX - self.MapPosXDraw) * scaleDraw + clipW * .5
+                            local sy = ((iconY + offY) - self.MapPosYDraw) * scaleDraw + clipH * .5
+                            skipForDockedMM = sx >= mmSX1 and sx <= mmSX2 and sy >= mmSY1 and sy <= mmSY2
+                        end
+                        if not skipForDockedMM and ((not Level and mapDungeonLevel == 0) or (Level and Level == mapDungeonLevel)) then
                             local icon = vn
                             local iconTex = icon.Tex
                             local actuallyIcon = type(iconTex) == "table"

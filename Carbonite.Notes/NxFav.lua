@@ -1882,6 +1882,7 @@ function Nx.Notes:HandyNotes(mapId)
 
         map:InitIconType ("!HANDY", "WP", "", Nx.fdb.profile.Notes.HandyNotesSize or 15, Nx.fdb.profile.Notes.HandyNotesSize or 15)
         map:SetIconTypeChop ("!HANDY", true)
+        map:SetIconTypeNoDockMinimap ("!HANDY", true)
         map:SetIconTypeLevel ("!HANDY", 20)
 
         -- Reuse temp frame instead of creating new ones
@@ -2037,6 +2038,7 @@ function Nx.Notes:RareScanner(mapId)
 
         map:InitIconType ("!RSR", "WP", "", Nx.fdb.profile.Notes.RareScannerSize or 32, Nx.fdb.profile.Notes.RareScannerSize or 32)
         map:SetIconTypeChop ("!RSR", true)
+        map:SetIconTypeNoDockMinimap ("!RSR", true)
         map:SetIconTypeLevel ("!RSR", 20)
 
         for _,rspin in ipairs(rspins) do
@@ -2137,6 +2139,7 @@ function Nx.Notes:Questie(mapId)
 
         map:InitIconType ("!QUE", "WP", "", Nx.fdb.profile.Notes.QuestieSize or 32, Nx.fdb.profile.Notes.QuestieSize or 32)
         map:SetIconTypeChop ("!QUE", true)
+        map:SetIconTypeNoDockMinimap ("!QUE", true)
         map:SetIconTypeLevel ("!QUE", 20)
 
         for _,questiePin in ipairs(questiePins) do
