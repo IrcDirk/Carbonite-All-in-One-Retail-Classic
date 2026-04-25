@@ -3341,28 +3341,43 @@ function Nx.Quest:Init()
 
     -- Hook tooltip
 
-    local ttHooks = {
-        "SetAction",
---        "SetAuctionItem",
-        "SetBagItem",
-        "SetGuildBankItem",
-        "SetHyperlink",
-        "SetInboxItem",
-        "SetInventoryItem",
-        "SetLootItem",
-        "SetLootRollItem",
-        "SetMerchantItem",
-        --"SetRecipeReagentItem",
-        --"SetRecipeResultItem",
-        "SetQuestItem",
-        "SetQuestLogItem",
-        "SetTradeTargetItem",
-    }
+    if TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall and Enum and Enum.TooltipDataType then
+        -- Retail/DF+ secure tooltip API: avoids tainting GameTooltip layout state,
+        -- which otherwise breaks Blizzard code like AddSuppressedPinsToTooltip.
+        local function questPostCall(tooltip)
+            if tooltip == GameTooltip then
+                Nx.Quest:TooltipProcess()
+            end
+        end
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, questPostCall)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, questPostCall)
+        if Enum.TooltipDataType.Quest then
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Quest, questPostCall)
+        end
+    else
+        local ttHooks = {
+            "SetAction",
+--            "SetAuctionItem",
+            "SetBagItem",
+            "SetGuildBankItem",
+            "SetHyperlink",
+            "SetInboxItem",
+            "SetInventoryItem",
+            "SetLootItem",
+            "SetLootRollItem",
+            "SetMerchantItem",
+            --"SetRecipeReagentItem",
+            --"SetRecipeResultItem",
+            "SetQuestItem",
+            "SetQuestLogItem",
+            "SetTradeTargetItem",
+        }
 
-    for k, name in ipairs (ttHooks) do
-            hooksecurefunc (GameTooltip, name, Nx.Quest.TooltipHook)
+        for k, name in ipairs (ttHooks) do
+                hooksecurefunc (GameTooltip, name, Nx.Quest.TooltipHook)
+        end
+--        GameTooltip:HookScript("OnTooltipSetUnit", Nx.Quest.TooltipHook)
     end
---    GameTooltip:HookScript("OnTooltipSetUnit", Nx.Quest.TooltipHook)
 
     local unitNames = {    -- 5 letter and shorter words are already blocked
         "Hunter", "Paladin", "Priest", "Monk",
@@ -10821,7 +10836,9 @@ function Nx.Quest.Watch:Set (data, on, track)
         local i, cur = Quest:FindCur (qId, qIndex)
 
         if not (cur and cur.Q) then
-            Quest:MsgNotInDB()
+            if not Nx.isRetail then
+                Quest:MsgNotInDB()
+            end
             return
         end
 
@@ -10830,7 +10847,9 @@ function Nx.Quest.Watch:Set (data, on, track)
         local q = cur.Q
         if not q["Start"] and not q["End"] then
 
-            Quest:MsgNotInDB()
+            if not Nx.isRetail then
+                Quest:MsgNotInDB()
+            end
             return
         end
 
@@ -10881,7 +10900,9 @@ function Nx.Quest.Watch:Set (data, on, track)
         Quest.List:Update()
 
     else
-        Quest:MsgNotInDB()
+        if not Nx.isRetail then
+            Quest:MsgNotInDB()
+        end
     end
 
 end

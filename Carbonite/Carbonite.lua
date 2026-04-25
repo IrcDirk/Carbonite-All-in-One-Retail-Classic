@@ -1731,20 +1731,25 @@ function Nx:NXOnUpdate (elapsed)
         Nx.TooltipLastDiffText = nil
     end
 
-    local s = GameTooltipTextLeft1:GetText()
-    if s and type(s) == "string" then
-        local slen = 0
-        pcall(function() slen = #s end)
-        if Nx.Tick % 4 == 1 and GameTooltipTextLeft1:IsVisible() and slen > 5 then
-            local textDiff = true
-            pcall(function() textDiff = (Nx.TooltipLastDiffText ~= s) end)
-            if textDiff or Nx.TooltipLastDiffNumLines ~= GameTooltip:NumLines() then
-                if Nx.Quest then
-                    Nx.Quest:TooltipProcess()
+    -- On retail, TooltipDataProcessor delivers tooltip updates without tainting
+    -- GameTooltip; the polling fallback below writes to GameTooltip from an
+    -- OnUpdate path and would re-introduce the taint.
+    if not (Nx.isRetail and TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall) then
+        local s = GameTooltipTextLeft1:GetText()
+        if s and type(s) == "string" then
+            local slen = 0
+            pcall(function() slen = #s end)
+            if Nx.Tick % 4 == 1 and GameTooltipTextLeft1:IsVisible() and slen > 5 then
+                local textDiff = true
+                pcall(function() textDiff = (Nx.TooltipLastDiffText ~= s) end)
+                if textDiff or Nx.TooltipLastDiffNumLines ~= GameTooltip:NumLines() then
+                    if Nx.Quest then
+                        Nx.Quest:TooltipProcess()
+                    end
                 end
             end
+            Nx.TooltipLastText = s
         end
-        Nx.TooltipLastText = s
     end
 
     if Nx.TooltipOwner then
