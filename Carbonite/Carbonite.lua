@@ -1731,10 +1731,11 @@ function Nx:NXOnUpdate (elapsed)
         Nx.TooltipLastDiffText = nil
     end
 
-    -- On retail, TooltipDataProcessor delivers tooltip updates without tainting
-    -- GameTooltip; the polling fallback below writes to GameTooltip from an
-    -- OnUpdate path and would re-introduce the taint.
-    if not (Nx.isRetail and TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall) then
+    -- Where TooltipDataProcessor exists (retail and every Classic flavor except
+    -- Classic Era), it delivers tooltip updates without tainting GameTooltip;
+    -- the polling fallback below writes to GameTooltip from an OnUpdate path
+    -- and would re-introduce the taint.
+    if not (TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall) then
         local s = GameTooltipTextLeft1:GetText()
         if s and type(s) == "string" then
             local slen = 0
