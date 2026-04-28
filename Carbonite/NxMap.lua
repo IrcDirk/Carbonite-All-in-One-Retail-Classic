@@ -2285,7 +2285,7 @@ function Nx.Map:MinimapOwnInit()
         Nx.Map:MinimapButtonShowUpdate()
         return
     end
-    mm:SetMaskTexture ("textures\\MinimapMask")
+    mm:SetMaskTexture (Nx.isRetail and "Interface\\CharacterFrame\\TempPortraitAlphaMask" or "textures\\MinimapMask")
     self:MinimapNodeGlowInit()
     Nx.Map:MinimapButtonShowUpdate (true)
 
@@ -2945,7 +2945,8 @@ end
 
 function Nx.Map:MinimapUpdateMask (optName)
 
-    local name = Nx.db.profile.MiniMap[optName] and "Interface\\Buttons\\White8x8" or "textures\\MinimapMask"
+    local roundMask = Nx.isRetail and "Interface\\CharacterFrame\\TempPortraitAlphaMask" or "textures\\MinimapMask"
+    local name = Nx.db.profile.MiniMap[optName] and "Interface\\Buttons\\White8x8" or roundMask
 
 --    if IsControlKeyDown() then
 --        self.MMMaskName = nil
@@ -3923,7 +3924,7 @@ function Nx.Map:MouseEnable (max)
             on = IsAltKeyDown() and true or false        -- IsAltKeyDown returns nil or 1
         end
     else
-        if Nx.db.profile.Map.MaxMouseIgnore then
+        if Nx.db.profile.Map.MouseIgnore then
             on = IsAltKeyDown() and true or false        -- IsAltKeyDown returns nil or 1
         end
     end
@@ -12992,7 +12993,7 @@ function Nx.Map.Dock:MinimapOwnInit()
                         v:SetSnapToPixelGrid(false)
                         v:SetTexelSnappingBias(0)
                         local tname = v:GetTexture()
-                        if tname and texnames[tname] then
+                        if type(tname) == "string" and texnames[tname] then
                             found[f] = 1
                             break
                         end
