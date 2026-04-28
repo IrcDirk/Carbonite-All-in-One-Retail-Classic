@@ -17,7 +17,7 @@ L["Info Font Spacing"] = "Межстрочный интервал информа
 L["Sets the spacing of the info font"] = "Задает размер межстрочного интервала информационного шрифта"
 L["Show Info Windows"] = "Показать окно информации"
 L["Toggle Info Windows"] = "Вкл./Выкл. окна информации"
-L["Info Module"] = "Информационный модуль"
+L["Info Module"] = "Модуль информации"
 L["Close"] = "Закрыть"
 L["Edit Item"] = "Изменить"
 L["Show"] = "Показать"
@@ -39,4 +39,10 @@ L["Fifteen seconds until the Arena"] = "Пятнадцать до боя на А
 L["Reset old info data %f"] = true
 L[" begins? in (%d+) "] = true
 L["(%d+) minutes? until the battle"] = true
-L["Info"] = true
+
+-- Kill marker icons (Carbonite map skull/seal markers)
+L["Kill Icons"] = "Иконки убийств"
+L["Show kill markers on map"] = "Показывать метки убийств на карте"
+L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = "Если включено, убитые мобы оставляют иконку черепа на карте в месте убийства"
+L["Auto-clear kill markers after"] = "Удалять метки убийств через"
+L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "Секунд до автоматического удаления метки убийства. 0 = никогда (только ручная очистка)"

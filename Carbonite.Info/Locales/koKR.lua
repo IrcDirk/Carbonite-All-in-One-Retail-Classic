@@ -40,3 +40,10 @@ L["Reset old info data %f"] = true
 L[" begins? in (%d+) "] = true
 L["(%d+) minutes? until the battle"] = true
 L["Info"] = true
+L["Info"] = "정보"
+-- Kill marker icons (Carbonite map skull/seal markers)
+L["Kill Icons"] = "처치 아이콘"
+L["Show kill markers on map"] = "지도에 처치 표시 보이기"
+L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = "활성화 시, 처치한 몬스터의 위치에 해골 아이콘이 지도에 표시됩니다"
+L["Auto-clear kill markers after"] = "처치 표시 자동 제거 시간"
+L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "처치 표시가 자동으로 사라지는 시간(초). 0 = 사용 안 함 (수동 제거만)"

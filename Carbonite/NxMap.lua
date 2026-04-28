@@ -1641,6 +1641,10 @@ function Nx.Map:CreateIconMenu(frm)
     -- Note finding
     self.GIconMenuIFindNote = menu:AddItem(0, L["Find Note"], self.GMenu_OnFindNote, self)
 
+    -- Clear historical kill/death marker (only visible when right-clicking
+    -- a "Kill" or "Death" icon, gated dynamically in GMenuOpen).
+    self.GIconMenuIClearKill = menu:AddItem(0, L["Clear"] or "Clear", self.GMenu_OnClearKill, self)
+
     -- Navigation options
     menu:AddItem(0, L["Goto"], self.GMenu_OnGoto, self)
     menu:AddItem(0, L["Clear Goto"], self.Menu_OnClearGoto, self)
@@ -3360,6 +3364,7 @@ function Nx.Map:GMenuOpen (icon, typ)
 
     self.GIconMenuITogInst:Show (false)
     self.GIconMenuIFindNote:Show (false)
+    self.GIconMenuIClearKill:Show (false)
 
     if typ == 3000 then
         if icon.UData then
@@ -3369,8 +3374,29 @@ function Nx.Map:GMenuOpen (icon, typ)
         if icon.FavData1 then
             self.GIconMenuIFindNote:Show()
         end
+
+        if icon.iconType == "Kill" or icon.iconType == "Death" then
+            self.GIconMenuIClearKill:Show()
+        end
     end
     self.GIconMenu:Open()
+end
+
+---
+-- Remove the underlying kill/death event record for the right-clicked icon.
+-- The render loop in Carbonite.lua (UEvents:UpdateMap) tags each Kill/Death
+-- icon with its source index in Nx.CurCharacter.E; we use that to splice out
+-- the record. The next call to UEvents:UpdateMap (driven by the per-tick map
+-- update) will re-init the icon types and the dropped record won't reappear.
+function Nx.Map:GMenu_OnClearKill()
+    local icon = self.ClickIcon
+    if not icon or not icon.EventIndex then return end
+    local events = Nx.CurCharacter and Nx.CurCharacter.E
+    if not events then return end
+    table.remove(events, icon.EventIndex)
+    if Nx.UEvents and Nx.UEvents.UpdateMap then
+        Nx.UEvents:UpdateMap()
+    end
 end
 
 -------------------------------------------------------------------------------
@@ -3421,9 +3447,9 @@ function Nx.Map:GMenu_OnGoto()
     end
 
     if self.ClickType == 3001 then
-        -- Social/punk target
-        if Nx.Social then
-            Nx.Social:GotoPunk(self.ClickIcon)
+        -- Punk target
+        if Nx.Punks then
+            Nx.Punks:GotoPunk(self.ClickIcon)
         end
     else
         -- Standard icon target
@@ -3443,8 +3469,8 @@ function Nx.Map:GMenu_OnPasteLink()
     local name
 
     if self.ClickType == 3001 then
-        if Nx.Social then
-            name = Nx.Social:GetPunkPasteInfo(self.ClickIcon)
+        if Nx.Punks then
+            name = Nx.Punks:GetPunkPasteInfo(self.ClickIcon)
         end
     else
         local icon = self.ClickIcon
@@ -5487,9 +5513,9 @@ function Nx.Map:Update (elapsed)
         self:UpdateHotspotsDebug()
     end
 --]]
-    if Nx.Social and Nx.scdb then
-        if Nx.scdb.profile.Social.MapShowPunks then
-            Nx.Social:UpdateIcons (self)
+    if Nx.Punks and Nx.pkdb then
+        if Nx.pkdb.profile.Punks.MapShowPunks then
+            Nx.Punks:UpdateIcons (self)
         end
     end
 

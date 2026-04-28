@@ -3357,25 +3357,53 @@ function Nx.UEvents:UpdateMap (upGuide)
             m.Guide:Update()
         end
 
-        m:InitIconType ("Kill", nil, "Interface\\TargetingFrame\\UI-TargetingFrame-Skull", 16, 16)
-        m:InitIconType ("Death", nil, "Interface\\TargetingFrame\\UI-TargetingFrame-Seal", 16, 16)
+        -- "WP" draw mode + 32x32 makes these scale the same as RareScanner /
+        -- Notes pins (much smaller on screen than ZP-mode icons would be).
+        -- SetIconTypeChop / NoDockMinimap match the way other WP icon types
+        -- behave on a docked minimap.
+        m:InitIconType ("Kill", "WP", "Interface\\TargetingFrame\\UI-TargetingFrame-Skull", 32, 32)
+        m:InitIconType ("Death", "WP", "Interface\\TargetingFrame\\UI-TargetingFrame-Seal", 32, 32)
+        m:SetIconTypeChop ("Kill", true)
+        m:SetIconTypeChop ("Death", true)
+        m:SetIconTypeNoDockMinimap ("Kill", true)
+        m:SetIconTypeNoDockMinimap ("Death", true)
 
         local icon
 
-        for k, item in ipairs (Nx.CurCharacter.E) do
+        -- Read kill-icon settings from Carbonite.Info if loaded; default to
+        -- "show, no auto-expire" when Info isn't present.
+        local killEnabled = true
+        local autoClearSecs = 0
+        if Nx.idb and Nx.idb.profile and Nx.idb.profile.Info then
+            killEnabled = Nx.idb.profile.Info.KillIcons
+            autoClearSecs = Nx.idb.profile.Info.KillIconAutoClearSecs or 0
+        end
 
+        local now = Nx:Time()
+        local events = Nx.CurCharacter.E
+
+        -- Walk in reverse so we can splice expired entries out in-place.
+        for k = #events, 1, -1 do
+            local item = events[k]
             local iMapId = Nx:GetEventMapId (item)
+            local typ, tm, _, x, y, text = Nx:UnpackEvent (item)
+            local isKillish = (typ == "K" or typ == "D")
 
-            if iMapId == mapId then
-
-                local typ, _, _, x, y, text = Nx:UnpackEvent (item)
-
+            -- Auto-expire kill/death events when the user enabled the timer.
+            -- Pruning here keeps the saved-vars list from growing forever.
+            -- Nx:Time() returns time()*100 + sub-second sequence; multiply
+            -- the threshold by 100 so we're comparing in matching units.
+            if isKillish and autoClearSecs > 0 and tm and (now - tm) > autoClearSecs * 100 then
+                table.remove(events, k)
+            elseif iMapId == mapId and isKillish and killEnabled then
+                local wx, wy = m:GetWorldPos (iMapId, x, y)
                 if typ == "K" then
-                    icon = m:AddIconPt ("Kill", x, y)
+                    icon = m:AddIconPt ("Kill", wx, wy)
+                    icon.EventIndex = k
                     m:SetIconTip (icon, text)
-
                 elseif typ == "D" then
-                    icon = m:AddIconPt ("Death", x, y)
+                    icon = m:AddIconPt ("Death", wx, wy)
+                    icon.EventIndex = k
                     m:SetIconTip (icon, text)
                 end
             end

@@ -64,7 +64,11 @@ local defaults = {
 			InfoFont = "Arial",
 			InfoFontSize = 11,
 			InfoFontSpacing = 0,
-
+			-- Kill marker icons (skull) on the Carbonite map. PARTY_KILL events
+			-- captured by the combat tracker get persisted as map events and
+			-- rendered as Skull icons by Nx.UEvents:UpdateMap.
+			KillIcons = true,                -- Drop entirely if false
+			KillIconAutoClearSecs = 0,       -- 0 = keep forever; >0 = expire after N seconds
 		},
 	},
 }
@@ -166,9 +170,37 @@ local function createOptions()
 						Nx.Opts:NXCmdFontChange()
 					end,
 				},
+				KillIconsHeader = {
+					order = 10,
+					type = "header",
+					name = L["Kill Icons"] or "Kill Icons",
+				},
+				KillIconsEnable = {
+					order = 11,
+					type = "toggle",
+					width = "full",
+					name = L["Show kill markers on map"] or "Show kill markers on map",
+					desc = L["When enabled, killed mobs leave a skull icon on your map at the kill location"]
+						or "When enabled, killed mobs leave a skull icon on your map at the kill location",
+					get = function() return Nx.idb.profile.Info.KillIcons end,
+					set = function() Nx.idb.profile.Info.KillIcons = not Nx.idb.profile.Info.KillIcons end,
+				},
+				KillIconAutoClearSecs = {
+					order = 12,
+					type = "range",
+					name = L["Auto-clear kill markers after"] or "Auto-clear kill markers after",
+					desc = L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"]
+						or "Seconds before a kill marker disappears automatically. 0 = never (manual clear only)",
+					min = 0,
+					max = 180,
+					step = 5,
+					bigStep = 15,
+					get = function() return Nx.idb.profile.Info.KillIconAutoClearSecs end,
+					set = function(_, value) Nx.idb.profile.Info.KillIconAutoClearSecs = value end,
+				},
 			},
 		}
-	end	
+	end
 	Nx.Opts:AddToProfileMenu(L["Info"],2,Nx.idb)	
 	return options
 end
@@ -194,8 +226,34 @@ function CarboniteInfo:OnInitialize()
 	Nx.NXMiniMapBut.Menu:AddItem(0, L["Show Combat Graph"], func, Nx.NXMiniMapBut)
 	CarboniteInfo:RegisterEvent("PLAYER_LOGIN")
 	CarboniteInfo:RegisterComm("carbmodule",Nx.Info.OnChat_msg_addon)
+
+	-- Periodically nudge UEvents:UpdateMap so kill/death events past their
+	-- auto-clear threshold actually get pruned + redrawn. UpdateMap is normally
+	-- only called on zone change, which isn't enough when the user is standing
+	-- around expecting markers to fade after N seconds. Cheap call (just walks
+	-- the events list and re-acquires icons), so a 5s cadence is fine.
+	Nx.Info.KillExpireTicker = C_Timer.NewTicker(5, function()
+		local secs = Nx.idb and Nx.idb.profile.Info and Nx.idb.profile.Info.KillIconAutoClearSecs
+		if secs and secs > 0 and Nx.UEvents and Nx.UEvents.UpdateMap then
+			Nx.UEvents:UpdateMap()
+		end
+	end)
 	tinsert(Nx.BrokerMenuTemplate,{ text = L["Toggle Info Windows"], func = function() Nx.Info:ToggleShow()end })
 	tinsert(Nx.BrokerMenuTemplate,{ text = L["Toggle Combat Graph"], func = function() Nx.Info.Combat:Open() end })
+
+	-- Map toolbar button: same widget that hosts Guide / Notes / Warehouse / etc.
+	Nx.Button.TypeData["MapInfo"] = {
+		Up = "$INV_Misc_Note_05",
+		SizeUp = 22,
+		SizeDn = 22,
+	}
+	function Nx.Info.OnButToggleInfo(self, but)
+		Nx.Info:ToggleShow()
+	end
+	tinsert(Nx.BarData, {"MapInfo", L["Info"], Nx.Info.OnButToggleInfo, false})
+	if Nx.Map and Nx.Map.Maps and Nx.Map.Maps[1] then
+		Nx.Map.Maps[1]:CreateToolBar()
+	end
 end
 
 function CarboniteInfo:PLAYER_LOGIN()
@@ -1640,7 +1698,10 @@ function Nx.Info.Combat:OnEvent (event, ...)
 			elseif cEvent == "PARTY_KILL" then
 
 				Combat:SetLine (-1, "e02020", L["Killed"] .. " " .. dName)
-				UEvents:AddKill (dName)
+				-- Skip persisting a map event when kill markers are disabled.
+				if Nx.idb and Nx.idb.profile.Info.KillIcons then
+					UEvents:AddKill (dName)
+				end
 			end
 
 		elseif bit.band (dFlags, OBJ_AFFILIATION_MINE) > 0 then

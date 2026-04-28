@@ -40,3 +40,10 @@ L["Reset old info data %f"] = "Reset vecchi dati info %f"
 L[" begins? in (%d+) "] = " inizio? in (%d+) "
 L["(%d+) minutes? until the battle"] = "(%d+) minuti? all'inizio della Battaglia"
 L["Info"] = true
+L["Info"] = "Info"
+-- Kill marker icons (Carbonite map skull/seal markers)
+L["Kill Icons"] = "Icone Uccisioni"
+L["Show kill markers on map"] = "Mostra marcatori di uccisione sulla mappa"
+L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = "Se attivato, i mob uccisi lasciano un'icona del teschio sulla mappa nel luogo dell'uccisione"
+L["Auto-clear kill markers after"] = "Rimuovi marcatori automaticamente dopo"
+L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "Secondi prima che un marcatore scompaia. 0 = mai (solo cancellazione manuale)"

@@ -40,3 +40,10 @@ L["Reset old info data %f"] = true
 L[" begins? in (%d+) "] = true
 L["(%d+) minutes? until the battle"] = true
 L["Info"] = true
+L["Info"] = "資訊"
+-- Kill marker icons (Carbonite map skull/seal markers)
+L["Kill Icons"] = "擊殺圖示"
+L["Show kill markers on map"] = "在地圖上顯示擊殺標記"
+L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = "啟用後，被擊殺的怪物會在擊殺位置留下骷髏圖示"
+L["Auto-clear kill markers after"] = "自動清除擊殺標記的延遲"
+L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "擊殺標記自動消失前的秒數。0 = 永不（僅手動清除）"

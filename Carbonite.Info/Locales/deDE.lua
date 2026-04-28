@@ -33,10 +33,16 @@ L["Delete"] = "L\195\182schen"
 L["Cancel"] = "Abbrechen"
 
 L["One minute until the Arena"] = "Eine Minute bis zum Arenastart"
-L["Thirty seconds until the Arena"] = "Drei\195\159\ig Sekunden bis zum Arenastart"
+L["Thirty seconds until the Arena"] = "Drei\195\159ig Sekunden bis zum Arenastart"
 L["Fifteen seconds until the Arena"] = "F\195\188nfzehn Sekunden bis zum Arenastart"
 
 L["Reset old info data %f"] = "Alte Info-Daten zur\195\188cksetzen"
 L[" begins? in (%d+) "] = " startet? in (%d+) "
 L["(%d+) minutes? until the battle"] = "(%d+) Minuten? bis zur Schlacht"
 L["Info"] = "Info"
+-- Kill marker icons (Carbonite map skull/seal markers)
+L["Kill Icons"] = "Tötungssymbole"
+L["Show kill markers on map"] = "Tötungsmarkierungen auf der Karte anzeigen"
+L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = "Wenn aktiviert, hinterlassen getötete Mobs ein Totenkopfsymbol an der Tötungsstelle auf deiner Karte"
+L["Auto-clear kill markers after"] = "Tötungsmarkierungen automatisch entfernen nach"
+L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "Sekunden bis zum automatischen Verschwinden. 0 = nie (nur manuelle Löschung)"
