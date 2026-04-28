@@ -10552,7 +10552,7 @@ function Nx.Map:IconOnEnter(motion)
     if this.NXData then
         if this.NXData.iconType == "!RSR" and RareScanner then
             local rspin = this.NXData.UData
-            if rspin then
+            if rspin and rspin.OnMouseEnter then
                 rspin:OnMouseEnter()
                 tooltip = ExtToolTip:Acquire("RsSimpleMapToolTip")
                 tooltip:SmartAnchorTo(self)
@@ -10561,18 +10561,22 @@ function Nx.Map:IconOnEnter(motion)
         end
 
         if this.NXData.iconType == "!QUE" and Questie then
+            -- qpin here is Questie's IconFrame (formerly the HBD pin's `.icon`).
+            -- Tooltip text comes from QuestieTooltips lookups against the
+            -- frame's IconData (qpin.data); the old code's qpin:OnMouseEnter()
+            -- was a vestigial no-op on the HBD pin and has been removed.
             local qpin = this.NXData.UData
-            qpin:OnMouseEnter()
+            local data = qpin and qpin.data
             local QuestieTooltips = QuestieLoader and QuestieLoader._modules["QuestieTooltips"]
             local TooltipText = ""
-            if QuestieTooltips then
-                if qpin.icon and qpin.icon.data.Type == "available" then
-                    local TooltipKeys = QuestieTooltips.lookupKeysByQuestId[qpin.icon.data.Id]
+            if QuestieTooltips and data then
+                if data.Type == "available" then
+                    local TooltipKeys = QuestieTooltips.lookupKeysByQuestId[data.Id]
                     if TooltipKeys then
                         for _, TooltipKey in ipairs(TooltipKeys) do
                             local TooltipLines = QuestieTooltips.GetTooltip(TooltipKey)
                             for _, TooltipData in pairs(QuestieTooltips.lookupByKey[TooltipKey]) do
-                                if TooltipData.name == qpin.icon.data.Name then
+                                if TooltipData.name == data.Name then
                                     TooltipText = format("|cff00ff00%s", TooltipData.name)
                                     if TooltipLines then
                                         TooltipText = TooltipText .. "\n" .. table.concat(TooltipLines, "\n")
@@ -10582,10 +10586,10 @@ function Nx.Map:IconOnEnter(motion)
                         end
                     end
                 else
-                    if qpin.icon and qpin.icon.data.ObjectiveTargetId then
-                        TooltipLines = QuestieTooltips.GetTooltip("m_" .. qpin.icon.data.ObjectiveTargetId)
-                                    or QuestieTooltips.GetTooltip("o_" .. qpin.icon.data.ObjectiveTargetId)
-                                    or QuestieTooltips.GetTooltip("i_" .. qpin.icon.data.ObjectiveTargetId)
+                    if data.ObjectiveTargetId then
+                        TooltipLines = QuestieTooltips.GetTooltip("m_" .. data.ObjectiveTargetId)
+                                    or QuestieTooltips.GetTooltip("o_" .. data.ObjectiveTargetId)
+                                    or QuestieTooltips.GetTooltip("i_" .. data.ObjectiveTargetId)
                         if TooltipLines then
                             if TooltipText == "" then
                                 TooltipText = table.concat(TooltipLines, "\n")
@@ -10832,13 +10836,15 @@ function Nx.Map:IconOnLeave(motion)
     if this.NXData and type(this.NXData) == "table" then
         if this.NXData.iconType == "!RSR" and RareScanner then
             local rspin = this.NXData.UData
-            rspin:OnMouseLeave()
-            this.NxTip = rspin.POI.name
+            if rspin and rspin.OnMouseLeave then
+                rspin:OnMouseLeave()
+            end
+            if rspin and rspin.POI then
+                this.NxTip = rspin.POI.name
+            end
         end
-        if this.NXData.iconType == "!QUE" and Questie then
-            local qpin = this.NXData.UData
-            qpin:OnMouseLeave()
-        end
+        -- Questie icon frames have no OnMouseLeave method; the original
+        -- qpin:OnMouseLeave() call was a no-op on the HBD pin.
     end
 
     -- Quest icon leave handling
