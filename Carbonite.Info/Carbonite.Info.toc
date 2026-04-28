@@ -1,0 +1,16 @@
+## Interface: 11508, 20505, 30403, 40402, 50503, 110005, 120000, 120001
+## Title: Carbonite Info @project-version@
+## Version: @project-version@
+## Author: No One
+## Notes: Released Under GPL
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: NXInfo
+## RequiredDeps: Carbonite
+## IconTexture: Interface\AddOns\Carbonite\Gfx\MMBut.tga
+
+## X-WoWI-ID: 23405
+## X-Curse-Project-ID: 87978
+
+Locales\locales.xml
+NxInfo.lua

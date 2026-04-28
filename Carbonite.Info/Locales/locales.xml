@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<Include file="enUS.lua"/>
+	<Include file="deDE.lua"/>
+	<Include file="esES.lua"/>
+	<Include file="esMX.lua"/>
+	<Include file="frFR.lua"/>
+	<Include file="itIT.lua"/>
+	<Include file="koKR.lua"/>
+	<Include file="ptBR.lua"/>
+	<Include file="ruRU.lua"/>
+	<Include file="zhTW.lua"/>
+	<Include file="zhCN.lua"/>
+</Ui>
