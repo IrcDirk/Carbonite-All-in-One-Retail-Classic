@@ -47,3 +47,6 @@ L["Show kill markers on map"] = "지도에 처치 표시 보이기"
 L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = "활성화 시, 처치한 몬스터의 위치에 해골 아이콘이 지도에 표시됩니다"
 L["Auto-clear kill markers after"] = "처치 표시 자동 제거 시간"
 L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "처치 표시가 자동으로 사라지는 시간(초). 0 = 사용 안 함 (수동 제거만)"
+
+L["Keep kill history"] = "처치 기록 영구 보관"
+L["When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log."] = "활성화 시, 자동 제거 타이머는 표시만 숨기고 기록은 보존합니다. 영구 처치 일지로 유용합니다."

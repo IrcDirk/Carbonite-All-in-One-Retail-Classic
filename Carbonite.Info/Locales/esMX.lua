@@ -47,3 +47,6 @@ L["Show kill markers on map"] = "Mostrar marcadores de muerte en el mapa"
 L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = "Cuando se activa, los enemigos muertos dejan un icono de calavera en el lugar de la muerte"
 L["Auto-clear kill markers after"] = "Borrar marcadores de muerte tras"
 L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "Segundos antes de que un marcador desaparezca. 0 = nunca (solo borrado manual)"
+
+L["Keep kill history"] = "Conservar historial de muertes para siempre"
+L["When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log."] = "Cuando se activa, el temporizador solo oculta los marcadores expirados pero conserva los registros. Útil como registro permanente de muertes."

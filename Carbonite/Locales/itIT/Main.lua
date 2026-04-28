@@ -182,3 +182,9 @@ L[" %.1f deg"] = true
 L[" %d deg"] = true
 L["Remove Current Point"] = true
 L["Remove All Points"] = true
+
+-- Carbonite.Info kill-marker tooltip
+L["kill"] = "uccisione"
+L["death"] = "morte"
+L["kills: %s"] = "uccisioni: %s"
+L["NPC ID: %s"] = "ID PNG: %s"

@@ -43,3 +43,5 @@ L["Show kill markers on map"] = true
 L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = true
 L["Auto-clear kill markers after"] = true
 L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = true
+L["Keep kill history"] = true
+L["When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log."] = true

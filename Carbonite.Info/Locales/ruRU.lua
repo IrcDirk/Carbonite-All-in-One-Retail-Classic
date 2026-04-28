@@ -46,3 +46,5 @@ L["Show kill markers on map"] = "Показывать метки убийств 
 L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = "Если включено, убитые мобы оставляют иконку черепа на карте в месте убийства"
 L["Auto-clear kill markers after"] = "Удалять метки убийств через"
 L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "Секунд до автоматического удаления метки убийства. 0 = никогда (только ручная очистка)"
+L["Keep kill history"] = "Хранить историю убийств"
+L["When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log."] = "Если включено, таймер только скрывает истёкшие метки, но сохраняет записи об убийствах. Полезно для постоянного журнала убийств."

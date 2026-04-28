@@ -43,3 +43,6 @@ L["Show kill markers on map"] = "在地图上显示击杀标记"
 L["When enabled, killed mobs leave a skull icon on your map at the kill location"] = "启用后，被击杀的怪物会在击杀位置留下骷髅图标"
 L["Auto-clear kill markers after"] = "自动清除击杀标记的延迟"
 L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "击杀标记自动消失前的秒数。0 = 永不（仅手动清除）"
+
+L["Keep kill history"] = "永久保留击杀历史"
+L["When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log."] = "启用后，自动清除计时器仅隐藏过期标记，但保留击杀记录。可用作永久击杀日志。"

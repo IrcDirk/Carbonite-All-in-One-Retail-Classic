@@ -179,3 +179,9 @@ L[" %.1f deg"] = " %.1f град."
 L[" %d deg"] = " %d град."
 L["Remove Current Point"] = "Удалить текущую точку"
 L["Remove All Points"] = "Удалить все точки"
+
+-- Carbonite.Info kill-marker tooltip
+L["kill"] = "убийство"
+L["death"] = "смерть"
+L["kills: %s"] = "убийств: %s"
+L["NPC ID: %s"] = "ID моба: %s"

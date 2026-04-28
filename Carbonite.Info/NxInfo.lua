@@ -66,12 +66,16 @@ local defaults = {
 			InfoFontSpacing = 0,
 			-- Kill marker icons (skull) on the Carbonite map. PARTY_KILL events
 			-- captured by the combat tracker get persisted as map events and
-			-- rendered as Skull icons by Nx.UEvents:UpdateMap.
-			-- Default OFF — the markers accumulate quickly during normal play
-			-- and the historical "you killed X here" record is rarely useful.
-			-- Users who want them can enable in the Info options panel.
-			KillIcons = false,
-			KillIconAutoClearSecs = 0,       -- 0 = keep forever; >0 = expire after N seconds
+			-- rendered as Skull icons by Nx.UEvents:UpdateMap. Tooltip shows
+			-- the kill timestamp and NPC ID, so the markers are now genuinely
+			-- useful as a "where did I last kill X" reference.
+			KillIcons = true,
+			KillIconAutoClearSecs = 0,       -- 0 = never hide; >0 = hide after N seconds
+			-- When true, the auto-clear timer only HIDES expired markers but
+			-- preserves the underlying records in saved variables. Useful as
+			-- a permanent kill log for later inspection. When false (default),
+			-- expired markers are pruned from saved data on render.
+			KillIconKeepForever = false,
 		},
 	},
 }
@@ -188,8 +192,18 @@ local function createOptions()
 					get = function() return Nx.idb.profile.Info.KillIcons end,
 					set = function() Nx.idb.profile.Info.KillIcons = not Nx.idb.profile.Info.KillIcons end,
 				},
-				KillIconAutoClearSecs = {
+				KillIconKeepForever = {
 					order = 12,
+					type = "toggle",
+					width = "full",
+					name = L["Keep kill history"] or "Keep kill history",
+					desc = L["When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log."]
+						or "When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log.",
+					get = function() return Nx.idb.profile.Info.KillIconKeepForever end,
+					set = function() Nx.idb.profile.Info.KillIconKeepForever = not Nx.idb.profile.Info.KillIconKeepForever end,
+				},
+				KillIconAutoClearSecs = {
+					order = 13,
 					type = "range",
 					name = L["Auto-clear kill markers after"] or "Auto-clear kill markers after",
 					desc = L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"]
@@ -1703,7 +1717,15 @@ function Nx.Info.Combat:OnEvent (event, ...)
 				Combat:SetLine (-1, "e02020", L["Killed"] .. " " .. dName)
 				-- Skip persisting a map event when kill markers are disabled.
 				if Nx.idb and Nx.idb.profile.Info.KillIcons then
-					UEvents:AddKill (dName)
+					-- destGUID format: Creature-0-srv-instance-zone-npcID-spawn
+					-- Parse out the npcID so we can include it in the tooltip
+					-- and have a stable identifier across renames / language.
+					local npcId
+					if dId then
+						local _, _, _, _, _, id = strsplit("-", dId)
+						npcId = tonumber(id)
+					end
+					UEvents:AddKill (dName, npcId)
 				end
 			end
 

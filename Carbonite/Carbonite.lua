@@ -2721,7 +2721,7 @@ function Nx:AddDeathEvent (name, time, mapId, x, y)
     self:AddEvent ("D", name, time, mapId, x, y)
 end
 
-function Nx:AddKillEvent (name, time, mapId, x, y)
+function Nx:AddKillEvent (name, time, mapId, x, y, npcId)
 
     local ev = self.CurCharacter.E
 
@@ -2736,7 +2736,16 @@ function Nx:AddKillEvent (name, time, mapId, x, y)
         end
     end
 
-    self:AddEvent ("K", name, time, mapId, x, y, format ("%d", kills))
+    -- Pack kills count and NPC ID into the single data field with a "|"
+    -- separator. Old records had just "<kills>"; the parser below tolerates
+    -- both "<kills>" and "<kills>|<npcId>".
+    local data
+    if npcId then
+        data = format("%d|%d", kills, npcId)
+    else
+        data = format("%d", kills)
+    end
+    self:AddEvent ("K", name, time, mapId, x, y, data)
 end
 
 function Nx:AddHerbEvent (name, time, mapId, x, y)
@@ -3091,17 +3100,16 @@ end
 
 ---
 -- Add a kill event
--- @param name  Name of killed enemy
+-- @param name   Name of killed enemy
+-- @param npcId  Optional NPC ID (parsed from the destGUID by the caller)
 --
-function Nx.UEvents:AddKill (name)
+function Nx.UEvents:AddKill (name, npcId)
 
     local mapId, x, y = self:GetPlyrPos()
 
-    Nx:AddKillEvent (name, Nx:Time(), mapId, x, y)
+    Nx:AddKillEvent (name, Nx:Time(), mapId, x, y, npcId)
 
     self:UpdateAll()
-
---    Nx:SendComm (2, "Killed "..name)
 end
 
 ---
@@ -3374,39 +3382,68 @@ function Nx.UEvents:UpdateMap (upGuide)
         -- "show, no auto-expire" when Info isn't present.
         local killEnabled = true
         local autoClearSecs = 0
+        local keepForever = false
         if Nx.idb and Nx.idb.profile and Nx.idb.profile.Info then
             killEnabled = Nx.idb.profile.Info.KillIcons
             autoClearSecs = Nx.idb.profile.Info.KillIconAutoClearSecs or 0
+            keepForever = Nx.idb.profile.Info.KillIconKeepForever or false
         end
 
         local now = Nx:Time()
         local events = Nx.CurCharacter.E
 
-        -- Walk in reverse so we can splice expired entries out in-place.
+        -- Build a multi-line tooltip for kill/death markers: branding line,
+        -- name, kill time (decoded from the *100 Nx:Time() format), and an
+        -- optional NPC ID line when the captured destGUID supplied one.
+        local function buildKillTip(name, tm, dataField, isDeath)
+            local realTm = tm and math.floor(tm / 100) or 0
+            local timeStr = realTm > 0 and date("%H:%M:%S  %Y-%m-%d", realTm) or "?"
+            local kills, npcId = strsplit("|", dataField or "")
+            local label = isDeath
+                and ("[Carbonite.Info  " .. (L["death"] or "death") .. "]")
+                or  ("[Carbonite.Info  " .. (L["kill"] or "kill") .. "]")
+            local lines = {
+                "|cff8080ff" .. label .. "|r",
+                name or "?",
+                "|cffa0a0a0" .. timeStr .. "|r",
+            }
+            if kills and tonumber(kills) and tonumber(kills) > 1 then
+                lines[#lines + 1] = "|cffa0a0a0" .. format(L["kills: %s"] or "kills: %s", kills) .. "|r"
+            end
+            if npcId and npcId ~= "" then
+                lines[#lines + 1] = "|cffa0a0a0" .. format(L["NPC ID: %s"] or "NPC ID: %s", npcId) .. "|r"
+            end
+            return table.concat(lines, "\n")
+        end
+
+        -- Walk in reverse so we can splice expired entries when the user has
+        -- NOT opted into "keep history forever". With KeepForever the timer
+        -- only suppresses display — the records remain in saved variables.
         for k = #events, 1, -1 do
             local item = events[k]
             local iMapId = Nx:GetEventMapId (item)
-            local typ, tm, _, x, y, text = Nx:UnpackEvent (item)
+            local typ, tm, _, x, y, text, data = Nx:UnpackEvent (item)
             local isKillish = (typ == "K" or typ == "D")
 
-            -- Auto-expire kill/death events when the user enabled the timer.
-            -- Pruning here keeps the saved-vars list from growing forever.
-            -- Nx:Time() returns time()*100 + sub-second sequence; multiply
-            -- the threshold by 100 so we're comparing in matching units.
-            if isKillish and autoClearSecs > 0 and tm and (now - tm) > autoClearSecs * 100 then
+            -- Nx:Time() = time()*100 + frac, so threshold needs *100 too.
+            local expired = isKillish and autoClearSecs > 0 and tm
+                                and (now - tm) > autoClearSecs * 100
+
+            if expired and not keepForever then
                 table.remove(events, k)
-            elseif iMapId == mapId and isKillish and killEnabled then
+            elseif iMapId == mapId and isKillish and killEnabled and not expired then
                 local wx, wy = m:GetWorldPos (iMapId, x, y)
                 if typ == "K" then
                     icon = m:AddIconPt ("Kill", wx, wy)
                     icon.EventIndex = k
-                    m:SetIconTip (icon, text)
+                    m:SetIconTip (icon, buildKillTip(text, tm, data, false))
                 elseif typ == "D" then
                     icon = m:AddIconPt ("Death", wx, wy)
                     icon.EventIndex = k
-                    m:SetIconTip (icon, text)
+                    m:SetIconTip (icon, buildKillTip(text, tm, data, true))
                 end
             end
+            -- expired AND keepForever: silently skip drawing, keep record.
         end
 
     end
