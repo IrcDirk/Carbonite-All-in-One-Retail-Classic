@@ -67,7 +67,10 @@ local defaults = {
 			-- Kill marker icons (skull) on the Carbonite map. PARTY_KILL events
 			-- captured by the combat tracker get persisted as map events and
 			-- rendered as Skull icons by Nx.UEvents:UpdateMap.
-			KillIcons = true,                -- Drop entirely if false
+			-- Default OFF — the markers accumulate quickly during normal play
+			-- and the historical "you killed X here" record is rarely useful.
+			-- Users who want them can enable in the Info options panel.
+			KillIcons = false,
 			KillIconAutoClearSecs = 0,       -- 0 = keep forever; >0 = expire after N seconds
 		},
 	},
