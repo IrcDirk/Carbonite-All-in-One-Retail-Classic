@@ -2427,10 +2427,21 @@ function Nx.Map:MinimapOnMouseUp(button)
     local map = Nx.Map.Maps[1]
 
     if this.NXPing then
-        if map.MMZoomType == 0 then
-            Minimap_OnClick(this)
-        else
-            map:Ping()
+        -- On retail, both Minimap:OnClick (which calls Minimap:PingLocation
+        -- internally) and our own map:Ping (which also calls PingLocation)
+        -- are forbidden from this tainted Lua path. Skip the ping silently
+        -- on retail — Carbonite-merged minimap pings just aren't available.
+        -- The user can disable MMOwn to get natural Blizzard minimap pings.
+        if not Nx.isRetail then
+            if map.MMZoomType == 0 then
+                if _G.Minimap_OnClick then
+                    _G.Minimap_OnClick(this)
+                elseif this.OnClick then
+                    this:OnClick(button or "LeftButton")
+                end
+            else
+                map:Ping()
+            end
         end
     else
         this.NxMap = map

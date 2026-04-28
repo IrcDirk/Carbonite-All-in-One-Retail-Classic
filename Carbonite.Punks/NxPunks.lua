@@ -21,6 +21,28 @@ Nx.Punks.Cols = {}                  -- Color cache (parsed from profile strings)
 CarbonitePunks = LibStub("AceAddon-3.0"):NewAddon("CarbonitePunks", "AceTimer-3.0", "AceEvent-3.0", "AceComm-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite.Punks", true)
 
+-- Combat-log event registration on retail is hyper-restricted: registering
+-- COMBAT_LOG_EVENT_UNFILTERED from any execution path Blizzard considers
+-- "tainted" is blocked, and the secure check fires *before* pcall can
+-- catch it (it's a C-level check, not a Lua error). With other Ace-based
+-- addons / Swatter / etc. loaded, even file load and PLAYER_LOGIN paths
+-- inherit taint, so the call is unsafe to even attempt on retail.
+--
+-- Skip CLEU entirely on retail; the per-second ticker in OnInitialize
+-- handles target/mouseover detection, which covers the common cases.
+-- Classic flavors don't have this restriction and register normally.
+local IS_RETAIL = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
+
+if not IS_RETAIL then
+	local PunksCombatLogFrame = CreateFrame("Frame")
+	PunksCombatLogFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	PunksCombatLogFrame:SetScript("OnEvent", function(_, event, ...)
+		if Nx and Nx.Punks and Nx.pkdb then
+			CarbonitePunks:OnCombat_log_event_unfiltered(event, ...)
+		end
+	end)
+end
+
 -- Inline class-icon markup using Blizzard's standard class-icon atlas.
 -- Returns "" when classFile is unknown so callers can concatenate freely.
 local CLASS_ICON_TEX = "Interface\\TargetingFrame\\UI-Classes-Circles"
@@ -328,7 +350,9 @@ function CarbonitePunks:OnInitialize()
 
 	Nx.Punks:Init()
 
-	CarbonitePunks:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", "OnCombat_log_event_unfiltered")
+	-- Combat log frame was registered at file-load (top-level) to avoid
+	-- the tainted-execution-path block on retail; nothing to wire here.
+
 	Nx.Punks.UpdateTicker = C_Timer.NewTicker(1, function()
 		CarbonitePunks:On_Event("FORCE_UPDATE")
 		Nx.Punks:OnUpdateTimer()
