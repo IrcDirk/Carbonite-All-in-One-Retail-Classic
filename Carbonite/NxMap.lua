@@ -5617,9 +5617,34 @@ function Nx.Map:Update (elapsed)
 
             local bgPOIs = C_PvP.GetBattlefieldVehicles(rid) or {}
 
+            -- Add vignettes (Bliz "special" map markers — Renown Quartermasters,
+            -- world-event NPCs, some rares, etc.). They live on a separate
+            -- C_VignetteInfo API that the AreaPOI/QuestHub/Event fetches don't
+            -- cover. We map the vignette's position-in-this-map to the same
+            -- shape as zPOI entries (position + name + atlasName) so the
+            -- existing render loop draws them without further changes.
+            local vPOIs = {}
+            if C_VignetteInfo and C_VignetteInfo.GetVignettes then
+                local vGUIDs = C_VignetteInfo.GetVignettes() or {}
+                for _, guid in ipairs(vGUIDs) do
+                    local vInfo = C_VignetteInfo.GetVignetteInfo(guid)
+                    if vInfo and vInfo.onWorldMap then
+                        local pos = C_VignetteInfo.GetVignettePosition and C_VignetteInfo.GetVignettePosition(guid, rid)
+                        if pos then
+                            vPOIs[#vPOIs + 1] = {
+                                position = pos,
+                                name = vInfo.name,
+                                atlasName = vInfo.atlasName,
+                                description = vInfo.description,
+                            }
+                        end
+                    end
+                end
+            end
+
             -- Use pooled table for concatenation
             zPOIs = POI_Pool.zPOIs
-            Nx.ArrayConcatReuse(zPOIs, tPOIs, pPOIs, dPOIs, aPOIs, bgPOIs)
+            Nx.ArrayConcatReuse(zPOIs, tPOIs, pPOIs, dPOIs, aPOIs, bgPOIs, vPOIs)
 
             -- Cache the POI data
             POI_Cache.mapID = rid

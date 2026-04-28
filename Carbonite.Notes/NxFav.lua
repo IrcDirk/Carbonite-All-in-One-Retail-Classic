@@ -273,7 +273,6 @@ local function notesConfig()
                         return true
                     end,
                 },
-
             },
         }
     end
@@ -2142,7 +2141,12 @@ function Nx.Notes:RareScanner(mapId)
         if pool then
             for pin in pool:EnumerateActive() do
                 local poi = pin.POI
-                local nx, ny = pin.normalizedX, pin.normalizedY
+                -- Retail RareScanner's RSPinMixin stores normalized coords on
+                -- pin.x / pin.y (not the Blizzard-standard pin.normalizedX/Y).
+                -- Classic RS uses MapCanvasPinMixin which sets normalizedX/Y.
+                -- Try both so dragon-glyph pins (retail-only path) render too.
+                local nx = pin.normalizedX or pin.x
+                local ny = pin.normalizedY or pin.y
                 if poi then
                     if poi.isGroup and poi.POIs then
                         for _, subPOI in ipairs(poi.POIs) do
@@ -2166,7 +2170,12 @@ function Nx.Notes:RareScanner(mapId)
             for pin in pool:EnumerateActive() do
                 local parent = pin.pin
                 local poi = parent and parent.POI
-                local nx, ny = pin.normalizedX, pin.normalizedY
+                -- Retail RareScanner's RSPinMixin stores normalized coords on
+                -- pin.x / pin.y (not the Blizzard-standard pin.normalizedX/Y).
+                -- Classic RS uses MapCanvasPinMixin which sets normalizedX/Y.
+                -- Try both so dragon-glyph pins (retail-only path) render too.
+                local nx = pin.normalizedX or pin.x
+                local ny = pin.normalizedY or pin.y
                 if poi and parent and (nx ~= parent.normalizedX or ny ~= parent.normalizedY) then
                     local tex = pin.Texture and pin.Texture.GetTexture and pin.Texture:GetTexture()
                     local color = "FFFFFF"
