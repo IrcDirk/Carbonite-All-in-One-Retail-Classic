@@ -1308,6 +1308,109 @@ function Nx.Skin:Init()
             ["BdCol"] = ".8|1|1|.8",
             ["BgCol"] = ".125|.125|.125|.88",        -- { .125, .125, .125, .88 },
         },
+        -- Modern themes. The chrome uses Blizzard's ChatBubble border (a
+        -- thin, clean 1-pixel-feel edge) which holds up at high UI scales
+        -- where the legacy 8x8 EdgeSquare looks fuzzy. BdColResolve is a
+        -- function-valued override read by Skin:Update() so themes can
+        -- pick up live game state (class, faction).
+        ["Modern Dark"] = {
+            ["Folder"] = "",
+            ["WinBrH"] = "WinBrH",
+            ["WinBrV"] = "WinBrV",
+            ["TabOff"] = "TabOff",
+            ["TabOn"] = "TabOn",
+            ["Backdrop"] = {
+                ["bgFile"]   = "Interface\\Buttons\\White8x8",
+                ["edgeFile"] = "Interface\\Tooltips\\UI-Tooltip-Border",
+                ["tile"]     = true,
+                ["tileSize"] = 9,
+                ["edgeSize"] = 9,
+                ["insets"]   = { ["left"] = 1, ["right"] = 1, ["top"] = 1, ["bottom"] = 1 }
+            },
+            ["BdCol"] = "0.30|0.36|0.46|0.95",
+            ["BgCol"] = "0.06|0.07|0.10|0.92",
+        },
+        ["Modern Light"] = {
+            ["Folder"] = "",
+            ["WinBrH"] = "WinBrH",
+            ["WinBrV"] = "WinBrV",
+            ["TabOff"] = "TabOff",
+            ["TabOn"] = "TabOn",
+            ["Backdrop"] = {
+                ["bgFile"]   = "Interface\\Buttons\\White8x8",
+                ["edgeFile"] = "Interface\\Tooltips\\UI-Tooltip-Border",
+                ["tile"]     = true,
+                ["tileSize"] = 9,
+                ["edgeSize"] = 9,
+                ["insets"]   = { ["left"] = 1, ["right"] = 1, ["top"] = 1, ["bottom"] = 1 }
+            },
+            ["BdCol"] = "0.50|0.55|0.65|0.95",
+            ["BgCol"] = "0.88|0.88|0.92|0.92",
+        },
+        ["Glass"] = {
+            ["Folder"] = "",
+            ["WinBrH"] = "WinBrH",
+            ["WinBrV"] = "WinBrV",
+            ["TabOff"] = "TabOff",
+            ["TabOn"] = "TabOn",
+            ["Backdrop"] = {
+                ["bgFile"]   = "Interface\\Buttons\\White8x8",
+                ["edgeFile"] = "Interface\\Tooltips\\UI-Tooltip-Border",
+                ["tile"]     = true,
+                ["tileSize"] = 9,
+                ["edgeSize"] = 9,
+                ["insets"]   = { ["left"] = 1, ["right"] = 1, ["top"] = 1, ["bottom"] = 1 }
+            },
+            ["BdCol"] = "1|1|1|0.40",
+            ["BgCol"] = "0|0|0|0.40",
+        },
+        ["Class Color"] = {
+            ["Folder"] = "",
+            ["WinBrH"] = "WinBrH",
+            ["WinBrV"] = "WinBrV",
+            ["TabOff"] = "TabOff",
+            ["TabOn"] = "TabOn",
+            ["Backdrop"] = {
+                ["bgFile"]   = "Interface\\Buttons\\White8x8",
+                ["edgeFile"] = "Interface\\Tooltips\\UI-Tooltip-Border",
+                ["tile"]     = true,
+                ["tileSize"] = 9,
+                ["edgeSize"] = 9,
+                ["insets"]   = { ["left"] = 1, ["right"] = 1, ["top"] = 1, ["bottom"] = 1 }
+            },
+            ["BdCol"] = "0.40|0.55|0.95|0.85",  -- fallback
+            ["BgCol"] = "0.06|0.07|0.10|0.92",
+            ["BdColResolve"] = function()
+                local _, class = UnitClass("player")
+                local cc = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)
+                local c = class and cc and cc[class]
+                if c then
+                    return string.format("%f|%f|%f|0.90", c.r, c.g, c.b)
+                end
+            end,
+        },
+        ["Faction"] = {
+            ["Folder"] = "",
+            ["WinBrH"] = "WinBrH",
+            ["WinBrV"] = "WinBrV",
+            ["TabOff"] = "TabOff",
+            ["TabOn"] = "TabOn",
+            ["Backdrop"] = {
+                ["bgFile"]   = "Interface\\Buttons\\White8x8",
+                ["edgeFile"] = "Interface\\Tooltips\\UI-Tooltip-Border",
+                ["tile"]     = true,
+                ["tileSize"] = 9,
+                ["edgeSize"] = 9,
+                ["insets"]   = { ["left"] = 1, ["right"] = 1, ["top"] = 1, ["bottom"] = 1 }
+            },
+            ["BdCol"] = "0.40|0.55|0.95|0.85",  -- fallback (Alliance-ish)
+            ["BgCol"] = "0.06|0.07|0.10|0.92",
+            ["BdColResolve"] = function()
+                local f = UnitFactionGroup("player")
+                if f == "Alliance" then return "0.18|0.45|0.95|0.90" end
+                if f == "Horde"    then return "0.85|0.20|0.20|0.90" end
+            end,
+        },
     }
     self:Set (Nx.db.profile.Skin["Name"], true)
 end
@@ -1317,7 +1420,9 @@ function Nx.Skin:Set (skinName, init)
     self.Data = Nx.Skins[skinName or ""]
 
     if not self.Data then
-        skinName = "Tool Blue"
+        -- New default for fresh profiles. Existing users keep whatever
+        -- they had set; only the empty/missing-name case picks this up.
+        skinName = "Modern Dark"
         self.Data = Nx.Skins[skinName]
     end
 
@@ -1337,7 +1442,19 @@ function Nx.Skin:Set (skinName, init)
 end
 
 function Nx.Skin:Update()
-    self.BdCol = { Nx.Util_str2rgba (Nx.db.profile.Skin.WinBdColor) }
+    -- Themes can opt into a live-state border color (e.g. class color,
+    -- faction color) by exposing a BdColResolve function. When present
+    -- it overrides the saved WinBdColor each Update; the saved value
+    -- still acts as the fallback when the resolver returns nil.
+    local data = self.Data
+    local resolved
+    if data and type(data["BdColResolve"]) == "function" then
+        local ok, val = pcall(data.BdColResolve)
+        if ok then resolved = val end
+    end
+    local bdColStr = resolved or Nx.db.profile.Skin.WinBdColor
+
+    self.BdCol = { Nx.Util_str2rgba (bdColStr) }
     self.BgCol = { Nx.Util_str2rgba (Nx.db.profile.Skin.WinSizedBgColor) }
     self.FixedBgCol = { Nx.Util_str2rgba (Nx.db.profile.Skin.WinFixedBgColor) }
 
@@ -1347,6 +1464,13 @@ end
 
 function Nx.Skin:GetBackdrop()
     return self.Data["Backdrop"]
+end
+
+-- Returns the Blizzard NineSlice layout name this theme wants applied,
+-- or nil for legacy-backdrop themes. Used by Nx.Window:ResetBackdrops
+-- to switch between SetBackdrop and NineSliceUtil.ApplyLayoutByName.
+function Nx.Skin:GetNineSliceLayout()
+    return self.Data and self.Data["NineSlice"]
 end
 
 function Nx.Skin:GetBorderCol()
@@ -1985,16 +2109,63 @@ end
 -- Set backdrops of all created windows
 ---------------------------------------------------------------------------------------
 
+-- Region names NineSliceUtil creates on the container.
+local NX_NINESLICE_PIECES = {
+    "TopLeftCorner", "TopRightCorner",
+    "BottomLeftCorner", "BottomRightCorner",
+    "TopEdge", "BottomEdge", "LeftEdge", "RightEdge",
+    "Center",
+}
+
+local function NxClearNineSlice(frm)
+    for i = 1, #NX_NINESLICE_PIECES do
+        local p = frm[NX_NINESLICE_PIECES[i]]
+        if p and p.Hide then
+            p:Hide()
+        end
+    end
+end
+
 function Nx.Window:ResetBackdrops()
 
     if self.Wins then
 
         local bk = Nx.Skin:GetBackdrop()
+        local nsLayout = Nx.Skin:GetNineSliceLayout()
+        -- Verify the named layout actually exists in this flavor's
+        -- NineSliceLayouts registry before calling ApplyLayoutByName.
+        -- The function exists on Cata Classic / TBC Classic but many
+        -- layouts (PortraitFrameTemplate, Dialog, etc.) aren't shipped
+        -- there and Blizzard crashes with "attempt to index nil
+        -- userLayout" if we pass an unknown name.
+        local canNineSlice = false
+        if nsLayout and NineSliceUtil and NineSliceUtil.ApplyLayoutByName
+           and _G.NineSliceLayouts and _G.NineSliceLayouts[nsLayout] then
+            canNineSlice = true
+        end
 
         for win, v in pairs (self.Wins) do
 
             if win.Border then
+                -- Strategy: always apply the legacy backdrop first as a
+                -- guaranteed-visible base layer. When the theme also
+                -- wants nine-slice atlas chrome we layer it on top —
+                -- if atlas resolves it visually replaces the backdrop,
+                -- if atlas fails (textureKit missing, layout
+                -- incompatible with the frame, regions not rendering)
+                -- the legacy backdrop is still there and the window
+                -- is never transparent.
+                if win.Frm._NxNineSliceApplied and not canNineSlice then
+                    NxClearNineSlice(win.Frm)
+                    win.Frm._NxNineSliceApplied = false
+                end
                 win.Frm:SetBackdrop (bk)
+                if canNineSlice then
+                    local ok = pcall(NineSliceUtil.ApplyLayoutByName, win.Frm, nsLayout)
+                    if ok then
+                        win.Frm._NxNineSliceApplied = true
+                    end
+                end
 
                 win.BackgndFade = win.BackgndFadeTarget + .0001        -- Cause refresh
             end
@@ -4224,13 +4395,28 @@ function Nx.Button:Update()
 --            tx:SetVertexColor (1, 1, 1, al)
 --        end
 
-        of:SetPoint ("TOPLEFT", f, -1, 1)
-
-        of:SetWidth (f:GetWidth() + 2)
-        of:SetHeight (f:GetHeight() + 2)
+        of:ClearAllPoints()
+        if self.IsListRow and self.NxListInst and self.NxListInst.Frm then
+            -- Span the OverFrm across the whole list row when this is
+            -- a list-row icon button, so hovering the button highlights
+            -- the entire row (cleaner than just lighting up a 14x14 icon).
+            local listFrm = self.NxListInst.Frm
+            local lineH = self.NxListInst.GetLineH and self.NxListInst:GetLineH() or f:GetHeight()
+            of:SetPoint("TOPLEFT", listFrm, "LEFT", 0, f:GetTop() and (f:GetTop() - listFrm:GetTop() + lineH * 0.5) or 0)
+            of:SetPoint("TOPLEFT", f, "LEFT", -2, lineH * 0.5 - 1)
+            of:SetWidth(listFrm:GetWidth() - 4)
+            of:SetHeight(lineH)
+        else
+            of:SetPoint ("TOPLEFT", f, -1, 1)
+            of:SetWidth (f:GetWidth() + 2)
+            of:SetHeight (f:GetHeight() + 2)
+        end
 
         if self.Pressed then
             of.texture:SetColorTexture (Nx.Util_str2rgba (".188|.188|.5|1"))
+        elseif self.IsListRow then
+            -- Subtler tint for row-wide highlight so it doesn't shout.
+            of.texture:SetColorTexture (Nx.Util_str2rgba ("0.5|0.5|0.7|0.18"))
         else
             of.texture:SetColorTexture (Nx.Util_str2rgba ("0.06|0.06|.250|1"))
         end
@@ -4814,7 +5000,60 @@ end
 -- self = menu instance
 ---------------------------------------------------------------------------------------
 
+-- Returns true if this menu only contains plain text actions and
+-- spacers — no sliders, checkboxes, color pickers, or sub-menus.
+-- Those are the kinds we can safely render via Blizzard's modern
+-- MenuUtil; complex menus fall back to the legacy renderer.
+function Nx.Menu:IsSimpleMenu()
+    for n = 1, #self.Items do
+        local item = self.Items[n]
+        if item.Slider or item.Checked or item.ColorTbl
+           or item.Sub or item.SubMenu or item.GetState then
+            return false
+        end
+    end
+    return true
+end
+
+function Nx.Menu:OpenViaMenuUtil()
+    if not (MenuUtil and MenuUtil.CreateContextMenu) then
+        return false
+    end
+    if not self:IsSimpleMenu() then
+        return false
+    end
+
+    local items = self.Items
+    MenuUtil.CreateContextMenu(UIParent, function(owner, root)
+        for n = 1, #items do
+            local item = items[n]
+            if item.ShowState ~= 0 then
+                if item.Spacer or (item.Text or "") == "" then
+                    if root.CreateDivider then root:CreateDivider() end
+                else
+                    root:CreateButton(item.Text or "", function()
+                        if item.Func then
+                            item.Func(item.User or self, item)
+                        end
+                    end)
+                end
+            end
+        end
+    end)
+    return true
+end
+
 function Nx.Menu:Open()
+
+    -- Route simple menus through Blizzard's modern MenuUtil for the
+    -- native dropdown look. Complex menus (sliders, checkboxes, colour
+    -- pickers, sub-menus) keep the legacy renderer because MenuUtil's
+    -- API doesn't map cleanly to those widgets.
+    local useMenuUtil = Nx.qdb and Nx.qdb.profile and Nx.qdb.profile.Menu
+        and Nx.qdb.profile.Menu.UseMenuUtil
+    if useMenuUtil and self:OpenViaMenuUtil() then
+        return
+    end
 
     if Nx.Menu.Cur then        -- Force current menu to close
         Nx.Menu.Cur:Close()
@@ -5891,6 +6130,11 @@ function Nx.List:CreateButtons()
                 self.Buts[butNum] = but
 
                 but.Frm:SetFrameLevel (f:GetFrameLevel() + 1)
+
+                -- Flag for OverFrm to render row-wide hover highlight
+                -- instead of sized to the small icon button itself.
+                but.IsListRow = true
+                but.NxListInst = self
             end
 
             but.Frm:SetScale (scale)

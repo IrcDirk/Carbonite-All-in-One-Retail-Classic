@@ -10327,6 +10327,32 @@ function Nx.Map:GetIconStatic (levelAdd)
         t:SetAllPoints (f)
         t:SetSnapToPixelGrid(false)
         t:SetTexelSnappingBias(0)
+
+        -- Halo texture used when this icon is the super-tracked POI.
+        -- Drawn behind the main texture (BACKGROUND layer), additive
+        -- blend so it brightens whatever's underneath. Same Blizzard
+        -- texture the world quest icons already use for their glow.
+        local g = f:CreateTexture(nil, "BACKGROUND")
+        f.NxGlow = g
+        g:SetTexture("Interface\\WorldMap\\UI-QuestPoi-IconGlow")
+        g:SetBlendMode("ADD")
+        g:SetSnapToPixelGrid(false)
+        g:SetTexelSnappingBias(0)
+        g:SetSize(40, 40)
+        g:SetPoint("CENTER")
+        g:SetVertexColor(1, 0.9, 0.4, 1)
+        g:Hide()
+
+        -- Objective-number label drawn over the icon for per-objective
+        -- POIs. Lets users match map markers to watch-list rows when
+        -- a quest has multiple POIs (e.g. "kill 3 things in 3 places").
+        local lbl = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        f.NxLabel = lbl
+        lbl:SetPoint("CENTER", 0, 0)
+        lbl:SetTextColor(1, 1, 1, 1)
+        lbl:SetShadowColor(0, 0, 0, 1)
+        lbl:SetShadowOffset(1, -1)
+        lbl:Hide()
     end
 
     local add = levelAdd or 0
@@ -10336,6 +10362,15 @@ function Nx.Map:GetIconStatic (levelAdd)
 --    f.texture:SetBlendMode ("BLEND")
     -- Reset texture coordinates to prevent stretched textures from previous atlas use
     f.texture:SetTexCoord (0, 1, 0, 1)
+
+    -- Default glow / label off; UpdateIcons turns them on as needed.
+    if f.NxGlow then
+        f.NxGlow:Hide()
+    end
+    if f.NxLabel then
+        f.NxLabel:SetText("")
+        f.NxLabel:Hide()
+    end
 
     f.NxTip = nil
     f.NXType = nil            -- 1000 plyr, 2000 BG, 3000 POI, 8000 debug, 8500 quest offer, 9000+ quest
@@ -10501,6 +10536,71 @@ function Nx.Map:IconOnMouseDown(button)
                         end
                         Nx.Notes.PrevRSPins = 0
                         Nx.Notes:RareScanner(map.MapId)
+                    end
+                elseif cat == 9 then
+                    -- Quest icon left-click → set the active quest. On retail /
+                    -- Wrath+ Classic where C_SuperTrack exists this calls
+                    -- Blizzard's super-track API and Carbonite's
+                    -- OnSuperTrackChanged listener mirrors it into our
+                    -- Tracking table. On Classic Era / TBC we polyfill by
+                    -- toggling Carbonite tracking directly so the user gets
+                    -- the same one-click "make this the active quest" UX.
+                    local cur = this.NXData
+                    local qId = cur and cur.QId
+                    if qId and qId > 0 then
+                        -- cur.QId can drift (saved-vars, etc.); resolve the
+                        -- live questID from the log index before calling
+                        -- Blizzard's API or it will silently reject.
+                        local liveQID = qId
+                        local qIndex = cur.QI
+                        if qIndex and qIndex > 0 then
+                            if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+                                local q = C_QuestLog.GetQuestIDForLogIndex(qIndex)
+                                if q and q > 0 then liveQID = q end
+                            elseif GetQuestIDFromLogIndex then
+                                local q = GetQuestIDFromLogIndex(qIndex)
+                                if q and q > 0 then liveQID = q end
+                            end
+                        end
+                        if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
+                            local current = C_SuperTrack.GetSuperTrackedQuestID() or 0
+                            if current == liveQID then
+                                -- Click again to clear (Blizzard parity).
+                                C_SuperTrack.SetSuperTrackedQuestID(0)
+                                if PlaySound and SOUNDKIT then
+                                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+                                end
+                            else
+                                if C_SuperTrack.SetSuperTrackedUserWaypoint
+                                   and C_SuperTrack.IsSuperTrackingUserWaypoint
+                                   and C_SuperTrack.IsSuperTrackingUserWaypoint() then
+                                    C_SuperTrack.SetSuperTrackedUserWaypoint(false)
+                                end
+                                if C_SuperTrack.ClearAllSuperTracked then
+                                    C_SuperTrack.ClearAllSuperTracked()
+                                end
+                                C_SuperTrack.SetSuperTrackedQuestID(liveQID)
+                                if PlaySound and SOUNDKIT then
+                                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                end
+                            end
+                        elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
+                            -- Classic Era / TBC: no C_SuperTrack. Drive
+                            -- the active quest through Carbonite's own
+                            -- state. SetActiveCarboniteQuest toggles
+                            -- (click again clears) so the polyfill
+                            -- matches Blizzard's super-track UX.
+                            local was = Nx.Quest.ActiveQID
+                            Nx.Quest:SetActiveCarboniteQuest(qId, cur.QI)
+                            if PlaySound and SOUNDKIT then
+                                PlaySound(was == qId and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
+                                                      or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                            end
+                        else
+                            map.OnMouseDown(map.Frm, button)
+                        end
+                    else
+                        map.OnMouseDown(map.Frm, button)
                     end
                 else
                     map.OnMouseDown(map.Frm, button)

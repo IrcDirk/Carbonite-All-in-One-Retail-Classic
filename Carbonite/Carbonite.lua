@@ -788,6 +788,7 @@ local defaults = {
         Menu = {
             CenterH = false,
             CenterV = false,
+            UseMenuUtil = (MenuUtil and MenuUtil.CreateContextMenu) and true or false,  -- Route simple menus through Blizzard MenuUtil for native dropdown look (retail / Cata+ Classic)
         },
         Route = {
             GatherRadius = 60,

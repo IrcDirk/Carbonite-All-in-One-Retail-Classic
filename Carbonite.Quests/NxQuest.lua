@@ -86,14 +86,29 @@ local GetAbandonQuestItems = C_QuestLog.GetAbandonQuestItems or GetAbandonQuestI
 
 -- Check if we need to create shims (Retail doesn't have GetQuestLogTitle natively)
 if C_QuestLog and C_QuestLog.GetInfo then
-    -- Retail: Create shim that wraps C_QuestLog.GetInfo with GetQuestLogTitle signature
+    -- Retail: Create shim that wraps C_QuestLog.GetInfo with GetQuestLogTitle signature.
+    --
+    -- Important: C_QuestLog.GetInfo's `.questID` can be a story/display ID
+    -- for replayable content (Chromie Time, Threads of Fate, scaling
+    -- campaigns) while C_QuestLog.GetQuestIDForLogIndex returns the
+    -- actual playable instance ID. The instance ID is the one that
+    -- works with C_SuperTrack, C_QuestLog.IsOnQuest, and the rest of
+    -- the live quest API, so we prefer it. q.questID stays as the
+    -- displayQuestID slot for any caller that wants the story ID.
     function GetQuestLogTitle(qn)
         local q = C_QuestLog.GetInfo(qn)
         if not q then
             return
         end
-        local isComplete = C_QuestLog.IsComplete(q.questID) and 1 or (C_QuestLog.IsFailed(q.questID) and -1 or nil)
-        return q.title, q.level, q.suggestedGroup, q.isHeader, q.isCollapsed, isComplete, q.frequency, q.questID, q.startEvent, q.questID, q.isOnMap, q.hasLocalPOI, q.isTask, q.isBounty, q.isStory, q.isHidden, q.isScaling
+        local liveID = q.questID
+        if C_QuestLog.GetQuestIDForLogIndex then
+            local id = C_QuestLog.GetQuestIDForLogIndex(qn)
+            if id and id > 0 then
+                liveID = id
+            end
+        end
+        local isComplete = C_QuestLog.IsComplete(liveID) and 1 or (C_QuestLog.IsFailed(liveID) and -1 or nil)
+        return q.title, q.level, q.suggestedGroup, q.isHeader, q.isCollapsed, isComplete, q.frequency, liveID, q.startEvent, q.questID, q.isOnMap, q.hasLocalPOI, q.isTask, q.isBounty, q.isStory, q.isHidden, q.isScaling
     end
 
     -- Retail: Wrap C_QuestLog.GetNumQuestLogEntries if it exists
@@ -401,6 +416,7 @@ local defaults = {
             ShowDailyReset = true,                      -- Show daily reset time
             ShowId = false,                             -- Show quest ID
             ShowQuestOffers = true,                     -- Show quest offers on map
+            ShowAllMapPOIs = (C_QuestLog and C_QuestLog.GetQuestsOnMap) and true or false, -- Show every in-log quest on the map (Blizzard parity). On any flavor where C_QuestLog.GetQuestsOnMap exists (retail + Wrath/Cata/MoP Classic) the patcher fills in missing data; on Era/TBC this stays off so we don't show stale bundled-DB entries.
             ShowLinkExtra = true,                       -- Show extra link info
             SideBySide = true,                          -- Side by side layout
             UseAltLKey = false,                         -- Use Alt-L keybind
@@ -439,7 +455,8 @@ local defaults = {
             AddChanged = true,                          -- Auto-watch changed quests
             BGColor = "0|0|0|.4",                       -- Background color
             BlizzModify = true,                         -- Modify Blizzard watch
-            BonusBar = false,                           -- Show progress bars
+            BonusBar = false,                           -- Show progress bars (bonus tasks)
+            ObjBars = true,                             -- Inline progress bars on X/Y kill/collect objectives
             BonusTask = true,                           -- Show bonus tasks
             ChalTrack = true,                           -- Track challenge modes
             FadeAll = false,                            -- Fade entire window
@@ -2688,10 +2705,35 @@ function Nx.Quest:TrackerHider_Init()
 end
 
 function Nx.Quest:TrackerHider_ShouldHide()
+    -- While Blizzard's Edit Mode is open the user almost certainly wants
+    -- to position Blizzard's tracker frame, so let it show even if our
+    -- "hide blizz tracker" preference is on. We restore the hide on
+    -- EditMode exit via the EditMode.Enter / EditMode.Exit hooks.
+    if self._editModeActive then
+        return false
+    end
     local qProfile = Nx.qdb and Nx.qdb.profile
     local enabled = qProfile and qProfile.Quest and qProfile.Quest.Enable
     local watchProfile = qProfile and qProfile.QuestWatch
     return enabled and watchProfile and watchProfile.HideBlizz == true
+end
+
+-- Hook EditMode events so TrackerHider yields while the user is
+-- positioning frames. Available on retail and Cata Classic onward;
+-- the EventRegistry / EditModeManagerFrame check makes this a no-op
+-- on flavors without it (Classic Era, TBC).
+function Nx.Quest:TrackerHider_BindEditMode()
+    if self._editModeBound then return end
+    if not (EventRegistry and EditModeManagerFrame) then return end
+    self._editModeBound = true
+    EventRegistry:RegisterCallback("EditMode.Enter", function()
+        Nx.Quest._editModeActive = true
+        Nx.Quest:TrackerHider_Apply()
+    end)
+    EventRegistry:RegisterCallback("EditMode.Exit", function()
+        Nx.Quest._editModeActive = false
+        Nx.Quest:TrackerHider_Apply()
+    end)
 end
 
 function Nx.Quest:TrackerHider_CaptureOriginal(frame, key)
@@ -2767,6 +2809,9 @@ function Nx.Quest:TrackerHider_Apply()
     if not self._trackerHider then
         self:TrackerHider_Init()
     end
+
+    -- Lazy-bind EditMode events; safe to call multiple times.
+    self:TrackerHider_BindEditMode()
 
     local hide = self:TrackerHider_ShouldHide()
 
@@ -3320,12 +3365,27 @@ function Nx.Quest:Init()
     menu:AddItem (0, "Add Note", self.Map.Menu_OnAddNote, self.Map)
 
     -- Hook quests
+    --
+    -- We use hooksecurefunc (post-call) instead of replacing the globals.
+    -- Replacing AcceptQuest / GetQuestReward meant any error inside our
+    -- wrapper aborted the original Blizzard call and the quest never
+    -- actually accepted/turned in. With a post-hook the user-visible
+    -- action always completes; our bookkeeping is best-effort and
+    -- protected by pcall so a Lua error here can never block turn-in.
 
-    self.BlizzAcceptQuest = AcceptQuest
-    AcceptQuest = self.AcceptQuest
+    hooksecurefunc("AcceptQuest", function(...)
+        local ok, err = pcall(Nx.Quest.RecordQuestAcceptOrFinish, Nx.Quest)
+        if not ok then
+            Nx.prtD("AcceptQuest hook error: %s", tostring(err))
+        end
+    end)
 
-    self.BlizzGetQuestReward = GetQuestReward -- dont remove needed to record finished quests
-    GetQuestReward = self.GetQuestReward
+    hooksecurefunc("GetQuestReward", function(choice, ...)
+        local ok, err = pcall(Nx.Quest.FinishQuest, Nx.Quest)
+        if not ok then
+            Nx.prtD("GetQuestReward hook error: %s", tostring(err))
+        end
+    end)
 
     QuestFrameDetailPanel:HookScript ("OnShow", function ()
         local auto = Nx.qdb.profile.Quest.AutoAccept
@@ -3870,48 +3930,187 @@ end
 -- Track quest acception
 -------------------------------------------------------------------------------
 
-function Nx.Quest.AcceptQuest (...)
-
-    Nx.Quest:RecordQuestAcceptOrFinish()
-    Nx.Quest.BlizzAcceptQuest (...)
-end
-
 -------------------------------------------------------------------------------
+-- Sync Carbonite's tracked quest with Blizzard's super-track.
 --
+-- Blizzard's super-track is the "active quest" — the one the on-screen arrow
+-- and POI highlights point at. The user sets it by clicking a quest POI on
+-- the map (or a row in the objective tracker). When this fires we mirror it
+-- as Carbonite's tracked quest so the map blob and Carbonite arrow follow
+-- the same quest the rest of the UI is showing.
 -------------------------------------------------------------------------------
 
---[[
-function Nx.Quest.CompleteQuest (...)
+-------------------------------------------------------------------------------
+-- ActiveQID: Carbonite's single source of truth for "the active quest".
+--
+-- On retail / Wrath+ Classic this mirrors C_SuperTrack.GetSuperTrackedQuestID
+-- (set in OnSuperTrackChanged). On older flavors that lack the API the
+-- click handlers set it directly so the icon highlight + blob behavior
+-- still works. UpdateIcons consumes it to paint the active POI gold.
+-------------------------------------------------------------------------------
 
---    Nx.prt ("CompleteQuest ")
---    Nx.prt ("Title '%s'", GetTitleText())
+Nx.Quest.ActiveQID = 0
 
-    Nx.Quest.BlizzCompleteQuest (...)
+function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
+    if not qId or qId <= 0 then
+        self.ActiveQID = 0
+        self.Tracking = {}
+        return
+    end
+
+    local cur = self.QIds and self.QIds[qId]
+    if not cur and qIndex and qIndex > 0 then
+        cur = self:FindCurByIndex(qIndex)
+    end
+
+    -- Click again on the same active quest = clear it.
+    if self.ActiveQID == qId then
+        self.ActiveQID = 0
+        self.Tracking = {}
+        if not InCombatLockdown() then
+            local Map = Nx.Map
+            local mapId = Map:GetCurrentMapId()
+            self:TrackOnMap(qId, 0, false, true)
+            Map:SetCurrentMap(mapId)
+        end
+        if self.Watch and self.Watch.Update then
+            self.Watch:Update()
+        end
+        return
+    end
+
+    local mask = cur and cur.TrackMask
+    if not mask or mask == 0 then mask = 0xffffffff end
+
+    self.ActiveQID = qId
+    self.Tracking = {}
+    self.Tracking[qId] = mask
+    if not InCombatLockdown() then
+        local Map = Nx.Map
+        local mapId = Map:GetCurrentMapId()
+        self:TrackOnMap(qId, 0, qIndex and qIndex > 0, true)
+        Map:SetCurrentMap(mapId)
+    end
+    if self.Watch and self.Watch.Update then
+        self.Watch:Update()
+    end
 end
---]]
 
-function Nx.Quest.GetQuestReward (choice, ...)
+function Nx.Quest:OnSuperTrackChanged()
+    if not C_SuperTrack then
+        return
+    end
 
---    Nx.prt ("GetQuestReward %s", choice or "nil")
+    local liveQID = C_SuperTrack.GetSuperTrackedQuestID()
+    if not liveQID or liveQID == 0 then
+        -- Blizzard sometimes drops the super-track value to 0 during
+        -- objective-completion transitions on chained quests. If we
+        -- have a remembered ActiveQID and that quest is still in the
+        -- player's log, restore it so the Blizzard arrow / tracker
+        -- stays pointing at the right quest.
+        local prev = self.ActiveQID
+        if prev and prev > 0
+           and C_QuestLog and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest(prev)
+           and C_SuperTrack.SetSuperTrackedQuestID then
+            C_SuperTrack.SetSuperTrackedQuestID(prev)
+            return
+        end
+        self.ActiveQID = 0
+        return
+    end
+    self.ActiveQID = liveQID
 
-    local q = Nx.Quest
-    q:FinishQuest()
-    q.BlizzGetQuestReward (choice, ...)
+    -- Skip world quests; their click path already calls SetSuperTrackedQuestID
+    -- and they don't live in CurQ anyway.
+    if QuestUtils_IsQuestWorldQuest and QuestUtils_IsQuestWorldQuest(liveQID) then
+        if self.Watch and self.Watch.Update then
+            self.Watch:Update()
+        end
+        return
+    end
+
+    -- Find cur. FindCur matches by cur.QId, which can drift away from
+    -- the live questID (saved-vars / cross-session). When that happens
+    -- walk CurQ resolving each cur's log index to the live questID.
+    local i, cur = self:FindCur(liveQID, 0)
+    if not cur then
+        for n, c in ipairs(self.CurQ) do
+            if c.QI and c.QI > 0
+               and C_QuestLog and C_QuestLog.GetQuestIDForLogIndex
+               and C_QuestLog.GetQuestIDForLogIndex(c.QI) == liveQID then
+                i, cur = n, c
+                break
+            end
+        end
+    end
+    if not cur then
+        return
+    end
+
+    -- Self-heal stale cur.QId so downstream code (icon draw, watch
+    -- list, blob render) sees the live ID.
+    if cur.QId ~= liveQID then
+        cur.QId = liveQID
+        if Nx.Quest.QIds then
+            Nx.Quest.QIds[liveQID] = cur
+        end
+        if Nx.Quest.IdToCurQ then
+            Nx.Quest.IdToCurQ[liveQID] = cur
+        end
+    end
+
+    -- Mark this quest as the only Carbonite-tracked one and redraw map.
+    -- TrackMask can be 0 for quests whose bundled objective data is
+    -- missing (Lua: 0 is truthy, so `or` won't substitute); fall back
+    -- to a mask that draws everything so the click is never invisible.
+    -- TrackOnMap uses this qId as the key for DrawBlob — must be the
+    -- live questID or the WorldMapBlobFrame won't have data for it.
+    local mask = cur.TrackMask
+    if not mask or mask == 0 then mask = 0xffffffff end
+    self.Tracking = {}
+    self.Tracking[liveQID] = mask
+    if not InCombatLockdown() then
+        self:TrackOnMap(liveQID, 0, true, true)
+    end
+    if self.Watch and self.Watch.Update then
+        self.Watch:Update()
+    end
 end
+
+-- FinishQuest runs from the GetQuestReward post-hook. By the time we get
+-- there Blizzard has already triggered QUEST_FINISHED and the QuestFrame
+-- may be hidden, so GetTitleText()/GetQuestID() can return empty/nil.
+-- We snapshot the values in OnQuestUpdate when QUEST_COMPLETE fires
+-- (reward UI still visible) and prefer that snapshot here.
 
 function Nx.Quest:FinishQuest()
 
---    Nx.prt ("FinishQuest")
+    local snap = self._completeSnapshot
+    self._completeSnapshot = nil
 
-    local finTitle = GetTitleText()
-    finTitle = self:ExtractTitle (finTitle)
+    local finTitle, finQID
+    if snap and (GetTime() - (snap.time or 0)) < 30 then
+        finTitle = snap.title
+        finQID   = snap.questID
+    end
+    if not finTitle or finTitle == "" then
+        finTitle = GetTitleText()
+    end
+    if (not finQID or finQID <= 0) and GetQuestID then
+        finQID = GetQuestID()
+    end
 
-    local i, cur = self:FindCur (finTitle)
+    finTitle = self:ExtractTitle (finTitle or "")
 
-    if not i then
+    local i, cur
+    if finQID and finQID > 0 then
+        i, cur = self:FindCur (finQID, 0)
+    end
+    if not i and finTitle and finTitle ~= "" then
+        i, cur = self:FindCur (finTitle)
+    end
 
---        Nx:ShowMessage (Nx.TXTBLUE.."Carb:\n|rCan't find quest in list!\nAn addon may have modified the title\n'" .. finTitle .. "'", "Continue")
---        assert (nil)
+    if not i or not cur then
         return
     end
 
@@ -3919,23 +4118,26 @@ function Nx.Quest:FinishQuest()
 
     local qId = cur.QId
 
-    assert (type (qId) ~= "string")
+    -- Earlier code had assert(type(qId) ~= "string") here; that aborted
+    -- the wrapper before Blizzard's GetQuestReward could run, leaving the
+    -- player unable to turn in. Soft-fail instead.
+    if type (qId) == "string" then
+        Nx.prtD ("FinishQuest: cur.QId is string for '%s'", tostring (finTitle))
+        return
+    end
 
-    local id = qId > 0 and qId or cur.Title
+    local id = qId and qId > 0 and qId or cur.Title
     Nx.Quest:SetQuest (id, "C", time())
 
     self:RecordQuestAcceptOrFinish()
     self:Capture (i, -1)
 
---    Nx.prt ("FinishQuest #%s (%s) %s", i, id, cur.Title)
-
-    if cur.Q then
+    if cur.Q and qId then
 
         self.Tracking[qId] = 0
         self:TrackOnMap (qId, 0)
     end
 
---    self.List:Update()
     self.Watch:Update()
     self.WQList:Update()
 end
@@ -4245,6 +4447,12 @@ function Nx.Quest:RecordQuestsLog()
             --Nx.prt ("%d",GetQuestLogQuestType(qn)) -- Seeing what quest type function returns
             --Nx.prt("%s", qDesc)
             if qId and not isHidden then
+                -- Pull live data from Blizzard for any quest our bundled DB
+                -- doesn't fully cover. Also re-syncs chained-objective text
+                -- (same questID, objective replaced in place on progress).
+                -- Available on retail + Wrath+ Classic; PatchQuestFromBlizzard
+                -- self-checks for the C_QuestLog API so older flavors no-op.
+                self:PatchQuestFromBlizzard (qId)
                 local quest = Nx.Quests[qId]
                 local lbCnt = GetNumQuestLeaderBoards (qn)
                 local cur = quest and fakeq[quest]
@@ -4688,7 +4896,9 @@ function Nx.Quest:ScanBlizzQuestDataZone(WatchUpdate)
                         end
                         if needEnd or bit_band (patch, 1) then
                             if not quest["End"] then --or (bit_band(patch,1) and mapId == MapUtil.GetDisplayableMapForPlayer()) then --disable this check as it's logic fails when there's no objectives defined in QuestDB for QuestID
-                                quest["End"] = format ("|%s|32|%f|%f", mapId, x, y)
+                                local safeTitle = (title or "?"):gsub("|", "")
+                                if safeTitle == "" then safeTitle = "?" end
+                                quest["End"] = format ("%s|%s|32|%f|%f", safeTitle, mapId, x, y)
                             end
                             patch = bit.bor (patch, 1)        -- Flag as a patched quest
                         end
@@ -5112,9 +5322,9 @@ function Nx.Quest:RecordQuestAcceptOrFinish()
         self.AcceptDLvl = Nx.Map:GetCurrentMapDungeonLevel()
     end
 
-    local map = Nx.Map:GetMap (1)
-    self.AcceptX = map.PlyrRZX
-    self.AcceptY = map.PlyrRZY
+    local map = Nx.Map and Nx.Map:GetMap (1)
+    self.AcceptX = (map and map.PlyrRZX) or 0
+    self.AcceptY = (map and map.PlyrRZY) or 0
 
 --    Nx.prt ("AcceptQuest (%s) (%s) %s,%s", giver, qname, self.AcceptAId, self.AcceptDLvl)
 
@@ -5893,6 +6103,160 @@ function Nx.Quest:QSendAllTimer()
 end
 
 -------------------------------------------------------------------------------
+-- Synthesize Carbonite quest data from Blizzard's live API.
+--
+-- Carbonite ships a bundled quest DB (Nx.Quests[questID]) with curated
+-- Start/End/Objective coordinates. On retail every patch adds quests
+-- the bundled DB doesn't know about, and many quests have *chained*
+-- objectives (the same questID's objectives change in place as the
+-- player progresses — e.g. "talk to NPC A" → "talk to NPC B"). For
+-- both cases we fall back to whatever C_QuestLog.GetQuestObjectives
+-- returns right now, plus the POI x/y from C_QuestLog.GetQuestsOnMap.
+--
+-- Two patch flag bits live in Nx.Quests[-questID]:
+--   bit 1 = End was synthesized
+--   bit 2 = Objectives were synthesized
+-- Once bit 2 is set we always re-sync from Blizzard so chain progress
+-- updates land. For pristine bundled quests we only fill in missing
+-- pieces — we don't overwrite curated coordinates with Blizzard's
+-- coarser POI x/y.
+-------------------------------------------------------------------------------
+
+function Nx.Quest:PatchQuestFromBlizzard (qId)
+    if not qId or qId <= 0 then return false end
+    if not C_QuestLog or not C_QuestLog.GetQuestObjectives then return false end
+
+    local objectives = C_QuestLog.GetQuestObjectives (qId)
+    local lbCnt = (objectives and #objectives) or 0
+
+    local quest = Nx.Quests[qId] or {}
+    local patch = Nx.Quests[-qId] or 0
+    local touched = false
+
+    -- Pull a sanitized title up front; used in both the header line
+    -- and the Start/End entries so the goto-arrow / tooltip show
+    -- something meaningful instead of "?". Pipe is the field
+    -- separator so we strip it from the title.
+    local title = (C_QuestLog.GetTitleForQuestID and C_QuestLog.GetTitleForQuestID (qId)) or "?"
+    title = (title or "?"):gsub("|", "")
+    if title == "" then title = "?" end
+
+    -- Header line (name|faction|level|0|0|0). Synthesize if missing.
+    if not quest["Quest"] then
+        local fac = UnitFactionGroup ("player") == "Horde" and 1 or 2
+        local level = 0
+        local qi = GetQuestLogIndexByID and GetQuestLogIndexByID (qId)
+        if qi and qi > 0 then
+            local _, lvl = GetQuestLogTitle (qi)
+            level = lvl or 0
+        end
+        quest["Quest"] = format ("[[%s|%s|%s|0|0|0]]", title, fac, level)
+        touched = true
+    end
+
+    -- Try to source x/y from a map Blizzard knows the quest is on.
+    local mapId, x, y
+    local function tryMap (m)
+        if mapId or not m then return end
+        local mq = C_QuestLog.GetQuestsOnMap and C_QuestLog.GetQuestsOnMap (m)
+        if not mq then return end
+        for _, e in ipairs (mq) do
+            if e.questID == qId and e.x and e.y then
+                mapId, x, y = m, e.x * 100, e.y * 100
+                return
+            end
+        end
+    end
+    if C_TaskQuest and C_TaskQuest.GetQuestZoneID then
+        tryMap (C_TaskQuest.GetQuestZoneID (qId))
+    end
+    if Nx.Map and Nx.Map.GetCurrentMapId then
+        tryMap (Nx.Map:GetCurrentMapId ())
+    end
+
+    if lbCnt > 0 then
+        -- Re-sync objective entries when:
+        --   - we previously patched this quest (chain progress refresh), or
+        --   - Carbonite's existing entry has a different objective count.
+        local prePatchedObjectives = bit_band (patch, 2) ~= 0
+        local existingCnt = (quest["Objectives"] and #quest["Objectives"]) or 0
+        if prePatchedObjectives or existingCnt ~= lbCnt then
+            local newObjs = {}
+            for i = 1, lbCnt do
+                local objText = (objectives[i] and objectives[i].text) or "?"
+                if mapId and x and y then
+                    newObjs[i] = { format ("%s|%s|32|%f|%f|6|6", objText, mapId, x, y) }
+                else
+                    -- Best-effort: text-only entry with sentinel zone 0.
+                    -- Watch list shows it; map can't pin it until we get
+                    -- coords on a later QUEST_POI_UPDATE.
+                    newObjs[i] = { format ("%s|0|32|0|0|6|6", objText) }
+                end
+            end
+            quest["Objectives"] = newObjs
+            patch = bit.bor (patch, 2)
+            touched = true
+        end
+    end
+
+    -- Resolve End coords with this priority chain:
+    --   1. Bundled End that's close to Blizzard's live POI → keep ours
+    --      (curated coordinates, often more precise than POI).
+    --   2. Bundled End that's far from Blizzard's POI → switch to live
+    --      (DB is stale or quest content changed; Blizz is current).
+    --   3. No bundled End but live POI available → synthesize from live.
+    --   4. No bundled End and no live POI → leave alone; UpdateIcons
+    --      falls back to quest["Start"] downstream.
+    --
+    -- Case 2 is also what catches "complete quest icon parking at the
+    -- in-progress objective spot": when a quest goes Complete, Blizz's
+    -- POI moves to the turn-in NPC; if our cached End is still at the
+    -- kill zone we'll be far from POI and switch.
+    local previouslyPatchedEnd = bit_band(patch, 1) ~= 0
+    local liveOK = mapId and x and y
+
+    if liveOK then
+        local _, ourMap, _, ourX, ourY = self:UnpackSE(quest["End"])
+        local distance = math.huge
+        if ourMap and ourX and ourY and ourMap == mapId then
+            local dx, dy = ourX - x, ourY - y
+            distance = math.sqrt(dx * dx + dy * dy)
+        end
+        -- Threshold tuned for Carbonite's 0..100 zone-percent scale: 8
+        -- units ~= 8% of map dimension, generous enough to keep
+        -- bundled coords for most curated entries but tight enough to
+        -- catch the start-vs-turn-in NPC mismatch case.
+        local farFromLive = distance > 8
+
+        if not quest["End"] then
+            -- No End yet: take whatever Blizzard has.
+            quest["End"] = format("%s|%s|32|%f|%f", title, mapId, x, y)
+            patch = bit.bor(patch, 1)
+            touched = true
+        elseif previouslyPatchedEnd then
+            -- We own this entry: refresh to current live coords so the
+            -- complete-state turn-in POI propagates.
+            quest["End"] = format("%s|%s|32|%f|%f", title, mapId, x, y)
+            patch = bit.bor(patch, 1)
+            touched = true
+        elseif farFromLive then
+            -- Bundled entry exists but is far from Blizzard's POI;
+            -- bundled DB is stale. Switch to live and flag as patched
+            -- so future refreshes follow Blizzard.
+            quest["End"] = format("%s|%s|32|%f|%f", title, mapId, x, y)
+            patch = bit.bor(patch, 1)
+            touched = true
+        end
+    end
+
+    if touched then
+        Nx.Quests[qId] = quest
+        Nx.Quests[-qId] = patch
+    end
+    return touched
+end
+
+-------------------------------------------------------------------------------
 -- Show quest is not in DB
 -------------------------------------------------------------------------------
 
@@ -6208,6 +6572,11 @@ function Nx.Quest.List:Open()
     CarboniteQuest:RegisterEvent ("QUEST_REMOVED", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("QUEST_TURNED_IN", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("QUEST_DETAIL", "OnQuestUpdate")
+    if C_SuperTrack then
+        -- Retail / Wrath+ Classic. Lets the map blob/arrow follow Blizzard's
+        -- super-tracked quest (e.g. set by clicking a quest POI).
+        CarboniteQuest:RegisterEvent ("SUPER_TRACKING_CHANGED", "OnQuestUpdate")
+    end
     --CarboniteQuest:RegisterEvent ("QUEST_WATCH_UPDATE", "OnQuestUpdate")
     --CarboniteQuest:RegisterEvent ("SCENARIO_UPDATE", "OnQuestUpdate")
     --CarboniteQuest:RegisterEvent ("SCENARIO_CRITERIA_UPDATE", "OnQuestUpdate")
@@ -7296,6 +7665,56 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
     local Quest = Nx.Quest
     local Map = Nx.Map
 
+    -- Retail / Wrath+ Classic: any non-shift click on a quest row
+    -- (title or objective) sets the super-tracked quest. Title click
+    -- on the already-active quest toggles it off (Blizz parity).
+    -- Per-objective targeting isn't supported because Blizzard's map
+    -- doesn't either — the arrow always follows GetNextWaypoint and
+    -- advances automatically.
+    if not shift
+       and qId and qId > 0
+       and C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
+
+        local i, cur, id = Quest:FindCur (qId, qIndex)
+        if cur then
+            -- Resolve the *live* questID from the log index. Carbonite's
+            -- cur.QId can drift away from Blizzard's actual questID
+            -- (saved-vars from a previous session, etc.); SetSuperTracked
+            -- silently rejects unknown IDs.
+            local liveQID = qId
+            if qIndex and qIndex > 0 then
+                if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+                    local q = C_QuestLog.GetQuestIDForLogIndex(qIndex)
+                    if q and q > 0 then liveQID = q end
+                elseif GetQuestIDFromLogIndex then
+                    local q = GetQuestIDFromLogIndex(qIndex)
+                    if q and q > 0 then liveQID = q end
+                end
+            end
+
+            if Quest.PatchQuestFromBlizzard then
+                Quest:PatchQuestFromBlizzard(liveQID)
+            end
+
+            local current = (C_SuperTrack.GetSuperTrackedQuestID and C_SuperTrack.GetSuperTrackedQuestID()) or 0
+            if qObj == 0 and current == liveQID then
+                -- Title click on already-active quest: toggle off + unwatch.
+                C_SuperTrack.SetSuperTrackedQuestID(0)
+                if Nx.Quest:GetQuest(id) == "W" then
+                    Nx.Quest.Watch:RemoveWatch(qId, qIndex)
+                end
+            else
+                if Nx.Quest:GetQuest(id) ~= "W" then
+                    Nx.Quest:SetQuest(id, "W")
+                end
+                C_SuperTrack.SetSuperTrackedQuestID(liveQID)
+            end
+            Quest:PartyStartSend()
+            self:Update()
+        end
+        return
+    end
+
     if qObj == 0 and not shift then
 
         local i, cur, id = Quest:FindCur (qId, qIndex)
@@ -7307,6 +7726,13 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
                 Nx.Quest.Watch:RemoveWatch (qId, qIndex)
             else
                 Nx.Quest:SetQuest (id, "W")
+                -- Older flavors without C_SuperTrack: drive the active
+                -- quest through Carbonite's own state. SetActiveCarboniteQuest
+                -- updates Tracking + ActiveQID + TrackOnMap so the icon
+                -- highlight and blob match the click.
+                if qId and qId > 0 then
+                    Quest:SetActiveCarboniteQuest(qId, qIndex)
+                end
             end
 
             Quest:PartyStartSend()
@@ -7466,6 +7892,8 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
         self.LoggingIn = true
     elseif event == "QUEST_TURNED_IN" then
         Nx.Quest.List:Refresh(event)
+    elseif event == "SUPER_TRACKING_CHANGED" then
+        Nx.Quest:OnSuperTrackChanged()
     elseif event == "QUEST_POI_UPDATE" then
         local oldmap = Nx.Map:GetCurrentMapAreaID()
         if Nx.Quest.OldMap ~= oldmap then
@@ -7487,6 +7915,16 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
         Nx.Quest.List:Refresh(event)
         return
     elseif event == "QUEST_COMPLETE" then
+        -- Snapshot title/questID while the reward UI is still up. The
+        -- GetQuestReward post-hook (FinishQuest) consumes this; by the
+        -- time the post-hook runs Blizzard has already fired
+        -- QUEST_FINISHED and GetTitleText()/GetQuestID() may be empty.
+        Quest._completeSnapshot = {
+            title   = GetTitleText() or "",
+            questID = (GetQuestID and GetQuestID()) or 0,
+            time    = GetTime(),
+        }
+
         local auto = Nx.qdb.profile.Quest.AutoTurnIn
         if IsShiftKeyDown() and IsControlKeyDown() then
             auto = not auto
@@ -7538,6 +7976,10 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 table.insert(Quest.AcceptPool, questId)
                 Nx.prtD("QUEST_ACCEPTED added to pool: %s", questId)
             end
+            -- Synthesize Carbonite quest data from Blizzard's API so the
+            -- bundled DB doesn't need to know about brand-new quests.
+            -- Function self-checks for the C_QuestLog API.
+            Quest:PatchQuestFromBlizzard(questId)
         end
         Nx.Quest:RecordQuests()
         --Nx.Quest.List:Refresh(event)
@@ -7547,11 +7989,43 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
         --Nx.Quest:RecordQuests()
     elseif event == "QUEST_REMOVED" then
         local questId = arg1
-        if QuestUtils_IsQuestWorldQuest(questId) then
-            C_SuperTrack.SetSuperTrackedQuestID(0)
+        if QuestUtils_IsQuestWorldQuest and QuestUtils_IsQuestWorldQuest(questId) then
+            if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
+                C_SuperTrack.SetSuperTrackedQuestID(0)
+            end
             worldquestdb[questId] = nil
             if Nx.Quest.WQList then
                 Nx.Quest.WQList:UpdateDB()
+            end
+        else
+            -- Regular quest abandoned/turned-in: clear our tracking +
+            -- super-track + map target so the icon, blob and goto arrow
+            -- don't linger pointing at a quest that's no longer in the
+            -- log. RecordQuestsLog will rebuild CurQ on the next refresh.
+            if Quest.Tracking then
+                Quest.Tracking[questId] = nil
+            end
+            if Nx.Quest.ActiveQID == questId then
+                Nx.Quest.ActiveQID = 0
+                if C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
+                   and C_SuperTrack.GetSuperTrackedQuestID() == questId then
+                    C_SuperTrack.SetSuperTrackedQuestID(0)
+                end
+            end
+            -- Drop any map target pointing at this quest.
+            if Quest.Map and Quest:IsTargeted(questId) then
+                Quest.Map:ClearTargets()
+            end
+            -- Hide a lingering blob if this was the one being drawn.
+            if Nx.BlobsAvailable and not InCombatLockdown() then
+                local QMap = NxMap1 and NxMap1.NxMap
+                if QMap and QMap.QuestWin then
+                    QMap.QuestWin:DrawNone()
+                    QMap.QuestWin:Hide()
+                end
+            end
+            if Nx.Quest.Watch and Nx.Quest.Watch.Update then
+                Nx.Quest.Watch:Update()
             end
         end
     elseif event == "QUEST_DETAIL" then        -- Happens when auto accept quest is given
@@ -7579,6 +8053,13 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             QLogUpdate = Nx:ScheduleTimer(self.LogUpdate,.5,self)    -- Small delay, so access works (0 does work)
         else
             Nx.Quest.List:Refresh("QUEST_LOG_UPDATE")
+            -- Objective progress doesn't fire SUPER_TRACKING_CHANGED, but
+            -- the waypoint Blizzard's arrow targets advances each time an
+            -- objective completes. Re-trigger OnSuperTrackChanged so our
+            -- goto arrow re-resolves through GetNextWaypoint and follows
+            -- the new objective. Cheap: it just re-runs TrackOnMap for
+            -- the active quest.
+            Nx.Quest:OnSuperTrackChanged()
         end
     elseif event == "GARRISON_MISSION_COMPLETE_RESPONSE" then
         Nx.Quest.List:LogUpdate()
@@ -7888,6 +8369,25 @@ function Nx.Quest.List:Update()
                             if not desc then desc = "?" end
                             color = done and oCompColor or oIncompColor
                             str = format ("     %s%s", color, desc)
+
+                            -- Inline progress bar for X/Y objectives
+                            -- (kill/collect). Same trick as the watch
+                            -- panel — width parameter of |T...|t scales
+                            -- with completion percent.
+                            if not done and Nx.qdb.profile.QuestWatch.ObjBars then
+                                local cn, total = strmatch(desc, "(%d+)/(%d+)")
+                                if cn and total then
+                                    local nn = tonumber(cn)
+                                    local tt = tonumber(total)
+                                    if nn and tt and tt > 0 then
+                                        local pct = floor(nn / tt * 100)
+                                        if pct > 0 then
+                                            str = format("     |TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:8:%d:|t%s%s",
+                                                pct, color, desc)
+                                        end
+                                    end
+                                end
+                            end
 
                             list:ItemAdd (qId * 0x10000 + ln * 0x100 + qn)
 
@@ -8584,9 +9084,21 @@ function Nx.Quest:UpdateIcons (map)
         end
 
         if showOnMap then
+            local showAllPOIs = Nx.qdb.profile.Quest.ShowAllMapPOIs
             for k, cur in ipairs (Quest.CurQ) do
-                if cur.Q and (Nx.Quest:GetQuest (cur.QId) == "W" or cur.PartyDesc) then
-                    tracking[cur.QId] = (tracking[cur.QId] or 0) + 0x10000        -- cur.TrackMask + i
+                if cur.Q then
+                    -- Watched quests + party-shared quests have always been drawn.
+                    -- ShowAllMapPOIs (default on for retail) extends this to every
+                    -- in-log quest, matching the modern Blizzard map UX where any
+                    -- quest in your log shows a POI on the open map. The icon
+                    -- clip-test in the draw pass below skips quests whose
+                    -- objective zone doesn't match the open map, so unrelated
+                    -- quests don't appear.
+                    if showAllPOIs
+                        or Nx.Quest:GetQuest (cur.QId) == "W"
+                        or cur.PartyDesc then
+                        tracking[cur.QId] = (tracking[cur.QId] or 0) + 0x10000        -- cur.TrackMask + i
+                    end
                 end
             end
         end
@@ -8601,6 +9113,18 @@ function Nx.Quest:UpdateIcons (map)
     local colorPerQ = Nx.qdb.profile.Quest.MapWatchColorPerQ
     local colMax = Nx.qdb.profile.Quest.MapWatchColorCnt
 
+    -- Cache the active questID so each icon can paint itself as the
+    -- "active" POI (Blizzard parity). On retail / Wrath+ Classic this
+    -- comes from C_SuperTrack; on older flavors we use Carbonite's
+    -- internal ActiveQID set by SetActiveCarboniteQuest. cur.QId may
+    -- be stale, so we also resolve via the live log index for the
+    -- comparison.
+    local activeQID = (C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
+        and C_SuperTrack.GetSuperTrackedQuestID()) or 0
+    if activeQID == 0 then
+        activeQID = Nx.Quest.ActiveQID or 0
+    end
+
     for trackId, trackMode in pairs (tracking) do
 
         local cur = Quest.IdToCurQ[trackId]
@@ -8608,6 +9132,16 @@ function Nx.Quest:UpdateIcons (map)
         if not cur and not quest then
             -- tracking entry exists but quest data is gone, skip
         else
+            local isSuperTracked = false
+            if activeQID > 0 and cur then
+                if cur.QId == activeQID then
+                    isSuperTracked = true
+                elseif cur.QI and cur.QI > 0
+                       and C_QuestLog and C_QuestLog.GetQuestIDForLogIndex
+                       and C_QuestLog.GetQuestIDForLogIndex(cur.QI) == activeQID then
+                    isSuperTracked = true
+                end
+            end
             local qname = Nx.TXTBLUE .. L["Quest: "] .. (cur and cur.Title or Quest:UnpackName (quest["Quest"]))
 
             local mask = showOnMap and cur and cur.TrackMask or trackMode
@@ -8656,7 +9190,12 @@ function Nx.Quest:UpdateIcons (map)
                         if cur and cur.PartyNames then
                             f.NxTip = f.NxTip .. "\n" .. cur.PartyNames
                         end
-                        f.texture:SetVertexColor (.6, 1, .6, 1)
+                        if isSuperTracked then
+                            f.texture:SetVertexColor (1, 0.85, 0, 1)        -- Active quest: Blizzard gold
+                            if f.NxGlow then f.NxGlow:Show() end
+                        else
+                            f.texture:SetVertexColor (.6, 1, .6, 1)
+                        end
                         f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQuestion")
                     end
                 end
@@ -8727,10 +9266,28 @@ function Nx.Quest:UpdateIcons (map)
                                     end
                                     if cnt == 1 then
                                         f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQTarget")
-                                        f.texture:SetVertexColor (r, g, b, .9)
+                                        if isSuperTracked then
+                                            f.texture:SetVertexColor (1, 0.85, 0, 1)
+                                            if f.NxGlow then f.NxGlow:Show() end
+                                        else
+                                            f.texture:SetVertexColor (r, g, b, .9)
+                                        end
                                     else
                                         f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconCirclePlus")
-                                        f.texture:SetVertexColor (r, g, b, .5)
+                                        if isSuperTracked then
+                                            f.texture:SetVertexColor (1, 0.85, 0, .8)
+                                            if f.NxGlow then f.NxGlow:Show() end
+                                        else
+                                            f.texture:SetVertexColor (r, g, b, .5)
+                                        end
+                                    end
+                                    -- Show the objective number on top of
+                                    -- the icon so users can match map
+                                    -- POIs to watch-list rows. Only for
+                                    -- the qObj > 0 case (per-objective).
+                                    if f.NxLabel then
+                                        f.NxLabel:SetText(tostring(n))
+                                        f.NxLabel:Show()
                                     end
                                 end
 
@@ -9461,11 +10018,6 @@ function Nx.Quest.Watch:Open()
         self.MenuPri:Open()
     end
     self.ButPri = Nx.Button:Create (win.Frm, "QuestWatchPri", nil, nil, 19, -5 + yo, "TOPLEFT", 1, 1, func, self)
-    local function func (self)
-        Nx.Quest.AltView = not Nx.Quest.AltView
-        Nx.Quest.Watch:UpdateList()
-    end
-    --self.ButSwap = Nx.Button:Create (win.Frm, "QuestWatchSwap", nil, nil, 34, -5 + yo, "TOPLEFT", 1, 1, func, self)
 
     local function func (self, but)
         local qopts = Nx.Quest:GetQuestOpts()
@@ -9608,6 +10160,7 @@ function Nx.Quest.Watch:Open()
     local menu = Nx.Menu:Create (list.Frm)
     self.WatchMenu = menu
 
+    menu:AddItem (0, L["Set as Active Quest"], self.Menu_OnSetActive, self)
     menu:AddItem (0, L["Remove Watch"], self.Menu_OnRemoveWatch, self)
     menu:AddItem (0, L["Link Quest (shift right click)"], self.Menu_OnLinkQuest, self)
     menu:AddItem (0, L["Show Quest Log (alt right click)"], self.Menu_OnShowQuest, self)
@@ -9616,38 +10169,6 @@ function Nx.Quest.Watch:Open()
 
     menu:AddItem (0, "")
     menu:AddItem (0, L["Abandon"], self.Menu_OnAbandon, self)
-
-    -- Create right clik menu
-
-    --[[local menu = Nx.Menu:Create (list.Frm)
-    self.RMenu = menu
-
-    menu:AddItem (0, L["FindGroup"], function(self)
-        local data = self.List:ItemGetData()
-        if data then
-            local qId = bit_rshift (data, 16)
-            if qId > 0 then
-                local activityID, categoryID, filters, questName = LFGListUtil_GetQuestCategoryData(qId)
-                if not activityID then
-                    categoryID = 6
-                    filters = 0
-                end
-                PVEFrame_ShowFrame("GroupFinderFrame", LFGListPVEStub)
-                local panel = LFGListFrame.CategorySelection;
-                LFGListCategorySelection_SelectCategory(panel, categoryID, filters)
-
-                local baseFilters = panel:GetParent().baseFilters;
-
-                local searchPanel = panel:GetParent().SearchPanel;
-                LFGListSearchPanel_Clear(searchPanel);
-                searchPanel.SearchBox.Instructions:SetText(questName or "");
-                LFGListSearchPanel_SetCategory(searchPanel, panel.selectedCategory, panel.selectedFilters, baseFilters)
-                LFGListFrame_SetActivePanel(panel:GetParent(), searchPanel);
-            end
-        end
-    end, self)]]--
-
-    --
 
     self.FirstUpdate = true
     self.FlashColor = 0
@@ -9724,6 +10245,29 @@ end
 function Nx.Quest.Watch:Menu_OnAbandon (item)
     Nx.Quest.List:Select (self.MenuQId, self.MenuQIndex)
     Nx.Quest:Abandon (self.MenuQIndex, self.MenuQId)
+end
+
+function Nx.Quest.Watch:Menu_OnSetActive (item)
+    -- "Set as Active Quest" — Blizzard's super-track on retail / Wrath+
+    -- Classic; on older flavors fall back to mirroring it as the only
+    -- Carbonite-tracked quest, which drives the same map blob/arrow.
+    local qId = self.MenuQId
+    if not qId or qId <= 0 then
+        return
+    end
+    if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
+        C_SuperTrack.SetSuperTrackedQuestID(qId)
+        return
+    end
+    local cur = Nx.Quest.CurQ and self.MenuQIndex and Nx.Quest:FindCurByIndex(self.MenuQIndex)
+    local mask = cur and cur.TrackMask
+    if not mask or mask == 0 then mask = 0xffffffff end
+    Nx.Quest.Tracking = {}
+    Nx.Quest.Tracking[qId] = mask
+    if not InCombatLockdown() then
+        Nx.Quest:TrackOnMap(qId, 0, true, true)
+    end
+    self:Update()
 end
 
 function Nx.Quest.Watch:Menu_OnRemoveAllWatches (item)
@@ -10022,6 +10566,16 @@ function Nx.Quest.Watch:UpdateList()
     local incompColor = Cols["incompColor"]
     local oCompColor = Cols["oCompColor"]
     local oIncompColor = Cols["oIncompColor"]
+
+    -- Cache the super-tracked quest so each row can flag the active one.
+    -- Matches what the rest of the modern WoW UI considers "the quest the
+    -- arrow is pointing at" — POI on map, objective tracker row, etc.
+    -- Same source as UpdateIcons: super-track on retail / Wrath+,
+    -- Carbonite ActiveQID on older flavors.
+    local superTrackedQID = (C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID and C_SuperTrack.GetSuperTrackedQuestID()) or 0
+    if superTrackedQID == 0 then
+        superTrackedQID = Nx.Quest.ActiveQID or 0
+    end
 
     -- List
 
@@ -10482,6 +11036,10 @@ function Nx.Quest.Watch:UpdateList()
                                 lvlStr = format ("%s%2d%s ", colStr, level, cur.TagShort)
                             end
                             local nameStr = format ("%s%s%s", lvlStr, color, cur.Title)
+                            if superTrackedQID > 0 and qId == superTrackedQID then
+                                -- Yellow chevron marks the super-tracked quest.
+                                nameStr = "|cffffd200>|r " .. nameStr
+                            end
                             if cur.NewTime and time() < cur.NewTime + 60 then
                                 nameStr = format ("|cff00%2x00" ..L["New: "] .."%s", self.FlashColor * 200 + 55, nameStr)
                             end
@@ -10567,6 +11125,27 @@ function Nx.Quest.Watch:UpdateList()
                                             local d = cur["OD"..ln]
                                             if d and d < .5 then            -- Not in yards
                                                 str = "*" .. str
+                                            end
+                                        end
+                                        -- Inline progress bar for X/Y
+                                        -- objectives (kill/collect). The
+                                        -- |T:height:width:|t escape lets
+                                        -- us draw a texture inside the
+                                        -- list-row text; width is in pixels
+                                        -- so passing the percent gives a
+                                        -- bar that grows with progress.
+                                        if not done and qwProfile.ObjBars and desc then
+                                            local cn, total = strmatch(desc, "(%d+)/(%d+)")
+                                            if cn and total then
+                                                local n = tonumber(cn)
+                                                local t = tonumber(total)
+                                                if n and t and t > 0 then
+                                                    local pct = floor(n / t * 100)
+                                                    if pct > 0 then
+                                                        str = format("|TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:8:%d:|t %s",
+                                                            pct, str)
+                                                    end
+                                                end
                                             end
                                         end
                                         list:ItemAdd (qId * 0x10000 + ln * 0x100 + qi)
@@ -10731,11 +11310,63 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
             end
             if click == "LeftButton" then
 
---                Nx.prt ("Data #%d, Id%d", qIndex, qId)
---                Nx.prt ("List but %s", but:GetType().WatchError or "nil")
+                -- Drive Blizzard super-track for any left-click on a
+                -- quest row button (title OR objective row). Carbonite's
+                -- cur.QId can drift away from Blizzard's actual questID
+                -- (saved-vars from a previous session, etc.) so look up
+                -- the *live* questID via the quest log index before
+                -- calling Blizzard's API — passing a stale ID means the
+                -- call is silently dropped and the arrow doesn't move.
+                -- Also clear any user-waypoint / map-pin super-track
+                -- since those out-prioritize quest super-track.
+                if qId and qId > 0 and not typ.WatchError
+                   and C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
+                    local liveQID = qId
+                    if qIndex and qIndex > 0 then
+                        if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+                            local q = C_QuestLog.GetQuestIDForLogIndex(qIndex)
+                            if q and q > 0 then liveQID = q end
+                        elseif GetQuestIDFromLogIndex then
+                            local q = GetQuestIDFromLogIndex(qIndex)
+                            if q and q > 0 then liveQID = q end
+                        end
+                    end
+                    if liveQID == qId
+                       and C_QuestLog and C_QuestLog.IsOnQuest
+                       and not C_QuestLog.IsOnQuest(liveQID) then
+                        for i = 1, GetNumQuestLogEntries() do
+                            local _, _, _, _, _, _, _, qid = GetQuestLogTitle(i)
+                            if i == qIndex and qid and qid > 0 then
+                                liveQID = qid
+                                break
+                            end
+                        end
+                    end
+
+                    Quest:PatchQuestFromBlizzard(liveQID)
+
+                    if C_SuperTrack.SetSuperTrackedUserWaypoint
+                       and C_SuperTrack.IsSuperTrackingUserWaypoint
+                       and C_SuperTrack.IsSuperTrackingUserWaypoint() then
+                        C_SuperTrack.SetSuperTrackedUserWaypoint(false)
+                    end
+                    if C_SuperTrack.ClearAllSuperTracked then
+                        C_SuperTrack.ClearAllSuperTracked()
+                    end
+                    C_SuperTrack.SetSuperTrackedQuestID(liveQID)
+                end
 
                 if typ.WatchError then
-                    Quest:MsgNotInDB ("O")
+                    -- WatchError means we couldn't resolve a zone for this
+                    -- objective. Try one more synthesis from Blizzard; if
+                    -- it patches we re-render and skip the message. If
+                    -- the live API isn't available on this flavor (Era /
+                    -- TBC) we show the legacy "not in database" toast.
+                    if Quest:PatchQuestFromBlizzard(qId) then
+                        self:Update()
+                    elseif not (C_QuestLog and C_QuestLog.GetQuestObjectives) then
+                        Quest:MsgNotInDB ("O")
+                    end
                 else
 
                     if IsAltKeyDown() then
@@ -10744,14 +11375,16 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                     else
 
                         if typ.WatchTip then
---[[
-                            local i, cur = Quest:FindCur (qId, qIndex)
-                            if cur.ItemLink then
-                                UseQuestLogSpecialItem (qIndex)
+                            -- Title-row click. Super-track is driven by
+                            -- the top-of-handler block above (with the
+                            -- live questID); on Classic without
+                            -- C_SuperTrack we drive the active quest via
+                            -- Carbonite's own state instead.
+                            if not (C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID) then
+                                Quest:SetActiveCarboniteQuest(qId, qIndex)
+                            else
+                                self:Update()
                             end
---]]
-                            val2 = false    -- Can't turn on cause will track missing stuff
-                            self:Set (data, val2)
 --[[
                             local i, cur = Quest:FindCur (qId, qIndex)
                             if i then
@@ -10835,8 +11468,17 @@ function Nx.Quest.Watch:Set (data, on, track)
 
         local i, cur = Quest:FindCur (qId, qIndex)
 
+        -- Synthesize quest data from Blizzard's API before giving up.
+        -- RecordQuestsLog already runs the patcher, but the player can
+        -- race it (click watch the same frame the quest accepted).
+        -- PatchQuestFromBlizzard self-checks for API availability.
         if not (cur and cur.Q) then
-            if not Nx.isRetail then
+            Quest:PatchQuestFromBlizzard(qId)
+            i, cur = Quest:FindCur (qId, qIndex)
+        end
+
+        if not (cur and cur.Q) then
+            if not (C_QuestLog and C_QuestLog.GetQuestObjectives) then
                 Quest:MsgNotInDB()
             end
             return
@@ -10846,8 +11488,13 @@ function Nx.Quest.Watch:Set (data, on, track)
 
         local q = cur.Q
         if not q["Start"] and not q["End"] then
-
-            if not Nx.isRetail then
+            -- One more shot at a live patch; End coords often come in
+            -- on a later QUEST_POI_UPDATE.
+            Quest:PatchQuestFromBlizzard(qId)
+            q = cur.Q
+        end
+        if not q["Start"] and not q["End"] then
+            if not (C_QuestLog and C_QuestLog.GetQuestObjectives) then
                 Quest:MsgNotInDB()
             end
             return
@@ -10900,7 +11547,7 @@ function Nx.Quest.Watch:Set (data, on, track)
         Quest.List:Update()
 
     else
-        if not Nx.isRetail then
+        if not (C_QuestLog and C_QuestLog.GetQuestObjectives) then
             Quest:MsgNotInDB()
         end
     end
@@ -11260,7 +11907,18 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
             return
         end
 --]]
-        local track = bit_band (tbits, bit_lshift (1, qObj))
+        -- For qObj > 0 (a specific objective): tracking bit must be set.
+        -- For qObj == 0 (title-row / "the whole quest"): any tracking bit
+        -- counts. cur.TrackMask only ever sets bits 1-15 (per-objective),
+        -- never bit 0, so the legacy `tbits & 1` test was always 0 and
+        -- the blob/target draw block below silently no-op'd whenever a
+        -- click came in via the title row (super-track flow).
+        local track
+        if qObj == 0 then
+            track = (tbits ~= 0) and 1 or 0
+        else
+            track = bit_band (tbits, bit_lshift (1, qObj))
+        end
 
         local questObj
         local name, zone, loc
@@ -11341,6 +11999,105 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                         x2, y2 = Map:GetWorldPos (mId, x2, y2)
                     end
 
+                    -- Title-row click on retail / Wrath+: prefer Blizzard's
+                    -- live next-waypoint over the static End coord. Blizz's
+                    -- own arrow uses GetNextWaypoint(questID) and advances
+                    -- it as objectives complete; using the same call makes
+                    -- the goto arrow follow the *current* objective rather
+                    -- than parking at one fixed turn-in point.
+                    -- The arrow label is composed as "Quest Title\n
+                    -- Objective Hint" so the user sees both.
+                    -- Title-row click on retail / Wrath+: compose a richer
+                    -- arrow label, and when Blizzard knows a live waypoint
+                    -- for this quest also override the static End coords
+                    -- so the arrow follows the *current* objective.
+                    --
+                    -- The two are independent: most quests have no scripted
+                    -- waypoint (GetNextWaypoint returns nil) but they still
+                    -- have objective text from GetQuestObjectives, so we
+                    -- always try to add the objective to the label even
+                    -- when the coords stay static.
+                    if qObj == 0 and C_QuestLog then
+                        local overrideMID, overrideX, overrideY
+                        if C_QuestLog.GetNextWaypoint then
+                            local wpMapID, wpX, wpY = C_QuestLog.GetNextWaypoint(qId)
+                            if wpMapID and wpX and wpY then
+                                overrideMID, overrideX, overrideY = wpMapID, wpX, wpY
+                            end
+                        end
+                        -- Fallback: walk the live POI list for the relevant
+                        -- map and pick this quest's current entry. Most
+                        -- non-scripted quests have no GetNextWaypoint but
+                        -- their POI x/y in GetQuestsOnMap *does* advance as
+                        -- objectives complete, so this keeps the arrow
+                        -- pointed at the current objective.
+                        if not overrideMID and C_QuestLog.GetQuestsOnMap then
+                            local function tryMap(m)
+                                if overrideMID or not m then return end
+                                local list = C_QuestLog.GetQuestsOnMap(m)
+                                if not list then return end
+                                for _, e in ipairs(list) do
+                                    if e.questID == qId and e.x and e.y then
+                                        overrideMID, overrideX, overrideY = m, e.x, e.y
+                                        return
+                                    end
+                                end
+                            end
+                            if C_TaskQuest and C_TaskQuest.GetQuestZoneID then
+                                tryMap(C_TaskQuest.GetQuestZoneID(qId))
+                            end
+                            tryMap(Map.GetCurrentMapId and Map:GetCurrentMapId())
+                        end
+                        if overrideMID then
+                            local nx, ny = Map:GetWorldPos(overrideMID,
+                                overrideX * 100, overrideY * 100)
+                            if nx and ny then
+                                x1, y1, x2, y2 = nx, ny, nx, ny
+                                mId = overrideMID
+                            end
+                        end
+
+                        local titlePart
+                        local curHere = self.QIds and self.QIds[qId]
+                        if curHere and curHere.Title then
+                            titlePart = curHere.Title
+                        else
+                            local titleFromAPI = C_QuestLog.GetTitleForQuestID
+                                and C_QuestLog.GetTitleForQuestID(qId)
+                            titlePart = titleFromAPI or name
+                        end
+
+                        -- GetNextWaypointText is only set for quests with
+                        -- explicit waypoint scripting (rare); fall back to
+                        -- the first unfinished objective from the live
+                        -- objective list (covers the common case).
+                        local wpText = C_QuestLog.GetNextWaypointText
+                            and C_QuestLog.GetNextWaypointText(qId)
+                        if (not wpText or wpText == "") and C_QuestLog.GetQuestObjectives then
+                            local objs = C_QuestLog.GetQuestObjectives(qId)
+                            if objs then
+                                for _, o in ipairs(objs) do
+                                    if o and not o.finished and o.text and o.text ~= "" then
+                                        wpText = o.text
+                                        break
+                                    end
+                                end
+                                if (not wpText or wpText == "") and #objs > 0 then
+                                    wpText = objs[#objs] and objs[#objs].text
+                                end
+                            end
+                        end
+
+                        -- Prefer the objective text (it's the actionable
+                        -- bit); fall back to the quest title when no
+                        -- objective is available.
+                        if wpText and wpText ~= "" then
+                            name = wpText
+                        elseif titlePart then
+                            name = titlePart
+                        end
+                    end
+
                     local cur = self.QIds[qId]
 --                    local _, cur = self:FindCur (qId)
                     if cur then
@@ -11371,7 +12128,15 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                 self.Map:GotoPlayer()
 
             else
-                Nx.Quest:MsgNotInDB ("Z")
+                -- No zone resolved for the objective. Try a live patch
+                -- first; if it filled in coords the next refresh will
+                -- pick them up and the user never sees the message.
+                -- PatchQuestFromBlizzard self-checks API availability;
+                -- when it returns false (no API or no Blizzard data),
+                -- fall back to the legacy toast.
+                if not Nx.Quest:PatchQuestFromBlizzard(qId) then
+                    Nx.Quest:MsgNotInDB ("Z")
+                end
 --                Nx.prt ("quest zone %s", zone)
             end
 
@@ -11456,7 +12221,16 @@ function Nx.Quest:UnpackSE (obj)
 --    Nx.prt("checking quest obj %s", obj)
     local i, zone, typ, x, y = Nx.Split("|",obj)
 --    Nx.prt("npc id should be %s", i)
-    local name = Nx.QuestStartEnd[tonumber(i)]
+    local name
+    local id = tonumber(i)
+    if id then
+        name = Nx.QuestStartEnd[id]
+    elseif i and i ~= "" then
+        -- Synthesized entries from PatchQuestFromBlizzard write the
+        -- quest title in the first field instead of a numeric NPC id
+        -- (Blizzard's API doesn't expose the giver's id for live data).
+        name = i
+    end
 
     if not name then
         name = "?"

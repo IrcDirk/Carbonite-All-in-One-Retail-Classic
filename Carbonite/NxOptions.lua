@@ -3144,6 +3144,7 @@ function Nx.Opts:Init()
         "BottomLeft", "Bottom", "BottomRight",
     }
     self.Skins = {
+        "Modern Dark","Modern Light","Glass","Class Color","Faction",
         "Blackout","Blackout Blues","Dialog Blue",
         "Dialog Gold","Simple Blue","Stone","Tool Blue",
     }
