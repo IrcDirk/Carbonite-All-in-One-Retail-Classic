@@ -10486,14 +10486,19 @@ function Nx.Map:IconOnMouseDown(button)
                     --Nx.prt("|cff00ff00" .. (hubData.name or "Quest Hub") .. "|r offers " .. state)
 
                     return  -- Don't process further
-                -- Handle RareScanner integration
+                -- Handle RareScanner integration. Entity pins implement
+                -- OnMouseDown (RSEntityPinMixin); group pins (RSGroupPinMixin)
+                -- don't, so we guard the call. The overlay-icon refresh
+                -- still fires regardless.
                 elseif map.ClickIcon and map.ClickIcon.iconType == "!RSR" and RareScanner then
                     local rspin = this.NXData.UData
                     if rspin then
                         if not rspin.owningMap then
                             rspin.owningMap = WorldMapFrame
                         end
-                        rspin:OnMouseDown(button)
+                        if rspin.OnMouseDown then
+                            rspin:OnMouseDown(button)
+                        end
                         Nx.Notes.PrevRSPins = 0
                         Nx.Notes:RareScanner(map.MapId)
                     end
@@ -10615,10 +10620,36 @@ function Nx.Map:IconOnEnter(motion)
         if this.NXData.iconType == "!RSR" and RareScanner then
             local rspin = this.NXData.UData
             if rspin and rspin.OnMouseEnter then
+                -- Cancel the leave ticker if a previous mouseout queued one;
+                -- otherwise it could fire after re-entering and close the
+                -- popup we just re-opened.
+                if rspin._NxLeaveTicker then
+                    rspin._NxLeaveTicker:Cancel()
+                    rspin._NxLeaveTicker = nil
+                end
                 rspin:OnMouseEnter()
                 tooltip = ExtToolTip:Acquire("RsSimpleMapToolTip")
                 tooltip:SmartAnchorTo(self)
                 this.NxTip = nil
+
+                -- For group pins RS opens a separate `groupTooltip` and
+                -- anchors it to the rspin frame (which lives on RareScanner's
+                -- private RSWorldMap canvas, off-screen for our merged map).
+                -- Re-anchor that tooltip to our Carbonite icon so it shows
+                -- at the cursor. We use the tooltip's own SmartAnchorTo so
+                -- it picks a side based on remaining screen space, and we
+                -- DON'T touch the rspin frame itself — doing so just gets
+                -- fought by RS's own UpdateScale loop.
+                if rspin.pinTemplate == "RSGroupPinTemplate" and rspin.groupTooltip then
+                    local gt = rspin.groupTooltip
+                    gt:ClearAllPoints()
+                    if gt.SmartAnchorTo then
+                        gt:SmartAnchorTo(self)
+                    else
+                        gt:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, 0)
+                    end
+                    gt:SetClampedToScreen(true)
+                end
             end
         end
 
@@ -10899,7 +10930,55 @@ function Nx.Map:IconOnLeave(motion)
         if this.NXData.iconType == "!RSR" and RareScanner then
             local rspin = this.NXData.UData
             if rspin and rspin.OnMouseLeave then
-                rspin:OnMouseLeave()
+                -- Defer the close as long as the cursor is still over the
+                -- tooltip, our icon, or (for groups) any cell within the
+                -- popup. A single one-shot timer is too brittle: if the
+                -- cursor is in transit between icon and tooltip at the
+                -- moment it fires, the tooltip would close even though the
+                -- user is heading toward it. Use a recurring 200ms ticker
+                -- that stops itself the moment cursor leaves both regions.
+                local icon = self
+                local isGroup = (rspin.pinTemplate == "RSGroupPinTemplate") and rspin.groupTooltip
+                -- Cancel any prior ticker so re-entering doesn't stack
+                -- multiple watchdogs.
+                if rspin._NxLeaveTicker then
+                    rspin._NxLeaveTicker:Cancel()
+                end
+                rspin._NxLeaveTicker = C_Timer.NewTicker(0.2, function(ticker)
+                    local stillThere = false
+                    if isGroup then
+                        local gt = rspin.groupTooltip
+                        if gt and gt.IsShown and gt:IsShown() then
+                            if MouseIsOver(gt) then stillThere = true end
+                            -- RS attaches a child entity-tooltip on
+                            -- gt.tooltip when the user hovers a cell in
+                            -- the popup; honour the same protection RS's
+                            -- own HideGroupTooltip uses.
+                            if not stillThere and gt.tooltip and gt.tooltip.IsShown and gt.tooltip:IsShown() then
+                                stillThere = true
+                            end
+                        end
+                    else
+                        -- Entity / overlay / guide pins: tooltip lives on
+                        -- rspin.tooltip (LibQTip frame). It's recreated on
+                        -- each OnMouseEnter so we can't capture it once.
+                        local tt = rspin.tooltip
+                        if tt and tt.IsShown and tt:IsShown() and MouseIsOver(tt) then
+                            stillThere = true
+                        end
+                    end
+                    if not stillThere and icon and icon.IsShown and icon:IsShown() and MouseIsOver(icon) then
+                        stillThere = true
+                    end
+                    if stillThere then
+                        return  -- keep polling
+                    end
+                    ticker:Cancel()
+                    rspin._NxLeaveTicker = nil
+                    if rspin.OnMouseLeave then
+                        rspin:OnMouseLeave()
+                    end
+                end)
             end
             if rspin and rspin.POI then
                 this.NxTip = rspin.POI.name

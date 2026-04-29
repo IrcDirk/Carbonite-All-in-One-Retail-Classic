@@ -2126,14 +2126,20 @@ function Nx.Notes:RareScanner(mapId)
     -- carry their own colored texture).
     local entries = {}
     local currentHash = 0
-    local function consider(pin, poi, nx, ny, tex, color)
-        if poi and poi.mapID == mapId and nx and ny and tex then
-            entries[#entries + 1] = { pin = pin, poi = poi, nx = nx, ny = ny, tex = tex, color = color }
+    local function consider(pin, poi, nx, ny, tex, color, isGroupRep)
+        -- Group POIs don't carry mapID directly (it's on each sub-POI), so
+        -- skip the mapID check for group representatives. Caller is expected
+        -- to have already verified the group belongs to this map via its
+        -- first sub-POI.
+        local mapOk = isGroupRep or (poi and poi.mapID == mapId)
+        if poi and mapOk and nx and ny and tex then
+            entries[#entries + 1] = { pin = pin, poi = poi, nx = nx, ny = ny, tex = tex, color = color, isGroupRep = isGroupRep }
             local stateBits = (poi.isDead and 1 or 0)
                             + (poi.isOpened and 2 or 0)
                             + (poi.isCompleted and 4 or 0)
                             + (poi.isDiscovered and 8 or 0)
-            currentHash = currentHash + nx * 10000 + ny * 100 + (poi.entityID or 0) + stateBits * 0.001
+            local idForHash = poi.entityID or (poi.POIs and #poi.POIs) or 0
+            currentHash = currentHash + nx * 10000 + ny * 100 + idForHash + stateBits * 0.001
         end
     end
     for _, template in ipairs({"RSEntityPinTemplate", "RSGroupPinTemplate"}) do
@@ -2149,11 +2155,33 @@ function Nx.Notes:RareScanner(mapId)
                 local ny = pin.normalizedY or pin.y
                 if poi then
                     if poi.isGroup and poi.POIs then
-                        for _, subPOI in ipairs(poi.POIs) do
-                            consider(pin, subPOI, nx, ny, subPOI.Texture, "FFFFFF")
+                        -- Verify the group belongs to our map; otherwise
+                        -- skip. Render each sub-rare at its OWN coords
+                        -- (which differ slightly per rare — that's why
+                        -- RareScanner clustered them in the first place).
+                        -- This produces a visible cluster of distinct
+                        -- icons matching the Bliz appearance, instead of
+                        -- a single stacked obscured icon. The group pin is
+                        -- still attached as user data on every sub-icon so
+                        -- mouseover on any of them triggers the RS group
+                        -- popup.
+                        local first = poi.POIs[1]
+                        if first and first.mapID == mapId then
+                            for _, sub in ipairs(poi.POIs) do
+                                if sub.mapID == mapId and sub.x and sub.y then
+                                    -- Sub-POI x/y can be raw 4-digit ints
+                                    -- (e.g. 4555 for 45.55%) or already-
+                                    -- normalised 0..1 fractions; normalise
+                                    -- defensively before passing to
+                                    -- consider() which expects 0..1.
+                                    local sx = (sub.x > 1) and (sub.x / 10000) or sub.x
+                                    local sy = (sub.y > 1) and (sub.y / 10000) or sub.y
+                                    consider(pin, sub, sx, sy, sub.Texture, "FFFFFF", true)
+                                end
+                            end
                         end
                     else
-                        consider(pin, poi, nx, ny, poi.Texture, "FFFFFF")
+                        consider(pin, poi, nx, ny, poi.Texture, "FFFFFF", false)
                     end
                 end
             end
@@ -2213,7 +2241,20 @@ function Nx.Notes:RareScanner(mapId)
     for _, e in ipairs(entries) do
         local wx, wy = Nx.Map:GetWorldPos(mapId, e.nx * 100, e.ny * 100)
         local rsnote = map:AddIconPt("!RSR", wx, wy, nil, e.color or "FFFFFF", e.tex)
-        map:SetIconTip(rsnote, e.poi.name)
+        local tip
+        if e.isGroupRep then
+            -- Plain-text fallback tooltip listing the group's sub-rares —
+            -- the hover handler in NxMap will also trigger RS's own native
+            -- group popup if it can position it near the cursor.
+            local lines = { format("|cffff8080Group (%d):|r", e.poi.POIs and #e.poi.POIs or 0) }
+            for _, sub in ipairs(e.poi.POIs or {}) do
+                lines[#lines + 1] = "  " .. (sub.name or "?")
+            end
+            tip = table.concat(lines, "\n")
+        else
+            tip = e.poi.name
+        end
+        map:SetIconTip(rsnote, tip)
         map:SetIconUserData(rsnote, e.pin)
     end
 end
