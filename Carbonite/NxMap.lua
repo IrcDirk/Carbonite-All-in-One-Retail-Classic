@@ -12505,7 +12505,16 @@ end
 function Nx.Map:AddTarget (target)
 
     assert (target)
-    assert (target.TargetX1)
+
+    -- Soft-fail when coords aren't resolved (objectives without a DB
+    -- entry on TBC Anniversary / MoP / Era can hit this). Returning
+    -- early lets callers like Nx.Quest:TrackOnMap finish their other
+    -- work (ClearAll, GotoPlayer) instead of being aborted by an
+    -- assertion. The Map is left without a goto point for this call,
+    -- which is the correct outcome when we have nothing to point at.
+    if not target.TargetX1 or not target.TargetY1 then
+        return
+    end
 
     self.UpdateTrackingDelay = 0
 

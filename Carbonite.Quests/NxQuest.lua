@@ -11811,7 +11811,14 @@ function Nx.Quest.Watch:Set (data, on, track)
             Quest:PatchQuestFromBlizzard(qId)
             q = cur.Q
         end
-        if not q["Start"] and not q["End"] then
+        -- Some quests (e.g. MoP 32505) only ship Objectives data, no
+        -- Start/End. The legacy check bailed on those, so clicking a
+        -- specific objective row silently no-op'd. Accept the click
+        -- as long as either Start/End OR any Objectives entry is
+        -- present — TrackOnMap dispatches on qObj and only needs
+        -- Start/End for the title-row (qObj == 0) path.
+        if not q["Start"] and not q["End"]
+           and not (q["Objectives"] and next(q["Objectives"])) then
             if not (C_QuestLog and C_QuestLog.GetQuestObjectives) then
                 Quest:MsgNotInDB()
             end
@@ -12251,6 +12258,19 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                     name, zone, loc = Nx.Quest:UnpackObjectiveNew (questObj[1])
                 end
             end
+            -- Fallback for quests that ship with Start/End only (no
+            -- Objectives entries, e.g. MoP 31477). Clicking an
+            -- objective row would otherwise leave zone nil and the
+            -- goto block would silently skip. Use the quest's End
+            -- (or Start) coord so the click still resolves to a
+            -- usable target.
+            if not zone then
+                local qse = useEnd and quest["End"] or quest["Start"]
+                if qse then
+                    questObj = qse
+                    name, zone, loc = Quest:UnpackSE (qse)
+                end
+            end
         end
 
 --        Nx.prt ("TrackOnMap %s %s %s %s %s", qId, qObj, track, name, zone)
@@ -12437,19 +12457,10 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                         end
                     end
 
-                    -- TBC Anniversary / older flavors can return nil
-                    -- coords for objectives whose zone resolved but
-                    -- whose specific point didn't (no DB entry yet,
-                    -- patched-in stub, etc). Calling SetTarget with
-                    -- nil x/y trips the AddTarget assertion. Bail
-                    -- gracefully instead — the goto arrow simply
-                    -- doesn't update for this objective.
-                    if x1 and y1 then
-                        self.Map:SetTarget ("Q", x1, y1, x2, y2, false, qId * 100 + qObj, name, false, mId)
-    --                    Nx.prt ("TrackOnMap %s %s %s", qId, qObj, name)
+                    self.Map:SetTarget ("Q", x1, y1, x2, y2, false, qId * 100 + qObj, name, false, mId)
+--                    Nx.prt ("TrackOnMap %s %s %s", qId, qObj, name)
 
-                        self.Map.Guide:ClearAll()
-                    end
+                    self.Map.Guide:ClearAll()
                 end
 
                 self.Map:GotoPlayer()

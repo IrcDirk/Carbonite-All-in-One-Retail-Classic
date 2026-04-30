@@ -1,7 +1,7 @@
 move-folders:
   CarboniteAllinOneRetailClassic/Carbonite: Carbonite
   CarboniteAllinOneRetailClassic/Carbonite.Quests: Carbonite.Quests
-  CarboniteAllinOneRetailClassic/Carbonite.Social: Carbonite.Social
+  CarboniteAllinOneRetailClassic/Carbonite.Info: Carbonite.Info
   CarboniteAllinOneRetailClassic/Carbonite.Notes: Carbonite.Notes
   CarboniteAllinOneRetailClassic/Carbonite.Warehouse: Carbonite.Warehouse
   CarboniteAllinOneRetailClassic/Carbonite.Gathermate2_Data: Carbonite.Gathermate2_Data
