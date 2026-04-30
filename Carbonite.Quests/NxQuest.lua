@@ -456,7 +456,6 @@ local defaults = {
             BGColor = "0|0|0|.4",                       -- Background color
             BlizzModify = true,                         -- Modify Blizzard watch
             BonusBar = false,                           -- Show progress bars (bonus tasks)
-            ObjBars = true,                             -- Inline progress bars on X/Y kill/collect objectives
             BonusTask = true,                           -- Show bonus tasks
             ChalTrack = true,                           -- Track challenge modes
             FadeAll = false,                            -- Fade entire window
@@ -6639,8 +6638,6 @@ function Nx.Quest:GetDifficultyColor (level)
     return GetQuestDifficultyColor (level)
 end
 
--------------------------------------------------------------------------------
-
 function Nx.Quest:CalcPercentColor (desc, done)
 
     local s1, _, i, total = strfind (desc, "(%d+)/(%d+)")
@@ -8662,25 +8659,6 @@ function Nx.Quest.List:Update()
                             if not desc then desc = "?" end
                             color = done and oCompColor or oIncompColor
                             str = format ("     %s%s", color, desc)
-
-                            -- Inline progress bar for X/Y objectives
-                            -- (kill/collect). Same trick as the watch
-                            -- panel — width parameter of |T...|t scales
-                            -- with completion percent.
-                            if not done and Nx.qdb.profile.QuestWatch.ObjBars then
-                                local cn, total = strmatch(desc, "(%d+)/(%d+)")
-                                if cn and total then
-                                    local nn = tonumber(cn)
-                                    local tt = tonumber(total)
-                                    if nn and tt and tt > 0 then
-                                        local pct = floor(nn / tt * 100)
-                                        if pct > 0 then
-                                            str = format("     |TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:8:%d:|t%s%s",
-                                                pct, color, desc)
-                                        end
-                                    end
-                                end
-                            end
 
                             list:ItemAdd (qId * 0x10000 + ln * 0x100 + qn)
 
@@ -11470,27 +11448,6 @@ function Nx.Quest.Watch:UpdateList()
                                                 str = "*" .. str
                                             end
                                         end
-                                        -- Inline progress bar for X/Y
-                                        -- objectives (kill/collect). The
-                                        -- |T:height:width:|t escape lets
-                                        -- us draw a texture inside the
-                                        -- list-row text; width is in pixels
-                                        -- so passing the percent gives a
-                                        -- bar that grows with progress.
-                                        if not done and qwProfile.ObjBars and desc then
-                                            local cn, total = strmatch(desc, "(%d+)/(%d+)")
-                                            if cn and total then
-                                                local n = tonumber(cn)
-                                                local t = tonumber(total)
-                                                if n and t and t > 0 then
-                                                    local pct = floor(n / t * 100)
-                                                    if pct > 0 then
-                                                        str = format("|TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:8:%d:|t %s",
-                                                            pct, str)
-                                                    end
-                                                end
-                                            end
-                                        end
                                         list:ItemAdd (qId * 0x10000 + ln * 0x100 + qi)
                                         list:ItemSetOffset (16, lnOffset)
                                         local butType = "QuestWatchErr"
@@ -12480,10 +12437,19 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                         end
                     end
 
-                    self.Map:SetTarget ("Q", x1, y1, x2, y2, false, qId * 100 + qObj, name, false, mId)
---                    Nx.prt ("TrackOnMap %s %s %s", qId, qObj, name)
+                    -- TBC Anniversary / older flavors can return nil
+                    -- coords for objectives whose zone resolved but
+                    -- whose specific point didn't (no DB entry yet,
+                    -- patched-in stub, etc). Calling SetTarget with
+                    -- nil x/y trips the AddTarget assertion. Bail
+                    -- gracefully instead — the goto arrow simply
+                    -- doesn't update for this objective.
+                    if x1 and y1 then
+                        self.Map:SetTarget ("Q", x1, y1, x2, y2, false, qId * 100 + qObj, name, false, mId)
+    --                    Nx.prt ("TrackOnMap %s %s %s", qId, qObj, name)
 
-                    self.Map.Guide:ClearAll()
+                        self.Map.Guide:ClearAll()
+                    end
                 end
 
                 self.Map:GotoPlayer()
