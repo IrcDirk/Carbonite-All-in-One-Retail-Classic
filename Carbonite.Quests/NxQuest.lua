@@ -3599,7 +3599,10 @@ function Nx.Quest:ProcessQuestDB(questTotal)
                         cnum = cnum + 1
                         qc.CNum = cnum
                         local name, side, level, minlevel, qnext = self:Unpack (qc["Quest"])
-                        clvlmax = max (clvlmax, level)
+                        -- Defensive: a malformed Quest field can produce a
+                        -- nil level; default to 0 instead of crashing the
+                        -- chain walker.
+                        clvlmax = max (clvlmax, level or 0)
                         if not qnext or qnext == 0 or _qids[qnext] == true or cnum > 40 then
                             break
                         end
@@ -3780,8 +3783,7 @@ function Nx.Quest:LoadQuestDB()
             end
         end
     else
-        --[[ temporary disable this condition as we don't have quest database for the Midnight expansion yet
-        if Nx.MaxPlayerLevel > 80 then -- 
+        if Nx.MaxPlayerLevel > 80 then  -- Midnight (level 81-90+ bucket)
             if Nx.qdb.profile.Quest.Load9 then
                 C_Timer.After(1, function() questTotal = questTotal + Nx.ModQuests:Load9(); numQLoad = numQLoad - 1; end)
                 timeDelay = timeDelay + 1
@@ -3790,7 +3792,7 @@ function Nx.Quest:LoadQuestDB()
             else
                 Nx.ModQuests:Clear9()
             end
-        end ]]--
+        end
     end
     C_Timer.After(1, function() Nx.Units2Quests:Load(); end)
 
@@ -3952,9 +3954,17 @@ end
 Nx.Quest.ActiveQID = 0
 
 function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
+    -- Suppress the AddQuestWatch hook for the duration of this call.
+    -- TrackOnMap below calls AddQuestWatch(BlizIndex) when QuestWatch.Sync
+    -- is enabled, which would otherwise re-fire our hook and recursively
+    -- toggle the quest off in the same click.
+    local prevSuppress = self._addWatchSuppress
+    self._addWatchSuppress = true
+
     if not qId or qId <= 0 then
         self.ActiveQID = 0
         self.Tracking = {}
+        self._addWatchSuppress = prevSuppress
         return
     end
 
@@ -3976,6 +3986,7 @@ function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
         if self.Watch and self.Watch.Update then
             self.Watch:Update()
         end
+        self._addWatchSuppress = prevSuppress
         return
     end
 
@@ -3985,15 +3996,41 @@ function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
     self.ActiveQID = qId
     self.Tracking = {}
     self.Tracking[qId] = mask
+
+    -- Pick the first incomplete objective for arrow targeting instead of
+    -- routing as title-row (qObj=0). Title-row falls back to the static
+    -- End coord on classic flavors (no GetNextWaypoint), which means the
+    -- arrow always points at the turn-in NPC even when the player is
+    -- mid-quest. Mirror the picked objective into ActiveObjI so the
+    -- (qId, objI) toggle logic in the click handlers can match it.
+    local pickedObj = 0
+    if cur and cur.Q and cur.Q["Objectives"] then
+        for n = 1, 15 do
+            local obj = cur.Q["Objectives"][n]
+            if not obj then break end
+            local done = cur[n + 300]
+            if not done then
+                local first = type(obj) == "table" and obj[1] or obj
+                local _, zone = self:UnpackObjectiveNew(first)
+                if zone then
+                    pickedObj = n
+                    break
+                end
+            end
+        end
+    end
+    self.ActiveObjI = pickedObj
+
     if not InCombatLockdown() then
         local Map = Nx.Map
         local mapId = Map:GetCurrentMapId()
-        self:TrackOnMap(qId, 0, qIndex and qIndex > 0, true)
+        self:TrackOnMap(qId, pickedObj, qIndex and qIndex > 0, true)
         Map:SetCurrentMap(mapId)
     end
     if self.Watch and self.Watch.Update then
         self.Watch:Update()
     end
+    self._addWatchSuppress = prevSuppress
 end
 
 function Nx.Quest:OnSuperTrackChanged()
@@ -4008,6 +4045,17 @@ function Nx.Quest:OnSuperTrackChanged()
         -- have a remembered ActiveQID and that quest is still in the
         -- player's log, restore it so the Blizzard arrow / tracker
         -- stays pointing at the right quest.
+        --
+        -- Skip the restore when the user *intentionally* cleared via the
+        -- icon-click toggle (UserClearedActive flag set by the click
+        -- handler). Without this guard the toggle-off click flips back
+        -- to the previous quest immediately.
+        if self.UserClearedActive then
+            self.UserClearedActive = nil
+            self.ActiveQID = 0
+            self.ActiveObjI = 0
+            return
+        end
         local prev = self.ActiveQID
         if prev and prev > 0
            and C_QuestLog and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest(prev)
@@ -4016,6 +4064,7 @@ function Nx.Quest:OnSuperTrackChanged()
             return
         end
         self.ActiveQID = 0
+        self.ActiveObjI = 0
         return
     end
     self.ActiveQID = liveQID
@@ -4069,9 +4118,43 @@ function Nx.Quest:OnSuperTrackChanged()
     if not mask or mask == 0 then mask = 0xffffffff end
     self.Tracking = {}
     self.Tracking[liveQID] = mask
-    if not InCombatLockdown() then
-        self:TrackOnMap(liveQID, 0, true, true)
+
+    -- Pick a per-objective target instead of qObj=0. Title-row routing
+    -- relies on Blizzard's GetNextWaypoint / GetQuestsOnMap to advance
+    -- the arrow to the current objective; on classic flavors (and
+    -- legacy retail quests) those return nothing, so qObj=0 falls back
+    -- to the static End coord — the arrow always points at the turn-in
+    -- NPC regardless of which POI the user clicked. Walk our objective
+    -- data and pick the first incomplete objective with a coord; that
+    -- way the arrow follows the actual work, not the ender.
+    local quest = cur.Q
+    local pickedObj = 0
+    if quest and quest["Objectives"] then
+        for n = 1, 15 do
+            local obj = quest["Objectives"][n]
+            if not obj then break end
+            local done = cur[n + 300]
+            if not done then
+                local first = type(obj) == "table" and obj[1] or obj
+                local _, zone = self:UnpackObjectiveNew(first)
+                if zone then
+                    pickedObj = n
+                    break
+                end
+            end
+        end
     end
+    if not InCombatLockdown() then
+        self:TrackOnMap(liveQID, pickedObj, true, true)
+    end
+    -- Mirror the picked objective into ActiveObjI so the (qId, objI) toggle
+    -- check in the click handlers can see it. Without this, super-track
+    -- changes that originate outside Carbonite (Blizzard's world-map pin
+    -- click eating our IconOnMouseDown, the objective tracker title click,
+    -- macros calling SetSuperTrackedQuestID, etc.) leave ActiveObjI at its
+    -- previous value, so a follow-up click on the same icon never sees a
+    -- match and can't toggle off.
+    self.ActiveObjI = pickedObj
     if self.Watch and self.Watch.Update then
         self.Watch:Update()
     end
@@ -4513,7 +4596,7 @@ function Nx.Quest:RecordQuestsLog()
                     cur.HighPri = true
                 end
 
-                cur.ItemLink, cur.ItemImg, cur.ItemCharges = GetQuestLogSpecialItemInfo (qn)
+                cur.ItemLink, cur.ItemImg, cur.ItemCharges, cur.ItemShowOnComplete = GetQuestLogSpecialItemInfo (qn)
 
                 --Nx.prt("Q num: %d itmLink: %s item: %s charges: %d", qn, cur.ItemLink or " ", cur.ItemImg or " ", cur.ItemCharges)
                 if cur.ItemLink then
@@ -4882,7 +4965,10 @@ function Nx.Quest:ScanBlizzQuestDataZone(WatchUpdate)
                 local needEnd = isComplete and not quest["End"]
                 local fac = UnitFactionGroup ("player") == "Horde" and 1 or 2
 
-                if worldQuestType == nil and (patch > 0 or needEnd or (not isComplete and not quest["Objectives"])) or qObjl < lbCnt then
+                -- Enter the patch block whenever Blizzard's API has objectives
+                -- to contribute (lbCnt > 0) — even if we already have static
+                -- POIs, we want to append the live ones too so both render.
+                if worldQuestType == nil and (patch > 0 or needEnd or (not isComplete and lbCnt > 0)) then
                     local x, y, objective;
                     x = mapQuests[n].x
                     y = mapQuests[n].y
@@ -4904,16 +4990,34 @@ function Nx.Quest:ScanBlizzQuestDataZone(WatchUpdate)
                         end
 
                         if not isComplete then
-                            if not quest["Objectives"] or qObjl < lbCnt then
+                            -- Static-DB POIs are authoritative for position.
+                            -- If our slot has data, just rename its desc to
+                            -- the live objective text (so tooltips / watch
+                            -- list show real labels instead of "nil"). If
+                            -- the slot is empty, write a single Blizzard-
+                            -- derived POI as a fallback.
+                            if not quest["Objectives"] then
                                 quest["Objectives"] = {}
                             end
                             patch = bit.bor (patch, 2)
 
-                            local s = title
                             for i = 1, lbCnt do
-                                if not quest["Objectives"][i] then
-                                    local obj = format ("%s|%s|32|%f|%f|6|6", objectives[i] and objectives[i].text or "?", mapId, x, y)
+                                local objText = (objectives[i] and objectives[i].text) or "?"
+                                objText = (objText:gsub("|", ""))
+                                local slot = quest["Objectives"][i]
+                                if not slot then
+                                    local obj = format ("%s|%s|32|%f|%f|6|6",
+                                        objText, mapId, x, y)
                                     quest["Objectives"][i] = {obj}
+                                else
+                                    for j, poi in ipairs (slot) do
+                                        if type(poi) == "string" then
+                                            local rest = poi:match("^[^|]*(|.*)$")
+                                            if rest then
+                                                slot[j] = objText .. rest
+                                            end
+                                        end
+                                    end
                                 end
                             end
                         end
@@ -6175,28 +6279,49 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
     end
 
     if lbCnt > 0 then
-        -- Re-sync objective entries when:
-        --   - we previously patched this quest (chain progress refresh), or
-        --   - Carbonite's existing entry has a different objective count.
-        local prePatchedObjectives = bit_band (patch, 2) ~= 0
-        local existingCnt = (quest["Objectives"] and #quest["Objectives"]) or 0
-        if prePatchedObjectives or existingCnt ~= lbCnt then
-            local newObjs = {}
-            for i = 1, lbCnt do
-                local objText = (objectives[i] and objectives[i].text) or "?"
+        -- For each Blizzard objective:
+        --   * If our static DB has POIs for this slot already, *rename* them
+        --     in place — replace the leading desc field with the live text
+        --     so tooltips / watch list show the real objective text instead
+        --     of "nil". Don't append a new POI; that would render a ghost
+        --     icon next to the real ones.
+        --   * If the slot is empty, write a single Blizzard-derived POI so
+        --     the watch list still shows something.
+        if not quest["Objectives"] then
+            quest["Objectives"] = {}
+        end
+        for i = 1, lbCnt do
+            local objText = (objectives[i] and objectives[i].text) or "?"
+            objText = (objText:gsub("|", ""))  -- strip pipes from desc
+            local slot = quest["Objectives"][i]
+            if not slot then
+                local obj
                 if mapId and x and y then
-                    newObjs[i] = { format ("%s|%s|32|%f|%f|6|6", objText, mapId, x, y) }
+                    obj = format ("%s|%s|32|%f|%f|6|6", objText, mapId, x, y)
                 else
                     -- Best-effort: text-only entry with sentinel zone 0.
                     -- Watch list shows it; map can't pin it until we get
                     -- coords on a later QUEST_POI_UPDATE.
-                    newObjs[i] = { format ("%s|0|32|0|0|6|6", objText) }
+                    obj = format ("%s|0|32|0|0|6|6", objText)
+                end
+                quest["Objectives"][i] = { obj }
+                touched = true
+            else
+                for j, poi in ipairs (slot) do
+                    if type(poi) == "string" then
+                        local rest = poi:match("^[^|]*(|.*)$")
+                        if rest then
+                            local renamed = objText .. rest
+                            if renamed ~= poi then
+                                slot[j] = renamed
+                                touched = true
+                            end
+                        end
+                    end
                 end
             end
-            quest["Objectives"] = newObjs
-            patch = bit.bor (patch, 2)
-            touched = true
         end
+        patch = bit.bor (patch, 2)
     end
 
     -- Resolve End coords with this priority chain:
@@ -6576,6 +6701,114 @@ function Nx.Quest.List:Open()
         -- Retail / Wrath+ Classic. Lets the map blob/arrow follow Blizzard's
         -- super-tracked quest (e.g. set by clicking a quest POI).
         CarboniteQuest:RegisterEvent ("SUPER_TRACKING_CHANGED", "OnQuestUpdate")
+
+        -- Toggle-on-second-click for the super-tracked quest. Blizzard's
+        -- world-map quest pin sits on top of Carbonite's icon and eats
+        -- the click, so our IconOnMouseDown never runs and the user can
+        -- never deactivate the active quest by clicking the pin again.
+        -- This hook intercepts every SetSuperTrackedQuestID call (Blizz
+        -- pin click, objective tracker, addons, etc.) and converts a
+        -- second call with the same id into a clear.
+        if C_SuperTrack.SetSuperTrackedQuestID and not Nx.Quest._stHookInstalled then
+            Nx.Quest._stHookInstalled = true
+            Nx.Quest._stLastSet = 0
+            hooksecurefunc(C_SuperTrack, "SetSuperTrackedQuestID", function(qID)
+                qID = qID or 0
+                local now = GetTime and GetTime() or 0
+
+                -- Lockout window after a user-initiated toggle-off. Blizzard's
+                -- own QuestObjectiveTracker / WorldMap pin code likes to
+                -- auto-restore the super-track to the next available quest
+                -- right after we clear it; squash any non-zero set during
+                -- the lockout so the user's "click off" decision sticks.
+                if Nx.Quest._stLockoutUntil and now < Nx.Quest._stLockoutUntil then
+                    if qID > 0 then
+                        Nx.Quest._stSuppressHook = true
+                        C_SuperTrack.SetSuperTrackedQuestID(0)
+                    end
+                    return
+                end
+
+                -- Skip our own toggle-clear so the hook doesn't recurse.
+                if Nx.Quest._stSuppressHook then
+                    Nx.Quest._stSuppressHook = false
+                    return
+                end
+
+                -- Ignore clears for last-set tracking. Blizzard's map pin
+                -- code emits a clear-then-set pair on every click, so
+                -- letting the clear reset _stLastSet meant the matching
+                -- set never appeared as a duplicate of the previous click.
+                if qID == 0 then
+                    return
+                end
+
+                -- Setting the same id that's already active -> toggle off.
+                if qID == Nx.Quest._stLastSet
+                   and qID == (Nx.Quest.ActiveQID or 0) then
+                    Nx.Quest._stSuppressHook = true
+                    Nx.Quest.UserClearedActive = true
+                    C_SuperTrack.SetSuperTrackedQuestID(0)
+                    Nx.Quest.ActiveQID = 0
+                    Nx.Quest.ActiveObjI = 0
+                    if Nx.Quest.Tracking then
+                        Nx.Quest.Tracking[qID] = nil
+                    end
+                    if Nx.Map and Nx.Map.Maps and Nx.Map.Maps[1] then
+                        local m1 = Nx.Map.Maps[1]
+                        if m1.ClearTargets then m1:ClearTargets() end
+                        -- Blizzard quest area blob is drawn into a
+                        -- separate WorldMapBlobFrame (QMap.QuestWin) and
+                        -- doesn't auto-hide on super-track clear; do it
+                        -- explicitly so the area stops shading the map.
+                        local f = NxMap1 and NxMap1.NxMap
+                        if f and f.QuestWin then
+                            if f.QuestWin.DrawNone then f.QuestWin:DrawNone() end
+                            if f.QuestWin.Hide then f.QuestWin:Hide() end
+                        end
+                    end
+                    Nx.Quest._stLastSet = 0
+                    Nx.Quest._stLockoutUntil = now + 0.6
+                else
+                    Nx.Quest._stLastSet = qID
+                end
+            end)
+        end
+    elseif AddQuestWatch and not Nx.Quest._addWatchHookInstalled then
+        -- Classic flavors without C_SuperTrack (TBC 2.5, Era 1.15). Blizzard's
+        -- world-map quest pin can sit on top of Carbonite's typ=32 point
+        -- icon and eat the click — Blizzard's classic pin click ultimately
+        -- calls AddQuestWatch(questIndex), so hooking that gives us a
+        -- reliable "user clicked a quest pin" signal. Route to
+        -- SetActiveCarboniteQuest so the goto arrow follows the
+        -- first-incomplete-objective heuristic instead of staying anchored
+        -- on whatever the quest log was last pointing at.
+        Nx.Quest._addWatchHookInstalled = true
+        hooksecurefunc("AddQuestWatch", function(questIndex)
+            if Nx.Quest._addWatchSuppress then return end
+            local qId
+            if GetQuestIDFromLogIndex then
+                qId = GetQuestIDFromLogIndex(questIndex)
+            elseif C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+                qId = C_QuestLog.GetQuestIDForLogIndex(questIndex)
+            end
+            if not qId or qId <= 0 then return end
+            -- Toggle: same active quest -> clear; new -> activate.
+            if (Nx.Quest.ActiveQID or 0) == qId then
+                Nx.Quest._addWatchSuppress = true
+                Nx.Quest:SetActiveCarboniteQuest(qId, questIndex) -- toggles off
+                Nx.Quest.ActiveObjI = 0
+                if Nx.Map and Nx.Map.Maps and Nx.Map.Maps[1]
+                   and Nx.Map.Maps[1].ClearTargets then
+                    Nx.Map.Maps[1]:ClearTargets()
+                end
+                Nx.Quest._addWatchSuppress = false
+            else
+                Nx.Quest._addWatchSuppress = true
+                Nx.Quest:SetActiveCarboniteQuest(qId, questIndex)
+                Nx.Quest._addWatchSuppress = false
+            end
+        end)
     end
     --CarboniteQuest:RegisterEvent ("QUEST_WATCH_UPDATE", "OnQuestUpdate")
     --CarboniteQuest:RegisterEvent ("SCENARIO_UPDATE", "OnQuestUpdate")
@@ -7665,22 +7898,16 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
     local Quest = Nx.Quest
     local Map = Nx.Map
 
-    -- Retail / Wrath+ Classic: any non-shift click on a quest row
-    -- (title or objective) sets the super-tracked quest. Title click
-    -- on the already-active quest toggles it off (Blizz parity).
-    -- Per-objective targeting isn't supported because Blizzard's map
-    -- doesn't either — the arrow always follows GetNextWaypoint and
-    -- advances automatically.
+    -- Quest-list click (retail / Wrath+ Classic). Toggle semantics mirror
+    -- the map-icon click handler: clicking the same (quest, objective)
+    -- pair a second time clears super-track + arrow, switching objectives
+    -- on the same quest just retargets the arrow.
     if not shift
        and qId and qId > 0
        and C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
 
         local i, cur, id = Quest:FindCur (qId, qIndex)
         if cur then
-            -- Resolve the *live* questID from the log index. Carbonite's
-            -- cur.QId can drift away from Blizzard's actual questID
-            -- (saved-vars from a previous session, etc.); SetSuperTracked
-            -- silently rejects unknown IDs.
             local liveQID = qId
             if qIndex and qIndex > 0 then
                 if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
@@ -7696,11 +7923,24 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
                 Quest:PatchQuestFromBlizzard(liveQID)
             end
 
-            local current = (C_SuperTrack.GetSuperTrackedQuestID and C_SuperTrack.GetSuperTrackedQuestID()) or 0
-            if qObj == 0 and current == liveQID then
-                -- Title click on already-active quest: toggle off + unwatch.
+            local activeQID = (C_SuperTrack.GetSuperTrackedQuestID
+                                and C_SuperTrack.GetSuperTrackedQuestID()) or 0
+            if activeQID == 0 then activeQID = Quest.ActiveQID or 0 end
+            local activeObjI = Quest.ActiveObjI or 0
+            local toggleOff = (activeQID == liveQID and activeObjI == qObj)
+
+            if toggleOff then
+                Quest.UserClearedActive = true
                 C_SuperTrack.SetSuperTrackedQuestID(0)
-                if Nx.Quest:GetQuest(id) == "W" then
+                Quest.ActiveQID = 0
+                Quest.ActiveObjI = 0
+                Quest.Tracking[qId] = nil
+                if Nx.Map and Nx.Map.Maps and Nx.Map.Maps[1]
+                   and Nx.Map.Maps[1].ClearTargets then
+                    Nx.Map.Maps[1]:ClearTargets()
+                end
+                -- Title-row toggle also clears the watch flag (Blizz parity).
+                if qObj == 0 and Nx.Quest:GetQuest(id) == "W" then
                     Nx.Quest.Watch:RemoveWatch(qId, qIndex)
                 end
             else
@@ -7708,6 +7948,10 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
                     Nx.Quest:SetQuest(id, "W")
                 end
                 C_SuperTrack.SetSuperTrackedQuestID(liveQID)
+                Quest.ActiveObjI = qObj
+                if qObj > 0 and Quest.TrackOnMap then
+                    Quest:TrackOnMap(qId, qObj, qIndex and qIndex > 0, true)
+                end
             end
             Quest:PartyStartSend()
             self:Update()
@@ -7717,50 +7961,99 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
 
     if qObj == 0 and not shift then
 
+        -- Classic Era / TBC title-row click. Toggle on (qId, 0) pair.
         local i, cur, id = Quest:FindCur (qId, qIndex)
         if cur then
+            local activeQID = Quest.ActiveQID or 0
+            local activeObjI = Quest.ActiveObjI or 0
+            local toggleOff = (activeQID == qId and activeObjI == 0)
 
-            local qStatus = Nx.Quest:GetQuest (id)
-            if qStatus == "W" then
+            local prevSuppress = Quest._addWatchSuppress
+            Quest._addWatchSuppress = true
 
-                Nx.Quest.Watch:RemoveWatch (qId, qIndex)
-            else
-                Nx.Quest:SetQuest (id, "W")
-                -- Older flavors without C_SuperTrack: drive the active
-                -- quest through Carbonite's own state. SetActiveCarboniteQuest
-                -- updates Tracking + ActiveQID + TrackOnMap so the icon
-                -- highlight and blob match the click.
-                if qId and qId > 0 then
+            if toggleOff then
+                if Quest.SetActiveCarboniteQuest then
+                    -- Polyfill toggles when called twice with same id.
                     Quest:SetActiveCarboniteQuest(qId, qIndex)
                 end
+                Quest.ActiveQID = 0
+                Quest.ActiveObjI = 0
+                Quest.Tracking[qId] = nil
+                if Nx.Map and Nx.Map.Maps and Nx.Map.Maps[1]
+                   and Nx.Map.Maps[1].ClearTargets then
+                    Nx.Map.Maps[1]:ClearTargets()
+                end
+                if Nx.Quest:GetQuest(id) == "W" then
+                    Nx.Quest.Watch:RemoveWatch(qId, qIndex)
+                end
+            else
+                if Nx.Quest:GetQuest(id) ~= "W" then
+                    Nx.Quest:SetQuest(id, "W")
+                end
+                if qId and qId > 0 and Quest.SetActiveCarboniteQuest then
+                    Quest:SetActiveCarboniteQuest(qId, qIndex)
+                end
+                Quest.ActiveObjI = 0
             end
 
+            Quest._addWatchSuppress = prevSuppress
             Quest:PartyStartSend()
         end
     else
 
         if qId > 0 and qObj > 0 then    -- FIX: Diabled qObj == 0 case
 
-            if shift and qObj == 0 or qObj > 0 then
+            -- Per-objective click on classic. Toggle on (qId, qObj) pair.
+            local i, cur, id = Quest:FindCur (qId, qIndex)
+            local activeQID = Quest.ActiveQID or 0
+            local activeObjI = Quest.ActiveObjI or 0
+            local toggleOff = (activeQID == qId and activeObjI == qObj)
 
-                local tbits = Quest.Tracking[qId] or 0
+            -- Wrap both branches in the AddQuestWatch hook suppress so any
+            -- AddQuestWatch fired by TrackOnMap's QuestWatch.Sync codepath
+            -- doesn't recursively re-toggle this quest in the hook (which
+            -- would activate-then-instantly-clear the user's first click).
+            local prevSuppress = Quest._addWatchSuppress
+            Quest._addWatchSuppress = true
 
-                if qObj == 0 then
-                    if bit_band (tbits, 1) > 0 then
-                        Quest.Tracking[qId] = nil
-                    else
-                        Quest.Tracking[qId] = 0xffffffff        -- Track all
-                    end
-                else
-                    Quest.Tracking[qId] = bit.bxor (tbits, bit_lshift (1, qObj))
+            if toggleOff then
+                -- Clear: drop watch state if active, drop this objective
+                -- bit, clear arrow.
+                Quest.Tracking[qId] = nil
+                Quest.ActiveObjI = 0
+                if cur and id and Nx.Quest:GetQuest(id) == "W" then
+                    Nx.Quest.Watch:RemoveWatch(qId, qIndex)
                 end
-
-                self:Update()
+                -- SetActiveCarboniteQuest with same id as Active = clears
+                -- (the polyfill toggles when called twice on the same id),
+                -- so this both resets ActiveQID and triggers TrackOnMap's
+                -- clear-targets path internally.
+                if Quest.SetActiveCarboniteQuest then
+                    Quest:SetActiveCarboniteQuest(qId, qIndex)
+                end
+                if Nx.Map and Nx.Map.Maps and Nx.Map.Maps[1]
+                   and Nx.Map.Maps[1].ClearTargets then
+                    Nx.Map.Maps[1]:ClearTargets()
+                end
+            else
+                -- Activate: ensure quest is watched + active, set tracking
+                -- bit for this objective, point the arrow at it.
+                if cur and id and Nx.Quest:GetQuest(id) ~= "W" then
+                    Nx.Quest:SetQuest(id, "W")
+                end
+                if Quest.SetActiveCarboniteQuest and activeQID ~= qId then
+                    Quest:SetActiveCarboniteQuest(qId, qIndex)
+                end
+                local tbits = Quest.Tracking[qId] or 0
+                Quest.Tracking[qId] = bit.bor (tbits, bit_lshift (1, qObj))
+                Quest.ActiveObjI = qObj
+                local mapId = Map:GetCurrentMapId()
+                Quest:TrackOnMap (qId, qObj, qIndex > 0, true)
+                Map:SetCurrentMap (mapId)
             end
 
-            local mapId = Map:GetCurrentMapId()
-            Quest:TrackOnMap (qId, qObj, qIndex > 0, true)
-            Map:SetCurrentMap (mapId)
+            Quest._addWatchSuppress = prevSuppress
+            self:Update()
         end
     end
 
@@ -9232,7 +9525,24 @@ function Nx.Quest:UpdateIcons (map)
 --                            Nx.prt ("Nxzone error %s %s", objName, objZone)
                             break
                         end
-                        if bit_band (mask, bit_lshift (1, n)) > 0 then
+                        -- Render this objective whenever:
+                        --   * the explicit mask bit is set (watched/tracked
+                        --     by user), OR
+                        --   * the quest is in the player's log (cur exists
+                        --     with QI > 0). This keeps the in-log POIs
+                        --     visible even when the user hasn't toggled
+                        --     "Show on map" — matching the modern UX where
+                        --     accepted quests draw their data automatically.
+                        local renderObj = bit_band (mask, bit_lshift (1, n)) > 0
+                            or (cur and cur.QI and cur.QI > 0)
+                        -- Skip completed objectives (and skip everything if
+                        -- the whole quest is complete) — there's no point
+                        -- showing a static area span / point you've already
+                        -- finished. cur[n+300] holds the per-objective done
+                        -- flag set during RecordQuestsLog.
+                        local objDone = cur and (cur.CompleteMerge or cur[n + 300])
+                        if objDone then renderObj = false end
+                        if renderObj then
                             local colI = n
 
                             if colorPerQ then
@@ -9246,157 +9556,155 @@ function Nx.Quest:UpdateIcons (map)
 
                             local oname = cur and cur[n] or objName
 
-                            if typ == 32 then  -- Points
-                                local cnt = 1
-                                local sz = navscale
+                            -- Per-POI dispatch. The objective list can mix
+                            -- typ 32 (points) and typ 35 (area spans) — e.g.
+                            -- a quest that has a static area-blob in its
+                            -- data files AND a runtime point pin from
+                            -- Blizzard's API. Render each POI according to
+                            -- its own typ so the area span isn't hidden by
+                            -- the first-POI dispatch.
 
-                                if cnt > 1 then
-                                    sz = map:GetWorldZoneScale (mapId) / 10.02 * ptSz
+                            local hover = Quest.IconHoverCur == cur and Quest.IconHoverObjI == n
+                            local tracking = bit_band (trackMode, bit_lshift (1, n)) > 0
+                            local tip = format ("%s\nObj: %s", qname, oname)
+                            if cur and cur[n + 400] then
+                                tip = tip .. "\n" .. cur[n + 400]
+                            end
+
+                            -- Distance arrow (per-objective). Draws an
+                            -- IconAreaArrows pointer at the closest edge
+                            -- of the objective area to the player. Only
+                            -- meaningful when the objective actually has a
+                            -- spannable area (typ 35) — for typ 32 point
+                            -- objectives the "closest edge" is the point
+                            -- itself, so the arrow icon ends up right on
+                            -- top of the real point and looks like a
+                            -- duplicate ghost icon next to it.
+                            local hasSpanForArrow = false
+                            for _, loc1 in pairs(obj) do
+                                if type(loc1) == "string" and loc1 ~= "" then
+                                    local _, _, poiTyp = Nx.Quest:UnpackObjectiveNew(loc1)
+                                    if poiTyp == 35 then hasSpanForArrow = true; break end
                                 end
-                                local x, y = Nx.Quest:UnpackLocPtOff (obj)
-                                local wx, wy = map:GetWorldPos (mapId, x, y)
-
-                                local f = map:GetIconStatic (4)
-                                if map:ClipFrameByMapType (f, wx, wy, sz, sz, 0) then
-                                    f.NXType = 9000 + n
-                                    f.NXData = cur
-                                    f.NxTip = format ("%s\nObj: %s (%.1f %.1f)", qname, oname, x, y)
-                                    if cur and cur[n + 400] then
-                                        f.NxTip = f.NxTip .. "\n" .. cur[n + 400]
-                                    end
-                                    if cnt == 1 then
-                                        f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQTarget")
-                                        if isSuperTracked then
-                                            f.texture:SetVertexColor (1, 0.85, 0, 1)
-                                            if f.NxGlow then f.NxGlow:Show() end
-                                        else
-                                            f.texture:SetVertexColor (r, g, b, .9)
-                                        end
-                                    else
-                                        f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconCirclePlus")
-                                        if isSuperTracked then
-                                            f.texture:SetVertexColor (1, 0.85, 0, .8)
-                                            if f.NxGlow then f.NxGlow:Show() end
-                                        else
-                                            f.texture:SetVertexColor (r, g, b, .5)
-                                        end
-                                    end
-                                    -- Show the objective number on top of
-                                    -- the icon so users can match map
-                                    -- POIs to watch-list rows. Only for
-                                    -- the qObj > 0 case (per-objective).
-                                    if f.NxLabel then
-                                        f.NxLabel:SetText(tostring(n))
-                                        f.NxLabel:Show()
-                                    end
-                                end
-
-                            else -- Spans (areas)
-
---                                Nx.prt ("%s, spans %s", objName, strsub (obj, loc))
-
-                                local hover = Quest.IconHoverCur == cur and Quest.IconHoverObjI == n
-                                local tracking = bit_band (trackMode, bit_lshift (1, n)) > 0
-
-                                local tip = format (L["%s\nObj: %s"], qname, oname)
-                                if cur and cur[n + 400] then
-                                    tip = tip .. "\n" .. cur[n + 400]
-                                end
-
-                                local x
-
-                                if cur then
-                                    local d = cur["OD"..n]
-                                    if d and d > 0 then
-                                        x = cur["OX"..n]
-                                    end
-                                end
-
-                                if x then
-                                    local y = cur["OY"..n]
-                                    local f = map:GetIcon (4)
-                                    local sz = navscale
-
-                                    if not hover then
-                                        sz = sz * .8
-                                    end
-
-                                    if map:ClipFrameByMapType (f, x, y, sz, sz, 0) then
-
-                                        f.NXType = 9000 + n
-                                        f.NXData = cur
-                                        f.NxTip = tip
-
-                                        f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconAreaArrows")
-
-                                        if tracking then
-                                            f.texture:SetVertexColor (.8, .8, .8, 1)
-                                        else
-                                            f.texture:SetVertexColor (r, g, b, .7)
-                                        end
-                                    end
-                                end
-
-                                if not cur or drawArea or hover
-                                        or (bit_band (trackMode, bit_lshift (1, n)) > 0 and tonumber(trkA) > .05) then
-
-                                    local ssub = strsub
-
-                                    for _,loc1 in pairs(obj) do
-                                        if loc1 == "" then
-                                            break
-                                        end
-
-                                        local _, mapId = Nx.Quest:UnpackObjectiveNew (loc1)
-                                        local scale = map:GetWorldZoneScale (mapId) / 10.02
-
-                                        local x, y, w, h = Nx.Quest:UnpackLocRect (loc1)
-                                        local wx, wy = map:GetWorldPos (mapId, x, y)
-
-                                        local f = map:GetIconStatic (hover and 1)
-                                        if areaTex then
-
-                                            if map:ClipFrameTL (f, wx, wy, w * scale, h * scale) then
-                                                f.NXType = 9000 + n
-                                                f.NXData = cur
-                                                f.NxTip = tip
-
-                                                f.texture:SetTexture (areaTex)
-
-                                                if hover then
-                                                    f.texture:SetVertexColor (hovR, hovG, hovB, tonumber(hovA))
-                                                elseif tracking then
-                                                    f.texture:SetVertexColor (trkR, trkG, trkB, tonumber(trkA))
-                                                else
-                                                    f.texture:SetVertexColor (r, g, b, tonumber(col[4]))
-                                                end
+                            end
+                            if cur and hasSpanForArrow then
+                                local d = cur["OD"..n]
+                                if d and d > 0 then
+                                    local ax = cur["OX"..n]
+                                    local ay = cur["OY"..n]
+                                    if ax and ay then
+                                        local f = map:GetIcon (4)
+                                        local sz = navscale
+                                        if not hover then sz = sz * .8 end
+                                        if map:ClipFrameByMapType (f, ax, ay, sz, sz, 0) then
+                                            f.NXType = 9000 + n
+                                            f.NXData = cur
+                                            f.NxTip = tip
+                                            f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconAreaArrows")
+                                            if tracking then
+                                                f.texture:SetVertexColor (.8, .8, .8, 1)
+                                            else
+                                                f.texture:SetVertexColor (r, g, b, .7)
                                             end
-
-                                        else
-
-                                            if map:ClipFrameTLSolid (f, wx, wy, w * scale, h * scale) then
-
-                                                f.NXType = 9000 + n
-                                                f.NXData = cur
-                                                f.NxTip = tip
-
-                                                if hover then
-                                                    f.texture:SetColorTexture (hovR, hovG, hovB, hovA)
-                                                elseif tracking then
-                                                    f.texture:SetColorTexture (trkR, trkG, trkB, trkA)
-                                                else
-                                                    f.texture:SetColorTexture (r, g, b, tonumber(col[4]))
-                                                end
-                                            end
-
                                         end
                                     end
                                 end
                             end
-                        end
-                    end
-                end
-            end
+
+                            -- Spans always render when this objective has any
+                            -- POI data. The original gating (only draw on
+                            -- hover / explicit-track / drawAll-areas) was a
+                            -- perf hint for the all-quests overview render —
+                            -- but for a quest in your log with both a point
+                            -- icon and an area blob, the user's intent is
+                            -- to see both at once. Hover/tracking still
+                            -- override the *color* via existing branches.
+                            local drawSpans = true
+
+                            for _, loc1 in pairs(obj) do
+                                if loc1 ~= "" and type(loc1) == "string" then
+                                    local _, poiMap, poiTyp = Nx.Quest:UnpackObjectiveNew (loc1)
+                                    local pmap = poiMap or mapId
+                                    -- PatchQuestFromBlizzard writes sentinel
+                                    -- entries with mapId=0 when the live API
+                                    -- hasn't returned coords yet (the watch
+                                    -- list still shows the text; the map is
+                                    -- meant to skip it until QUEST_POI_UPDATE
+                                    -- replaces it with real coords). Without
+                                    -- this guard those sentinels render at
+                                    -- the world origin as a tiny ghost icon
+                                    -- next to the real POI.
+                                    if not poiMap or poiMap == 0 then
+                                        -- skip
+                                    elseif poiTyp == 32 then
+                                        -- Point
+                                        local px, py = Nx.Quest:UnpackLocPtOff (loc1)
+                                        if px and py then
+                                            local wx, wy = map:GetWorldPos (pmap, px, py)
+                                            local f = map:GetIconStatic (4)
+                                            if map:ClipFrameByMapType (f, wx, wy, navscale, navscale, 0) then
+                                                f.NXType = 9000 + n
+                                                f.NXData = cur
+                                                f.NxTip = format ("%s\nObj: %s (%.1f %.1f)", qname, oname, px, py)
+                                                if cur and cur[n + 400] then
+                                                    f.NxTip = f.NxTip .. "\n" .. cur[n + 400]
+                                                end
+                                                f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQTarget")
+                                                if isSuperTracked then
+                                                    f.texture:SetVertexColor (1, 0.85, 0, 1)
+                                                    if f.NxGlow then f.NxGlow:Show() end
+                                                else
+                                                    f.texture:SetVertexColor (r, g, b, .9)
+                                                end
+                                                if f.NxLabel then
+                                                    f.NxLabel:SetText(tostring(n))
+                                                    f.NxLabel:Show()
+                                                end
+                                            end
+                                        end
+                                    elseif drawSpans then
+                                        -- Span / area
+                                        local scale = map:GetWorldZoneScale (pmap) / 10.02
+                                        local x, y, w, h = Nx.Quest:UnpackLocRect (loc1)
+                                        if x and y and w and h then
+                                            local wx, wy = map:GetWorldPos (pmap, x, y)
+                                            local f = map:GetIconStatic (hover and 1)
+                                            if areaTex then
+                                                if map:ClipFrameTL (f, wx, wy, w * scale, h * scale) then
+                                                    f.NXType = 9000 + n
+                                                    f.NXData = cur
+                                                    f.NxTip = tip
+                                                    f.texture:SetTexture (areaTex)
+                                                    if hover then
+                                                        f.texture:SetVertexColor (hovR, hovG, hovB, tonumber(hovA))
+                                                    elseif tracking then
+                                                        f.texture:SetVertexColor (trkR, trkG, trkB, tonumber(trkA))
+                                                    else
+                                                        f.texture:SetVertexColor (r, g, b, tonumber(col[4]))
+                                                    end
+                                                end
+                                            else
+                                                if map:ClipFrameTLSolid (f, wx, wy, w * scale, h * scale) then
+                                                    f.NXType = 9000 + n
+                                                    f.NXData = cur
+                                                    f.NxTip = tip
+                                                    if hover then
+                                                        f.texture:SetColorTexture (hovR, hovG, hovB, hovA)
+                                                    elseif tracking then
+                                                        f.texture:SetColorTexture (trkR, trkG, trkB, trkA)
+                                                    else
+                                                        f.texture:SetColorTexture (r, g, b, tonumber(col[4]))
+                                                    end
+                                                end
+                                            end -- if areaTex / else
+                                        end -- if x and y and w and h
+                                    end -- elseif drawSpans
+                                end -- if loc1 ~= ""
+                            end -- for _, loc1 in pairs(obj)
+                        end -- if bit_band(mask, ...)
+                    end -- if objZone
+                end -- for n
+            end -- if quest
         end -- if not cur and not quest
     end
 
@@ -10845,11 +11153,21 @@ function Nx.Quest.Watch:UpdateList()
                                             list:ItemSetOffset (16, -1)
                                             local percent = GetQuestProgressBarPercent(questId) or 0
                                             if Nx.qdb.profile.QuestWatch.BonusBar then
-                                                if (math.floor(percent) == 0) then
-                                                    list:ItemSet(2, "0%")
+                                                -- Two-segment bar: filled (B) + remainder (BG).
+                                                -- Always 100px wide so the bar's full extent
+                                                -- is visible even at low percentages.
+                                                local filled = math.floor(percent)
+                                                local empty  = 100 - filled
+                                                local bar = ""
+                                                if filled > 0 then
+                                                    bar = format(" |TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:12:%d:|t", filled)
                                                 else
-                                                    list:ItemSet(2, format(" |TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:12:%d:|t %.2f%%", math.floor(percent), percent))
+                                                    bar = " "
                                                 end
+                                                if empty > 0 then
+                                                    bar = bar .. format("|TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarBG:12:%d:|t", empty)
+                                                end
+                                                list:ItemSet(2, format("%s %.2f%%", bar, percent))
                                             else
                                                 list:ItemSet(2,format("|cff00ff00%s %.2f%%", L["Progress: "], percent))
                                             end
@@ -10897,11 +11215,21 @@ function Nx.Quest.Watch:UpdateList()
                                             list:ItemSetOffset (16, -1)
                                             local percent = GetQuestProgressBarPercent(questId) or 0
                                             if Nx.qdb.profile.QuestWatch.BonusBar then
-                                                if (math.floor(percent) == 0) then
-                                                    list:ItemSet(2, "0%")
+                                                -- Two-segment bar: filled (B) + remainder (BG).
+                                                -- Always 100px wide so the bar's full extent
+                                                -- is visible even at low percentages.
+                                                local filled = math.floor(percent)
+                                                local empty  = 100 - filled
+                                                local bar = ""
+                                                if filled > 0 then
+                                                    bar = format(" |TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:12:%d:|t", filled)
                                                 else
-                                                    list:ItemSet(2, format(" |TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:12:%d:|t %.2f%%", math.floor(percent), percent))
+                                                    bar = " "
                                                 end
+                                                if empty > 0 then
+                                                    bar = bar .. format("|TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarBG:12:%d:|t", empty)
+                                                end
+                                                list:ItemSet(2, format("%s %.2f%%", bar, percent))
                                             else
                                                 list:ItemSet(2,format("|cff00ff00%s %.2f%%", L["Progress: "], percent))
                                             end
@@ -11025,7 +11353,14 @@ function Nx.Quest.Watch:UpdateList()
                             else
                                 list:ItemSetButton ("QuestWatchTip", false)        -- QuestWatchTip  >  QuestWatch?
                             end
-                            if cur.ItemLink and Nx.qdb.profile.QuestWatch.ItemScale >= 1 then
+                            -- Skip the WatchItem icon when the quest is
+                            -- finished, unless Blizzard's API explicitly
+                            -- says to keep it visible after completion
+                            -- (some hand-in items must stay clickable).
+                            local showItem = cur.ItemLink
+                                and Nx.qdb.profile.QuestWatch.ItemScale >= 1
+                                and (not isComplete or cur.ItemShowOnComplete)
+                            if showItem then
                                 list:ItemSetFrame ("WatchItem~" .. cur.QI .. "~" .. cur.ItemImg .. "~" .. cur.ItemCharges)
                             end
                             list:ItemSetButtonTip ((cur.ObjText or "?") .. (cur.PartyDesc or ""))
@@ -11096,8 +11431,16 @@ function Nx.Quest.Watch:UpdateList()
                                         desc = cur[ln]
                                         done = cur[ln + 300]
                                     end
-                                    --Nx.prt("%s", desc);
-                                    if not (hideDoneObj and done) then
+                                    -- Skip rows where the only desc we have
+                                    -- is the "nil" placeholder (POI desc not
+                                    -- filled in our DB) AND Blizzard's API
+                                    -- didn't supply objective text either —
+                                    -- otherwise the watch list would render
+                                    -- a literal "nil" line.
+                                    local skipRow = (not desc) or desc == ""
+                                                    or desc == "nil"
+                                                    or desc == "?"
+                                    if not skipRow and not (hideDoneObj and done) then
                                         if showPerColor then
                                             if done then
                                                 color = Quest.PerColors[9]
@@ -11319,6 +11662,7 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                 -- call is silently dropped and the arrow doesn't move.
                 -- Also clear any user-waypoint / map-pin super-track
                 -- since those out-prioritize quest super-track.
+                local _wasToggledOff = false
                 if qId and qId > 0 and not typ.WatchError
                    and C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
                     local liveQID = qId
@@ -11353,7 +11697,17 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                     if C_SuperTrack.ClearAllSuperTracked then
                         C_SuperTrack.ClearAllSuperTracked()
                     end
+                    -- Will trigger our SetSuperTrackedQuestID hook. If that
+                    -- hook toggles off (clicking the active quest again), it
+                    -- clears ActiveQID + the goto arrow + the blob. We have
+                    -- to remember the toggle happened so the rest of this
+                    -- handler doesn't immediately re-add tracking via
+                    -- Watch:Set (which would put the arrow right back).
                     C_SuperTrack.SetSuperTrackedQuestID(liveQID)
+                    if Quest._stLockoutUntil and GetTime
+                       and GetTime() < Quest._stLockoutUntil then
+                        _wasToggledOff = true
+                    end
                 end
 
                 if typ.WatchError then
@@ -11367,6 +11721,13 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                     elseif not (C_QuestLog and C_QuestLog.GetQuestObjectives) then
                         Quest:MsgNotInDB ("O")
                     end
+                elseif _wasToggledOff then
+                    -- The SetSuperTrackedQuestID hook just toggled off this
+                    -- quest in response to the click. Don't run the rest of
+                    -- the handler — Watch:Set / SetActiveCarboniteQuest
+                    -- below would immediately re-add the tracking + goto
+                    -- arrow that we just cleared.
+                    self:Update()
                 else
 
                     if IsAltKeyDown() then
@@ -12545,10 +12906,33 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
         cnt = 0
         for a,b in pairs(str) do
             local npc,zone,typ,x, y, w, h = Nx.Split ("|",b)
-            w = w / 1002 * 100
-            h = h / 668 * 100
-            local wx1, wy1 = Map:GetWorldPos (mapId, x, y)
-            local wx2, wy2 = Map:GetWorldPos (mapId, x + w, y + h)
+            local poiTyp = tonumber(typ) or 35
+            local poiMap = tonumber(zone) or mapId
+            local pX = tonumber(x); local pY = tonumber(y)
+            -- Skip sentinel entries with mapId=0 (PatchQuestFromBlizzard
+            -- writes these when live coords aren't available yet).
+            if not pX or not pY or poiMap == 0 then
+                -- skip
+            elseif poiTyp <= 33 then
+                -- Point: compare against the bare coord, no bounding box.
+                -- Mixing typ 32 entries into a list (after our refactor
+                -- to have point + span coexist per objective) used to be
+                -- silently treated as a span with leftover w/h, which
+                -- offset goto targets to a phantom corner of the box.
+                local wx, wy = Map:GetWorldPos (poiMap, pX, pY)
+                if wx and wy then
+                    local dist = (wx - px) ^ 2 + (wy - py) ^ 2
+                    if dist < closeDist then
+                        closeDist = dist
+                        closeX = wx
+                        closeY = wy
+                    end
+                end
+            else
+            w = (tonumber(w) or 0) / 1002 * 100
+            h = (tonumber(h) or 0) / 668 * 100
+            local wx1, wy1 = Map:GetWorldPos (poiMap, pX, pY)
+            local wx2, wy2 = Map:GetWorldPos (poiMap, pX + w, pY + h)
             x = wx1        -- Top left
             y = wy1
             if px >= wx1 and px <= wx2 then
@@ -12571,6 +12955,7 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
                 closeX = x
                 closeY = y
             end
+            end -- end of else (span) branch
         end
         return closeX, closeY
     end

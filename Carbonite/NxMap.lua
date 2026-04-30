@@ -7279,6 +7279,12 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
         f.NxTarget = target;
         target.dist = dist;
 
+        -- Disable mouse so this overlay marker doesn't eat clicks meant
+        -- for the underlying quest icon. The goto-target marker sits at
+        -- the destination, which is exactly where the user wants to
+        -- click again to toggle the quest off.
+        f:EnableMouse(false)
+
         local size = 16 * self.IconNavScale
         self:ClipFrameByMapType (f, dstX, dstY, size, size, 0)
 
@@ -10281,6 +10287,14 @@ function Nx.Map:GetIconNI (levelAdd)
         t:SetTexelSnappingBias(0)
     end
 
+    -- Explicitly disable mouse on every fetch. These frames are used
+    -- only for the directional path arrows from player -> goto target;
+    -- any click on them would otherwise eat clicks meant for quest
+    -- icons stacked underneath (the user reported clicks not
+    -- registering whenever the path arrows visually overlapped the
+    -- destination icon on TBC).
+    f:EnableMouse(false)
+
     local add = levelAdd or 0
     f:SetFrameLevel (self.Level + add)
 
@@ -10547,6 +10561,14 @@ function Nx.Map:IconOnMouseDown(button)
                     -- the same one-click "make this the active quest" UX.
                     local cur = this.NXData
                     local qId = cur and cur.QId
+                    -- Encode the per-objective index in NXType (renderer uses
+                    -- 9000 for start/end icons and 9000+N for objective N).
+                    -- Capture it so we can re-target the arrow at the actual
+                    -- objective the user clicked, not whatever default the
+                    -- super-track listener picks (which on classic falls back
+                    -- to the static End coord).
+                    local objI = ((this.NXType or 0) - 9000)
+                    if objI < 0 or objI > 15 then objI = 0 end
                     if qId and qId > 0 then
                         -- cur.QId can drift (saved-vars, etc.); resolve the
                         -- live questID from the log index before calling
@@ -10562,15 +10584,65 @@ function Nx.Map:IconOnMouseDown(button)
                                 if q and q > 0 then liveQID = q end
                             end
                         end
-                        if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
-                            local current = C_SuperTrack.GetSuperTrackedQuestID() or 0
-                            if current == liveQID then
-                                -- Click again to clear (Blizzard parity).
+                        -- Compute toggle state BEFORE invoking any setter.
+                        -- The "click the active icon to clear" UX matches the
+                        -- whole pair (qId, objI), so clicking objective 1
+                        -- while objective 2 is active switches arrows rather
+                        -- than toggling the quest off, and clicking the same
+                        -- objective twice clears both super-track + arrow.
+                        local activeQID = (C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
+                                            and C_SuperTrack.GetSuperTrackedQuestID()) or 0
+                        if activeQID == 0 and Nx.Quest then
+                            activeQID = Nx.Quest.ActiveQID or 0
+                        end
+                        local activeObjI = (Nx.Quest and Nx.Quest.ActiveObjI) or 0
+                        local toggleOff = (activeQID == liveQID and activeObjI == objI)
+
+                        local _prevAddWatchSuppress
+                        if Nx.Quest then
+                            _prevAddWatchSuppress = Nx.Quest._addWatchSuppress
+                            Nx.Quest._addWatchSuppress = true
+                        end
+
+                        if toggleOff then
+                            -- Mark the clear as user-initiated so
+                            -- OnSuperTrackChanged's "restore previous"
+                            -- guard doesn't immediately re-apply the
+                            -- quest. Cleared again inside the listener.
+                            if Nx.Quest then
+                                Nx.Quest.UserClearedActive = true
+                            end
+                            if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
                                 C_SuperTrack.SetSuperTrackedQuestID(0)
-                                if PlaySound and SOUNDKIT then
-                                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+                            elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
+                                -- Polyfill on classic — second call with the
+                                -- same id clears (toggle behavior).
+                                Nx.Quest:SetActiveCarboniteQuest(qId, cur.QI)
+                            end
+                            if Nx.Quest then
+                                Nx.Quest.ActiveQID = 0
+                                Nx.Quest.ActiveObjI = 0
+                                if Nx.Quest.Tracking then
+                                    Nx.Quest.Tracking[qId] = nil
                                 end
-                            else
+                                -- Drop watch so the next refresh tick
+                                -- doesn't see the quest as still-watched
+                                -- and re-create the goto arrow target
+                                -- via Watch:Update / RecordQuestsLog.
+                                local id = cur and cur.QId or qId
+                                if id and Nx.Quest:GetQuest(id) == "W"
+                                   and Nx.Quest.Watch and Nx.Quest.Watch.RemoveWatch then
+                                    Nx.Quest.Watch:RemoveWatch(qId, cur.QI)
+                                end
+                            end
+                            -- Clear the goto arrow so it doesn't keep
+                            -- pointing at the now-deactivated objective.
+                            if map.ClearTargets then map:ClearTargets() end
+                            if PlaySound and SOUNDKIT then
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+                            end
+                        else
+                            if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
                                 if C_SuperTrack.SetSuperTrackedUserWaypoint
                                    and C_SuperTrack.IsSuperTrackingUserWaypoint
                                    and C_SuperTrack.IsSuperTrackingUserWaypoint() then
@@ -10580,24 +10652,33 @@ function Nx.Map:IconOnMouseDown(button)
                                     C_SuperTrack.ClearAllSuperTracked()
                                 end
                                 C_SuperTrack.SetSuperTrackedQuestID(liveQID)
-                                if PlaySound and SOUNDKIT then
-                                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                            elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
+                                -- Classic Era / TBC: no C_SuperTrack. Use
+                                -- Carbonite's own active-quest state. The
+                                -- polyfill toggles, so call it only when
+                                -- the quest isn't already active to avoid
+                                -- clearing here.
+                                if activeQID ~= qId then
+                                    Nx.Quest:SetActiveCarboniteQuest(qId, cur.QI)
                                 end
+                            else
+                                map.OnMouseDown(map.Frm, button)
                             end
-                        elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
-                            -- Classic Era / TBC: no C_SuperTrack. Drive
-                            -- the active quest through Carbonite's own
-                            -- state. SetActiveCarboniteQuest toggles
-                            -- (click again clears) so the polyfill
-                            -- matches Blizzard's super-track UX.
-                            local was = Nx.Quest.ActiveQID
-                            Nx.Quest:SetActiveCarboniteQuest(qId, cur.QI)
+                            if Nx.Quest then Nx.Quest.ActiveObjI = objI end
+                            -- Re-target the arrow at the specific objective
+                            -- the user clicked (super-track + classic active
+                            -- both default to qObj=0 routing, which on
+                            -- classic falls back to the static End coord).
+                            if objI > 0 and Nx.Quest and Nx.Quest.TrackOnMap then
+                                Nx.Quest:TrackOnMap(qId, objI,
+                                    cur.QI and cur.QI > 0, true)
+                            end
                             if PlaySound and SOUNDKIT then
-                                PlaySound(was == qId and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
-                                                      or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                             end
-                        else
-                            map.OnMouseDown(map.Frm, button)
+                        end
+                        if Nx.Quest then
+                            Nx.Quest._addWatchSuppress = _prevAddWatchSuppress
                         end
                     else
                         map.OnMouseDown(map.Frm, button)

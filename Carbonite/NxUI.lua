@@ -5553,10 +5553,14 @@ function Nx.List:FreeFrames (list)
     local frms = self.Frms
     for n, f in ipairs (list.UsedFrms) do
         if not InCombatLockdown() then
-            -- Don't hide WatchItem frames to prevent blinking - they'll be reused immediately
-            if f.NXListFType ~= "WatchItem" then
-                f:Hide()
-            end
+            -- Hide everything, including WatchItem. The previous "skip hide
+            -- on WatchItem to prevent blink" optimization assumed 1:1 frame
+            -- reuse on every render — but renders that need FEWER WatchItem
+            -- icons leave the leftovers visible (ghost duplicates floating
+            -- on progress bars / next quest's row). Re-render reuses these
+            -- frames in the very next instruction so the flash is too short
+            -- to perceive in practice.
+            f:Hide()
         else
             tinsert(visFrms, f)
         end
