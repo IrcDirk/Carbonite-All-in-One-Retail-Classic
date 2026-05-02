@@ -3673,6 +3673,16 @@ function Nx.Quest:ProcessQuestDB(questTotal)
     --Nx.Quest.List:LogUpdate()
     C_Timer.After(1, function() Nx.Quest:RecordQuests() end)
     --Nx.Quest.Watch:Update()
+
+    -- The DB loads asynchronously across ~11 chained C_Timer ticks, so a
+    -- player who opens the quest window (default L) before all chunks
+    -- finish sees an empty Database tab — the iteration is over
+    -- Quest.Sorted, which is only populated here. Force a refresh on the
+    -- already-open window so it picks up the freshly-sorted list without
+    -- requiring the player to close and reopen.
+    if Nx.Quest.List and Nx.Quest.List.Opened and Nx.Quest.List.Update then
+        Nx.Quest.List:Update()
+    end
 end
 
 function Nx.Quest:LoadQuestDB()
@@ -8839,8 +8849,6 @@ function Nx.Quest.List:Update()
         list:ItemAdd (0)
 
         local addBlank
-        local inchain
-        local showchain
 
 --        local qsIndex = 1
 --        local qsLast = #Quest.Sorted
@@ -8863,30 +8871,27 @@ function Nx.Quest.List:Update()
                 addBlank = true
             end
 
-            local show = showchain
+            -- Compute show fresh per quest. The previous implementation
+            -- carried `showchain` across iterations to "show all members of a
+            -- chain together" — but pairs(Quest.Sorted) doesn't traverse in
+            -- chain order, so the inherited show leaked into unrelated
+            -- quests and broke both zone and level filters in this tab.
+            -- Each quest is now evaluated independently; chain heads still
+            -- get the CLvlMax-based "any reachable level in the chain"
+            -- relaxation, while chain members are filtered by their own lvl.
+            local show = true
 
-            if not inchain then
-
-                show = true
-
+            if not showLowLevel then
                 if quest.CLvlMax then
-                    inchain = true
+                    show = show and quest.CLvlMax >= minLevel
+                else
+                    show = show and ((lvl == 0) or (lvl >= minLevel))
                 end
+            end
+            show = show and lvl <= maxLevel
 
-                if not showLowLevel then
-                    if quest.CLvlMax then
-                        show = show and quest.CLvlMax >= minLevel
-                    else
-                        show = show and ((lvl == 0) or (lvl >= minLevel))
-                    end
-                end
-                show = show and lvl <= maxLevel
-
-                if show and not showAllZones then
-                    show = self:CheckShow (mapId, qsIndex)
-                end
-
-                showchain = show
+            if show and not showAllZones then
+                show = self:CheckShow (mapId, qsIndex)
             end
 
             if not Quest.DailyIds[qId] then
@@ -8898,7 +8903,12 @@ function Nx.Quest.List:Update()
             if show then
 
                 local lvlStr = format ("|cffd0d0d0%2d", lvl)
-                local title = qname
+                -- Prefer the live, localized title; fall back to Questie's
+                -- per-locale patch table; final fallback is the English
+                -- name baked into the Quest header. A live-cache miss kicks
+                -- a server request so the next refresh picks up the real
+                -- localized name (see Quest:GetLocalizedName).
+                local title = Quest:GetLocalizedName (qId, qname)
 
                 local cati = Quest:UnpackCategory (quest["Quest"])
                 if cati > 0 then
@@ -8935,15 +8945,20 @@ function Nx.Quest.List:Update()
 
                 local filterName = ""
 
+                -- Resolve Start/End through the alt-spawn picker so a
+                -- multi-city quest (holiday turn-in, capital quartermaster)
+                -- displays the spawn matching the player's zone or faction
+                -- instead of whichever copy the curated data happened to
+                -- pick from.
                 local sMapName
-                local sName, sMapId = Quest:UnpackSE (quest["Start"])
+                local sName, sMapId = Quest:UnpackSE (Quest:ResolveStart (qId))
                 if sMapId then
                     sMapName = Map:IdToName (sMapId)
                     filterName = format ("%s(%s)", sName, sMapName)
                 end
 
                 local eMapName
-                local eName, eMapId = Quest:UnpackSE (quest["End"])
+                local eName, eMapId = Quest:UnpackSE (Quest:ResolveEnd (qId))
                 if eMapId then
                     eMapName = Map:IdToName (eMapId)
                     if sName ~= eName then
@@ -9035,41 +9050,14 @@ function Nx.Quest.List:Update()
                         list:ItemSetButtonTip (questTip)
                     end
 
-                    -- Objectives (max of 15)
-
-                    for n = 1, 15 do
-
-                        local obj = quest["Objectives"]
-                        if obj then obj = quest["Objectives"][n] end
-                        if not obj then
-                            break
-                        end
-
-                        list:ItemAdd (qId * 0x10000 + n * 0x100)
-
-                        local name, zone, loc = Nx.Quest:UnpackObjectiveNew (obj)
-                        if not name then
-                            name = "?"
-                        end
---                        str = zone and "|cff505050o" or ""
-                        if zone then
-                            list:ItemSetButton ("QuestWatch", false)
-                            list:ItemSetButtonTip (questTip)
-                            list:ItemSet (4, Map:IdToName (zone))
-                        end
-
-                        if bit_band (trackMode, bit_lshift (1, n)) > 0 then
-                            list:ItemSetButton (qLocColors[n][5], true)
-                        end
-
---                        list:ItemSet (1, str)
-                        list:ItemSet (2, format ("     |cff9f9faf%s", name))
-                    end
+                    -- Objective rows intentionally omitted from the
+                    -- Database tab. Many quests have only one POI baked in
+                    -- (a single city for multi-city/multi-faction quests,
+                    -- a single chosen spawn cluster for spread-out kill
+                    -- objectives) so the row would mislead more than help.
+                    -- Tracked-quest objective POIs in the live tracker are
+                    -- unaffected — they get their text from the API.
                 end
-            end
-
-            if next == 0 then
-                inchain = false
             end
 
 --            qsindex = qsindex + 1
@@ -12519,6 +12507,49 @@ function Nx.Quest:Unpack (info)
 end
 
 -------------------------------------------------------------------------------
+-- Resolve a localized quest title with progressive fallback.
+-- Order:
+--   1. Live Blizzard cache (C_QuestLog.GetTitleForQuestID / GetQuestInfo).
+--      Always returns the player's locale when populated.
+--   2. Nx.QuestName[qId] — the offline lookup populated from
+--      Carbonite.Quests/Data/<exp>/QuestName.lua plus the matching
+--      QuestName_<locale>.lua patch (sourced from Questie's lookupQuests).
+--   3. The static English `fallback` baked into the Quest header string.
+-- On a live-cache miss we fire RequestLoadQuestByID once per id per session
+-- so subsequent refreshes pick up the real localized title.
+-------------------------------------------------------------------------------
+
+function Nx.Quest:GetLocalizedName (qId, fallback)
+    if not qId then
+        return fallback
+    end
+    if C_QuestLog then
+        if C_QuestLog.GetTitleForQuestID then
+            local n = C_QuestLog.GetTitleForQuestID(qId)
+            if n and n ~= "" then
+                return n
+            end
+        elseif C_QuestLog.GetQuestInfo then
+            local n = C_QuestLog.GetQuestInfo(qId)
+            if n and n ~= "" then
+                return n
+            end
+        end
+        if C_QuestLog.RequestLoadQuestByID then
+            self._requestedNames = self._requestedNames or {}
+            if not self._requestedNames[qId] then
+                self._requestedNames[qId] = true
+                C_QuestLog.RequestLoadQuestByID(qId)
+            end
+        end
+    end
+    if Nx.QuestName and Nx.QuestName[qId] then
+        return Nx.QuestName[qId]
+    end
+    return fallback
+end
+
+-------------------------------------------------------------------------------
 -- Unpack quest name
 -------------------------------------------------------------------------------
 
@@ -12552,6 +12583,93 @@ end
 -- Example: 00,1,xywh
 -------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
+-- Resolve a Start/End packed string for the player's current city when the
+-- quest has alternate spawns (Nx.QuestStartAlts / Nx.QuestEndAlts populated
+-- for multi-city/multi-faction quests like the holiday turn-ins).
+--
+-- Picks, in order:
+--   1. The alt whose UiMapID matches the player's current map.
+--   2. The alt whose UiMapID belongs to the player's faction (capital
+--      cities — see CITY_FACTION below).
+--   3. The primary `Start`/`End` string already on the quest record.
+-------------------------------------------------------------------------------
+
+-- UiMapID → faction marker for the capital cities a multi-city quest can
+-- land on. 1=Alliance, 2=Horde. Two conventions are mixed here because
+-- Carbonite ships per-flavor RMapID sets:
+--   * classic / tbc / wrath / cata use the legacy "1453-1958" range.
+--   * mop / retail use the modern "84-110" range (matches Blizzard's
+--     UiMapID system after the Cataclysm map revamp).
+-- Each flavor only ever sees its own IDs at runtime, but the same
+-- NxQuest.lua loads in all of them, so the table covers both.
+-- Neutral hubs (Shattrath, Dalaran, Pandaren capitals) intentionally
+-- absent — when the player is in one of those, the step 1 current-map
+-- match handles them; otherwise the primary is used.
+local CITY_FACTION = {
+    -- Legacy / tbc-cata RMapIDs
+    [1453] = 1,  -- Stormwind
+    [1455] = 1,  -- Ironforge
+    [1457] = 1,  -- Darnassus
+    [1947] = 1,  -- The Exodar
+    [1454] = 2,  -- Orgrimmar
+    [1456] = 2,  -- Thunder Bluff
+    [1458] = 2,  -- Undercity
+    [1954] = 2,  -- Silvermoon City
+    -- Modern / mop+ RMapIDs
+    [84]   = 1,  -- Stormwind
+    [87]   = 1,  -- Ironforge
+    [89]   = 1,  -- Darnassus
+    [103]  = 1,  -- The Exodar
+    [85]   = 2,  -- Orgrimmar
+    [86]   = 2,  -- Orgrimmar (alt instance map)
+    [88]   = 2,  -- Thunder Bluff
+    [90]   = 2,  -- Undercity
+    [110]  = 2,  -- Silvermoon City
+}
+
+local function _pickAltSE (alts, primary)
+    if not alts or alts == "" then
+        return primary
+    end
+    -- Match player's current map first
+    local Map = Nx.Map
+    local curMap = Map and Map.GetCurrentMapId and Map:GetCurrentMapId() or 0
+    -- Player faction byte (matches the side bitmask: 1=Alliance, 2=Horde)
+    local plFact = 0
+    if Nx.PlFactionNum == 0 then
+        plFact = 1
+    elseif Nx.PlFactionNum == 1 then
+        plFact = 2
+    end
+    local factionFallback
+    for entry in (alts .. ";"):gmatch ("([^;]+);") do
+        local _, m = strsplit ("|", entry)
+        m = tonumber (m) or 0
+        if m == curMap then
+            return entry
+        end
+        if not factionFallback and plFact > 0 and CITY_FACTION[m] == plFact then
+            factionFallback = entry
+        end
+    end
+    return factionFallback or primary
+end
+
+function Nx.Quest:ResolveStart (qId)
+    local quest = qId and Nx.Quests and Nx.Quests[qId]
+    local primary = quest and quest["Start"]
+    local alts = Nx.QuestStartAlts and Nx.QuestStartAlts[qId]
+    return _pickAltSE (alts, primary)
+end
+
+function Nx.Quest:ResolveEnd (qId)
+    local quest = qId and Nx.Quests and Nx.Quests[qId]
+    local primary = quest and quest["End"]
+    local alts = Nx.QuestEndAlts and Nx.QuestEndAlts[qId]
+    return _pickAltSE (alts, primary)
+end
+
 function Nx.Quest:UnpackSE (obj)
     if not obj then
         return
@@ -12562,7 +12680,15 @@ function Nx.Quest:UnpackSE (obj)
     local name
     local id = tonumber(i)
     if id then
-        name = Nx.QuestStartEnd[id]
+        -- New schema: ID lookup walks NPC → Object → Item, with a
+        -- fall-through to the legacy combined Nx.QuestStartEnd table
+        -- so unmigrated expansion data still resolves. The split tables
+        -- are populated from Questie/ATT for expansions where the
+        -- Carbonite.Quests/Data/<flavor>/QuestStartEnd*.lua files exist.
+        name = (Nx.QuestStartEndNPC and Nx.QuestStartEndNPC[id])
+            or (Nx.QuestStartEndObject and Nx.QuestStartEndObject[id])
+            or (Nx.QuestStartEndItem   and Nx.QuestStartEndItem[id])
+            or (Nx.QuestStartEnd       and Nx.QuestStartEnd[id])
     elseif i and i ~= "" then
         -- Synthesized entries from PatchQuestFromBlizzard write the
         -- quest title in the first field instead of a numeric NPC id

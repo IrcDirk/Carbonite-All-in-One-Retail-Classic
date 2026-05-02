@@ -1,0 +1,16 @@
+## Interface: 40402
+## Title: Carbonite Quest - Cataclysm Classic @project-version@
+## Version: @project-version@
+## Author: No One
+## Notes: Released Under GPL
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: NXQuest
+## RequiredDeps: Carbonite
+
+Locales\locales.xml
+Data\Shared\QuestCats.lua
+Data\cata\QuestNPC.lua
+Data\cata\QuestStartEnd.xml
+Data\cata\QuestData.xml
+NxQuest.lua

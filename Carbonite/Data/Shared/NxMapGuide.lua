@@ -1572,6 +1572,19 @@ function Nx.Map.Guide:UpdateMapIcons()
                     local debugMap = Nx.db.profile.Debug.DebugMap
                     local showComplete = self.ShowQuestGiverCompleted
                     local qIds = Quest.QIds
+                    -- Class-restriction filter: Nx.QuestRequiredClasses[qId]
+                    -- carries Questie's requiredClasses bitmask (only emitted
+                    -- for class-restricted quests; missing = unrestricted).
+                    -- Bits: WARRIOR=1 PALADIN=2 HUNTER=4 ROGUE=8 PRIEST=16
+                    --       DEATHKNIGHT=32 SHAMAN=64 MAGE=128 WARLOCK=256
+                    --       MONK=512 DRUID=1024
+                    local _, playerClassToken = UnitClass ("player")
+                    local playerClassBit = ({
+                        WARRIOR=1, PALADIN=2, HUNTER=4, ROGUE=8, PRIEST=16,
+                        DEATHKNIGHT=32, SHAMAN=64, MAGE=128, WARLOCK=256,
+                        MONK=512, DRUID=1024,
+                    })[playerClassToken] or 0
+                    local QRC = Nx.QuestRequiredClasses
                     for namex, qdata in pairs (stzone) do
                         local name = Nx.Split ("=", namex)
                         local anyDaily
@@ -1580,20 +1593,23 @@ function Nx.Map.Guide:UpdateMapIcons()
                         for n = 1, #qdata, 6 do
                             local qId = tonumber (strsub (qdata, n, n + 5), 16)
                             local quest = Nx.Quests[qId]
-                            local qname
-                            if C_QuestLog.GetTitleForQuestID then
-                                qname = C_QuestLog.GetTitleForQuestID(qId)
-                            else
-                                qname = C_QuestLog.GetQuestInfo(qId)
-                            end
                             local qnameorig, _, lvl, minlvl = Quest:Unpack (quest["Quest"])
-                            if not qname then
-                                qname = qnameorig
-                            end
+                            -- Live cache → Nx.QuestName locale patch →
+                            -- static English fallback. Cache misses also
+                            -- queue a RequestLoadQuestByID so the next
+                            -- refresh shows the real localized title.
+                            local qname = Quest:GetLocalizedName (qId, qnameorig)
                             if lvl < 1 then
                                 lvl = Nx.CurCharacter["Level"]
                             end
-                            if lvl >= minLvl and lvl <= maxLvl then
+                            -- Skip class-restricted quests for foreign classes.
+                            -- A nil/zero requiredClasses entry means "any class"
+                            -- and falls through to the level filter below.
+                            local req = QRC and QRC[qId]
+                            local classOK = (not req) or req == 0
+                                or (playerClassBit ~= 0
+                                    and bit.band(req, playerClassBit) ~= 0)
+                            if classOK and lvl >= minLvl and lvl <= maxLvl then
                                 local col = "|r"
                                 local daily = Quest.DailyIds[qId] or Quest.DailyDungeonIds[qId]
                                 anyDaily = anyDaily or daily

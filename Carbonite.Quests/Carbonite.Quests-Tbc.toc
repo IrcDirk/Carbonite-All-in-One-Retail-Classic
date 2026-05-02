@@ -11,5 +11,6 @@
 Locales\locales.xml
 Data\Shared\QuestCats.lua
 Data\tbc\QuestNPC.lua
+Data\tbc\QuestStartEnd.xml
 Data\tbc\QuestData.xml
 NxQuest.lua

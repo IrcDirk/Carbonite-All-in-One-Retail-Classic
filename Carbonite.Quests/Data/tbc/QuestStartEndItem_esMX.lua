@@ -1,0 +1,38 @@
+-- AUTO-GENERATED. Do not edit by hand.
+-- esMX translations for quest item names (patches the English base table).
+
+if not Nx or GetLocale() ~= "esMX" then return end
+local L = Nx.QuestStartEndItem
+if not L then return end
+L[735] = "Medallones de Rolf y Malakai"
+L[745] = "Documentos del alguacil McBride"
+L[748] = "Marcador de armaduras de Ventormenta"
+L[889] = "Una carta polvorienta sin enviar"
+L[916] = "Una página de diario rota"
+L[921] = "Una página de diario borrada"
+L[938] = "Páginas de diario embarrado"
+L[939] = "Una página de un diario manchada de sangre"
+L[957] = "Envío de William"
+L[962] = "Pastel de tripa de cerdo"
+L[1083] = "Glifo de Azora"
+L[1208] = "Carta de amor de Maybell"
+L[1252] = "Nota de la abuela Pedregosa"
+L[1257] = "Licor de invisibilidad"
+L[1283] = "Nota de Verner"
+L[1284] = "Cajón de herraduras"
+L[1293] = "El estado de Villa del Lago"
+L[1294] = "La respuesta del General"
+L[1307] = "Planificación de recogida de oro"
+L[1325] = "Ramo de narcisos"
+L[1327] = "Nota de Wiley"
+L[1353] = "Informe de Shaw"
+L[1357] = "Mapa del tesoro del capitán Sander"
+L[1358] = "Una pista del tesoro de Sander"
+L[1361] = "Otra pista del tesoro de Sander"
+L[1362] = "Pista final del tesoro de Sander"
+L[1407] = "Petición a los Páramos de Poniente de Solomon"
+L[1408] = "Respuesta a Solomon de Mantorrecio"
+L[1409] = "Petición a Villa Oscura de Solomon"
+L[1410] = "Respuesta de Cerranegro a Solomon"
+L[1451] = "Botella zumo de zombi"
+L[1453] = "Peine espectral"

@@ -1,0 +1,16 @@
+## Interface: 30403
+## Title: Carbonite Quest - Wrath Classic @project-version@
+## Version: @project-version@
+## Author: No One
+## Notes: Released Under GPL
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: NXQuest
+## RequiredDeps: Carbonite
+
+Locales\locales.xml
+Data\Shared\QuestCats.lua
+Data\wrath\QuestNPC.lua
+Data\wrath\QuestStartEnd.xml
+Data\wrath\QuestData.xml
+NxQuest.lua
