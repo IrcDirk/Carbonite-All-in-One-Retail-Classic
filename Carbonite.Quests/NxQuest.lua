@@ -4059,10 +4059,24 @@ function Nx.Quest:OnSuperTrackChanged()
         -- icon-click toggle (UserClearedActive flag set by the click
         -- handler). Without this guard the toggle-off click flips back
         -- to the previous quest immediately.
+        --
+        -- In both "we're not going to restore" branches the Blizzard quest
+        -- area blob (drawn into WorldMapBlobFrame / QMap.QuestWin) doesn't
+        -- auto-hide on super-track clear, so explicitly hide it here. Skips
+        -- in combat lockdown — the secure frame would refuse the call.
+        local function clearBlob()
+            if InCombatLockdown() then return end
+            local f = NxMap1 and NxMap1.NxMap
+            if f and f.QuestWin then
+                if f.QuestWin.DrawNone then f.QuestWin:DrawNone() end
+                if f.QuestWin.Hide then f.QuestWin:Hide() end
+            end
+        end
         if self.UserClearedActive then
             self.UserClearedActive = nil
             self.ActiveQID = 0
             self.ActiveObjI = 0
+            clearBlob()
             return
         end
         local prev = self.ActiveQID
@@ -4074,6 +4088,7 @@ function Nx.Quest:OnSuperTrackChanged()
         end
         self.ActiveQID = 0
         self.ActiveObjI = 0
+        clearBlob()
         return
     end
     self.ActiveQID = liveQID

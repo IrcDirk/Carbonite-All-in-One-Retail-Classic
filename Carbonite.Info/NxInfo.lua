@@ -231,6 +231,9 @@ function CarboniteInfo:OnInitialize()
 	Nx.Font:ModuleAdd("Info.InfoFont",{ "NxFontI", "GameFontNormal","idb" })
 	Nx.Info:Init()
 	Nx.Info.Combat:Init()
+	-- Combat:Open() defers its own first-time setup through C_Timer.After
+	-- so the frame is born outside any tainted caller (AceTimer chain,
+	-- minimap menu callback, etc.) — safe to call directly.
 	Nx.Info.Combat:Open()
 	CarboniteInfo:PLAYER_LOGIN()
 	local function func ()
@@ -398,6 +401,31 @@ end
 -- Update all info windows
 ---------------------------------------------------------------------------------------
 
+-- Retail wraps unit health/power values in opaque "secret number" types
+-- when an addon's execution context is tainted (e.g., reading these APIs
+-- from a timer tick that touched secure templates). The wrapped values
+-- assign and pass through fine, but ANY arithmetic with a plain number
+-- (h / max, h - prev, h * 100) throws "attempt to perform arithmetic on
+-- a secret number value". Convert to a plain number at the boundary so
+-- every downstream consumer (percentage, delta, format) sees a real
+-- number. Returns 0 when conversion fails — for that tick the readout
+-- snaps to 0 and recovers automatically when the taint clears.
+local function _safeN (v)
+	if v == nil then
+		return 0
+	end
+	local ok, r = pcall (function () return v + 0 end)
+	return ok and r or 0
+end
+
+local function _safeRatio (a, b)
+	a, b = _safeN (a), _safeN (b)
+	if b == 0 then
+		return 0
+	end
+	return a / b
+end
+
 function Nx.Info:OnTimer()
 
 	local vars = self.Vars
@@ -410,14 +438,16 @@ function Nx.Info:OnTimer()
 		h = 0
 		m = 0
 	end
-	vars["Health"] = h
-	vars["Mana"] = m
+	-- Normalize through _safeN so the rest of the addon never sees a
+	-- secret-wrapped number on retail.
+	vars["Health"] = _safeN (h)
+	vars["Mana"]   = _safeN (m)
 
-	vars["HealthMax"] = UnitHealthMax ("player")
-	vars["ManaMax"] = UnitPowerMax ("player")
+	vars["HealthMax"] = _safeN (UnitHealthMax ("player"))
+	vars["ManaMax"]   = _safeN (UnitPowerMax ("player"))
 
-	vars["Health%"] = h / vars["HealthMax"]
-	vars["Mana%"] = m / vars["ManaMax"]
+	vars["Health%"] = _safeRatio (vars["Health"], vars["HealthMax"])
+	vars["Mana%"]   = _safeRatio (vars["Mana"],   vars["ManaMax"])
 
 	local h = 0
 	local m = -1
@@ -433,11 +463,11 @@ function Nx.Info:OnTimer()
 			m = UnitPowerMax ("target") > 0 and UnitPower ("target") or -1
 		end
 
-		vars["THealthMax"] = max (UnitHealthMax ("target"), 1)
-		vars["TManaMax"] = max (UnitPowerMax ("target"), 1)
+		vars["THealthMax"] = max (_safeN (UnitHealthMax ("target")), 1)
+		vars["TManaMax"]   = max (_safeN (UnitPowerMax  ("target")), 1)
 	end
-	vars["THealth"] = h
-	vars["TMana"] = m
+	vars["THealth"] = _safeN (h)
+	vars["TMana"]   = (m == -1) and -1 or _safeN (m)
 
 	vars["InBG"] = Nx.InBG
 
@@ -706,9 +736,12 @@ function Nx.Info:Create2 (index)
 		end
 	end
 
-	self.HealthLast = UnitHealth ("player")
+	-- _safeN normalizes retail's tainted "secret number" values to plain
+	-- numbers; HealthLast/ManaLast feed into arithmetic in CalcHealthChange
+	-- and CalcManaChange, which can't operate on the wrapped form.
+	self.HealthLast = _safeN (UnitHealth ("player"))
 	self.HealthLastVal = 0
-	self.ManaLast = UnitPower ("player")
+	self.ManaLast = _safeN (UnitPower ("player"))
 	self.ManaLastVal = 0
 
 	-- Show if it exists
@@ -1106,14 +1139,19 @@ function Nx.Info:CalcComboPoints()
 		end
 
 	else
-		-- Retail's GetComboPoints prefers a unit + target form; the older
-		-- single-arg form still works on classic. Pass both args so retail
-		-- gets the right number too.
+		-- Retail requires the two-arg form (unit + target); calling the
+		-- legacy one-arg form throws "bad argument #2" there. Classic
+		-- accepts both, so we always pass two args. The pcall on the
+		-- second attempt is defensive in case a future API tightening
+		-- rejects calling against an unset target on classic too.
 		local i = GetComboPoints ("player", "target")
-		if not i or i == 0 then
-			i = GetComboPoints ("player") or 0
+		if (not i or i == 0) and not Nx.isRetail then
+			local ok, v = pcall (GetComboPoints, "player")
+			if ok then
+				i = v or 0
+			end
 		end
-		if i > 0 then
+		if i and i > 0 then
 			return "|cffff8080", string.rep ("*", i)
 		end
 	end
@@ -1129,7 +1167,9 @@ end
 function Nx.Info:CalcTargetHealthPercent()
 
 	if self.Vars["TName"] then
-		self.Vars["THealth%"] = self.Vars["THealth"] / self.Vars["THealthMax"]
+		-- _safeRatio guards against retail's secret-number taint; see
+		-- comment near _safeN at the top of this file.
+		self.Vars["THealth%"] = _safeRatio (self.Vars["THealth"], self.Vars["THealthMax"])
 		return "|cffe0e0e0", format ("%d", self.Vars["THealth%"] * 100)
 	end
 end
@@ -1144,7 +1184,7 @@ end
 function Nx.Info:CalcTargetManaPercent()
 
 	if self.Vars["TMana"] >= 0 then
-		self.Vars["TMana%"] = self.Vars["TMana"] / self.Vars["TManaMax"]
+		self.Vars["TMana%"] = _safeRatio (self.Vars["TMana"], self.Vars["TManaMax"])
 		return "|cffe0e0e0", format ("%d", self.Vars["TMana%"] * 100)
 	end
 end
@@ -1563,19 +1603,22 @@ function Nx:OnChat_msg_bg_system_neutral (event, arg1, arg2, arg3)
 	end
 end
 
-function Nx.Info.Combat:Open()
-
-	local win = self.Win
-
-	if win then
-		if win:IsShown() then
-			win:Show (false)
-		else
-			win:Show()
-		end
+-- First-time UI setup for the combat window. On retail, Carbonite.Info
+-- inherits taint from Carbonite parent's load context (parent owns the
+-- _G.LibStub and _G.Nx globals, which flags every reader tainted-by-
+-- Carbonite). That makes Frame:RegisterEvent fire ADDON_ACTION_FORBIDDEN
+-- from any path inside this addon — including file scope and inside
+-- securecallfunction. Until Carbonite parent stops owning those globals
+-- (or a sibling addon that loads alphabetically before Carbonite/ does
+-- the registration in a clean chunk), retail gets a degraded combat
+-- module: the window opens, the OnTimer poll keeps the player health/
+-- mana readout current via _safeN/_safeRatio, but per-hit combat-log
+-- tallying, XP/honor gains, loot logs and combat-lockdown events are
+-- unavailable. Classic flavors are unaffected.
+function Nx.Info.Combat:_FirstTimeOpen()
+	if self.Frm then
 		return
 	end
-
 
 	self.EventTable = {
 	}
@@ -1597,18 +1640,20 @@ function Nx.Info.Combat:Open()
 
 	f:SetScript ("OnEvent", self.OnEvent)
 
-	f:RegisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
-	f:RegisterEvent ("CHAT_MSG_COMBAT_XP_GAIN")
-	f:RegisterEvent ("CHAT_MSG_COMBAT_HONOR_GAIN")
-	f:RegisterEvent ("CHAT_MSG_LOOT")
-	f:RegisterEvent ("PLAYER_REGEN_DISABLED")
-	f:RegisterEvent ("PLAYER_REGEN_ENABLED")
+	if not Nx.isRetail then
+		f:RegisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
+		f:RegisterEvent ("CHAT_MSG_COMBAT_XP_GAIN")
+		f:RegisterEvent ("CHAT_MSG_COMBAT_HONOR_GAIN")
+		f:RegisterEvent ("CHAT_MSG_LOOT")
+		f:RegisterEvent ("PLAYER_REGEN_DISABLED")
+		f:RegisterEvent ("PLAYER_REGEN_ENABLED")
 
-	for k, v in pairs (self.EventTable) do
-		f:RegisterEvent (k)
+		for k, v in pairs (self.EventTable) do
+			f:RegisterEvent (k)
+		end
+
+		f:RegisterEvent ("PLAYER_DEAD")
 	end
-
-	f:RegisterEvent ("PLAYER_DEAD")
 
 	f:SetScript ("OnUpdate", self.OnUpdate)
 
@@ -1624,6 +1669,38 @@ function Nx.Info.Combat:Open()
 	f.texture = t
 
 	self:OpenGraph()
+end
+
+function Nx.Info.Combat:Open()
+
+	local win = self.Win
+
+	if win then
+		if win:IsShown() then
+			win:Show (false)
+		else
+			win:Show()
+		end
+		return
+	end
+
+	-- Defer the first-time setup so the frame is created in a clean
+	-- Blizzard ticker scope, not inside whatever (possibly tainted)
+	-- caller invoked us. _opening guards against multiple deferrals
+	-- racing if Open is called several times before the first tick fires.
+	if self._opening then
+		return
+	end
+	self._opening = true
+	local function setup ()
+		self._opening = nil
+		self:_FirstTimeOpen()
+	end
+	if C_Timer and C_Timer.After then
+		C_Timer.After (0, setup)
+	else
+		setup ()
+	end
 end
 
 function Nx.Info.Combat:OpenGraph()
