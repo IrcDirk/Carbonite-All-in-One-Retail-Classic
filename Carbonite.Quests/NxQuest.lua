@@ -8449,13 +8449,19 @@ function Nx.Quest.List:LogUpdate()
         end
     end
 
-    for k, qn in ipairs (Quest.AcceptPool) do
+    -- Iterate backward: table.remove shifts later entries down, so a
+    -- forward ipairs loop would skip the entry that follows each removal.
+    -- Zoning into a new area can drop several quests into AcceptPool at
+    -- once (QUEST_DETAIL + QUEST_ACCEPTED, auto-accept chains) and the
+    -- skipped ones never got Watch:Add, so they didn't show up in the
+    -- tracker or get map-tracked until /reload re-ran WatchAtLogin.
+    for k = #Quest.AcceptPool, 1, -1 do
+        local qn = Quest.AcceptPool[k]
         local qi = GetQuestLogIndexByID (qn)
         if qi > 0 then
             local curi, cur = Quest:FindCurByIndex (qi)
             if cur then
                 Quest.QIdsNew[cur.QId] = time()
-                --Nx.prt ("OnQuestUpdate Watch %d %d", qn, k)
                 if Nx.qdb.profile.QuestWatch.AddNew and not Quest.DailyPVPIds[cur.QId] then
                     Quest.Watch:Add (curi,true)
                 end
