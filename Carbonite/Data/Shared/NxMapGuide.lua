@@ -1256,6 +1256,27 @@ function Nx.Map.Guide:ClearShowFolders()
         local folder = self:FindFolder (L["Quest Givers"])
         self:AddShowFolders (folder)
     end
+    if Nx.db.char.Map.ShowClassTrainer then
+        -- PatchFolder() strips " <L[Trainer]>" from folder.Name at load time,
+        -- so L["Class Trainer"] -> "Class" (in locales where the suffix is
+        -- the standalone word). Mirror the same strip when looking up.
+        local className = gsub (L["Class Trainer"], " " .. L["Trainer"], "")
+        local folder = self:FindFolder (className)
+        if folder then
+            self:AddShowFolders (folder)
+        end
+    end
+    if Nx.db.char.Map.ShowProfessionTrainer then
+        local folder = self:FindFolder (L["Trainer"])
+        if folder then
+            -- The parent folder has T="^C" which filters to the player's
+            -- class — useless for professions. Add each profession child
+            -- (T="^P"/"^S") directly so all profession trainers are shown.
+            for _, child in ipairs (folder) do
+                self:AddShowFolders (child)
+            end
+        end
+    end
 end
 
 function Nx.Map.Guide:UpdateGatherFolders()
@@ -1481,6 +1502,12 @@ function Nx.Map.Guide:UpdateMapIcons()
     if not self.ShowAllCont then
         cont1 = map:IdToContZone (mapId)
         cont2 = cont1
+        -- City/sub-maps (e.g. Stormwind) have no Cont field, so IdToContZone
+        -- returns the default 90. UpdateMapGeneralIcons would bail on
+        -- `cont > ContCnt`; clamp to 1 so the data-loop still runs.
+        if cont1 > Map.ContCnt then
+            cont1, cont2 = 1, 1
+        end
     end
     for showType, folder in pairs (self.ShowFolders) do
         local mode = strbyte (showType)

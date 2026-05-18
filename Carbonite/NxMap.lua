@@ -1065,6 +1065,18 @@ function Nx.Map:Create(index)
         item:SetChecked(Nx.db.char.Map, "ShowGatherA")
     end
 
+    -- Trainer toggles
+    local function trainerFunc(self)
+        self.Guide:ClearShowFolders()
+        self.Guide:UpdateMapIcons()
+    end
+
+    local item = showMenu:AddItem(0, L["Show Class Trainer"], trainerFunc, m)
+    item:SetChecked(Nx.db.char.Map, "ShowClassTrainer")
+
+    local item = showMenu:AddItem(0, L["Show Profession Trainers"], trainerFunc, m)
+    item:SetChecked(Nx.db.char.Map, "ShowProfessionTrainer")
+
     -- POI visibility toggles
     local function func(self)
         self.Guide.POIDraw = nil
