@@ -98,6 +98,10 @@
     <Script file="Comm\ChannelSpamFilter.lua" />
     <Script file="Map\HotspotsRenderer.lua" />
     <Script file="Integrations\GuildBank.lua" />
+    <Script file="Window\WindowEscape.lua" />
+    <Script file="Window\WindowSearch.lua" />
+    <Script file="Window\WindowCombat.lua" />
+    <Script file="TooltipPostHook\TooltipPostHook.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />
