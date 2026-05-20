@@ -35,12 +35,17 @@ local Options = Module:New("Options", {
 -- { provider = fn, displayName = string, order = number }.
 local registry = {}
 
--- Root group: built once during OnEnable. Lazily resolves each
--- registered provider so modules can register before AceDB exists.
+-- Root group: built lazily each time AceConfig asks for the table so
+-- providers registered after OnEnable (e.g. by plugins loaded later)
+-- still appear. The legacy NxOptions section provides a "Main" tab
+-- with version blurb and credits; if no module has registered "Main"
+-- by the time the panel opens, a small default About tab is rendered
+-- instead.
 local function buildRootGroup()
-    local args = {
-        about = {
-            order = 1,
+    local args = {}
+    if not registry["Main"] then
+        args.about = {
+            order = 0,
             type  = "group",
             name  = "About",
             args  = {
@@ -51,8 +56,8 @@ local function buildRootGroup()
                     order = 1,
                 },
             },
-        },
-    }
+        }
+    end
 
     -- Sort by user-supplied order then displayName for stability.
     local ids = {}

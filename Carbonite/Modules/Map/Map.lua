@@ -95,6 +95,16 @@ function Map:Refresh()
     Carbonite.Core.EventBus:Fire("MAP_REFRESH")
 end
 
+-- Path planning shortcuts. Callers should prefer these over reaching
+-- into Carbonite.Modules.Map.Pathing directly.
+function Map:PlanRoute(points, opts)
+    return Carbonite.Modules.Map.Pathing:PlanRoute(points, opts)
+end
+
+function Map:BuildPath(tracking, src, dst)
+    return Carbonite.Modules.Map.Pathing:BuildPath(tracking, src, dst)
+end
+
 function Map:OnEnable()
     -- Watch zone changes and broadcast through the EventBus so other
     -- modules can react without independent ZONE_CHANGED listeners.

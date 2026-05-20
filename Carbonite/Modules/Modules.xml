@@ -11,6 +11,9 @@
          itself can refer to them. Order matters here. -->
     <Script file="Map\Pin.lua" />
     <Script file="Map\Layer.lua" />
+    <Script file="Map\Pathing.lua" />
+    <Script file="Map\Coords.lua" />
+    <Script file="Map\MinimapGlow.lua" />
     <Script file="Map\Pins\QuestPin.lua" />
     <Script file="Map\Pins\GatherPin.lua" />
     <Script file="Map\Pins\PlayerPin.lua" />

@@ -7239,7 +7239,12 @@ end
 -- Uses Travel system for path optimization
 --
 function Nx.Map:CalcTracking()
-    local Travel = Nx.Travel
+    -- Route all path requests through the Carbonite Pathing class so
+    -- this call site stays in lock-step with the new architecture.
+    -- Pathing:BuildPath delegates to the legacy Travel:MakePath graph
+    -- traversal while keeping the public API centralized.
+    local Pathing = Carbonite and Carbonite.Modules and Carbonite.Modules.Map and Carbonite.Modules.Map.Pathing
+    local Travel  = Nx.Travel
 
     local tr = {}
     self.Tracking = tr
@@ -7250,7 +7255,13 @@ function Nx.Map:CalcTracking()
 
     -- Build path through all targets
     for n, tar in ipairs(self.Targets) do
-        Travel:MakePath(tr, srcMapId, srcX, srcY, tar.MapId, tar.TargetMX, tar.TargetMY, tar.TargetType)
+        if Pathing then
+            Pathing:BuildPath(tr,
+                { mapID = srcMapId, x = srcX, y = srcY },
+                { mapID = tar.MapId, x = tar.TargetMX, y = tar.TargetMY, type = tar.TargetType })
+        elseif Travel and Travel.MakePath then
+            Travel:MakePath(tr, srcMapId, srcX, srcY, tar.MapId, tar.TargetMX, tar.TargetMY, tar.TargetType)
+        end
 
         tinsert(tr, tar)
 

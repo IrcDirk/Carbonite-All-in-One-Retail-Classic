@@ -5,8 +5,9 @@
     <Script file="Mixins\Resizable.lua" />
     <Script file="Mixins\Tooltipable.lua" />
 
-    <!-- Skin / Tooltip / Widget are standalone. -->
+    <!-- Skin / Font / Tooltip / Widget are standalone. -->
     <Script file="Skin.lua" />
+    <Script file="Font.lua" />
     <Script file="Tooltip.lua" />
     <Script file="Widget.lua" />
 

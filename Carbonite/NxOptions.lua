@@ -3058,31 +3058,80 @@ local function trackConfig()
     end
     return trackoptions
 end
+---
+-- Hand every NxOptions section to the new Carbonite.Modules.Options
+-- module so they appear under the single unified Carbonite options
+-- panel instead of each section getting its own Blizzard panel.
+-- The new Options module owns the AceConfig:RegisterOptionsTable call
+-- and the AddToBlizOptions root; this file just contributes section
+-- providers.
+--
 function Nx:SetupConfig()
-    AceConfig:RegisterOptionsTable("Carbonite", mainConfig)
-    Nx.optionsFrame, Nx.optionsPanelID = AceConfigDialog:AddToBlizOptions("Carbonite", "Carbonite",nil,"main")
-    Nx:AddToConfig("General",generalOptions(),L["General"])
-    -- Register all config sections with Blizzard options
-    Nx:AddToConfig("Battlegrounds", BGConfig(), L["Battlegrounds"])
-    Nx:AddToConfig("Fonts", fontConfig(), L["Fonts"])
-    Nx:AddToConfig("Guide & Gather", guidegatherConfig(), L["Guide & Gather"])
-    Nx:AddToConfig("Maps", mapConfig(), L["Maps"])
-    Nx:AddToConfig("Menus", menuConfig(), L["Menus"])
-    Nx:AddToConfig("Privacy", commConfig(), L["Privacy"])
-    Nx:AddToConfig("Profiles", profilesConfig(), L["Profiles"])
-    Nx:AddToConfig("Skin", skinConfig(), L["Skin"])
-    Nx:AddToConfig("Tracking HUD", trackConfig(), L["Tracking HUD"])
+    local Options = _G.Carbonite and _G.Carbonite.GetModule and _G.Carbonite:GetModule("Options", true)
+    if not Options then
+        -- Fallback to legacy registration if the new module hasn't loaded
+        -- (e.g. during an unmigrated TOC load order).
+        AceConfig:RegisterOptionsTable("Carbonite", mainConfig)
+        Nx.optionsFrame, Nx.optionsPanelID = AceConfigDialog:AddToBlizOptions("Carbonite", "Carbonite", nil, "main")
+        Nx:AddToConfig("General",       generalOptions(),     L["General"])
+        Nx:AddToConfig("Battlegrounds", BGConfig(),           L["Battlegrounds"])
+        Nx:AddToConfig("Fonts",         fontConfig(),         L["Fonts"])
+        Nx:AddToConfig("Guide & Gather",guidegatherConfig(),  L["Guide & Gather"])
+        Nx:AddToConfig("Maps",          mapConfig(),          L["Maps"])
+        Nx:AddToConfig("Menus",         menuConfig(),         L["Menus"])
+        Nx:AddToConfig("Privacy",       commConfig(),         L["Privacy"])
+        Nx:AddToConfig("Profiles",      profilesConfig(),     L["Profiles"])
+        Nx:AddToConfig("Skin",          skinConfig(),         L["Skin"])
+        Nx:AddToConfig("Tracking HUD",  trackConfig(),        L["Tracking HUD"])
+        return
+    end
+
+    -- The legacy mainConfig() returns a wrapped "Carbonite Classic"
+    -- group with a child "main" that holds the version blurb / credits.
+    -- Strip the outer wrapper so the new unified panel uses that block
+    -- as its own About tab.
+    Options:Register("Main", function()
+        local m = mainConfig()
+        return (m and m.args and m.args.main) or { type = "group", name = L["Main Options"], args = {} }
+    end, { displayName = L["Main Options"], order = 0 })
+
+    Options:Register("General",        generalOptions,    { displayName = L["General"],        order = 1 })
+    Options:Register("Battlegrounds",  BGConfig,          { displayName = L["Battlegrounds"],  order = 5 })
+    Options:Register("Fonts",          fontConfig,        { displayName = L["Fonts"],          order = 60 })
+    Options:Register("Guide & Gather", guidegatherConfig, { displayName = L["Guide & Gather"], order = 35 })
+    Options:Register("Maps",           mapConfig,         { displayName = L["Maps"],           order = 10 })
+    Options:Register("Menus",          menuConfig,        { displayName = L["Menus"],          order = 65 })
+    Options:Register("Privacy",        commConfig,        { displayName = L["Privacy"],        order = 70 })
+    Options:Register("Skin",           skinConfig,        { displayName = L["Skin"],           order = 55 })
+    Options:Register("Tracking HUD",   trackConfig,       { displayName = L["Tracking HUD"],   order = 20 })
+
+    -- Plugin/legacy compatibility: Nx.optionsFrame is read by NxFav,
+    -- NxWarehouse, and NxQuest as a way to "have somewhere to anchor
+    -- a sub-panel onto". Provide a stub object so those reads do not
+    -- nil-out; the new Options module makes a single unified panel
+    -- and does not need per-section frames.
+    Nx.optionsFrame = setmetatable({}, { __index = function() return Options.frame end })
+    Nx.optionsPanelID = Options.panelID
 end
 
 ---
--- Add a configuration table to Blizzard options
--- @param name          Internal config name
--- @param optionsTable  AceConfig options table
--- @param displayName   Display name in options panel
+-- Plugin entry point: a sibling addon (Notes, Warehouse, Quest, etc.)
+-- registers its options page here. The new Options module is the
+-- canonical owner; this function forwards on for backwards compat.
 --
 function Nx:AddToConfig(name, optionsTable, displayName)
     modular_config[name] = optionsTable
-    Nx.optionsFrame[name] = AceConfigDialog:AddToBlizOptions("Carbonite", displayName, "Carbonite", name)
+    local Options = _G.Carbonite and _G.Carbonite.GetModule and _G.Carbonite:GetModule("Options", true)
+    if Options then
+        Options:Register(name, optionsTable, { displayName = displayName or name })
+        Nx.optionsFrame = Nx.optionsFrame or setmetatable({}, { __index = function() return Options.frame end })
+        Nx.optionsFrame[name] = Options.frame
+        return
+    end
+    -- Legacy fallback when new module is not present.
+    if Nx.optionsFrame then
+        Nx.optionsFrame[name] = AceConfigDialog:AddToBlizOptions("Carbonite", displayName, "Carbonite", name)
+    end
 end
 
 ---
