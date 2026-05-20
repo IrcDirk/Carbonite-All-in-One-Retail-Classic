@@ -10,6 +10,7 @@
     <Script file="Comm\PositionShare.lua" />
     <Script file="Comm\CommReceive.lua" />
     <Script file="Comm\ChannelManager.lua" />
+    <Script file="Comm\WireFormat.lua" />
 
     <!-- Map needs Pin / Layer / pin classes before the Map module
          itself can refer to them. Order matters here. -->
@@ -65,6 +66,10 @@
     <Script file="EventDispatcher\EventDispatcher.lua" />
     <Script file="ChatHooks\ChatHooks.lua" />
     <Script file="MainUpdater\MainUpdater.lua" />
+    <Script file="Window\WindowLayout.lua" />
+    <Script file="Window\WindowConsole.lua" />
+    <Script file="ZoneTransition\ZoneTransition.lua" />
+    <Script file="PlayerCharacter\PlayerCharacter.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />
