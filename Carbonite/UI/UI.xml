@@ -13,4 +13,5 @@
 
     <!-- Composed widgets. -->
     <Script file="Window.lua" />
+    <Script file="Button.lua" />
 </Ui>

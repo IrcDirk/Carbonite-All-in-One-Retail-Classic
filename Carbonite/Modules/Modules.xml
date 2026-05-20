@@ -13,6 +13,10 @@
     <Script file="Map\Layer.lua" />
     <Script file="Map\Pathing.lua" />
     <Script file="Map\Coords.lua" />
+    <Script file="Map\MapIDs.lua" />
+    <Script file="Map\Hotspots.lua" />
+    <Script file="Map\Targets.lua" />
+    <Script file="Map\IconTypes.lua" />
     <Script file="Map\MinimapGlow.lua" />
     <Script file="Map\Pins\QuestPin.lua" />
     <Script file="Map\Pins\GatherPin.lua" />
