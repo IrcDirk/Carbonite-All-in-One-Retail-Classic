@@ -1702,6 +1702,19 @@ end
 -- Called every frame to update addon state
 -------------------------------------------------------------------------------
 
+-- File-scope helpers used by NXOnUpdate's tooltip-scan branch.
+-- Operating on GameTooltip text can raise "secure value" taint:
+-- GameTooltipTextLeft1:GetText() may return a string carrying the
+-- secure flag from a spell / aura tooltip path. `#secureString` and
+-- `secureString ~= otherSecureString` both raise inside a tainted
+-- context. We pcall through these helpers to defend against that.
+-- Hoisting the wrapped functions to file scope (rather than passing
+-- inline `function() ... end` closures to pcall) keeps the protection
+-- and stops allocating two closures per frame the tooltip is visible
+-- (60/sec at high fps) — a real per-frame memory leak.
+local function _tt_lenOf(s) return #s end
+local function _tt_neq(a, b) return a ~= b end
+
 ---
 -- Main frame update handler
 -- Processes tooltips, network updates, and calls module updates
@@ -1741,11 +1754,15 @@ function Nx:NXOnUpdate (elapsed)
     if not (TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall) then
         local s = GameTooltipTextLeft1:GetText()
         if s and type(s) == "string" then
-            local slen = 0
-            pcall(function() slen = #s end)
+            -- pcall through the file-scope _tt_lenOf / _tt_neq helpers
+            -- to defend against secure-tainted GameTooltip strings
+            -- without allocating fresh closures every frame the
+            -- tooltip is visible (was a measurable memory leak).
+            local ok, slen = pcall(_tt_lenOf, s)
+            if not ok then slen = 0 end
             if Nx.Tick % 4 == 1 and GameTooltipTextLeft1:IsVisible() and slen > 5 then
-                local textDiff = true
-                pcall(function() textDiff = (Nx.TooltipLastDiffText ~= s) end)
+                local okEq, textDiff = pcall(_tt_neq, Nx.TooltipLastDiffText, s)
+                if not okEq then textDiff = true end
                 if textDiff or Nx.TooltipLastDiffNumLines ~= GameTooltip:NumLines() then
                     if Nx.Quest then
                         Nx.Quest:TooltipProcess()
