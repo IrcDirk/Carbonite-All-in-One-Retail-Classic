@@ -4345,6 +4345,12 @@ end
 -- Animate scale change over multiple frames
 -- @param steps  Number of zoom steps (positive = in, negative = out)
 --
+-- Also captures the resulting scale into self._userScale so the
+-- next instance teleport restores it instead of slamming to the
+-- hard-coded zoom-in default (see Nx.Map:GotoCurrentZone). This
+-- is the path mouse-wheel zoom + the minimap zoom buttons take,
+-- so it's the right place to read "the user chose this zoom".
+--
 function Nx.Map:SetScaleOverTime(steps)
     local step = steps >= 0 and 1 or -1
 
@@ -4353,6 +4359,7 @@ function Nx.Map:SetScaleOverTime(steps)
     end
 
     self.StepTime = 10
+    self._userScale = self.Scale
 end
 
 -------------------------------------------------------------------------------
@@ -12068,7 +12075,16 @@ function Nx.Map:GotoCurrentZone()
 --    Nx.prt ("GotoCurrentZone")
 
     if self.InstanceId then
-        self:Move (self.PlyrX, self.PlyrY, 20, 15)
+        -- Bug fix: this branch used to hard-code Scale = 20 which is
+        -- "very zoomed in" on most modern maps. Every teleport into a
+        -- dungeon / raid / scenario / garrison wiped the user's
+        -- chosen zoom level (user-reported "map zooms to max after
+        -- teleport" bug). Prefer the remembered user scale captured
+        -- by SetScaleOverTime; fall back to 5 which fits most
+        -- instance maps without slamming to max.
+        local INSTANCE_DEFAULT_SCALE = 5
+        local scale = self._userScale or INSTANCE_DEFAULT_SCALE
+        self:Move (self.PlyrX, self.PlyrY, scale, 15)
     else
         self:SetToCurrentZone()
         local mapId = MapUtil.GetDisplayableMapForPlayer()
