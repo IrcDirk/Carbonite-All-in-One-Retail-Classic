@@ -14,3 +14,8 @@ Data\cata\QuestNPC.lua
 Data\cata\QuestStartEnd.xml
 Data\cata\QuestData.xml
 NxQuest.lua
+WatchHider.lua
+QuestWatchSurface.lua
+QuestRouting.lua
+Plugin.lua
+Data\Shared\QuestDataLoader.lua

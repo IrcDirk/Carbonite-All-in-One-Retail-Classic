@@ -1,12 +1,20 @@
 -- Carbonite | Core / SavedVariables
--- Wraps AceDB-3.0. Because the legacy Carbonite.lua already creates
+-- Wraps AceDB-3.0. The legacy Carbonite.lua already creates
 -- `Nx.db = LibStub("AceDB-3.0"):New("CarbData", defaults, true)`
--- during its own OnInitialize, this module's job is NOT to create
--- a second DB. Instead:
---   1. It waits for the legacy DB to appear.
---   2. It merges every Module's `dbDefaults` into the existing DB
---      via db:RegisterDefaults.
---   3. It exposes per-module sub-DBs to keep keys namespaced.
+-- and registers a substantial defaults table (profile.General,
+-- profile.Battleground, profile.Guide, profile.Map, profile.Track,
+-- profile.Skin, ...).  This module's job is to add each
+-- Carbonite.Core.Module's `dbDefaults` to the live DB WITHOUT
+-- touching AceDB's defaults registration — calling RegisterDefaults
+-- a second time triggers removeDefaults on the previous set, which
+-- wipes all the legacy General/Battleground/Guide values and
+-- breaks every legacy code path that reads them.
+--
+-- We instead populate db.profile[<Mod>]/char[<Mod>]/global[<Mod>]
+-- directly. The legacy defaults stay AceDB-managed (so profile
+-- copy / reset honors them); module defaults are lazy / sticky
+-- (they persist via the regular SavedVariables flush at logout,
+-- but don't auto-restore on profile reset).
 
 local Carbonite = _G.Carbonite
 local Logger = Carbonite.Core.Logger:Get("SavedVariables")
@@ -20,9 +28,15 @@ function SavedVariables:GetModuleDB(name)
     return moduleDB[name]
 end
 
--- Snapshots each module's dbDefaults and merges them into the live
--- AceDB instance. Safe to call multiple times - AceDB de-dupes
--- repeat RegisterDefaults calls by replacing the defaults table.
+-- Deep-copy a default value so user mutations don't mutate our
+-- shared defaults table.
+local function copyValue(v)
+    if type(v) ~= "table" then return v end
+    local out = {}
+    for k, vv in pairs(v) do out[k] = copyValue(vv) end
+    return out
+end
+
 local function bind()
     local db = Carbonite.db or _G.Nx and _G.Nx.db
     if not db then
@@ -31,19 +45,23 @@ local function bind()
     end
     Carbonite.db = db
 
-    -- Build a merged defaults table for every module then register it.
-    local merged = { profile = {}, char = {}, global = {}, realm = {}, factionrealm = {} }
+    -- Poke each module's defaults directly into the live db scope
+    -- tables. Only writes when the destination key is nil so we
+    -- never overwrite the user's saved values.
     for _, mod in ipairs(Carbonite.Core.Module.registry or {}) do
         if mod.dbDefaults then
             for scope, subTable in pairs(mod.dbDefaults) do
-                merged[scope] = merged[scope] or {}
-                for k, v in pairs(subTable) do
-                    merged[scope][k] = v
+                local destScope = db[scope]
+                if destScope then
+                    for k, v in pairs(subTable) do
+                        if destScope[k] == nil then
+                            destScope[k] = copyValue(v)
+                        end
+                    end
                 end
             end
         end
     end
-    db:RegisterDefaults(merged)
 
     -- Build per-module DB views over the now-populated db.
     for _, mod in ipairs(Carbonite.Core.Module.registry or {}) do
@@ -62,9 +80,9 @@ local function bind()
     return true
 end
 
--- The legacy OnInitialize runs at PLAYER_LOGIN. We listen there.
--- If the DB still is not ready we retry once a frame for a few
--- seconds before giving up.
+-- The legacy OnInitialize runs at PLAYER_LOGIN. We listen on
+-- CARBONITE_INITIALIZE (fired from our Bootstrap's PLAYER_LOGIN
+-- handler) and retry-poll briefly if the DB isn't ready yet.
 Carbonite.Core.EventBus:Subscribe("CARBONITE_INITIALIZE", function()
     if bind() then return end
     local tries = 0

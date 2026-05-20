@@ -12,6 +12,10 @@ local Carbonite = _G.Carbonite
 local Module = Carbonite.Core.Module
 
 local Comm = Module:New("Comm", {
+    -- AceComm-3.0 isn't in Module's default mixins (most modules
+    -- don't need the addon channel). Adding it here gives us
+    -- self:RegisterComm / self:SendCommMessage on this module.
+    mixins = { "AceComm-3.0" },
     defaults = {
         profile = {
             Comm = {

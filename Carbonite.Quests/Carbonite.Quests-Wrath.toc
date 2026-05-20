@@ -14,3 +14,8 @@ Data\wrath\QuestNPC.lua
 Data\wrath\QuestStartEnd.xml
 Data\wrath\QuestData.xml
 NxQuest.lua
+WatchHider.lua
+QuestWatchSurface.lua
+QuestRouting.lua
+Plugin.lua
+Data\Shared\QuestDataLoader.lua
