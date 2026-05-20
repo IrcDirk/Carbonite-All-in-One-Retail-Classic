@@ -4368,7 +4368,18 @@ local POI_Pool = {
     pPOIs = {},
     aPOIs = {},
     zPOIs = {},
+    vPOIs = {},
 }
+
+-- Shared sentinel returned in place of `or {}` when a C_AreaPoiInfo /
+-- C_VignetteInfo / C_ResearchInfo / C_TaxiMap query returns nil. The
+-- POI fetch path runs on every cache miss (~twice per second when the
+-- map is open) and used to allocate up to a dozen empty fallback
+-- tables per pass; this constant collapses those to a single shared
+-- read-only table.  DO NOT mutate it.
+local POI_EMPTY = setmetatable({}, {
+    __newindex = function() error("POI_EMPTY is immutable", 2) end,
+})
 
 -- POI cache to reduce API calls during zoom/scroll (refreshes every 0.5 seconds or on map change)
 local POI_Cache = {
@@ -4758,16 +4769,35 @@ function Nx.Map.OnUpdate(this, elapsed)
         end
     end
 
-    map.Win:SetTitle (title, 1)
-
-    if Nx.db.profile.Map.ShowTitle2 then
-
-        local s = GetSubZoneText()
-        local pvpType = GetZonePVPInfo()
-        if pvpType then
-            s = s .. " (" .. L[pvpType] .. ")"
+    -- Throttle the SetTitle calls to ~15 hz. SetTitle internally pokes
+    -- a FontString and Carbonite's window-title chrome; doing it 60
+    -- times per second when the underlying numbers update at most ~10
+    -- hz from server position packets is wasted work, and each
+    -- format() above allocated a fresh string every frame. The legacy
+    -- tooltip path at line 4751 already uses Nx.Tick % 3 for the same
+    -- reason; we use % 4 here so the two throttle gates don't beat
+    -- against each other.
+    --
+    -- Force-update on first call (LastTitle1 / LastTitle2 nil) so the
+    -- title doesn't render blank on the first 3 frames.
+    if Nx.Tick % 4 == 0 or map.LastTitle1 == nil then
+        if title ~= map.LastTitle1 then
+            map.Win:SetTitle (title, 1)
+            map.LastTitle1 = title
         end
-        map.Win:SetTitle (format ("%s %s", s, cursorLocXY), 2)
+
+        if Nx.db.profile.Map.ShowTitle2 then
+            local s = GetSubZoneText()
+            local pvpType = GetZonePVPInfo()
+            if pvpType then
+                s = s .. " (" .. L[pvpType] .. ")"
+            end
+            local t2 = format ("%s %s", s, cursorLocXY)
+            if t2 ~= map.LastTitle2 then
+                map.Win:SetTitle (t2, 2)
+                map.LastTitle2 = t2
+            end
+        end
     end
 end
 
@@ -5588,21 +5618,26 @@ function Nx.Map:Update (elapsed)
         elseif cacheValid then
             zPOIs = POI_Cache.data
         else
-            -- Fetch fresh POI data
-            local tPOIs = C_TaxiMap.GetTaxiNodesForMap(rid) or {}
+            -- Fetch fresh POI data. Each `or POI_EMPTY` here uses a
+            -- shared immutable sentinel in place of `or {}` so we
+            -- don't allocate a fresh empty table every time the
+            -- Blizzard API returns nil. POI_EMPTY is never mutated
+            -- (it's frozen by metatable) so the for-loops below skip
+            -- their bodies when the API had nothing to return.
+            local tPOIs = C_TaxiMap.GetTaxiNodesForMap(rid) or POI_EMPTY
             -- Reuse pooled tables instead of creating new ones every frame
             local pPOIs = POI_Pool.pPOIs
             wipe(pPOIs)
-            local dPOIs = C_ResearchInfo.GetDigSitesForMap(rid) or {}
+            local dPOIs = C_ResearchInfo.GetDigSitesForMap(rid) or POI_EMPTY
             local aPOIs = POI_Pool.aPOIs
             wipe(aPOIs)
-            local areaPOIIds = C_AreaPoiInfo.GetAreaPOIForMap(rid) or {}
+            local areaPOIIds = C_AreaPoiInfo.GetAreaPOIForMap(rid) or POI_EMPTY
             for j, aPOIId in ipairs(areaPOIIds) do
                 aPOIs[j] = C_AreaPoiInfo.GetAreaPOIInfo(rid, aPOIId)
             end
             -- Add Delves POIs
             if C_AreaPoiInfo.GetDelvesForMap then
-                local delvePOIIds = C_AreaPoiInfo.GetDelvesForMap(rid) or {}
+                local delvePOIIds = C_AreaPoiInfo.GetDelvesForMap(rid) or POI_EMPTY
                 local offset = #aPOIs
                 for j, delvePOIId in ipairs(delvePOIIds) do
                     aPOIs[offset + j] = C_AreaPoiInfo.GetAreaPOIInfo(rid, delvePOIId)
@@ -5610,7 +5645,7 @@ function Nx.Map:Update (elapsed)
             end
             -- Add Quest Hubs POIs
             if C_AreaPoiInfo.GetQuestHubsForMap then
-                local hubPOIIds = C_AreaPoiInfo.GetQuestHubsForMap(rid) or {}
+                local hubPOIIds = C_AreaPoiInfo.GetQuestHubsForMap(rid) or POI_EMPTY
                 local offset = #aPOIs
                 for j, hubPOIId in ipairs(hubPOIIds) do
                     aPOIs[offset + j] = C_AreaPoiInfo.GetAreaPOIInfo(rid, hubPOIId)
@@ -5618,7 +5653,7 @@ function Nx.Map:Update (elapsed)
             end
             -- Add Dragonriding Races POIs
             if C_AreaPoiInfo.GetDragonridingRacesForMap then
-                local racePOIIds = C_AreaPoiInfo.GetDragonridingRacesForMap(rid) or {}
+                local racePOIIds = C_AreaPoiInfo.GetDragonridingRacesForMap(rid) or POI_EMPTY
                 local offset = #aPOIs
                 for j, racePOIId in ipairs(racePOIIds) do
                     aPOIs[offset + j] = C_AreaPoiInfo.GetAreaPOIInfo(rid, racePOIId)
@@ -5626,24 +5661,27 @@ function Nx.Map:Update (elapsed)
             end
             -- Add Events POIs
             if C_AreaPoiInfo.GetEventsForMap then
-                local eventPOIIds = C_AreaPoiInfo.GetEventsForMap(rid) or {}
+                local eventPOIIds = C_AreaPoiInfo.GetEventsForMap(rid) or POI_EMPTY
                 local offset = #aPOIs
                 for j, eventPOIId in ipairs(eventPOIIds) do
                     aPOIs[offset + j] = C_AreaPoiInfo.GetAreaPOIInfo(rid, eventPOIId)
                 end
             end
 
-            local bgPOIs = C_PvP.GetBattlefieldVehicles(rid) or {}
+            local bgPOIs = C_PvP.GetBattlefieldVehicles(rid) or POI_EMPTY
 
-            -- Add vignettes (Bliz "special" map markers — Renown Quartermasters,
-            -- world-event NPCs, some rares, etc.). They live on a separate
-            -- C_VignetteInfo API that the AreaPOI/QuestHub/Event fetches don't
-            -- cover. We map the vignette's position-in-this-map to the same
-            -- shape as zPOI entries (position + name + atlasName) so the
-            -- existing render loop draws them without further changes.
-            local vPOIs = {}
+            -- Vignettes ("special" map markers — Renown Quartermasters,
+            -- world-event NPCs, some rares). The vPOIs array itself is
+            -- pooled via POI_Pool.vPOIs; the per-vignette entry tables
+            -- (position / name / atlasName / description) are still
+            -- allocated fresh because Blizzard's vignette API returns
+            -- a new info table per call and reusing them across
+            -- refreshes would risk stale data. Pooling the OUTER
+            -- array is the main win.
+            local vPOIs = POI_Pool.vPOIs
+            wipe(vPOIs)
             if C_VignetteInfo and C_VignetteInfo.GetVignettes then
-                local vGUIDs = C_VignetteInfo.GetVignettes() or {}
+                local vGUIDs = C_VignetteInfo.GetVignettes() or POI_EMPTY
                 for _, guid in ipairs(vGUIDs) do
                     local vInfo = C_VignetteInfo.GetVignetteInfo(guid)
                     if vInfo and vInfo.onWorldMap then
