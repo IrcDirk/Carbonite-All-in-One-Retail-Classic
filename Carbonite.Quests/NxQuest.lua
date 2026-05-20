@@ -4437,7 +4437,13 @@ function Nx.Quest:RecordQuestsLog()
                         end
 
                         if Nx.qdb.profile.Quest.AutoTurnInAC and cur.IsAutoComplete then
-                            ShowQuestComplete (qi)
+                            -- ShowQuestComplete on retail takes questID, on
+                            -- Classic it takes the log index.
+                            if Nx.isRetail then
+                                ShowQuestComplete (cur.QId)
+                            else
+                                ShowQuestComplete (qi)
+                            end
                         end
 
                         if Nx.qdb.profile.QuestWatch.RemoveComplete and not cur.IsAutoComplete then
@@ -11739,6 +11745,36 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                             end
 --]]
                         else
+
+                            -- Shortcut for the "?" autocomplete button: the
+                            -- button type itself is the contract. The render
+                            -- pass only stamps QuestWatchAC (with its
+                            -- AutoComplete = true marker) when the quest is
+                            -- both complete and auto-completable, so trust
+                            -- that signal directly instead of re-checking
+                            -- cur.CompleteMerge / cur.IsAutoComplete here
+                            -- (both of which can be stale or nil-ed out by
+                            -- a RecordQuestsLog pass between render and click).
+                            if typ.AutoComplete then
+                                -- API signature differs between Classic and Retail:
+                                --   Classic (MoP / Wrath / etc.): ShowQuestComplete(questLogIndex)
+                                --   Retail (11.x):                ShowQuestComplete(questID)
+                                -- Carbonite has historically passed the log index
+                                -- everywhere, which silently no-ops on retail.
+                                Nx.prt ("|cffffd200[Carbonite]|r AutoComplete ? clicked: qId=%s qIndex=%s",
+                                    tostring(qId), tostring(qIndex))
+                                if ShowQuestComplete then
+                                    if Nx.isRetail then
+                                        ShowQuestComplete(qId)
+                                    else
+                                        local qi = (GetQuestLogIndexByID and GetQuestLogIndexByID(qId)) or qIndex
+                                        if qi and qi > 0 then
+                                            ShowQuestComplete(qi)
+                                        end
+                                    end
+                                end
+                                return
+                            end
 
                             local i, cur = Quest:FindCur (qId, qIndex)
                             local isComplete = cur and cur.CompleteMerge
