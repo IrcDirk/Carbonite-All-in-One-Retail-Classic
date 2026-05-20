@@ -11318,6 +11318,30 @@ function Nx.Quest.Watch:UpdateList()
                     if true then
                         if 1 then
                             local level, isComplete = cur.Level, cur.CompleteMerge
+                            local isAC = cur.IsAutoComplete
+                            -- Cached flags can drift from server truth between
+                            -- RecordQuestsLog passes. In particular, once
+                            -- Blizzard's AutoQuestPopup processes a
+                            -- ShowQuestComplete call the popup is removed,
+                            -- and a follow-up RecordQuestsLog can drop
+                            -- cur.IsAutoComplete even when the quest is still
+                            -- pending server-side (e.g. user closed the
+                            -- completion dialog because bags were full).
+                            -- Re-check the live API when the cached flag is
+                            -- false so the "?" button stays visible.
+                            if qId and qId > 0 and C_QuestLog then
+                                if not isComplete and C_QuestLog.IsComplete
+                                        and C_QuestLog.IsComplete(qId) then
+                                    isComplete = true
+                                end
+                                if not isAC and GetQuestLogIndexByID then
+                                    local logIdx = GetQuestLogIndexByID(qId)
+                                    if logIdx and logIdx > 0
+                                            and GetQuestLogIsAutoComplete(logIdx) then
+                                        isAC = true
+                                    end
+                                end
+                            end
                             local quest = cur.Q
                             local qi = cur.QI
                             local lbNum = cur.LBCnt
@@ -11342,7 +11366,7 @@ function Nx.Quest.Watch:UpdateList()
                                         butType = "QuestWatchErr"
                                     end
                                 end
-                                if isComplete and cur.IsAutoComplete then
+                                if isComplete and isAC then
                                     butType = "QuestWatchAC"
                                     pressed = false
                                 end
@@ -11405,7 +11429,7 @@ function Nx.Quest.Watch:UpdateList()
                                 list:ItemAdd (0)
                                 list:ItemSet (2, format ("  |cfff06060%s %s", TIME_REMAINING, SecondsToTime (cur.TimeExpire - time())))
                             end
-                            if isComplete and cur.IsAutoComplete then
+                            if isComplete and isAC then
                                 list:ItemAdd (0)
                                 list:ItemSet (2, format ("|cff%2x0000--- " ..L["Click ? to complete"] .." ---", self.FlashColor * 200 + 55))
                             end
