@@ -28,6 +28,7 @@
     <Script file="Map\FrameToWorld.lua" />
     <Script file="Map\MinimapButton.lua" />
     <Script file="Map\POICache.lua" />
+    <Script file="Map\MapOpen.lua" />
     <Script file="Map\Pins\QuestPin.lua" />
     <Script file="Map\Pins\GatherPin.lua" />
     <Script file="Map\Pins\PlayerPin.lua" />
@@ -43,6 +44,10 @@
     <Script file="Whatsnew\Whatsnew.lua" />
     <Script file="CombatStats\CombatStats.lua" />
     <Script file="TitleScreen\TitleScreen.lua" />
+    <Script file="UserEvents\UserEvents.lua" />
+    <Script file="GroupMembers\GroupMembers.lua" />
+    <Script file="ItemRegistry\ItemRegistry.lua" />
+    <Script file="AuctionAssist\AuctionAssist.lua" />
 
     <!-- Integrations with sibling addons. -->
     <Script file="Integrations\TomTom.lua" />
