@@ -17,3 +17,4 @@ Data\shared\QuestCats.lua
 Data\retail\QuestNPC.lua
 Data\retail\QuestData.xml
 NxQuest.lua
+WatchHider.lua

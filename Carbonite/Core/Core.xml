@@ -10,4 +10,5 @@
     <Script file="SavedVariables.lua" />
     <Script file="SlashCommands.lua" />
     <Script file="Versions.lua" />
+    <Script file="DataPersistence.lua" />
 </Ui>
