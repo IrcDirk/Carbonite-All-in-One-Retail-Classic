@@ -68,8 +68,11 @@
     <Script file="MainUpdater\MainUpdater.lua" />
     <Script file="Window\WindowLayout.lua" />
     <Script file="Window\WindowConsole.lua" />
+    <Script file="Window\WindowMenu.lua" />
     <Script file="ZoneTransition\ZoneTransition.lua" />
     <Script file="PlayerCharacter\PlayerCharacter.lua" />
+    <Script file="EditModeHooks\EditModeHooks.lua" />
+    <Script file="Map\GuideLocations.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />
@@ -77,4 +80,5 @@
     <!-- Integrations with sibling addons. -->
     <Script file="Integrations\TomTom.lua" />
     <Script file="Integrations\TomTomWaypoints.lua" />
+    <Script file="Integrations\LDB.lua" />
 </Ui>
