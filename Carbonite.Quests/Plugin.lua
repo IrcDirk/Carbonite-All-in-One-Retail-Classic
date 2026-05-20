@@ -25,7 +25,15 @@ end
 
 local Quests = {}
 QuestAddon.Public = Quests
-Carbonite.Quests = Quests
+-- Cross-plugin slot. Carbonite == Nx, and NxQuest.lua keeps the
+-- legacy Nx.Quest table with the full method surface; don't
+-- collide. Sibling .Quests classes (WatchHider, WatchSurface,
+-- Routing) ALSO live under Carbonite.Quests so we use a sub-key
+-- here rather than replacing the whole bucket.
+Carbonite.Plugins = Carbonite.Plugins or {}
+Carbonite.Plugins.Quests = Quests
+Carbonite.Quests = Carbonite.Quests or {}
+Carbonite.Quests.Public = Quests
 
 -- Returns the loaded quest database for the running client. The
 -- per-flavor data files all populate a single global table; this

@@ -31,7 +31,15 @@ end
 
 local Notes = {}
 NotesAddon.Public = Notes
-Carbonite.Notes = Notes  -- exposed on the main namespace for cross-plugin use
+-- Cross-plugin access slot. We can NOT use `Carbonite.Notes` here:
+-- `Carbonite` is the same table as the legacy `Nx`, and NxFav.lua
+-- has already populated `Nx.Notes` with its own method table
+-- (Init / Update / Folders / etc.). Overwriting that table erases
+-- those methods and the AceTimer-deferred OnInitialize crashes at
+-- `Nx.Notes:Init()`. Hang our public API off Carbonite.Plugins
+-- instead, which is a namespace we own.
+Carbonite.Plugins = Carbonite.Plugins or {}
+Carbonite.Plugins.Notes = Notes
 
 -- Pull a note iterator from the legacy storage. The legacy storage
 -- has changed shape several times; this normalizes them to a flat

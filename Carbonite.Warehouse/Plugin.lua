@@ -18,7 +18,11 @@ end
 
 local Warehouse = {}
 WHAddon.Public = Warehouse
-Carbonite.Warehouse = Warehouse
+-- Cross-plugin access slot. Carbonite == Nx, and NxWarehouse.lua
+-- populates Nx.Warehouse with the legacy method table (Init,
+-- ConvertData, RecordCharacter, ...). Don't overwrite it.
+Carbonite.Plugins = Carbonite.Plugins or {}
+Carbonite.Plugins.Warehouse = Warehouse
 
 -- Returns the canonical inventory table for a character. Defers to
 -- the legacy storage so we are interoperable with users upgrading
