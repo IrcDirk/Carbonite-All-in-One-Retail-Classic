@@ -102,6 +102,10 @@
     <Script file="Window\WindowSearch.lua" />
     <Script file="Window\WindowCombat.lua" />
     <Script file="TooltipPostHook\TooltipPostHook.lua" />
+    <Script file="ScriptProcessor\ScriptProcessor.lua" />
+    <Script file="DataExportImport\DataExportImport.lua" />
+    <Script file="Map\MapDrag.lua" />
+    <Script file="Map\MapView.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />

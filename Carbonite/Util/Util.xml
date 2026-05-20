@@ -7,4 +7,5 @@
     <Script file="LegacyStrings.lua" />
     <Script file="Mouse.lua" />
     <Script file="Time.lua" />
+    <Script file="GameVersion.lua" />
 </Ui>
