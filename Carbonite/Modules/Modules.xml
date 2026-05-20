@@ -1,7 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
     <!-- Options should load first so other modules can register
-         their option pages during their own load. -->
+         their option pages during their own load. Engine (relocated
+         from NxOptions.lua) sits right after the shell so the giant
+         legacy tree is available when other modules try to extend it. -->
     <Script file="Options\Options.lua" />
+    <Script file="Options\OptionsEngine.lua" />
 
     <!-- Comm next: other modules may want to send addon messages
          on enable. Engine (relocated from NxCom.lua) sits right after

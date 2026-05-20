@@ -29,6 +29,18 @@ local AceConfigReg      = LibStub("AceConfigRegistry-3.0")
 local AceConfigDialog   = LibStub("AceConfigDialog-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
+-------------------------------------------------------------------------------
+-- Relocation note
+-------------------------------------------------------------------------------
+-- The full Carbonite options tree, plus the Nx.Opts lifecycle and
+-- every NXCmd* callback, was relocated here from the legacy
+-- Carbonite/NxOptions.lua file. Methods continue to attach to
+-- Nx.Opts (initialised as {} by Carbonite.lua). The new
+-- Modules/Options/Options.lua module owns the AceConfig wrapper
+-- (Options:Register / Options:Open) used by the new module shells;
+-- the engine below feeds the still-very-large legacy tree through
+-- the same AceConfig registration so both worlds coexist.
+
 -- Configuration tables for modular addon support
 local modular_config = {}
 

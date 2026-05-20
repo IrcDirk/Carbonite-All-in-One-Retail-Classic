@@ -22,7 +22,6 @@ UI\UI.xml
 Carbonite.lua
 
 NxUI.lua
-NxOptions.lua
 
 Data\classic\data.xml
 Data\classic\NxMapData.lua
