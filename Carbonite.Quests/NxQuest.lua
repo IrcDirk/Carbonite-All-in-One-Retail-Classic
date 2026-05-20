@@ -4240,7 +4240,28 @@ function Nx.Quest:FinishQuest()
     end
 
     local id = qId and qId > 0 and qId or cur.Title
-    Nx.Quest:SetQuest (id, "C", time())
+
+    if Nx.isClassicEra then
+        -- Classic Era never fires QUEST_TURNED_IN, so we have to
+        -- commit the history record from the GetQuestReward hook.
+        Nx.Quest:SetQuest (id, "C", time())
+    else
+        -- Defer the "C" history write until QUEST_TURNED_IN confirms
+        -- the server actually accepted the turn-in. GetQuestReward
+        -- firing only means the client SENT the turn-in attempt; the
+        -- server can still reject it (e.g. inventory full when
+        -- completing an auto-complete quest). If we wrote "C" here
+        -- and the server rejected, the quest stayed in the log but
+        -- got filtered out of the watch list (UpdateList drops
+        -- anything whose qStatus isn't "W"), so the "?" autocomplete
+        -- button vanished and the player couldn't retry.
+        Nx.Quest._pendingTurnIn = {
+            id    = id,
+            qId   = qId,
+            title = cur.Title,
+            t     = GetTime(),
+        }
+    end
 
     self:RecordQuestAcceptOrFinish()
     self:Capture (i, -1)
@@ -4625,6 +4646,26 @@ function Nx.Quest:RecordQuestsLog()
                 cur.CanShare = GetQuestLogPushable()
                 cur.Complete = isComplete            -- 1 is Done, nil not. Otherwise failed
                 cur.IsAutoComplete = GetQuestLogIsAutoComplete (qn)
+
+                -- Recovery for a now-fixed bug where FinishQuest wrote
+                -- "C" history before the server confirmed the turn-in
+                -- (auto-complete quest + full bags rejected the turn-in
+                -- but the local hook had already flagged the quest as
+                -- completed). The quest then stayed in the live log but
+                -- got filtered out of the watch list. If we still see
+                -- the contradiction (in log + history says "C") and
+                -- Blizzard's per-character completed-quest flag confirms
+                -- the server has NOT recorded this quest as completed,
+                -- the "C" is stale -- restore it to "W" so the quest is
+                -- watched again and the "?" button is visible.
+                if cur.QId and cur.QId > 0 and C_QuestLog
+                        and C_QuestLog.IsQuestFlaggedCompleted then
+                    local qStatus = self:GetQuest (cur.QId)
+                    if qStatus == "C"
+                            and not C_QuestLog.IsQuestFlaggedCompleted (cur.QId) then
+                        self:SetQuest (cur.QId, "W", time())
+                    end
+                end
 
                 local left = GetQuestLogTimeLeft()
                 if left then
@@ -8218,6 +8259,18 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
     if event == "PLAYER_LOGIN" then
         self.LoggingIn = true
     elseif event == "QUEST_TURNED_IN" then
+        -- Server confirmed the turn-in. Commit the history "C" write
+        -- that FinishQuest deferred (see comment there for the reason
+        -- the GetQuestReward post-hook can't be trusted on its own).
+        local turnedQID = arg1
+        local pend = Quest._pendingTurnIn
+        if pend and (GetTime() - (pend.t or 0)) < 30 then
+            local commitID = (turnedQID and turnedQID > 0) and turnedQID or pend.id
+            Quest:SetQuest (commitID, "C", time())
+            Quest._pendingTurnIn = nil
+        elseif turnedQID and turnedQID > 0 then
+            Quest:SetQuest (turnedQID, "C", time())
+        end
         Nx.Quest.List:Refresh(event)
     elseif event == "SUPER_TRACKING_CHANGED" then
         Nx.Quest:OnSuperTrackChanged()
