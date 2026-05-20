@@ -89,6 +89,11 @@
     <Script file="SoundPlayer\SoundPlayer.lua" />
     <Script file="Map\IconTooltip.lua" />
     <Script file="Map\DockOpts.lua" />
+    <Script file="HUD\HUDArrow.lua" />
+    <Script file="Map\GuidePane.lua" />
+    <Script file="CombatLockdown\CombatLockdown.lua" />
+    <Script file="Comm\CommChat.lua" />
+    <Script file="Map\DragonRiding.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />
