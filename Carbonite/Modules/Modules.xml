@@ -30,6 +30,7 @@
     <Script file="Map\POICache.lua" />
     <Script file="Map\MapOpen.lua" />
     <Script file="Map\TravelGraph.lua" />
+    <Script file="Map\MapToolBar.lua" />
     <Script file="Map\Pins\QuestPin.lua" />
     <Script file="Map\Pins\GatherPin.lua" />
     <Script file="Map\Pins\PlayerPin.lua" />
@@ -43,12 +44,16 @@
 
     <!-- Cross-cutting modules. -->
     <Script file="Whatsnew\Whatsnew.lua" />
+    <Script file="Whatsnew\WhatsnewWindow.lua" />
     <Script file="CombatStats\CombatStats.lua" />
     <Script file="TitleScreen\TitleScreen.lua" />
     <Script file="UserEvents\UserEvents.lua" />
     <Script file="GroupMembers\GroupMembers.lua" />
     <Script file="ItemRegistry\ItemRegistry.lua" />
     <Script file="AuctionAssist\AuctionAssist.lua" />
+    <Script file="SlashHandler\SlashHandler.lua" />
+    <Script file="EventDispatcher\EventDispatcher.lua" />
+    <Script file="ChatHooks\ChatHooks.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />
