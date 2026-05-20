@@ -24,6 +24,8 @@
     <Script file="Map\ZoneIterator.lua" />
     <Script file="Map\Battleground.lua" />
     <Script file="Map\GroupTracking.lua" />
+    <Script file="Map\ContinentLookup.lua" />
+    <Script file="Map\FrameToWorld.lua" />
     <Script file="Map\Pins\QuestPin.lua" />
     <Script file="Map\Pins\GatherPin.lua" />
     <Script file="Map\Pins\PlayerPin.lua" />
@@ -34,6 +36,10 @@
     <!-- HUD and Travel are simple module shells, order independent. -->
     <Script file="HUD\HUD.lua" />
     <Script file="Travel\Travel.lua" />
+
+    <!-- Cross-cutting modules. -->
+    <Script file="Whatsnew\Whatsnew.lua" />
+    <Script file="CombatStats\CombatStats.lua" />
 
     <!-- Integrations with sibling addons. -->
     <Script file="Integrations\TomTom.lua" />

@@ -18,4 +18,5 @@
     <Script file="Slider.lua" />
     <Script file="TabBar.lua" />
     <Script file="DropDown.lua" />
+    <Script file="ToolBar.lua" />
 </Ui>
