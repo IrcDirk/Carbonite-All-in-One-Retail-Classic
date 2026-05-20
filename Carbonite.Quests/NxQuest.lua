@@ -11730,14 +11730,25 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                             local i, cur = Quest:FindCur (qId, qIndex)
                             local isComplete = cur and cur.CompleteMerge
                             local isAC = cur and cur.IsAutoComplete
-                            -- IsAutoComplete may be stale (nil) if RecordQuestsLog ran since frame draw;
-                            -- fall back to C_QuestLog when available
-                            if not isAC and cur and C_QuestLog then
-                                isAC = C_QuestLog.IsComplete and C_QuestLog.IsComplete(qId) and
-                                       GetQuestLogIsAutoComplete(GetQuestLogIndexByID(qId))
+                            -- Both flags can be stale between render and click:
+                            --   * IsAutoComplete is nil-ed out if RecordQuestsLog
+                            --     ran in the gap.
+                            --   * CompleteMerge can lag the server when the
+                            --     player just turned the last objective and the
+                            --     QuestLog hasn't redrawn yet.
+                            -- Fall back to live C_QuestLog state for both so the
+                            -- "?" autocomplete button always autocompletes when
+                            -- the API agrees, instead of toggling tracking
+                            -- (user-reported bug: ? click switches tracking).
+                            if cur and C_QuestLog then
+                                local apiComplete = C_QuestLog.IsComplete and C_QuestLog.IsComplete(qId)
+                                local logIdx = GetQuestLogIndexByID and GetQuestLogIndexByID(qId)
+                                local apiAC = logIdx and logIdx > 0
+                                    and GetQuestLogIsAutoComplete(logIdx)
+                                if apiComplete then isComplete = true end
+                                if apiAC       then isAC       = true end
                             end
                             if isComplete and isAC then
---                                Nx.prt ("ShowQuestComplete %s", qIndex)
                                 -- Use fresh log index in case quest log was reshuffled
                                 local qi = GetQuestLogIndexByID(qId)
                                 ShowQuestComplete (qi > 0 and qi or qIndex)
