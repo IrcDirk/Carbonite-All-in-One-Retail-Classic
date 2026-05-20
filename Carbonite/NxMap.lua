@@ -4776,16 +4776,36 @@ function Nx.Map.OnUpdate(this, elapsed)
         end
     end
 
-    map.Win:SetTitle (title, 1)
-
-    if Nx.db.profile.Map.ShowTitle2 then
-
-        local s = GetSubZoneText()
-        local pvpType = GetZonePVPInfo()
-        if pvpType then
-            s = s .. " (" .. L[pvpType] .. ")"
+    -- Throttle the SetTitle calls to ~15 hz. SetTitle internally pokes
+    -- a FontString and Carbonite's window-title chrome; doing it 60
+    -- times per second when the underlying numbers update at most ~10
+    -- hz from server position packets is wasted work, and each
+    -- format() above allocated a fresh string every frame. The legacy
+    -- tooltip path right above already uses Nx.Tick % 3 for the same
+    -- reason; we use % 4 so the two throttle gates don't beat against
+    -- each other.
+    --
+    -- Force-update on the very first call (LastTitle1 / LastTitle2 nil)
+    -- so the title doesn't render blank during the first frames after
+    -- the map opens.
+    if Nx.Tick % 4 == 0 or map.LastTitle1 == nil then
+        if title ~= map.LastTitle1 then
+            map.Win:SetTitle (title, 1)
+            map.LastTitle1 = title
         end
-        map.Win:SetTitle (format ("%s %s", s, cursorLocXY), 2)
+
+        if Nx.db.profile.Map.ShowTitle2 then
+            local s = GetSubZoneText()
+            local pvpType = GetZonePVPInfo()
+            if pvpType then
+                s = s .. " (" .. L[pvpType] .. ")"
+            end
+            local t2 = format ("%s %s", s, cursorLocXY)
+            if t2 ~= map.LastTitle2 then
+                map.Win:SetTitle (t2, 2)
+                map.LastTitle2 = t2
+            end
+        end
     end
 end
 
