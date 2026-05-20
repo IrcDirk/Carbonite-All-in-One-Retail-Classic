@@ -1,0 +1,15 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
+    <!-- Mixin first - the rest reference it via Carbonite.UI.Mixin.Apply. -->
+    <Script file="Mixin.lua" />
+    <Script file="Mixins\Draggable.lua" />
+    <Script file="Mixins\Resizable.lua" />
+    <Script file="Mixins\Tooltipable.lua" />
+
+    <!-- Skin / Tooltip / Widget are standalone. -->
+    <Script file="Skin.lua" />
+    <Script file="Tooltip.lua" />
+    <Script file="Widget.lua" />
+
+    <!-- Composed widgets. -->
+    <Script file="Window.lua" />
+</Ui>

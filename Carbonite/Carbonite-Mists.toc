@@ -13,6 +13,12 @@
 Libs\libs.xml
 Locales\Locales.xml
 Taintless.xml
+
+Core\Core.xml
+Compat\Compat.xml
+Util\Util.xml
+UI\UI.xml
+
 Carbonite.lua
 
 NxUI.lua
@@ -28,5 +34,7 @@ NxMap.lua
 Data\Shared\NxMapGuide.lua
 
 NxTravel.lua
+
+Modules\Modules.xml
 
 Carbonite.xml

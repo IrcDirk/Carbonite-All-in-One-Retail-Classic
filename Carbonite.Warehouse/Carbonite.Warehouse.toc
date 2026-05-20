@@ -9,5 +9,6 @@
 ## RequiredDeps: Carbonite
 
 Locales\locales.xml
+Plugin.lua
 NxWarehouse.lua
 

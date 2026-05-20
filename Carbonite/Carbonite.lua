@@ -25,8 +25,15 @@
 
 local _G = getfenv(0)
 
--- Create main addon object using Ace3 libraries
-Nx = LibStub("AceAddon-3.0"):NewAddon("Carbonite","AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0", "AceComm-3.0")
+-- The new Core/Bootstrap.lua may have already created the Carbonite
+-- AceAddon and aliased it as Nx. If so, reuse it; otherwise create
+-- it the old way for unmigrated load orders.
+local AceAddon = LibStub("AceAddon-3.0")
+Nx = AceAddon:GetAddon("Carbonite", true)
+if not Nx then
+    Nx = AceAddon:NewAddon("Carbonite","AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0", "AceComm-3.0")
+    _G.Nx = Nx
+end
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
 -------------------------------------------------------------------------------

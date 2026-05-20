@@ -1,0 +1,24 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
+    <!-- Options should load first so other modules can register
+         their option pages during their own load. -->
+    <Script file="Options\Options.lua" />
+
+    <!-- Comm next: other modules may want to send addon messages
+         on enable. -->
+    <Script file="Comm\Comm.lua" />
+
+    <!-- Map needs Pin / Layer / pin classes before the Map module
+         itself can refer to them. Order matters here. -->
+    <Script file="Map\Pin.lua" />
+    <Script file="Map\Layer.lua" />
+    <Script file="Map\Pins\QuestPin.lua" />
+    <Script file="Map\Pins\GatherPin.lua" />
+    <Script file="Map\Pins\PlayerPin.lua" />
+    <Script file="Map\Pins\NotePin.lua" />
+    <Script file="Map\Pins\TrainerPin.lua" />
+    <Script file="Map\Map.lua" />
+
+    <!-- HUD and Travel are simple module shells, order independent. -->
+    <Script file="HUD\HUD.lua" />
+    <Script file="Travel\Travel.lua" />
+</Ui>
