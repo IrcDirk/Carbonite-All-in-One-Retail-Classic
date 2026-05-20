@@ -84,6 +84,11 @@
     <Script file="CharacterRoster\CharacterRoster.lua" />
     <Script file="InitFlow\InitFlow.lua" />
     <Script file="DebugFlags\DebugFlags.lua" />
+    <Script file="Comm\NetSend.lua" />
+    <Script file="TaintlessHelpers\TaintlessHelpers.lua" />
+    <Script file="SoundPlayer\SoundPlayer.lua" />
+    <Script file="Map\IconTooltip.lua" />
+    <Script file="Map\DockOpts.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />
