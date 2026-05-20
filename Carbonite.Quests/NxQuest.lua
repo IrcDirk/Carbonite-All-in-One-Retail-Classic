@@ -11761,8 +11761,6 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                                 --   Retail (11.x):                ShowQuestComplete(questID)
                                 -- Carbonite has historically passed the log index
                                 -- everywhere, which silently no-ops on retail.
-                                Nx.prt ("|cffffd200[Carbonite]|r AutoComplete ? clicked: qId=%s qIndex=%s",
-                                    tostring(qId), tostring(qIndex))
                                 if ShowQuestComplete then
                                     if Nx.isRetail then
                                         ShowQuestComplete(qId)
