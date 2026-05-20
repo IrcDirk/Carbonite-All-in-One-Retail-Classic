@@ -15523,18 +15523,22 @@ local zoneMapIDtoContinentMapID = {}
 -- @return         Continent map ID or nil
 --
 function Nx.Map:GetContinentMapID(uiMapID)
-    -- Check cache first
-    local continentMapID = zoneMapIDtoContinentMapID[uiMapID]
-    if continentMapID then
-        return continentMapID
-    end
+    -- Check cache first. The cache uses `false` to mark a previously-
+    -- attempted lookup that yielded no continent (cosmic/world map or
+    -- broken parent chain). A naked nil would mean "not yet looked up"
+    -- and force us to re-traverse the parent hierarchy on every call
+    -- — a real performance hit on maps with no continent answer
+    -- (battlegrounds, the cosmic map, etc.).
+    local cached = zoneMapIDtoContinentMapID[uiMapID]
+    if cached then return cached end
+    if cached == false then return nil end
 
     -- Not cached - traverse hierarchy to find continent
     local mapInfo = C_Map.GetMapInfo(uiMapID)
 
     -- Invalid or cosmic/world map
     if not mapInfo or mapInfo.mapType == 0 or mapInfo.mapType == 1 then
-        zoneMapIDtoContinentMapID[uiMapID] = nil
+        zoneMapIDtoContinentMapID[uiMapID] = false
         return nil
     end
 
@@ -15547,7 +15551,7 @@ function Nx.Map:GetContinentMapID(uiMapID)
     -- Check parent
     local parentMapInfo = C_Map.GetMapInfo(mapInfo.parentMapID)
     if not parentMapInfo then
-        zoneMapIDtoContinentMapID[uiMapID] = nil
+        zoneMapIDtoContinentMapID[uiMapID] = false
         return nil
     else
         if parentMapInfo.mapType == 2 then
@@ -15555,8 +15559,10 @@ function Nx.Map:GetContinentMapID(uiMapID)
             zoneMapIDtoContinentMapID[uiMapID] = parentMapInfo.mapID
             return parentMapInfo.mapID
         else
-            -- Recurse up the hierarchy
-            return Nx.Map:GetContinentMapID(parentMapInfo.mapID)
+            -- Recurse up the hierarchy and cache whatever we find
+            local found = Nx.Map:GetContinentMapID(parentMapInfo.mapID)
+            zoneMapIDtoContinentMapID[uiMapID] = found or false
+            return found
         end
     end
 end
