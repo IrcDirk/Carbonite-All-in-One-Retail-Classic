@@ -6,6 +6,8 @@
     <!-- Comm next: other modules may want to send addon messages
          on enable. -->
     <Script file="Comm\Comm.lua" />
+    <Script file="Comm\CommQueue.lua" />
+    <Script file="Comm\PositionShare.lua" />
 
     <!-- Map needs Pin / Layer / pin classes before the Map module
          itself can refer to them. Order matters here. -->
@@ -31,6 +33,8 @@
     <Script file="Map\MapOpen.lua" />
     <Script file="Map\TravelGraph.lua" />
     <Script file="Map\MapToolBar.lua" />
+    <Script file="Map\MapTooltip.lua" />
+    <Script file="Map\ScrollScale.lua" />
     <Script file="Map\Pins\QuestPin.lua" />
     <Script file="Map\Pins\GatherPin.lua" />
     <Script file="Map\Pins\PlayerPin.lua" />
