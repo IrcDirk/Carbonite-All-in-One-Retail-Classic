@@ -101,8 +101,9 @@ function Map:PlanRoute(points, opts)
     return Carbonite.Modules.Map.Pathing:PlanRoute(points, opts)
 end
 
-function Map:BuildPath(tracking, src, dst)
-    return Carbonite.Modules.Map.Pathing:BuildPath(tracking, src, dst)
+function Map:BuildPath(tracking, srcMapID, srcX, srcY, dstMapID, dstX, dstY, dstType)
+    return Carbonite.Modules.Map.Pathing:BuildPath(tracking,
+        srcMapID, srcX, srcY, dstMapID, dstX, dstY, dstType)
 end
 
 function Map:OnEnable()

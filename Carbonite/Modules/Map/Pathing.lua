@@ -234,19 +234,33 @@ end
 -- the high-level API every caller should use; the heavy graph traversal
 -- still lives in Nx.Travel:MakePath, but Pathing is the single front
 -- door so call sites do not couple to the legacy table directly.
---   src = { mapID, x, y }
---   dst = { mapID, x, y, type }    type matches the legacy targetType
--- The returned value is whatever Travel:MakePath puts on `tracking`.
+--
+-- HOT PATH: called from CalcTracking once per waypoint per ~45 frames.
+-- Takes scalar arguments rather than a {mapID=..., x=..., y=...}
+-- table because allocating wrapper tables here was a measurable
+-- per-frame leak (every CalcTracking pulse cost #targets * 2 table
+-- allocations). Callers that want the table-arg ergonomics can use
+-- BuildPathFromSpec below; do NOT use it on hot paths.
+--
+--   BuildPath(tracking, srcMapID, srcX, srcY, dstMapID, dstX, dstY, dstType)
 -- --------------------------------------------------------------------------
 
-function Pathing:BuildPath(tracking, src, dst)
-    if not src or not dst then return nil end
+function Pathing:BuildPath(tracking, srcMapID, srcX, srcY, dstMapID, dstX, dstY, dstType)
     local Travel = Carbonite.Travel or (Carbonite.Modules and Carbonite.Modules.Map and Carbonite.Modules.Map.Travel)
     if Travel and Travel.MakePath then
-        return Travel:MakePath(tracking, src.mapID, src.x, src.y, dst.mapID, dst.x, dst.y, dst.type)
+        return Travel:MakePath(tracking, srcMapID, srcX, srcY, dstMapID, dstX, dstY, dstType)
     end
     if log then log:warn("BuildPath: Travel module not available") end
     return nil
+end
+
+-- Table-arg variant for one-shot callers (slash commands, debug
+-- tooling). Allocates: do not use in a per-frame path.
+function Pathing:BuildPathFromSpec(tracking, src, dst)
+    if not src or not dst then return nil end
+    return self:BuildPath(tracking,
+        src.mapID, src.x, src.y,
+        dst.mapID, dst.x, dst.y, dst.type)
 end
 
 -- --------------------------------------------------------------------------

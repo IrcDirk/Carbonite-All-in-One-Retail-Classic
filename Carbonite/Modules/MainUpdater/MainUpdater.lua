@@ -62,31 +62,49 @@ function MainUpdater:RegisterPostHook(fn, name)
     postHooks[#postHooks + 1] = { fn = fn, name = name or "anon" }
 end
 
+-- Reused buffer for the ready-this-tick subscriber set. Avoids
+-- allocating `local ready = {}` every frame, which was a measurable
+-- per-frame leak. We clear it in place via wipe() to keep the array
+-- part of the table reusable.
+local readyBuf = {}
+
 -- Called by the legacy NxOnUpdate or by our own listener frame.
 -- Dispatches to every subscriber whose tick counter has reached
--- its `interval`.
+-- its `interval`. HOT PATH - must not allocate.
 function MainUpdater:OnTick(elapsed)
-    local ready = {}
-    for _, s in ipairs(subs) do
+    local count = 0
+    for i = 1, #subs do
+        local s = subs[i]
         s.counter = s.counter + 1
         if s.counter >= s.interval then
             s.counter = 0
-            ready[#ready + 1] = s
+            count = count + 1
+            readyBuf[count] = s
         end
     end
-    if #ready > 0 then fireAll(ready, elapsed) end
+    if count > 0 then
+        fireAll(readyBuf, elapsed)
+        -- Clear the slots we used so dead subscriber references can be
+        -- collected. Keeping the table's array storage allocated is
+        -- the win; nil-ing the entries gives us correctness back.
+        for i = 1, count do readyBuf[i] = nil end
+    end
     if #postHooks > 0 then fireAll(postHooks, elapsed) end
 end
 
--- Stand-alone listener frame in case the legacy NxOnUpdate isn't
--- driving us yet (e.g. we're loaded ahead of the legacy file in
--- some upgrade scenarios). Lifecycle: bind on CARBONITE_ENABLE.
+-- Stand-alone listener frame for the early-boot window before the
+-- legacy NxOnUpdate has had a chance to install our bridge. Once
+-- the legacy file's NxOnUpdate runs once we unhook this frame's
+-- OnUpdate (no point keeping the per-frame trampoline alive when
+-- something else is driving us).
 Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
     local f = CreateFrame("Frame", "CarbMainUpdaterDriver")
-    f:SetScript("OnUpdate", function(_, elapsed)
-        -- Skip if the legacy NxOnUpdate exists - it'll drive us via
-        -- the rewire installed below. We only fire if nothing else is.
-        if MainUpdater._drivenByLegacy then return end
+    f:SetScript("OnUpdate", function(self_, elapsed)
+        if MainUpdater._drivenByLegacy then
+            -- Permanent retirement: stop running per-frame.
+            self_:SetScript("OnUpdate", nil)
+            return
+        end
         MainUpdater:OnTick(elapsed or 0)
     end)
     MainUpdater._driverFrame = f

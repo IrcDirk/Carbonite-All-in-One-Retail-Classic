@@ -7253,12 +7253,13 @@ function Nx.Map:CalcTracking()
     local srcY = self.PlyrY
     local srcMapId = MapUtil.GetDisplayableMapForPlayer()
 
-    -- Build path through all targets
+    -- Build path through all targets. Scalar-arg BuildPath signature
+    -- because this is a hot path - wrapping the src/dst pairs in
+    -- tables here was a measurable per-frame leak.
     for n, tar in ipairs(self.Targets) do
         if Pathing then
-            Pathing:BuildPath(tr,
-                { mapID = srcMapId, x = srcX, y = srcY },
-                { mapID = tar.MapId, x = tar.TargetMX, y = tar.TargetMY, type = tar.TargetType })
+            Pathing:BuildPath(tr, srcMapId, srcX, srcY,
+                tar.MapId, tar.TargetMX, tar.TargetMY, tar.TargetType)
         elseif Travel and Travel.MakePath then
             Travel:MakePath(tr, srcMapId, srcX, srcY, tar.MapId, tar.TargetMX, tar.TargetMY, tar.TargetType)
         end
