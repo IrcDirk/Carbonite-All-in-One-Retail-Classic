@@ -34,6 +34,37 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
 ---------------------------------------------------------------------------------------
+-- Module attachment
+---------------------------------------------------------------------------------------
+
+-- Engine for the Travel module: taxi capture, flight-path search,
+-- cross-continent routing, riding-skill detection. Relocated from
+-- the legacy Carbonite/NxTravel.lua. The lifecycle/options shell
+-- lives in Modules/Travel/Travel.lua; this file owns the engine.
+--
+-- Methods attach to the AceAddon Travel module, and _G.Nx.Travel
+-- is re-anchored at the module so legacy callsites (NxMap, NxFav,
+-- NxWarehouse, the new Map/* wrappers) keep resolving.
+
+local Carbonite = _G.Carbonite
+local Travel = Carbonite:GetModule("Travel", true)
+if not Travel then return end
+
+-- Carry forward any state the legacy Nx.Travel = {} table picked up
+-- before the module was wired in.
+do
+    local prev = _G.Nx and _G.Nx.Travel
+    if type(prev) == "table" and prev ~= Travel then
+        for k, v in pairs(prev) do
+            if Travel[k] == nil then Travel[k] = v end
+        end
+    end
+end
+
+_G.Nx.Travel = Travel
+Carbonite.Travel = Travel
+
+---------------------------------------------------------------------------------------
 -- Travel System Initialization
 ---------------------------------------------------------------------------------------
 
@@ -103,7 +134,7 @@ end
 
 --- Initialize the travel system
 -- Sets up taxi hooks, flight master data, and flying skill detection
-function Nx.Travel:Init()
+function Travel:Init()
     -- Hook the TakeTaxiNode function to track flight times
     self.OrigTakeTaxiNode = TakeTaxiNode
     TakeTaxiNode = self.TakeTaxiNode
@@ -137,7 +168,7 @@ end
 --- Add travel points of a specific type from guide data
 -- Parses NPC data to extract flight master locations and adds them to the travel network
 -- @param typ The type of travel point to add (e.g., "Flight Master")
-function Nx.Travel:Add(typ)
+function Travel:Add(typ)
     local Map = Nx.Map
 
     -- Determine which faction's NPCs to hide (opposite of player's faction)
@@ -189,8 +220,8 @@ end
 
 --- Called when the taxi/flight path map is opened
 -- Triggers capturing of available taxi nodes
-function Nx.Travel.OnTaximap_opened()
-    local self = Nx.Travel
+function Travel.OnTaximap_opened()
+    local self = Travel
     self:CaptureTaxi()
 end
 
@@ -200,7 +231,7 @@ end
 
 --- Record which taxi locations the player can use
 -- Scans all taxi nodes on the current map and records their availability
-function Nx.Travel:CaptureTaxi()
+function Travel:CaptureTaxi()
     self.TaxiNameStart = false
 
     local taxiT = Nx.db.char.Travel.Taxi["Taxi"]
@@ -236,8 +267,8 @@ end
 --- Hook function for TakeTaxiNode
 -- Called when player takes a flight path, calculates ETA
 -- @param node The taxi node index being traveled to
-function Nx.Travel.TakeTaxiNode(node)
-    local self = Nx.Travel
+function Travel.TakeTaxiNode(node)
+    local self = Travel
     local map = Nx.Map
 
     -- Store destination name
@@ -264,7 +295,7 @@ function Nx.Travel.TakeTaxiNode(node)
     end
 
     -- Call original function to actually take the flight
-    Nx.Travel.OrigTakeTaxiNode(node)
+    Travel.OrigTakeTaxiNode(node)
 end
 
 ---------------------------------------------------------------------------------------
@@ -275,7 +306,7 @@ end
 -- Sums up individual route segments to get total flight duration
 -- @param dest The destination taxi node index
 -- @return Total flight time in seconds
-function Nx.Travel:TaxiCalcTime(dest)
+function Travel:TaxiCalcTime(dest)
     local tm = 0
     local num = NumTaxiNodes()
 
@@ -342,7 +373,7 @@ end
 -- @param x X coordinate from route data
 -- @param y Y coordinate from route data
 -- @return Node index if found, nil otherwise
-function Nx.Travel:TaxiFindNodeFromRouteXY(x, y)
+function Travel:TaxiFindNodeFromRouteXY(x, y)
     for n = 1, NumTaxiNodes() do
         local x2, y2 = TaxiNodePosition(n)
         local dist = (x - x2) ^ 2 + (y - y2) ^ 2
@@ -363,7 +394,7 @@ end
 -- @param srcName Source taxi node name
 -- @param destName Destination taxi node name
 -- @return Flight time in seconds, or 0 if not found
-function Nx.Travel:TaxiFindConnectionTime(srcName, destName)
+function Travel:TaxiFindConnectionTime(srcName, destName)
     local srcNPCName, x, y = Nx.Map.Guide:FindTaxis(srcName)
     local destNPCName, x, y = Nx.Map.Guide:FindTaxis(destName)
 
@@ -419,7 +450,7 @@ end
 --- Timer callback during taxi flight
 -- Updates the ETA display while player is on a taxi
 -- @return Timer interval, or nil to stop timer
-function Nx.Travel:TaxiTimer()
+function Travel:TaxiTimer()
     if UnitOnTaxi("player") then
         -- Update remaining time
         Nx.Map.TaxiETA = max(0, self.TaxiTimeEnd - GetTime())
@@ -435,7 +466,7 @@ end
 --- Save discovered flight time for a route segment
 -- Called when we learn a new flight time that wasn't in the database
 -- @param tm The flight time in seconds
-function Nx.Travel:TaxiSaveTime(tm)
+function Travel:TaxiSaveTime(tm)
     if self.TaxiSaveName then
         Nx.db.char.Travel["TaxiTime"][self.TaxiSaveName] = tm
         self.TaxiSaveName = false
@@ -481,7 +512,7 @@ end
 -- @param dstX Destination world X coordinate
 -- @param dstY Destination world Y coordinate
 -- @return Best total distance and connection data, or nil if none found
-function Nx.Travel:FindCrossContinent(cont1, srcMapId, srcX, srcY, cont2, dstMapId, dstX, dstY)
+function Travel:FindCrossContinent(cont1, srcMapId, srcX, srcY, cont2, dstMapId, dstX, dstY)
     local Map = Nx.Map
     local winfo = Map.MapWorldInfo
 
@@ -552,7 +583,7 @@ end
 
 --- Update self.FlyingMount and self.Speed for the given continent and riding skill
 -- Called at the start of routing and again when the path crosses into a new continent
-function Nx.Travel:UpdateFlyingForCont(cont, riding)
+function Travel:UpdateFlyingForCont(cont, riding)
     self.FlyingMount = false
 
     if riding >= 225 then
@@ -613,7 +644,7 @@ end
 -- @param dstX Destination world X coordinate
 -- @param dstY Destination world Y coordinate
 -- @param targetType Type of target for waypoint display
-function Nx.Travel:MakePath(tracking, srcMapId, srcX, srcY, dstMapId, dstX, dstY, targetType)
+function Travel:MakePath(tracking, srcMapId, srcX, srcY, dstMapId, dstX, dstY, targetType)
     -- Check if routing is enabled
     if not Nx.db.profile.Map.RouteUse then
         return
@@ -644,7 +675,7 @@ function Nx.Travel:MakePath(tracking, srcMapId, srcX, srcY, dstMapId, dstX, dstY
     end
 
     -- Get player's riding skill to determine travel speed
-    local riding = Nx.Travel:GetRidingSkill()
+    local riding = Travel:GetRidingSkill()
 
     -- Alt key overrides flying for testing
     if IsAltKeyDown() then
@@ -988,7 +1019,7 @@ end
 -- @param dstX Destination world X coordinate
 -- @param dstY Destination world Y coordinate
 -- @return Best distance and path table if found
-function Nx.Travel:FindFlight(srcMapId, srcX, srcY, dstMapId, dstX, dstY)
+function Travel:FindFlight(srcMapId, srcX, srcY, dstMapId, dstX, dstY)
     -- Find closest flight master to source
     local t1Dist, t1Node, t1tex = self:FindClosest(srcMapId, srcX, srcY)
 
@@ -1072,7 +1103,7 @@ end
 -- @param posX World X coordinate
 -- @param posY World Y coordinate
 -- @return Distance, node data, and texture if found
-function Nx.Travel:FindClosest(mapId, posX, posY)
+function Travel:FindClosest(mapId, posX, posY)
     local Map = Nx.Map
 
     local cont = Map:IdToContZone(mapId)
@@ -1132,7 +1163,7 @@ end
 -- @param dstY Destination world Y coordinate
 -- @param skipIndirect If true, don't search for indirect connections
 -- @return Distance and connection data if found
-function Nx.Travel:FindConnection(srcMapId, srcX, srcY, dstMapId, dstX, dstY, skipIndirect)
+function Travel:FindConnection(srcMapId, srcX, srcY, dstMapId, dstX, dstY, skipIndirect)
     -- If player can fly, use straight line distance
     if self.FlyingMount then
         return ((srcX - dstX) ^ 2 + (srcY - dstY) ^ 2) ^ .5
@@ -1222,7 +1253,7 @@ end
 
 --- Debug function to capture and print taxi node data
 -- Used for development and data gathering
-function Nx.Travel:DebugCaptureTaxi()
+function Travel:DebugCaptureTaxi()
     local num = NumTaxiNodes()
 
     if num > 0 then
@@ -1251,7 +1282,7 @@ end
 --- Get the player's riding skill level
 -- Determines the highest riding skill the player has learned
 -- @return Riding skill level (0, 75, 150, 225, 300, or 375)
-function Nx.Travel:GetRidingSkill()
+function Travel:GetRidingSkill()
     -- Can only fly in flyable areas
     if not IsFlyableArea() then
         return 0

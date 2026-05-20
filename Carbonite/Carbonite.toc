@@ -42,8 +42,6 @@ NxMap.lua
 
 Data\Shared\NxMapGuide.lua
 
-NxTravel.lua
-
 # --- new module shells. Load AFTER legacy files so they can wrap
 #     the legacy implementations through Nx.* references. ---
 Modules\Modules.xml

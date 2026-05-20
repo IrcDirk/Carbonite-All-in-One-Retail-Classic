@@ -1,8 +1,9 @@
 -- Carbonite | Modules / Travel
--- Module wrapper for the taxi / flight-path system. The actual path
--- graph and pathing math still live in NxTravel.lua; this file is
--- the new front door: it owns the saved-variable layout, the slash
--- command, and the option page registration.
+-- Module shell for the taxi / flight-path system. Owns the saved
+-- variable layout, the /travel slash command, and the option page.
+-- The engine (taxi capture, FindFlight, MakePath, GetRidingSkill,
+-- etc.) lives in TravelEngine.lua and attaches to the same module
+-- instance, re-anchoring Nx.Travel so legacy callsites keep working.
 
 local Carbonite = _G.Carbonite
 local Module = Carbonite.Core.Module
@@ -21,28 +22,18 @@ local Travel = Module:New("Travel", {
     },
 })
 
-function Travel:Rebuild()
-    local legacy = Carbonite.Travel
-    if legacy and legacy.Build then legacy:Build() end
-    Carbonite.Core.EventBus:Fire("TRAVEL_REBUILT")
-end
-
-function Travel:RouteTo(mapID, x, y)
-    local legacy = Carbonite.Travel
-    if legacy and legacy.RouteTo then return legacy:RouteTo(mapID, x, y) end
-end
-
 function Travel:OnEnable()
     Carbonite.Core.SlashCommands:Register("travel", function(rest)
         local args = {}
         for w in rest:gmatch("%S+") do args[#args + 1] = w end
-        if args[1] == "rebuild" then
-            self:Rebuild()
-            self.log:info("travel graph rebuilt")
+        if args[1] == "add" and self.Add then
+            -- Re-scan the flight-master guide data into self.Travel.
+            self:Add(LibStub("AceLocale-3.0"):GetLocale("Carbonite")["Flight Master"])
+            self.log:info("flight master locations reloaded")
         else
-            self.log:info("usage: /carb travel rebuild")
+            self.log:info("usage: /carb travel add")
         end
-    end, "travel graph commands")
+    end, "travel commands")
 end
 
 Carbonite.Core.EventBus:Subscribe("MODULE_ENABLED", function(name)
@@ -80,9 +71,13 @@ Carbonite.Core.EventBus:Subscribe("MODULE_ENABLED", function(name)
                     get = function() return db().IncludeMages end,
                     set = function(_, v) db().IncludeMages = v end,
                 },
-                rebuild = {
-                    order = 10, type = "execute", name = "Rebuild graph now",
-                    func = function() Travel:Rebuild() end,
+                reload = {
+                    order = 10, type = "execute", name = "Reload flight master data",
+                    func = function()
+                        if Travel.Add then
+                            Travel:Add(LibStub("AceLocale-3.0"):GetLocale("Carbonite")["Flight Master"])
+                        end
+                    end,
                 },
             },
         }

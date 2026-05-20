@@ -52,7 +52,9 @@
     <!-- HUD: lifecycle/options shell first, engine attaches to it. -->
     <Script file="HUD\HUD.lua" />
     <Script file="HUD\HUDEngine.lua" />
+    <!-- Travel: same split (shell, then engine relocated from NxTravel.lua). -->
     <Script file="Travel\Travel.lua" />
+    <Script file="Travel\TravelEngine.lua" />
 
     <!-- Cross-cutting modules. -->
     <Script file="Whatsnew\Whatsnew.lua" />

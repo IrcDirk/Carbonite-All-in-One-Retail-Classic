@@ -32,8 +32,6 @@ NxMap.lua
 
 Data\Shared\NxMapGuide.lua
 
-NxTravel.lua
-
 Modules\Modules.xml
 
 Carbonite.xml
