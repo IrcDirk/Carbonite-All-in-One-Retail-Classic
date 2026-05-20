@@ -20,6 +20,10 @@
     <Script file="Map\MinimapGlow.lua" />
     <Script file="Map\MiniMap.lua" />
     <Script file="Map\ViewState.lua" />
+    <Script file="Map\ZoomController.lua" />
+    <Script file="Map\ZoneIterator.lua" />
+    <Script file="Map\Battleground.lua" />
+    <Script file="Map\GroupTracking.lua" />
     <Script file="Map\Pins\QuestPin.lua" />
     <Script file="Map\Pins\GatherPin.lua" />
     <Script file="Map\Pins\PlayerPin.lua" />
