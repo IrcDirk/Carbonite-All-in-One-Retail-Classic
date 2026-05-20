@@ -26,6 +26,8 @@
     <Script file="Map\GroupTracking.lua" />
     <Script file="Map\ContinentLookup.lua" />
     <Script file="Map\FrameToWorld.lua" />
+    <Script file="Map\MinimapButton.lua" />
+    <Script file="Map\POICache.lua" />
     <Script file="Map\Pins\QuestPin.lua" />
     <Script file="Map\Pins\GatherPin.lua" />
     <Script file="Map\Pins\PlayerPin.lua" />
@@ -40,6 +42,7 @@
     <!-- Cross-cutting modules. -->
     <Script file="Whatsnew\Whatsnew.lua" />
     <Script file="CombatStats\CombatStats.lua" />
+    <Script file="TitleScreen\TitleScreen.lua" />
 
     <!-- Integrations with sibling addons. -->
     <Script file="Integrations\TomTom.lua" />
