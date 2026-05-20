@@ -111,6 +111,10 @@
     <Script file="MouseoverHandler\MouseoverHandler.lua" />
     <Script file="DurabilityWatcher\DurabilityWatcher.lua" />
     <Script file="Comm\AddonPrefix.lua" />
+    <Script file="FriendsList\FriendsList.lua" />
+    <Script file="MailboxNotice\MailboxNotice.lua" />
+    <Script file="PlayerSpec\PlayerSpec.lua" />
+    <Script file="AutoCompleteRealms\AutoCompleteRealms.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />

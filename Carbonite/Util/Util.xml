@@ -8,4 +8,5 @@
     <Script file="Mouse.lua" />
     <Script file="Time.lua" />
     <Script file="GameVersion.lua" />
+    <Script file="ClassColors.lua" />
 </Ui>
