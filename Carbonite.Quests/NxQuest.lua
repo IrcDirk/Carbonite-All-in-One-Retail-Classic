@@ -2412,6 +2412,12 @@ function CarboniteQuest:OnInitialize()
         Up = "Interface\\Addons\\Carbonite\\Gfx\\Map\\IconQuestion",
         SizeUp = 15,
         VRGBAUp = ".75|1|.75|1",
+        -- Marker read by the watch-list click handler: this button
+        -- triggers ShowQuestComplete, NOT a super-track toggle. Without
+        -- this flag the super-track-on-left-click block at the top of
+        -- OnListEvent runs first and swallows the click into the
+        -- waypoint-arrow toggle, never reaching ShowQuestComplete.
+        AutoComplete = true,
     }
     Nx.Button.TypeData["QuestWatchTip"] = {
         Up = "Interface\\Addons\\Carbonite\\Gfx\\Buttons\\DotOn",
@@ -11628,8 +11634,15 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                 -- call is silently dropped and the arrow doesn't move.
                 -- Also clear any user-waypoint / map-pin super-track
                 -- since those out-prioritize quest super-track.
+                --
+                -- Skip when the button's `AutoComplete` flag is set
+                -- (the "?" QuestWatchAC button): that button has its
+                -- own action (ShowQuestComplete) handled further down,
+                -- and super-tracking on its click swallows the input
+                -- into the waypoint-arrow toggle instead of completing
+                -- the quest.
                 local _wasToggledOff = false
-                if qId and qId > 0 and not typ.WatchError
+                if qId and qId > 0 and not typ.WatchError and not typ.AutoComplete
                    and C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
                     local liveQID = qId
                     if qIndex and qIndex > 0 then
