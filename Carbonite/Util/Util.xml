@@ -4,4 +4,5 @@
     <Script file="Math.lua" />
     <Script file="Colors.lua" />
     <Script file="Async.lua" />
+    <Script file="LegacyStrings.lua" />
 </Ui>
