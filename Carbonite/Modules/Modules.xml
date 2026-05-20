@@ -78,6 +78,12 @@
     <Script file="Map\WorldMapIntegration.lua" />
     <Script file="LootHandler\LootHandler.lua" />
     <Script file="HotkeyBindings\HotkeyBindings.lua" />
+    <Script file="Map\NameplateGlow.lua" />
+    <Script file="Comm\CommSend.lua" />
+    <Script file="TooltipScanner\TooltipScanner.lua" />
+    <Script file="CharacterRoster\CharacterRoster.lua" />
+    <Script file="InitFlow\InitFlow.lua" />
+    <Script file="DebugFlags\DebugFlags.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />
