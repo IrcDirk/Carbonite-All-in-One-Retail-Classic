@@ -49,8 +49,9 @@
     <Script file="Map\Pins\TrainerPin.lua" />
     <Script file="Map\Map.lua" />
 
-    <!-- HUD and Travel are simple module shells, order independent. -->
+    <!-- HUD: lifecycle/options shell first, engine attaches to it. -->
     <Script file="HUD\HUD.lua" />
+    <Script file="HUD\HUDEngine.lua" />
     <Script file="Travel\Travel.lua" />
 
     <!-- Cross-cutting modules. -->

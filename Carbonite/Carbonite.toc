@@ -32,7 +32,6 @@ Carbonite.lua
 NxUI.lua
 NxOptions.lua
 NxCom.lua
-NxHUD.lua
 
 # --- per-flavor map data; same file layout for every flavor ---
 Data\retail\data.xml

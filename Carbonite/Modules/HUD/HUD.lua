@@ -1,8 +1,11 @@
 -- Carbonite | Modules / HUD
--- Module shell for the heads-up directional arrow. The legacy
--- implementation lives in NxHUD.lua and uses the old Nx.HUD table;
--- this module owns lifecycle (Open/Close/Toggle) and saved settings,
--- and forwards the heavy lifting to the legacy code via Nx.HUD.
+-- Module shell for the heads-up directional arrow. Defines saved-
+-- variable defaults, lifecycle (Show/Hide/Toggle), options page, and
+-- the /hud slash command. The frame creation, options application
+-- and per-frame Update live in HUDEngine.lua, which attaches its
+-- methods to this same module instance and re-anchors Nx.HUD so
+-- legacy callers (NxMap, NxOptions, Carbonite.lua) continue to
+-- resolve `Nx.HUD:Method()` to the module's methods.
 
 local Carbonite = _G.Carbonite
 local Module = Carbonite.Core.Module
@@ -24,33 +27,33 @@ local HUD = Module:New("HUD", {
     },
 })
 
-function HUD:Show()
-    local legacy = Carbonite.HUD
-    if legacy and legacy.Open then legacy:Open() end
+-- Show / Hide / Toggle wrap the engine in HUDEngine.lua (HUD:Open
+-- builds the frame on first call; HUD.Win:Show(false) hides it).
+function HUD:ShowWindow()
+    if self.Open then self:Open() end
     self.visible = true
     Carbonite.Core.EventBus:Fire("HUD_OPENED")
 end
 
-function HUD:Hide()
-    local legacy = Carbonite.HUD
-    if legacy and legacy.Win and legacy.Win.Hide then legacy.Win:Hide() end
+function HUD:HideWindow()
+    if self.Win and self.Win.Show then self.Win:Show(false) end
     self.visible = false
     Carbonite.Core.EventBus:Fire("HUD_CLOSED")
 end
 
 function HUD:Toggle()
-    if self.visible then self:Hide() else self:Show() end
+    if self.visible then self:HideWindow() else self:ShowWindow() end
 end
 
 function HUD:OnEnable()
     local db = self:DB() and self:DB().profile or {}
 
-    if db.Enabled then self:Show() end
+    if db.Enabled then self:ShowWindow() end
 
     Carbonite.Core.SlashCommands:Register("hud", function(rest)
         rest = rest:lower()
-        if rest == "show" then self:Show()
-        elseif rest == "hide" then self:Hide()
+        if rest == "show" then self:ShowWindow()
+        elseif rest == "hide" then self:HideWindow()
         else self:Toggle() end
     end, "show / hide / toggle the directional HUD")
 end
@@ -70,7 +73,7 @@ Carbonite.Core.EventBus:Subscribe("MODULE_ENABLED", function(name)
                 enabled = {
                     order = 1, type = "toggle", name = "Enabled", width = "full",
                     get = function() return get("Enabled") end,
-                    set = function(_, v) set("Enabled", v); if v then HUD:Show() else HUD:Hide() end end,
+                    set = function(_, v) set("Enabled", v); if v then HUD:ShowWindow() else HUD:HideWindow() end end,
                 },
                 scale = {
                     order = 2, type = "range", name = "Scale", min = 0.5, max = 3, step = 0.05,

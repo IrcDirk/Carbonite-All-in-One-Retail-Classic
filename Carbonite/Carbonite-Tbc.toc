@@ -24,7 +24,6 @@ Carbonite.lua
 NxUI.lua
 NxOptions.lua
 NxCom.lua
-NxHUD.lua
 
 Data\tbc\data.xml
 Data\tbc\NxMapData.lua
