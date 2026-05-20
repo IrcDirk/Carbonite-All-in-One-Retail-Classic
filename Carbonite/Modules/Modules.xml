@@ -115,6 +115,10 @@
     <Script file="MailboxNotice\MailboxNotice.lua" />
     <Script file="PlayerSpec\PlayerSpec.lua" />
     <Script file="AutoCompleteRealms\AutoCompleteRealms.lua" />
+    <Script file="InstanceDetector\InstanceDetector.lua" />
+    <Script file="CurrencyTracker\CurrencyTracker.lua" />
+    <Script file="AchievementHelper\AchievementHelper.lua" />
+    <Script file="PartyState\PartyState.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />

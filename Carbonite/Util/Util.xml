@@ -9,4 +9,5 @@
     <Script file="Time.lua" />
     <Script file="GameVersion.lua" />
     <Script file="ClassColors.lua" />
+    <Script file="WaypointFormat.lua" />
 </Ui>
