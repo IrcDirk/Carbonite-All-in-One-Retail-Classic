@@ -2310,7 +2310,13 @@ function Nx.Map:MinimapOwnInit()
     mm:SetHeight (140)
     self.MMAlphaDelay = 100
 
-    mm:SetParent (self.Frm)
+    -- Parent to the window frame (sibling of self.Frm) rather than self.Frm
+    -- itself, so the map frame's SetClipsChildren(true) (which clips Carbonite
+    -- icons at the map edges) does not also clip the docked minimap or its
+    -- children when the user offsets it outside the map's rect via DXO/DYO.
+    -- Clipping there hid GatherMate2 pins and broke the engine's tracking-blip
+    -- mouseover/tooltip for the portion of the minimap outside the clip box.
+    mm:SetParent (self.Win.Frm)
 
     --self.MMFrm:SetQuestBlobRingAlpha(1)
     self.MMFrm:SetPOIArrowTexture("Interface\\Addons\\Carbonite\\Gfx\\Map\\32Transparent")
@@ -2878,7 +2884,7 @@ function Nx.Map:MinimapUpdateEnd()
                 (Enum.GarrisonType.Type_8_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_8_0_Garrison)) or
                 (Enum.GarrisonType.Type_9_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_9_0_Garrison))
                 )) then
-            mm:SetPoint("TOPLEFT", 1, 0)
+            mm:SetPoint("TOPLEFT", self.Frm, "TOPLEFT", 1, 0)
             mm:SetScale(.02)
             mm:SetFrameLevel(1)
 
@@ -2910,7 +2916,7 @@ function Nx.Map:MinimapUpdateEnd()
         end
 
         mm:ClearAllPoints()
-        mm:SetPoint ("TOPLEFT", (x + Nx.db.profile.MiniMap.DXO) / iconScale,
+        mm:SetPoint ("TOPLEFT", self.Frm, "TOPLEFT", (x + Nx.db.profile.MiniMap.DXO) / iconScale,
                                         (-y - Nx.db.profile.MiniMap.DYO) / iconScale)
         mm:Show()
         if (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then

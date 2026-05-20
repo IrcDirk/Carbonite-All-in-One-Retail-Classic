@@ -2242,11 +2242,25 @@ function Nx.Map.Guide:SavePlayerNPCTarget()
     local tag = GameTooltipTextLeft2 and GameTooltipTextLeft2:GetText() or ""
     local lvl = GameTooltipTextLeft3 and GameTooltipTextLeft3:GetText() or ""
     local faction = GameTooltipTextLeft4 and GameTooltipTextLeft4:GetText() or ""
-    if strfind(tag,"^" .. L["Level"] .. " ") or strfind(tag, "^|c%x%x%x%x%x%x%x%x" .. L["Level"] .. " ") then
-        tag=""
-        faction=lvl
+    local nameLine = GameTooltipTextLeft1 and GameTooltipTextLeft1:GetText() or ""
+
+    -- On retail, GameTooltip lines can be "secret" strings the runtime refuses
+    -- to convert (strfind / format throw "attempt to perform string conversion
+    -- on a secret string value"). That aborts the whole event-callback chain,
+    -- which is how Krowi_AchievementFilter's MERCHANT_SHOW dispatch ends up
+    -- pointing at us. Run the risky bits under pcall and skip the capture if
+    -- any line is secret — a missed NPC capture is far less harmful than
+    -- breaking other addons' event handlers downstream.
+    local ok, str = pcall(function()
+        if strfind(tag, "^" .. L["Level"] .. " ") or strfind(tag, "^|c%x%x%x%x%x%x%x%x" .. L["Level"] .. " ") then
+            tag = ""
+            faction = lvl
+        end
+        return format("%s~%s~%s", tag, nameLine, faction)
+    end)
+    if not ok then
+        return
     end
-    local str=format("%s~%s~%s",tag,GameTooltipTextLeft1 and GameTooltipTextLeft1:GetText() or "",faction)
     self.PlayerNPCTarget = str
     -- if not visible then
     --     GameTooltip:Hide()
