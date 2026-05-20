@@ -18,6 +18,8 @@
     <Script file="Map\Targets.lua" />
     <Script file="Map\IconTypes.lua" />
     <Script file="Map\MinimapGlow.lua" />
+    <Script file="Map\MiniMap.lua" />
+    <Script file="Map\ViewState.lua" />
     <Script file="Map\Pins\QuestPin.lua" />
     <Script file="Map\Pins\GatherPin.lua" />
     <Script file="Map\Pins\PlayerPin.lua" />
@@ -28,4 +30,7 @@
     <!-- HUD and Travel are simple module shells, order independent. -->
     <Script file="HUD\HUD.lua" />
     <Script file="Travel\Travel.lua" />
+
+    <!-- Integrations with sibling addons. -->
+    <Script file="Integrations\TomTom.lua" />
 </Ui>

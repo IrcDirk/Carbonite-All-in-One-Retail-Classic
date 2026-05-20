@@ -14,4 +14,7 @@
     <!-- Composed widgets. -->
     <Script file="Window.lua" />
     <Script file="Button.lua" />
+    <Script file="EditBox.lua" />
+    <Script file="Slider.lua" />
+    <Script file="TabBar.lua" />
 </Ui>
