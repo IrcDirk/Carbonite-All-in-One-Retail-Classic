@@ -21,4 +21,5 @@
     <Script file="ToolBar.lua" />
     <Script file="List.lua" />
     <Script file="MenuItem.lua" />
+    <Script file="MenuActions.lua" />
 </Ui>
