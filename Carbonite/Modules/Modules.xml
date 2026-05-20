@@ -4,8 +4,10 @@
     <Script file="Options\Options.lua" />
 
     <!-- Comm next: other modules may want to send addon messages
-         on enable. -->
+         on enable. Engine (relocated from NxCom.lua) sits right after
+         the shell so subsequent submodules see Nx.Com fully populated. -->
     <Script file="Comm\Comm.lua" />
+    <Script file="Comm\CommEngine.lua" />
     <Script file="Comm\CommQueue.lua" />
     <Script file="Comm\PositionShare.lua" />
     <Script file="Comm\CommReceive.lua" />

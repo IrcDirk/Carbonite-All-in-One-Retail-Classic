@@ -42,6 +42,18 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
 ---------------------------------------------------------------------------------------
+-- Relocation note
+---------------------------------------------------------------------------------------
+-- The protocol engine, channel manager, player-status decoders and
+-- punk/pal alert plumbing relocated from the legacy Carbonite/NxCom.lua.
+-- All methods continue to attach to the Nx.Com table that
+-- Carbonite.lua initialises (Nx.Com = {}, Nx.Com.List = {}). The
+-- Modules/Comm shell (Comm.lua, CommSend.lua, CommReceive.lua,
+-- WireFormat.lua, ChannelManager.lua, PositionShare.lua, etc.) wraps
+-- this engine through Nx.Com references; subsequent ports will move
+-- behaviour out of these methods piecemeal.
+
+---------------------------------------------------------------------------------------
 -- Version and Default Options
 ---------------------------------------------------------------------------------------
 

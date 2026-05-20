@@ -31,7 +31,6 @@ Carbonite.lua
 # --- legacy UI and option tables ---
 NxUI.lua
 NxOptions.lua
-NxCom.lua
 
 # --- per-flavor map data; same file layout for every flavor ---
 Data\retail\data.xml
