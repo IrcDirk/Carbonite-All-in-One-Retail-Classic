@@ -94,6 +94,10 @@
     <Script file="CombatLockdown\CombatLockdown.lua" />
     <Script file="Comm\CommChat.lua" />
     <Script file="Map\DragonRiding.lua" />
+    <Script file="ProfileSwitcher\ProfileSwitcher.lua" />
+    <Script file="Comm\ChannelSpamFilter.lua" />
+    <Script file="Map\HotspotsRenderer.lua" />
+    <Script file="Integrations\GuildBank.lua" />
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />

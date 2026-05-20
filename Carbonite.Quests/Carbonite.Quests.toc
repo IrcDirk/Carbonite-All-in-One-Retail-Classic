@@ -18,3 +18,4 @@ Data\retail\QuestNPC.lua
 Data\retail\QuestData.xml
 NxQuest.lua
 WatchHider.lua
+QuestWatchSurface.lua
