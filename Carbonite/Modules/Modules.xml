@@ -149,6 +149,9 @@
     <Script file="TooltipScanner\TooltipScanner.lua" />
     <Script file="CharacterRoster\CharacterRoster.lua" />
     <Script file="InitFlow\InitFlow.lua" />
+    <!-- Nx:InitEvents (AceEvent registrations for Nx / Com / Guide /
+         AuctionAssist / Travel) extracted from Carbonite.lua. -->
+    <Script file="InitFlow\EventRegistration.lua" />
     <Script file="DebugFlags\DebugFlags.lua" />
     <!-- Mouseover NPC debug capture (Nx:UnitDGet / UnitDCapture / UnitDTip)
          extracted from Carbonite.lua. -->
