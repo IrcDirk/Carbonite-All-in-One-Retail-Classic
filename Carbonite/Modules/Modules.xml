@@ -5,8 +5,7 @@
          into. Relocated from NxUI.lua. -->
     <Script file="UI\UIEngine.lua" />
     <!-- Modal-dialog helpers extracted from Carbonite.lua (Nx:ShowMessage,
-         Nx:ShowEditBox, etc.). Depends on Nx existing -- loaded after the
-         UI engine for clarity. -->
+         Nx:ShowEditBox, etc.). Loaded after the UI engine. -->
     <Script file="UI\Dialogs.lua" />
 
     <!-- Options should load second so other modules can register
@@ -90,8 +89,8 @@
          extracted from Carbonite.lua. -->
     <Script file="UserEvents\EventHandlers.lua" />
     <!-- Per-character event log (kills/deaths/gathers) extracted
-         from Carbonite.lua. Nx.UEvents:Add* (in NXOnUpdate) still
-         calls Nx:Add<Kind>Event. -->
+         from Carbonite.lua. Nx.UEvents:Add (in NXOnUpdate) still
+         calls Nx:AddXEvent for each kind. -->
     <Script file="UserEvents\EventLog.lua" />
     <Script file="GroupMembers\GroupMembers.lua" />
     <Script file="ItemRegistry\ItemRegistry.lua" />
