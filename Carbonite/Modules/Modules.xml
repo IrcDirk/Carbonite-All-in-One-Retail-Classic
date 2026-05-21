@@ -74,6 +74,9 @@
     <!-- Cross-cutting modules. -->
     <Script file="Whatsnew\Whatsnew.lua" />
     <Script file="Whatsnew\WhatsnewWindow.lua" />
+    <!-- Engine extracted from Carbonite.lua: owns Nx.Whatsnew data
+         table + the changelog window's frame-building methods. -->
+    <Script file="Whatsnew\WhatsnewEngine.lua" />
     <Script file="CombatStats\CombatStats.lua" />
     <Script file="TitleScreen\TitleScreen.lua" />
     <Script file="UserEvents\UserEvents.lua" />
