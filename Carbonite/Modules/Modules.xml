@@ -160,6 +160,9 @@
     <!-- Nx:SetupEverything pipeline + ADDON_LOADED / UNIT_NAME_UPDATE
          / LocaleInit extracted from Carbonite.lua. -->
     <Script file="InitFlow\SetupPipeline.lua" />
+    <!-- AceAddon lifecycle hooks (OnInitialize / OnProfileChanged /
+         OnEnable / OnDisable) + NXOnLoad extracted from Carbonite.lua. -->
+    <Script file="InitFlow\AceAddonLifecycle.lua" />
     <Script file="DebugFlags\DebugFlags.lua" />
     <!-- Mouseover NPC debug capture (Nx:UnitDGet / UnitDCapture / UnitDTip)
          extracted from Carbonite.lua. -->
