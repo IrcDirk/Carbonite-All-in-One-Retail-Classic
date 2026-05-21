@@ -136,6 +136,9 @@
     <!-- Nx:InitGlobal (saved-variable migration + default install)
          extracted from Carbonite.lua. -->
     <Script file="PlayerCharacter\InitGlobal.lua" />
+    <!-- The 468-line AceDB defaults table extracted from
+         Carbonite.lua; OnInitialize references it as Nx.Defaults. -->
+    <Script file="PlayerCharacter\Defaults.lua" />
     <Script file="EditModeHooks\EditModeHooks.lua" />
     <Script file="Map\GuideLocations.lua" />
     <Script file="Map\WorldMapIntegration.lua" />
