@@ -192,3 +192,69 @@ function Nx:OnUpdate_battlefield_score(event)
             cb.KBs, kbrank, cb.Deaths, cb.HKs, cb.Honor)
     end
 end
+
+-------------------------------------------------------------------------------
+-- Legacy frame-event dispatcher
+-------------------------------------------------------------------------------
+
+--- The Carbonite.xml frame OnEvent script calls this; routes the
+--- raw WoW event to whatever handler the legacy code registered in
+--- Nx.Events (mostly set up by NxOnLoad / SetupEverything).
+function Nx:NXOnEvent(event, ...)
+    local h = self.Events[event]
+    if h then
+        h(nil, event, ...)
+    else
+        assert(0)
+    end
+end
+
+-------------------------------------------------------------------------------
+-- Player login (PLAYER_LOGIN, dispatched via AceEvent)
+-------------------------------------------------------------------------------
+
+--- Wires up the group-member cache, kicks the Com module's
+--- login event, builds the post-login windows, and replaces
+--- Blizzard's /played handler with a no-op so we can format the
+--- response ourselves later.
+function Nx:OnPlayer_login(event)
+    Nx:OnParty_members_changed()
+    Nx.Com:OnEvent(event)
+    Nx.InitWins()
+
+    Nx.BlizzChatFrame_DisplayTimePlayed = ChatFrame_DisplayTimePlayed
+    ChatFrame_DisplayTimePlayed = function() end
+
+    Nx.RequestTime = true
+end
+
+-------------------------------------------------------------------------------
+-- Mouseover unit (UPDATE_MOUSEOVER_UNIT)
+-------------------------------------------------------------------------------
+
+--- On every mouseover unit change: refresh the Quest tooltip (so
+--- the watch-window quest text follows mouseover), and append a
+--- debug "GUID player/NPC/pet" line + delegate to UnitDTip when
+--- DebugUnit is on.
+function Nx:OnUpdate_mouseover_unit(event)
+    if Nx.Quest then
+        Nx.Quest:TooltipProcess(true)
+    end
+
+    local _, guid, id, typ = Nx:UnitDGet("mouseover")
+    if not guid then return end
+
+    local tip = GameTooltip
+
+    if typ == 0 then
+        tip:AddLine(format(L["GUID player"] .. " %s", strsub(guid, 6)))
+    elseif typ == 3 then
+        tip:AddLine(format(L["GUID NPC"] .. " %d", id))
+        Nx:UnitDTip()
+    elseif typ == 4 then
+        tip:AddLine(format(L["GUID pet"] .. " %s", strsub(guid, 13)))
+    end
+
+    tip:AddLine(format(" %s", guid))
+    tip:Show()
+end
