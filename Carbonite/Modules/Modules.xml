@@ -157,6 +157,9 @@
     <!-- Nx:InitEvents (AceEvent registrations for Nx / Com / Guide /
          AuctionAssist / Travel) extracted from Carbonite.lua. -->
     <Script file="InitFlow\EventRegistration.lua" />
+    <!-- Nx:SetupEverything pipeline + ADDON_LOADED / UNIT_NAME_UPDATE
+         / LocaleInit extracted from Carbonite.lua. -->
+    <Script file="InitFlow\SetupPipeline.lua" />
     <Script file="DebugFlags\DebugFlags.lua" />
     <!-- Mouseover NPC debug capture (Nx:UnitDGet / UnitDCapture / UnitDTip)
          extracted from Carbonite.lua. -->
