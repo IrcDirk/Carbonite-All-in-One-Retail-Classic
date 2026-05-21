@@ -99,6 +99,9 @@
          from Carbonite.lua. Nx.UEvents:Add (in NXOnUpdate) still
          calls Nx:AddXEvent for each kind. -->
     <Script file="UserEvents\EventLog.lua" />
+    <!-- The Nx.UEvents class (event log + display window) extracted
+         from Carbonite.lua. -->
+    <Script file="UserEvents\UEventsEngine.lua" />
     <Script file="GroupMembers\GroupMembers.lua" />
     <Script file="ItemRegistry\ItemRegistry.lua" />
     <!-- Nx.Item class (Load / EnableLoadFromServer / ShowTooltip / etc.)
@@ -112,6 +115,8 @@
     <Script file="EventDispatcher\EventDispatcher.lua" />
     <Script file="ChatHooks\ChatHooks.lua" />
     <Script file="MainUpdater\MainUpdater.lua" />
+    <!-- Nx.Proc tick scheduler extracted from Carbonite.lua. -->
+    <Script file="MainUpdater\ProcScheduler.lua" />
     <Script file="Window\WindowLayout.lua" />
     <Script file="Window\WindowConsole.lua" />
     <Script file="Window\WindowMenu.lua" />
