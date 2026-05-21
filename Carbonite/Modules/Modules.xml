@@ -84,6 +84,11 @@
     <Script file="CombatStats\CombatStats.lua" />
     <Script file="TitleScreen\TitleScreen.lua" />
     <Script file="UserEvents\UserEvents.lua" />
+    <!-- WoW event handlers (OnPlayer_regen_*, OnUnit_spellcast_sent,
+         OnZone_changed_new_area, OnPlayer_level_up,
+         OnParty_members_changed, OnUpdate_battlefield_score)
+         extracted from Carbonite.lua. -->
+    <Script file="UserEvents\EventHandlers.lua" />
     <Script file="GroupMembers\GroupMembers.lua" />
     <Script file="ItemRegistry\ItemRegistry.lua" />
     <Script file="AuctionAssist\AuctionAssist.lua" />
