@@ -46,6 +46,10 @@
     <Script file="Map\ContinentLookup.lua" />
     <Script file="Map\FrameToWorld.lua" />
     <Script file="Map\MinimapButton.lua" />
+    <!-- Nx.NXMiniMapBut behaviour (menu builder, mouse handlers,
+         drag, profiling toggle) plus Nx.ModChatReceive stub
+         extracted from Carbonite.lua. -->
+    <Script file="Map\MinimapButtonEngine.lua" />
     <Script file="Map\POICache.lua" />
     <Script file="Map\MapOpen.lua" />
     <Script file="Map\TravelGraph.lua" />
@@ -97,6 +101,9 @@
     <Script file="UserEvents\EventLog.lua" />
     <Script file="GroupMembers\GroupMembers.lua" />
     <Script file="ItemRegistry\ItemRegistry.lua" />
+    <!-- Nx.Item class (Load / EnableLoadFromServer / ShowTooltip / etc.)
+         extracted from Carbonite.lua. -->
+    <Script file="ItemRegistry\ItemEngine.lua" />
     <Script file="AuctionAssist\AuctionAssist.lua" />
     <!-- Engine extracted from Carbonite.lua: AH browse hook plus
          the event-routed AceEvent callbacks. -->
