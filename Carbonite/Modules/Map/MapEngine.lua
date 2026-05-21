@@ -1809,91 +1809,14 @@ function Nx.Map:OnWin(typ)
     end
 end
 
----
--- Attach world map elements to our frame (currently disabled)
---
-function Nx.Map:AttachWorldMap()
---[[
-    -- Legacy code for world map attachment
-    if not Nx.db.profile.Map.WOwn then
-        return
-    end
-    local f = _G["WorldMapButton"]
-    if f then
-        self.WorldMapFrm = f
-        self.WorldMapFrmParent = f:GetParent()
-        self.WorldMapFrmScale = f:GetScale()
-
-        f:SetParent(self.TextFrm)
-        f:Show()
-        f:EnableMouse(false)
-
-        self:SetWorldMapIcons (.001)
-
-        local tipf = _G["GameTooltip"]
-        if tipf then
-            tipf:SetParent (self.Frm)
-        end
-
-        local af = _G["WorldMapFrameAreaFrame"]
-        if af then
-            af:Hide()
---            af:SetParent (self.Frm)
---            af:SetPoint ("TOP", self.Frm, "TOP", 0, 0)
-        end
-
---        Gatherer.MapNotes.MapDraw = function() Nx.prt ("Gath mapdraw") end
-
-        -- Remove leftovers
-        for n = 1, NUM_WORLDMAP_POIS do
-            local f = _G["WorldMapFramePOI" .. n]
-            f:Hide()
-        end
-
-        self.WorldMapFrmMapId = 0
-    end
-]]--
-end
-
---------
---
-
-function Nx.Map:DetachWorldMap()
-    ---- THIS DOES NOT WORK, UNTIL FIXED DISABLING IT
---[[
-    local f = self.WorldMapFrm
-
-    if f then
-
---        Nx.prt ("DetachWorldMap")
-
-        self.WorldMapFrm = nil
-
-        f:SetParent (self.WorldMapFrmParent)
-        f:SetScale (self.WorldMapFrmScale)
-        f:SetPoint ("TOPLEFT", "WorldMapDetailFrame", "TOPLEFT", 0, 0)
-        f.GetCenter = self.WorldMapFrmGetCenter
-
-        f:EnableMouse (true)
-
-        self:SetWorldMapIcons (1)
-
-        local tipf = _G["GameTooltip"]
-        if tipf then
-            tipf:SetParent (self.WorldMapFrmParent)
-            tipf:SetFrameStrata ("TOOLTIP")
-        end
-
-        local af = _G["WorldMapFrameAreaFrame"]
-        if af then
-            af:Show()
---            af:SetParent (f)
---            af:SetPoint ("TOP", f, "TOP", 0, -10)
-        end
-
-    end
-]]--
-end
+-- AttachWorldMap / DetachWorldMap were Carbonite's attempt to
+-- reparent Blizzard's WorldMapButton into our own frame. The bodies
+-- have been commented out for years; multiple callsites
+-- (OnWin "SizeMax", a couple of map-mode switches) still invoke
+-- the methods, so we keep them as named no-ops until a follow-up
+-- removes the callsites.
+function Nx.Map:AttachWorldMap() end
+function Nx.Map:DetachWorldMap() end
 
 --------
 -- Update Blizzard world map frame if we grabbed it
@@ -4489,17 +4412,8 @@ function Nx.Map.OnUpdate(this, elapsed)
     end
 
     map.MouseIsOver = winx
+    Nx.Map.MouseOver = winx ~= nil
 
-    if winx then
-        Nx.Map.MouseOver = true
-    else
-        Nx.Map.MouseOver = false
-    end
-
-    if Nx.Map:IsInstanceMap(Nx.Map.RMapId) then
-        --winx = nil
-        --Nx.Map.MouseOver = false
-    end
 
     -- Scroll map with mouse
 
@@ -5017,11 +4931,7 @@ function Nx.Map:Update (elapsed)
     if IS_BACKGROUND_WORLD_CACHING then
         return
     end
-    if WorldMapFrame:IsVisible() then
-        --return
-    end
     local Nx = Nx
-    local Map = Nx.Map
 
     -- Debug profiling for stutter detection
     local debugProfile = Nx.db.profile.Debug.DebugMap
@@ -5031,10 +4941,7 @@ function Nx.Map:Update (elapsed)
     end
 
     self:MouseEnable (self.Win:IsSizeMax())
-
-    --if self.NeedWorldUpdate then
-        self:UpdateWorld()
-    --end
+    self:UpdateWorld()
 
     if debugProfile then
         local now = debugprofilestop()
