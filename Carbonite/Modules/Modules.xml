@@ -143,6 +143,10 @@
 
     <!-- Gather data registry. -->
     <Script file="Gather\Gather.lua" />
+    <!-- Nx:GetMaxGatherSkill / ShouldShowGatherNode / GetGatherNodeName
+         extracted from Carbonite.lua; data files in Data/Shared/NxMapGuide.lua
+         still call these as Nx:... methods. -->
+    <Script file="Gather\GatherEngine.lua" />
 
     <!-- Integrations with sibling addons. -->
     <Script file="Integrations\TomTom.lua" />

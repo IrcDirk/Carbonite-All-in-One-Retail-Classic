@@ -122,75 +122,10 @@ Nx.MaxPlayerLevel = GetMaxLevelForExpansionLevel(LE_EXPANSION_LEVEL_CURRENT)
 
 local IsAddOnLoaded = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 
----
--- Get max gathering skill level for the current game version
--- Used to filter which gathering nodes are relevant for the current expansion
--- @return  Max skill level for the current expansion (9999 for retail)
---
-function Nx:GetMaxGatherSkill()
-    if Nx.isRetail then
-        return 9999  -- Show all nodes on retail
-    elseif Nx.isMoPClassic then
-        return 600
-    elseif Nx.isCataClassic then
-        return 525
-    elseif Nx.isWotlkClassic then
-        return 450
-    elseif Nx.isTBCClassic then
-        return 375
-    elseif Nx.isClassicEra then
-        return 300
-    else
-        return 9999  -- Default to showing all
-    end
-end
-
----
--- Check if a gathering node should be shown for the current game version
--- @param skill           The skill level of the node
--- @param isExpansionNode true if this is a WoD+ expansion-specific node (skill=1 expansion herbs/mines)
--- @return                true if the node should be shown
---
-function Nx:ShouldShowGatherNode(skill, isExpansionNode)
-    -- WoD+ expansion nodes use skill=1 (expansion-based scaling) and are retail/WoD-only.
-    -- Classic-era nodes like Silverleaf, Peacebloom, Copper Vein also have skill=1
-    -- but should always be shown (isExpansionNode=false for those).
-    if skill == 1 and isExpansionNode then
-        return Nx.isRetail or Nx.WODMaps
-    end
-    -- Other nodes are shown if skill is within the expansion's max
-    return skill <= Nx:GetMaxGatherSkill()
-end
-
----
--- Get localized name for a gather node using item ID
--- Falls back to the L["..."] name if item not cached
--- @param typ: "H" for herbs, "M" for mines, "L" for timber
--- @param index: index in GatherInfo[typ]
--- @return localized name string
----
-function Nx:GetGatherNodeName(typ, index)
-    local nodeData = Nx.GatherInfo[typ] and Nx.GatherInfo[typ][index]
-    if not nodeData then
-        return "Unknown"
-    end
-
-    local itemId = nodeData[4]
-    if itemId then
-        -- Try to get localized name from game
-        local name
-        if C_Item and C_Item.GetItemInfo then
-            name = C_Item.GetItemInfo(itemId)
-        elseif GetItemInfo then
-            name = GetItemInfo(itemId)
-        end
-        if name then
-            return name
-        end
-    end
-    -- Fall back to the L["..."] localized name
-    return nodeData[3] or "Unknown"
-end
+-- Nx:GetMaxGatherSkill, Nx:ShouldShowGatherNode and
+-- Nx:GetGatherNodeName were extracted into
+-- Modules/Gather/GatherEngine.lua. Compat/Expansion.lua is now the
+-- canonical source for the per-flavor skill cap.
 
 -------------------------------------------------------------------------------
 -- GLOBAL STATE VARIABLES
