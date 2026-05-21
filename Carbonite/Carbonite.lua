@@ -250,70 +250,11 @@ Nx.GlowOn = false           -- Minimap button glow state
 -- The 468-line AceDB defaults table lives in
 -- Modules/PlayerCharacter/Defaults.lua and is exposed as
 -- Nx.Defaults. OnInitialize and OnProfileChanged read it directly.
+-------------------------------------------------------------------------------
+-- Nx.BrokerMenuTemplate + Nx.Broker (LibDataBroker integration
+-- and right-click menu) live in Modules/Integrations/LDBEngine.lua.
+-------------------------------------------------------------------------------
 
-
-Nx.BrokerMenuTemplate = {
-    { text = "Carbonite", icon = icon, isTitle = true },
-    { text = L["Options"], func = function() Nx.Opts:Open() end },
-    { text = L["Toggle Map"], func = function() Nx.Map:ToggleSize(0) end },
-    { text = L["Toggle Events"], func = function() Nx.UEvents.List:Open() end },
-}
-
--- Create dropdown frame for Classic/old retail (UIDropDownMenuTemplate doesn't exist in 11.0+)
-local menuFrame
-if Nx.isRetail then
-    -- Retail 11.0+ uses new menu system
-    menuFrame = nil
-else
-    menuFrame = CreateFrame("Frame", "CarboniteMenuFrame", UIParent, "UIDropDownMenuTemplate")
-end
-
--- Helper function to show context menu (compatible with both old and new systems)
-local function ShowBrokerMenu(ownerRegion)
-    if MenuUtil and MenuUtil.CreateContextMenu then
-        -- Retail 11.0+ new menu system
-        MenuUtil.CreateContextMenu(ownerRegion, function(ownerRegion, rootDescription)
-            rootDescription:CreateTitle("Carbonite")
-            rootDescription:CreateButton(L["Options"], function() Nx.Opts:Open() end)
-            rootDescription:CreateButton(L["Toggle Map"], function() Nx.Map:ToggleSize(0) end)
-            rootDescription:CreateButton(L["Toggle Events"], function() Nx.UEvents.List:Open() end)
-        end)
-    elseif EasyMenu then
-        -- Classic/old retail
-        EasyMenu(Nx.BrokerMenuTemplate, menuFrame, "cursor", 0, 0, "MENU")
-    end
-end
-
-Nx.Broker = LibStub("LibDataBroker-1.1"):NewDataObject("Broker_Carbonite", {
-    type = "data source",
-    icon = "Interface\\AddOns\\Carbonite\\Gfx\\MMBut",
-    label = "Carbonite",
-    text = "Carbonite",
-    OnTooltipShow = function(tooltip)
-                        if not tooltip or not tooltip.AddLine then return end
-                        tooltip:AddLine("Carbonite")
-                        tooltip:AddLine(L["Left-Click to Toggle Map"])
-                        if Nx.db.profile.MiniMap.ButOwn then
-                            tooltip:AddLine(L["Shift Left-Click to Toggle Minimize"])
-                        end
-                        tooltip:AddLine(L["Middle-Click to Toggle Guide"])
-                        tooltip:AddLine(L["Right-Click for Menu"])
-                    end,
-    OnClick = function(frame, msg)
-                if msg == "LeftButton" then
-                    if (IsShiftKeyDown()) then
-                        Nx.db.profile.MiniMap.ButWinMinimize = not Nx.db.profile.MiniMap.ButWinMinimize
-                        Nx.Map.Dock:UpdateOptions()
-                    else
-                        Nx.Map:ToggleSize(0)
-                    end
-                elseif msg == "MiddleButton" then
-                    Nx.Map:GetMap(1).Guide:ToggleShow()
-                elseif msg == "RightButton" then
-                    ShowBrokerMenu(frame)
-                end
-            end,
-})
 
 function Nx:OnInitialize()
     local ver = GetBuildInfo()

@@ -201,6 +201,8 @@
     <Script file="Gather\GatherStorage.lua" />
 
     <!-- Integrations with sibling addons. -->
+    <!-- LDB broker + base menu template extracted from Carbonite.lua. -->
+    <Script file="Integrations\LDBEngine.lua" />
     <Script file="Integrations\TomTom.lua" />
     <Script file="Integrations\TomTomWaypoints.lua" />
     <Script file="Integrations\LDB.lua" />
