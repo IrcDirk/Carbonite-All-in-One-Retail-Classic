@@ -4,6 +4,10 @@
          later legacy file (NxMap, NxQuest, NxFav, NxWarehouse) calls
          into. Relocated from NxUI.lua. -->
     <Script file="UI\UIEngine.lua" />
+    <!-- Modal-dialog helpers extracted from Carbonite.lua (Nx:ShowMessage,
+         Nx:ShowEditBox, etc.). Depends on Nx existing -- loaded after the
+         UI engine for clarity. -->
+    <Script file="UI\Dialogs.lua" />
 
     <!-- Options should load second so other modules can register
          their option pages during their own load. Engine (relocated
@@ -105,6 +109,9 @@
     <Script file="CharacterRoster\CharacterRoster.lua" />
     <Script file="InitFlow\InitFlow.lua" />
     <Script file="DebugFlags\DebugFlags.lua" />
+    <!-- Mouseover NPC debug capture (Nx:UnitDGet / UnitDCapture / UnitDTip)
+         extracted from Carbonite.lua. -->
+    <Script file="DebugFlags\UnitDataCapture.lua" />
     <Script file="Comm\NetSend.lua" />
     <Script file="TaintlessHelpers\TaintlessHelpers.lua" />
     <Script file="SoundPlayer\SoundPlayer.lua" />
