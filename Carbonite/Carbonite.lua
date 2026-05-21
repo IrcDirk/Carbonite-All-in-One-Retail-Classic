@@ -256,202 +256,52 @@ Nx.GlowOn = false           -- Minimap button glow state
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- Nx:OnInitialize / OnProfileChanged / OnEnable / OnDisable +
--- Nx:NXOnLoad (the Carbonite.xml frame OnLoad target) live in
--- Modules/InitFlow/AceAddonLifecycle.lua.
--------------------------------------------------------------------------------
-
-
--------------------------------------------------------------------------------
--- Nx:SetupEverything (the post-PLAYER_LOGIN init pipeline),
--- Nx:ADDON_LOADED, Nx:UNIT_NAME_UPDATE and Nx:LocaleInit live in
--- Modules/InitFlow/SetupPipeline.lua.
--------------------------------------------------------------------------------
-
-
--------------------------------------------------------------------------------
--- EVENT REGISTRATION
--- Sets up all event handlers for the addon
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
--- Nx:InitEvents (AceEvent embedding + WoW event registration for
--- the Nx / Nx.Com / Nx.Map.Guide / Nx.AuctionAssist / Nx.Travel
--- subsystems) lives in Modules/InitFlow/EventRegistration.lua.
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
--- Nx:NXOnEvent (legacy frame-event router), Nx:OnPlayer_login
--- and Nx:OnUpdate_mouseover_unit moved to
--- Modules/UserEvents/EventHandlers.lua.
--------------------------------------------------------------------------------
-
----
--- Get unit debug data from GUID
--- @param target  Unit ID to inspect
--- @return        data table, guid, id, type
+-- EXTRACTED SUBSYSTEMS (where to look)
+-- ============================================================================
+-- This file used to be ~5000 lines; it now only holds version constants,
+-- per-flavor flags, the Nx.* namespace stubs, the AceDB defaults pointer,
+-- and a handful of state flags. Everything else lives under Modules/* or
+-- Util/. Lookup table:
 --
--- Nx:UnitDGet / Nx:UnitDCapture / Nx:UnitDTip (mouseover NPC debug
--- coordinate + tooltip capture) were extracted into
--- Modules/DebugFlags/UnitDataCapture.lua.
-
--- The six WoW-event handlers OnPlayer_regen_disabled / regen_enabled,
--- OnUnit_spellcast_sent, OnZone_changed_new_area, OnPlayer_level_up,
--- OnParty_members_changed and OnUpdate_battlefield_score were
--- extracted into Modules/UserEvents/EventHandlers.lua. Nx:InitEvents
--- still registers them via Nx:RegisterEvent("EVENT", "OnX"); they
--- continue to attach to Nx.
-
--------------------------------------------------------------------------------
--- Nx:NXOnUpdate (the per-frame OnUpdate handler, plus its
--- _tt_lenOf / _tt_neq tooltip-taint pcall helpers) lives in
--- Modules/MainUpdater/NXOnUpdate.lua. Carbonite.xmls NxFrame
--- OnUpdate script still calls Nx:NXOnUpdate(elapsed).
--------------------------------------------------------------------------------
-
-
--- Nx:WhatsNewUnread and the Nx.Whatsnew window methods live in
--- Modules/Whatsnew/WhatsnewEngine.lua.
-
--------------------------------------------------------------------------------
--- UTILITY FUNCTIONS
--------------------------------------------------------------------------------
--- Nx:LootIt / Nx:Time / Nx:UnitIsPlusMob live in
--- Modules/PlayerCharacter/MiscHelpers.lua.
--------------------------------------------------------------------------------
-
-
--------------------------------------------------------------------------------
--- GLOBAL DATA MANAGEMENT
--- Functions for managing saved variables and persistent data
--------------------------------------------------------------------------------
-
--- Gather format:
---   [nodeType] = { [mapId] = { [nodeId] = { "x|y|level", ... } } }
---   Herb and Mine node data organized by map
-
--------------------------------------------------------------------------------
--- Nx:InitGlobal (saved-variable migration + default installation)
--- lives in Modules/PlayerCharacter/InitGlobal.lua.
--------------------------------------------------------------------------------
-
-
----
--- Get named data from appropriate storage
--- @param name  Data category: "Events", "List", "Quests", "Win", "Herb", "Mine"
--- @param ch    Character table (defaults to current)
--- @return      Requested data table
+-- Lifecycle / event plumbing
+--   AceAddon lifecycle (OnInitialize/OnEnable/OnDisable/OnProfileChanged)
+--   + NXOnLoad ........................ Modules/InitFlow/AceAddonLifecycle.lua
+--   SetupEverything + ADDON_LOADED + UNIT_NAME_UPDATE + LocaleInit
+--                                    .. Modules/InitFlow/SetupPipeline.lua
+--   InitEvents (AceEvent registrations) Modules/InitFlow/EventRegistration.lua
+--   NXOnEvent + OnPlayer_login + OnUpdate_mouseover_unit + the six WoW
+--   event handlers (regen/spellcast/zone/level/party/BG score)
+--                                    .. Modules/UserEvents/EventHandlers.lua
+--   NXOnUpdate (per-frame pump)     .. Modules/MainUpdater/NXOnUpdate.lua
+--   Slash command dispatcher       .. Modules/SlashHandler/SlashCommandEngine.lua
 --
--- Nx:GetData / GetDataToolBar / GetHUDOpts / GetCap / CaptureFind
--- moved to Modules/PlayerCharacter/CharacterData.lua alongside the
--- saved-variable character ops (Init/Find/Copy/Delete/RealmChars).
-
--------------------------------------------------------------------------------
--- Nx:PackXY / Nx:UnpackXY (hex coord packing) live in
--- Modules/Map/CoordPack.lua.
--------------------------------------------------------------------------------
-
-
--------------------------------------------------------------------------------
--- CHARACTER DATA MANAGEMENT
--- Per-character data storage and retrieval
--------------------------------------------------------------------------------
-
--- Event packed string format: "TYPE^TIME^MAPID^XXYY^NAME[^DATA]"
---   TYPE: I=Info, K=Kill, D=Death, M=Mine, H=Herb
---   TIME: time() * 100
---   MAPID: numeric map ID
---   XXYY: packed coordinates
---   NAME: event description
---   DATA: optional extra data (kill count, etc.)
-
--- Quest format:
---   Table indexed by quest ID
---   Value: "STIME" where S = status (C=complete, c=incomplete, W=watched)
---                         TIME = time() value
-
--- Nx:InitCharacter / GetRealmCharName / CalcRealmChars /
--- FindCharacter / DeleteCharacter / GetUnitClass / RecordCharacter
--- live in Modules/PlayerCharacter/CharacterData.lua.
-
--- The per-character event log (DeleteOldEvents, AddEvent,
--- GetEventMapId, UnpackEvent, AddInfo/Death/Kill/Herb/Mine/Timber
--- Event) lives in Modules/UserEvents/EventLog.lua.
-
--------------------------------------------------------------------------------
--- TITLE SCREEN ANIMATION
--- Animated logo displayed on addon load
--------------------------------------------------------------------------------
-
--- Nx.Title:Init / TickWait / TickWait2 / Tick (splash animation)
--- live in Modules/TitleScreen/TitleScreenEngine.lua.
-
--------------------------------------------------------------------------------
--- AUCTION HOUSE ASSISTANT
--- Provides buyout-per-item calculations and display
--------------------------------------------------------------------------------
-
--- The AuctionAssist engine -- OnAuction_house_show /
--- OnAuction_house_closed / OnAuction_item_list_update /
--- AuctionFrameBrowse_Update plus the Create / Update / OnListEvent
--- stubs -- lives in Modules/AuctionAssist/AuctionAssistEngine.lua.
-
--------------------------------------------------------------------------------
--- The Nx.UEvents class (per-character event log + windowed display:
--- Init / AddInfo / AddDeath / AddKill / AddHonor / AddHerb / AddMine /
--- AddTimber / AddOpen / GetPlyrPos / UpdateAll / SortCmp / Sort /
--- List:Open / List:Update / UpdateMap) lives in
--- Modules/UserEvents/UEventsEngine.lua.
--------------------------------------------------------------------------------
-
-
-
--------------------------------------------------------------------------------
--- UTILITY FUNCTIONS
--- String splitting, process management
--------------------------------------------------------------------------------
-
--- Cache for split results (weak values for garbage collection)
-local TempTable = {}
-setmetatable(TempTable, {__mode = "v"})
-
----
--- Split a string by delimiter (cached for performance)
--- @param d  Delimiter character
--- @param p  String to split
--- @return   Unpacked values from split
+-- State / data
+--   AceDB defaults                 .. Modules/PlayerCharacter/Defaults.lua
+--   InitGlobal (SV migration)      .. Modules/PlayerCharacter/InitGlobal.lua
+--   Character record ops           .. Modules/PlayerCharacter/CharacterData.lua
+--   Misc helpers (LootIt/Time/etc).. Modules/PlayerCharacter/MiscHelpers.lua
+--   UEvents class                  .. Modules/UserEvents/UEventsEngine.lua
+--   EventLog (per-character kills/deaths/gathers)
+--                                  .. Modules/UserEvents/EventLog.lua
+--   Gather subsystem               .. Modules/Gather/GatherStorage.lua
+--   PackXY / UnpackXY              .. Modules/Map/CoordPack.lua
 --
-function Nx.Split(d, p)
-    if p and not string.find(p,d) then
-        return p
-    end
-    if not p then
-        return nil
-    end
-    if p and #p <= 1 then return p end
-    if TempTable[p] then
-        return unpack(TempTable[p],1,table.maxn(TempTable[p]))
-    else
-        --local TempNum = 0
-        local Tossaway = {strsplit(d, p)}
-        --[[while true do
-            local l=string.find(p,d,TempNum,true);
-            if l~=nil then
-                table.insert(Tossaway, string.sub(p,TempNum,l-1))
-                TempNum=l+1
-            else
-                table.insert(Tossaway, string.sub(p,TempNum))
-                break
-            end
-        end]]--
-        TempTable[p] = Tossaway
-        return unpack(Tossaway)
-    end
-end
-
--------------------------------------------------------------------------------
--- Nx.Proc (the lightweight tick scheduler used by Title and other
--- multi-frame work) lives in Modules/MainUpdater/ProcScheduler.lua.
+-- UI / windows
+--   Title splash                   .. Modules/TitleScreen/TitleScreenEngine.lua
+--   Whatsnew window                .. Modules/Whatsnew/WhatsnewEngine.lua
+--   AuctionAssist                  .. Modules/AuctionAssist/AuctionAssistEngine.lua
+--   Item handler                   .. Modules/ItemRegistry/ItemEngine.lua
+--   Minimap button                 .. Modules/Map/MinimapButtonEngine.lua
+--   ShowMessage / ShowEditBox      .. Modules/UI/Dialogs.lua
+--   UnitData mouseover capture     .. Modules/DebugFlags/UnitDataCapture.lua
+--
+-- Integrations
+--   LDB broker                     .. Modules/Integrations/LDBEngine.lua
+--   TomTom emulation               .. Modules/Integrations/TomTom.lua
+--
+-- Util
+--   Nx.Split (legacy unpack split) .. Util/NxSplit.lua
+--   Nx.Proc tick scheduler         .. Modules/MainUpdater/ProcScheduler.lua
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------

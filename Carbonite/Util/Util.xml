@@ -10,4 +10,5 @@
     <Script file="GameVersion.lua" />
     <Script file="ClassColors.lua" />
     <Script file="WaypointFormat.lua" />
+    <Script file="NxSplit.lua" />
 </Ui>
