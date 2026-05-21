@@ -1379,29 +1379,11 @@ end
 -- moved to Modules/PlayerCharacter/CharacterData.lua alongside the
 -- saved-variable character ops (Init/Find/Copy/Delete/RealmChars).
 
----
--- Pack x,y coordinates into a hex string
--- @param x  X coordinate (0-100)
--- @param y  Y coordinate (0-100)
--- @return   6-character hex string "XXXYYY"
---
-function Nx:PackXY (x, y)
+-------------------------------------------------------------------------------
+-- Nx:PackXY / Nx:UnpackXY (hex coord packing) live in
+-- Modules/Map/CoordPack.lua.
+-------------------------------------------------------------------------------
 
-    x = max (0, min (100, x))
-    y = max (0, min (100, y))
-    return format ("%03x%03x", x * 40.9 + .5, y * 40.9 + .5)        -- Round off
-end
-
----
--- Unpack a hex string to x,y coordinates
--- @param xy  6-character hex string
--- @return    x, y coordinates (0-100 range)
---
-function Nx:UnpackXY (xy)
-    local x = tonumber (strsub (xy, 1, 3), 16) / 40.9
-    local y = tonumber (strsub (xy, 4, 6), 16) / 40.9
-    return x, y
-end
 
 -------------------------------------------------------------------------------
 -- CHARACTER DATA MANAGEMENT

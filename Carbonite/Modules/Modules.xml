@@ -70,6 +70,9 @@
          Loads last in this Map block so the small shells above are
          registered before the engine's methods overwrite. -->
     <Script file="Map\MapEngine.lua" />
+    <!-- Nx:PackXY / UnpackXY (event-log coord packing) extracted
+         from Carbonite.lua. -->
+    <Script file="Map\CoordPack.lua" />
 
     <!-- HUD: lifecycle/options shell first, engine attaches to it. -->
     <Script file="HUD\HUD.lua" />
