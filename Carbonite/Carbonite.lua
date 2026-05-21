@@ -303,40 +303,14 @@ Nx.GlowOn = false           -- Minimap button glow state
 -- Modules/Whatsnew/WhatsnewEngine.lua. Nx.Whatsnew is populated
 -- by that file at load time.
 
--------------------------------------------------------------------------------
--- TOMTOM EMULATION
--- Provides TomTom-compatible API for addons that expect it
--------------------------------------------------------------------------------
-
----
--- Set up TomTom emulation API
--- Creates global TomTom table with wrapper functions
---
-function Nx.EmulateTomTom()
-    if _G.TomTom and Nx.RealTom then
-        return
-    end
-    local tom = {}
-    _G.TomTom = tom
-    tom["version"] = "v40200"
-    tom["AddWaypoint"] = Nx.TTAddWaypoint
-    tom["AddZWaypoint"] = Nx.TTAddZWaypoint
-    tom["SetCustomWaypoint"] = Nx.TTSetCustomWaypoint
-    tom["SetCustomMFWaypoint"] = Nx.TTSetCustomMFWaypoint
-    tom["AddMFWaypoint"] = Nx.TTSetCustomMFWaypoint
-    tom["RemoveWaypoint"] = Nx.TTRemoveWaypoint
-    tom["SetCrazyArrow"] = Nx.TTSetCrazyArrow
-    tom["DefaultCallbacks"] = Nx.TTDefaultCallbacks
-    tom["SetClosestWaypoint"] = Nx.TTSetClosestWaypoint
-    SLASH_WAY1 = '/way'
-    SLASH_CBWAY1 = '/cbway'
-    SlashCmdList["WAY"] = function (msg, editbox)
-        Nx:TTWayCmd(msg)
-    end
-    SlashCmdList["CBWAY"] = function (msg, editbox)
-        Nx:TTWayCmd(msg)
-    end
-end
+-- Nx.EmulateTomTom is provided by Modules/Integrations/TomTom.lua,
+-- which exposes a fuller surface (ClearAllWaypoints,
+-- GetCurrentPlayerPosition, /way / /cway / /wayb slash commands,
+-- etc.) and aliases Nx.EmulateTomTom on CARBONITE_LOADED. The old
+-- 30-line stub here that just registered AddWaypoint /
+-- AddZWaypoint / SetCustomWaypoint / SetCrazyArrow and the /way +
+-- /cbway slash commands has been removed in favour of that
+-- integration module.
 
 local defaults = {
     char = {
