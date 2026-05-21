@@ -20,6 +20,18 @@
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- Relocation note
+-------------------------------------------------------------------------------
+-- The 8457-line legacy UI engine: every Nx.prt* / Nx.Util_* helper
+-- plus the Nx.Window / Nx.Button / Nx.List / Nx.Item / Nx.Title /
+-- Nx.NXMiniMapBut classes, relocated from Carbonite/NxUI.lua.
+-- Methods continue to attach to the same legacy tables that
+-- Carbonite.lua initialises. A separate, newer UI primitive tree
+-- lives in Carbonite/UI/* (Carbonite.UI.Window etc.); the two
+-- namespaces don't collide, and the new Modules/Window/* shells
+-- lazy-access Nx.Window via accessors so they keep working.
+
+-------------------------------------------------------------------------------
 -- LOCAL VARIABLES
 -------------------------------------------------------------------------------
 
@@ -8158,8 +8170,8 @@ function Nx.Graph:Create(width, height, parentFrm)
     sf.NxGraph = g
 
     local bd = {
-        ["bgFile"] = "Interface\Buttons\UI-SliderBar-Background",
-        ["edgeFile"] = "Interface\Buttons\UI-SliderBar-Border",
+        ["bgFile"] = "Interface\\Buttons\\UI-SliderBar-Background",
+        ["edgeFile"] = "Interface\\Buttons\\UI-SliderBar-Border",
         ["tile"] = true,
         ["tileSize"] = 8,
         ["edgeSize"] = 8,

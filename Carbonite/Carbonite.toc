@@ -28,9 +28,6 @@ UI\UI.xml
 #     event handlers; will be progressively migrated into modules) ---
 Carbonite.lua
 
-# --- legacy UI and option tables ---
-NxUI.lua
-
 # --- per-flavor map data; same file layout for every flavor ---
 Data\retail\data.xml
 Data\retail\NxMapData.lua

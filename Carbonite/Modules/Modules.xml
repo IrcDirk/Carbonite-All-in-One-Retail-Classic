@@ -1,5 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
-    <!-- Options should load first so other modules can register
+    <!-- UI engine first: provides Nx.prt / Nx.Util_* helpers and the
+         legacy Nx.Window/Button/List/Item/Title classes that every
+         later legacy file (NxMap, NxQuest, NxFav, NxWarehouse) calls
+         into. Relocated from NxUI.lua. -->
+    <Script file="UI\UIEngine.lua" />
+
+    <!-- Options should load second so other modules can register
          their option pages during their own load. Engine (relocated
          from NxOptions.lua) sits right after the shell so the giant
          legacy tree is available when other modules try to extend it. -->

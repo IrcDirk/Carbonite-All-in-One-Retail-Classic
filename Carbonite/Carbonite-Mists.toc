@@ -21,8 +21,6 @@ UI\UI.xml
 
 Carbonite.lua
 
-NxUI.lua
-
 Data\mop\data.xml
 Data\mop\NxMapData.lua
 

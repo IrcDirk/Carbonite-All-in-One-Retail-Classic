@@ -21,8 +21,6 @@ UI\UI.xml
 
 Carbonite.lua
 
-NxUI.lua
-
 Data\tbc\data.xml
 Data\tbc\NxMapData.lua
 
