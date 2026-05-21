@@ -26,8 +26,6 @@ NxUI.lua
 Data\tbc\data.xml
 Data\tbc\NxMapData.lua
 
-NxMap.lua
-
 Data\Shared\NxMapGuide.lua
 
 Modules\Modules.xml

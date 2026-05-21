@@ -53,6 +53,10 @@
     <Script file="Map\Pins\NotePin.lua" />
     <Script file="Map\Pins\TrainerPin.lua" />
     <Script file="Map\Map.lua" />
+    <!-- The 15600-line legacy map engine, relocated from NxMap.lua.
+         Loads last in this Map block so the small shells above are
+         registered before the engine's methods overwrite. -->
+    <Script file="Map\MapEngine.lua" />
 
     <!-- HUD: lifecycle/options shell first, engine attaches to it. -->
     <Script file="HUD\HUD.lua" />

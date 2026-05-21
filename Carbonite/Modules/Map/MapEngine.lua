@@ -43,6 +43,17 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 local ExtToolTip = LibStub('LibQTip-1.0RS')
 
 -------------------------------------------------------------------------------
+-- Relocation note
+-------------------------------------------------------------------------------
+-- The 15600-line map engine: world map / minimap / waypoints /
+-- hotspots / icons / blobs / per-flavor map switching, relocated
+-- from the legacy Carbonite/NxMap.lua. Methods continue to attach
+-- to Nx.Map (initialised as {} by Carbonite.lua). The 39 small
+-- modules in Modules/Map/* lazy-access Nx.Map via accessors so
+-- they continue to wrap this engine; subsequent ports move pieces
+-- of behaviour into them.
+
+-------------------------------------------------------------------------------
 -- CONFIGURATION CONSTANTS
 -------------------------------------------------------------------------------
 

@@ -35,8 +35,6 @@ NxUI.lua
 Data\retail\data.xml
 Data\retail\NxMapData.lua
 
-# --- legacy map module ---
-NxMap.lua
 
 Data\Shared\NxMapGuide.lua
 
