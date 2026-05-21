@@ -112,6 +112,8 @@
          the event-routed AceEvent callbacks. -->
     <Script file="AuctionAssist\AuctionAssistEngine.lua" />
     <Script file="SlashHandler\SlashHandler.lua" />
+    <!-- The legacy /carb dispatcher extracted from Carbonite.lua. -->
+    <Script file="SlashHandler\SlashCommandEngine.lua" />
     <Script file="EventDispatcher\EventDispatcher.lua" />
     <Script file="ChatHooks\ChatHooks.lua" />
     <Script file="MainUpdater\MainUpdater.lua" />
@@ -128,6 +130,9 @@
          (Init/Find/Copy/Delete/Calc + small data accessors)
          extracted from Carbonite.lua. -->
     <Script file="PlayerCharacter\CharacterData.lua" />
+    <!-- Nx:InitGlobal (saved-variable migration + default install)
+         extracted from Carbonite.lua. -->
+    <Script file="PlayerCharacter\InitGlobal.lua" />
     <Script file="EditModeHooks\EditModeHooks.lua" />
     <Script file="Map\GuideLocations.lua" />
     <Script file="Map\WorldMapIntegration.lua" />
