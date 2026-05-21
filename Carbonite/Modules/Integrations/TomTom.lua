@@ -331,8 +331,14 @@ end
 -- Auto-install at enable. Idempotent.
 Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function() TomTom:Emulate() end)
 
--- Legacy alias: keep Nx.EmulateTomTom callable so unmigrated code paths
--- (the legacy Carbonite.lua still calls it) end up here.
-Carbonite.Core.EventBus:Subscribe("CARBONITE_LOADED", function()
-    if _G.Nx then _G.Nx.EmulateTomTom = function() TomTom:Emulate() end end
-end)
+-- Legacy alias: install Nx.EmulateTomTom at FILE-LOAD time, not via the
+-- CARBONITE_LOADED event. Carbonite's UNIT_NAME_UPDATE handler in
+-- Carbonite.lua calls Nx.EmulateTomTom() during the early AceEvent
+-- dispatch, and that dispatch can fire BEFORE ADDON_LOADED for
+-- Carbonite (and therefore before CARBONITE_LOADED). Map:Init in
+-- MapEngine also calls it from inside SetupEverything; if it was nil
+-- there the error aborted the rest of Init and left Nx.Map.Maps[1]
+-- unpopulated, cascading into a second crash inside Nx.UEvents:GetPlyrPos.
+if _G.Nx then
+    _G.Nx.EmulateTomTom = function() TomTom:Emulate() end
+end
