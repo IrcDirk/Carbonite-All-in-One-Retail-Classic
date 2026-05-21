@@ -30,12 +30,14 @@
          itself can refer to them. Order matters here. -->
     <Script file="Map\Pin.lua" />
     <Script file="Map\Layer.lua" />
+    <Script file="Map\MapProvider.lua" />
     <Script file="Map\Pathing.lua" />
     <Script file="Map\Coords.lua" />
     <Script file="Map\MapIDs.lua" />
     <Script file="Map\Hotspots.lua" />
     <Script file="Map\Targets.lua" />
     <Script file="Map\IconTypes.lua" />
+    <Script file="Map\Renderer.lua" />
     <Script file="Map\MinimapGlow.lua" />
     <Script file="Map\MiniMap.lua" />
     <Script file="Map\ViewState.lua" />
@@ -54,6 +56,7 @@
     <Script file="Map\MapOpen.lua" />
     <Script file="Map\TravelGraph.lua" />
     <Script file="Map\MapToolBar.lua" />
+    <Script file="Map\AddonButtons.lua" />
     <Script file="Map\MapTooltip.lua" />
     <Script file="Map\ScrollScale.lua" />
     <Script file="Map\TaxiCapture.lua" />
@@ -65,6 +68,7 @@
     <Script file="Map\Pins\PlayerPin.lua" />
     <Script file="Map\Pins\NotePin.lua" />
     <Script file="Map\Pins\TrainerPin.lua" />
+    <Script file="Map\Pins\PathPin.lua" />
     <Script file="Map\Map.lua" />
     <!-- The 15600-line legacy map engine, relocated from NxMap.lua.
          Loads last in this Map block so the small shells above are

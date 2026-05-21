@@ -10,5 +10,10 @@
 
 Locales\locales.xml
 NxWarehouse.lua
+# Extracted modules (load AFTER NxWarehouse.lua so the Nx.Warehouse
+# namespace is fully set up before they attach methods).
+Options.lua
+Init.lua
+Engine.lua
 Plugin.lua
 

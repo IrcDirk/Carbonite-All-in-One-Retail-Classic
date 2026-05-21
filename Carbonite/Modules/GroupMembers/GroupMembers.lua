@@ -94,7 +94,7 @@ end
 Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
     local f = CreateFrame("Frame", "CarbGroupMembersListener")
     f:RegisterEvent("GROUP_ROSTER_UPDATE")
-    f:RegisterEvent("PARTY_MEMBERS_CHANGED")
+    pcall(f.RegisterEvent, f, "PARTY_MEMBERS_CHANGED")  -- Classic-era only
     f:RegisterEvent("PLAYER_ENTERING_WORLD")
     f:SetScript("OnEvent", rebuild)
     rebuild()

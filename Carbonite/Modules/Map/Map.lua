@@ -35,31 +35,43 @@ local Map = Module:New("Map", {
     },
 })
 
-local layers = {}
-
 function Map:GetLayer(name)
-    local l = layers[name]
-    if not l then
-        l = Layer.New(name)
-        layers[name] = l
-    end
-    return l
+    return Layer.Get(name)
 end
 
 function Map:RemoveLayer(name)
-    if layers[name] then
-        layers[name]:Clear()
-        layers[name] = nil
-    end
+    Layer.Remove(name)
 end
 
 function Map:Layers()
-    return layers
+    return Layer.All()
 end
 
 function Map:AddPin(layerName, kind, opts)
-    local layer = self:GetLayer(layerName)
+    local layer = Layer.Get(layerName)
     local pin = Pin.Acquire(kind, opts)
+    layer:Add(pin)
+    return pin
+end
+
+-- Adds a line segment to the layer's pin list. The line connects
+-- two world-space points with optional color/thickness. Lines are
+-- drawn each frame by Renderer.lua's LINE drawMode path.
+--   layerName  the layer to put the line into (usually mirrors kind)
+--   kind       the Pin class (must have drawMode = "LINE")
+--   opts       table { x, y, x2, y2, mapID, color, thickness, tex }
+function Map:AddLine(layerName, kind, opts)
+    local layer = Layer.Get(layerName)
+    local pin = Pin.Acquire(kind)
+    pin.x       = opts.x
+    pin.y       = opts.y
+    pin.x2      = opts.x2
+    pin.y2      = opts.y2
+    pin.mapID   = opts.mapID
+    pin.color   = opts.color
+    pin.thickness = opts.thickness
+    pin.tex     = opts.tex
+    pin.show    = true
     layer:Add(pin)
     return pin
 end
@@ -91,7 +103,7 @@ function Map:Toggle()
 end
 
 function Map:Refresh()
-    for _, layer in pairs(layers) do layer.version = layer.version + 1 end
+    for _, layer in pairs(Layer.All()) do layer.version = layer.version + 1 end
     Carbonite.Core.EventBus:Fire("MAP_REFRESH")
 end
 

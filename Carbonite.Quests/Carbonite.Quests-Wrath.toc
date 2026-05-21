@@ -14,6 +14,22 @@ Data\wrath\QuestNPC.lua
 Data\wrath\QuestStartEnd.xml
 Data\wrath\QuestData.xml
 NxQuest.lua
+# Extracted modules (load after NxQuest.lua so Nx.Quest namespace + Nx.Quest.defaults are set up).
+Options.lua
+Init.lua
+TrackerHider.lua
+MapIcons.lua
+QuestProvider.lua
+WorldQuestWindow.lua
+WatchWindow.lua
+QuestWindow.lua
+DataAndComm.lua
+Tracking.lua
+Tooltips.lua
+CheckMapAndCom.lua
+Detection.lua
+BlizzardLog.lua
+SuperTrack.lua
 WatchHider.lua
 QuestWatchSurface.lua
 QuestRouting.lua

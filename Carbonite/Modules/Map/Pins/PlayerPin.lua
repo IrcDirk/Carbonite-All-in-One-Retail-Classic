@@ -6,7 +6,14 @@ local Carbonite = _G.Carbonite
 local Pin = Carbonite.Modules.Map.Pin
 local MapApi = Carbonite.Compat.MapApi
 
-local PlayerPin = Pin.Define("Player", {})
+local PlayerPin = Pin.Define("Player", {
+    -- Renderer metadata. Player arrows draw on top of everything so
+    -- frameLvl sits high; they pulse to be visible.
+    drawMode = "WP",
+    w = 20, h = 20,
+    clipKind = "chop",
+    frameLvl = 10,
+})
 
 function PlayerPin:OnAcquire(opts)
     self.unit  = opts.unit or "player"

@@ -8,6 +8,11 @@ local Pin = Carbonite.Modules.Map.Pin
 local Tooltip = Carbonite.UI.Tooltip
 
 local TrainerPin = Pin.Define("Trainer", {
+    -- Renderer metadata. Trainers were "!T" in legacy: world-point,
+    -- 16x16, chop so the city overlay doesn't bleed off the map.
+    drawMode = "WP",
+    w = 16, h = 16,
+    clipKind = "chop",
     minScale = 0.5,
 })
 

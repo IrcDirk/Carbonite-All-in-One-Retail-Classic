@@ -8,6 +8,13 @@ local Pin = Carbonite.Modules.Map.Pin
 local Tooltip = Carbonite.UI.Tooltip
 
 local QuestPin = Pin.Define("Quest", {
+    -- Renderer metadata. Quests sit in the world-point pipeline at
+    -- the same physical size the legacy "!QU" iconType used; chop
+    -- clipping keeps them from rendering half off the map edge.
+    drawMode = "WP",
+    w = 17, h = 17,
+    clipKind = "chop",
+    noDockMinimap = true,
     minScale = 0.4,
 })
 

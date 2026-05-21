@@ -7,22 +7,38 @@ local Pin = Carbonite.Modules.Map.Pin
 local Tooltip = Carbonite.UI.Tooltip
 
 local NotePin = Pin.Define("Note", {
+    -- Renderer metadata. Matches the legacy "!Fav" iconType. The
+    -- "Note" layer name is canonical; NxFav.lua's MapIcons producer
+    -- now writes here instead of the legacy "!Fav" iconType.
+    drawMode = "WP",
+    w = 17, h = 17,
+    clipKind = "chop",
     minScale = 0.3,
 })
 
 function NotePin:OnAcquire(opts)
-    self.mapID = opts.mapID
-    self.x     = opts.x
-    self.y     = opts.y
-    self.text  = opts.text or ""
-    self.icon  = opts.icon or "Interface\\Minimap\\Minimap_skull_normal"
-    self.color = opts.color
-    self.show  = true
+    -- Field names mirror what Renderer.lua's renderWP reads on each
+    -- pin: pin.x / pin.y / pin.level / pin.tex / pin.color / pin.tip.
+    -- Legacy callers used "text" + "icon"; both spellings are accepted
+    -- so old call sites don't break during migration.
+    self.mapID  = opts.mapID
+    self.x      = opts.x
+    self.y      = opts.y
+    self.level  = opts.level
+    self.tex    = opts.icon or "Interface\\Minimap\\Minimap_skull_normal"
+    self.tip    = opts.text or opts.tip
+    self.color  = opts.color
+    self.favRef = opts.favRef     -- click-target user data (NxFav fav table)
+    self.favIdx = opts.favIdx
+    self.text   = self.tip        -- alias for old ShowTooltip code
+    self.icon   = self.tex
+    self.show   = true
 end
 
 function NotePin:OnRelease()
     Pin.OnRelease(self)
-    self.color = nil
+    self.level, self.tex, self.tip, self.color, self.favRef, self.favIdx, self.icon, self.text =
+        nil, nil, nil, nil, nil, nil, nil, nil
 end
 
 function NotePin:ShowTooltip(owner)

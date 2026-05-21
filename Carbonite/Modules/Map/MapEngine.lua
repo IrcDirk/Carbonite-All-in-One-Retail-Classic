@@ -806,9 +806,11 @@ function Nx.Map:Create(index)
 
     ---------------------------------------------------------------------------
     -- Icon Frame Pools
-    -- These pools prevent constant frame creation/destruction
+    -- These pools prevent constant frame creation/destruction.
+    -- The legacy `m.Data = {}` general-data table is gone — every
+    -- iconType now lives on the Pin / Layer namespace (see
+    -- Modules/Map/IconTypes.lua + Modules/Map/Renderer.lua).
     ---------------------------------------------------------------------------
-    m.Data = {}                             -- General data storage
 
     -- Interactive icon frames (respond to mouse)
     m.IconFrms = {}
@@ -824,6 +826,15 @@ function Nx.Map:Create(index)
     m.IconStaticFrms = {}
     m.IconStaticFrms.Next = 1
     m.IconStaticFrms.Used = 0
+
+    -- Line pool (lines on the map frame, used by the LINE Pin drawMode).
+    -- Frame:CreateLine() returns a Line texture region; pre-allocating
+    -- N lines on one host frame is cheaper than spawning frames per
+    -- segment. Pool semantics mirror IconStaticFrms (Next bumps each
+    -- render, HideExtraIcons hides up-to Used).
+    m.LineFrms = {}
+    m.LineFrms.Next = 1
+    m.LineFrms.Used = 0
 
     -- World quest icon frames
     m.IconWQFrms = {}
@@ -1212,6 +1223,36 @@ function Nx.Map:Create(index)
         local item = mmmenu:AddItem(0, L["Docking Below Map Scale"], func, m)
         item:SetSlider(opts.NXMMDockOnAtScale, 0, 5)
     end
+
+    ---------------------------------------------------------------------------
+    -- PLUGINS SUBMENU
+    -- Exposes the slash-command entry points for the supported
+    -- external pin sources (HandyNotes / Questie / RareScanner). The
+    -- toolbar buttons those addons attach to Blizzard's WorldMapFrame
+    -- can't be reparented; routing through slash commands gives the
+    -- user a one-click way to reach each addon's panel from the
+    -- Carbonite map.
+    ---------------------------------------------------------------------------
+
+    local function _runSlash(_, cmd)
+        local fn = SlashCmdList and SlashCmdList[cmd]
+        if fn then
+            fn("")
+        else
+            -- Slash commands register under various names; try a few.
+            local h = ChatFrame_OpenChat or DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.editBox
+            if h and ChatFrame_OpenChat then
+                ChatFrame_OpenChat("/" .. cmd:lower())
+            end
+        end
+    end
+
+    local pmenu = Nx.Menu:Create(f)
+    menu:AddSubMenu(pmenu, L["Plugins..."] or "Plugins...")
+
+    pmenu:AddItem(0, "HandyNotes",  function() _runSlash(nil, "HANDYNOTES") end)
+    pmenu:AddItem(0, "Questie",     function() _runSlash(nil, "QUESTIE") end)
+    pmenu:AddItem(0, "RareScanner", function() _runSlash(nil, "RARESCANNER") end)
 
     ---------------------------------------------------------------------------
     -- SCALE SUBMENU
@@ -4978,6 +5019,15 @@ function Nx.Map:Update (elapsed)
         self.MapId = mapId
         mapChange = true
         Nx.Map.mapChange = mapChange
+
+        -- Tell every registered MapProvider that the visible map
+        -- has flipped. Each provider invokes its OnMapChanged hook
+        -- (if any) so third-party integrations can rebuild their
+        -- pin layer for the new zone without polling.
+        local MP = Carbonite.Modules.Map.MapProvider
+        if MP and MP.BroadcastMapChanged then
+            MP.BroadcastMapChanged(mapId)
+        end
 
         -- Hide all world quest icons immediately on map change to prevent stale icons
         local wqFrms = self.IconWQFrms
@@ -9461,537 +9511,24 @@ function Nx.Map:ClipZoneFrm (cont, zone, frm, alpha)
 end
 
 -------------------------------------------------------------------------------
--- ICON TYPE MANAGEMENT
--- Functions for initializing, configuring, and managing map icon types
--- Icon types define how groups of icons are drawn (mode, texture, size, etc.)
+-- ICON TYPE MANAGEMENT — REMOVED
+-- The legacy Nx.Map:InitIconType / AddIconPt / SetIconType* / etc.
+-- now live in Modules/Map/IconTypes.lua. That module's rewireLegacy
+-- installs the Nx.Map.* methods at CARBONITE_LOADED, routing through
+-- the Pin/Layer pipeline instead of the old self.Data storage.
 -------------------------------------------------------------------------------
 
----
--- Initialize a map icon type with drawing parameters
--- @param iconType  String identifier for the icon type (e.g. "!QU" for quests)
--- @param drawMode  Drawing mode: "ZP" = zone point, "WP" = world point, "ZR" = zone rect
--- @param texture   Default texture path for this icon type
--- @param w         Default width for icons of this type
--- @param h         Default height for icons of this type
---
-function Nx.Map:InitIconType (iconType, drawMode, texture, w, h)
-
-    local d = self.Data
-
-    local t = wipe (d[iconType] or {})
-    d[iconType] = t
-    t.Num = 0
-    t.Enabled = true
-    t.DrawMode = drawMode or "ZP"    -- Zone point is default
-    t.Tex = texture
-    t.W = w
-    t.H = h
-    t.Scale = 1    -- USED???
-end
-
----
--- Clear/remove a map icon type and all its icons
--- @param iconType  String identifier for the icon type to clear
---
-function Nx.Map:ClearIconType (iconType)
-
-    local d = self.Data
-    d[iconType] = nil
-end
-
----
--- Set alpha transparency for an icon type
--- @param iconType   String identifier for the icon type
--- @param alpha      Normal alpha value (0-1)
--- @param alphaNear  Alpha when player is near icon (for pulsing effect)
---
-function Nx.Map:SetIconTypeAlpha (iconType, alpha, alphaNear)
-
-    local d = self.Data
-    assert (d[iconType])
-
-    d[iconType].Alpha = alpha
-    d[iconType].AlphaNear = alphaNear
-end
-
----
--- Set minimum scale at which this icon type becomes visible
--- Icons will be hidden when map zoom is below this scale
--- @param iconType  String identifier for the icon type
--- @param scale     Minimum scale threshold for visibility
---
-function Nx.Map:SetIconTypeAtScale (iconType, scale)
-
-    local d = self.Data
-    assert (d[iconType])
-
-    d[iconType].AtScale = scale
-end
-
----
--- Set frame level offset for an icon type
--- Higher levels render on top of lower levels
--- @param iconType  String identifier for the icon type
--- @param level     Frame level offset to add to base level
---
-function Nx.Map:SetIconTypeLevel (iconType, level)
-
-    local d = self.Data
-    assert (d[iconType])
-
-    d[iconType].Lvl = level
-end
-
----
--- Enable or disable chopping (edge clipping) for an icon type
--- When enabled, uses ClipFrameWChop for better edge handling
--- @param iconType  String identifier for the icon type
--- @param on        Boolean to enable/disable chopping
---
-function Nx.Map:SetIconTypeChop (iconType, on)
-
-    local d = self.Data
-    assert (d[iconType])
-
-    d[iconType].ClipFunc = on and self.ClipFrameWChop or self.ClipFrameW
-end
-
----
--- Hide icons of this type when they would overlap the docked minimap
--- @param iconType  String identifier for the icon type
--- @param on        Boolean to enable/disable docked-minimap exclusion
---
-function Nx.Map:SetIconTypeNoDockMinimap (iconType, on)
-
-    local d = self.Data
-    assert (d[iconType])
-
-    d[iconType].NoDockMinimap = on
-end
-
----
--- Add a point icon to map data
--- @param iconType  String identifier for the icon type (must be initialized)
--- @param x         World X coordinate
--- @param y         World Y coordinate
--- @param level     Dungeon level (nil for surface)
--- @param color     Color hex string (e.g. "FF0000" for red)
--- @param texture   Optional texture path (overrides type default)
--- @param tx1       Texture coord left (0-1)
--- @param ty1       Texture coord top (0-1)
--- @param tx2       Texture coord right (0-1)
--- @param ty2       Texture coord bottom (0-1)
--- @return          Icon table for further customization
---
-function Nx.Map:AddIconPt (iconType, x, y, level, color, texture, tx1, ty1, tx2, ty2)
-    local d = self.Data
-
-    assert (d[iconType])
-
-    local tdata = d[iconType]
-    tdata.Num = tdata.Num + 1 -- Use # instead??
-
-    local icon = {}
-    tdata[tdata.Num] = icon
-
-    icon.X = x
-    icon.Y = y
-    icon.iconType = iconType
-    icon.Level = level
-    icon.Color = color
-    icon.Tex = texture
-    if tx1 and ty1 and tx2 and ty2 then
-        icon.TX1 = tx1
-        icon.TY1 = ty1
-        icon.TX2 = tx2
-        icon.TY2 = ty2
-    end
-    assert (tdata.Tex or texture or color)
-
-    return icon
-end
-
----
--- Get the count of icons for a given type
--- @param iconType  String identifier for the icon type
--- @return          Number of icons
---
-function Nx.Map:GetIconCnt (iconType)
-
-    return #self.Data[iconType]
-end
-
----
--- Get point icon world position at index
--- Used by routing code to retrieve icon locations
--- @param iconType  String identifier for the icon type
--- @param index     1-based index into the icon array
--- @return          x, y world coordinates (or nil if wrong dungeon level)
---
-function Nx.Map:GetIconPt (iconType, index)
-
-    local icon = self.Data[iconType][index]
-    if (icon.Level == Nx.Map.DungeonLevel) then
-        return icon.X, icon.Y
-    end
-end
-
----
--- Add a rectangular icon to map data (zone coordinates)
--- Used for highlighting areas on the map
--- @param iconType  String identifier for the icon type (must be initialized)
--- @param mapId     Map ID the rectangle belongs to
--- @param x         Zone X coordinate of top-left (0-100)
--- @param y         Zone Y coordinate of top-left (0-100)
--- @param x2        Zone X coordinate of bottom-right (0-100)
--- @param y2        Zone Y coordinate of bottom-right (0-100)
--- @param color     Color hex string with alpha (e.g. "80FF0000")
--- @return          Icon table for further customization
---
-function Nx.Map:AddIconRect (iconType, mapId, x, y, x2, y2, color)
-
-    local d = self.Data
-
-    assert (d[iconType])
-
-    local tdata = d[iconType]
-    tdata.Num = tdata.Num + 1
-
-    local icon = {}
-    tdata[tdata.Num] = icon
-
-    icon.MapId = mapId
-    icon.X = x
-    icon.Y = y
-    icon.X2 = x2
-    icon.Y2 = y2
-    icon.Color = color
-
-    return icon
-end
-
----
--- Set tooltip text for an icon
--- @param icon  Icon table returned from AddIconPt/AddIconRect
--- @param tip   Tooltip string (use ~ for line breaks)
---
-function Nx.Map:SetIconTip (icon, tip)
-    icon.Tip = tip
-end
-
----
--- Set custom user data on an icon
--- Can store any Lua value for later retrieval
--- @param icon  Icon table returned from AddIconPt/AddIconRect
--- @param data  Any value to associate with this icon
---
-function Nx.Map:SetIconUserData (icon, data)
-    icon.UData = data
-end
-
----
--- Set favorite-related data on an icon
--- Used by the Notes module for favorite locations
--- @param icon   Icon table returned from AddIconPt/AddIconRect
--- @param data1  First favorite data value
--- @param data2  Second favorite data value
---
-function Nx.Map:SetIconFavData (icon, data1, data2)
-    icon.FavData1 = data1
-    icon.FavData2 = data2
-end
-
----
--- Get favorite-related data from an icon
--- @param icon  Icon table
--- @return      data1, data2 values previously set
---
-function Nx.Map:GetIconFavData (icon)
-    return icon.FavData1, icon.FavData2
-end
 
 --------
--- Update all icons
+-- Update all icons. Body delegated to Carbonite.Modules.Map.Renderer
+-- which walks Layer.All() instead of self.Data.
 
 function Nx.Map:UpdateIcons (drawNonGuide)
-    local c2rgb = Nx.Util_c2rgb
-    local c2rgba = Nx.Util_c2rgba
-    local d = self.Data
-
-    local wpScale = 1
-    local wpMin = Nx.db.profile.Map.IconScaleMin
-    if wpMin >= 0 then
-        wpScale = self.ScaleDraw * .08
-    end
-    if Nx.Map:GetMap(1).LOpts.NXMMFull then
-        return
-    end
-    for type, v in pairs (d) do
-        v.Enabled = drawNonGuide or strbyte (type) == 33    -- "!" is guide types
-        if v.AtScale then
-            if self.ScaleDraw < v.AtScale then
-                v.Enabled = false
-            end
-        end
-        if (self:IsInstanceMap(Nx.Map.UpdateMapID) or self:IsBattleGroundMap(Nx.Map.UpdateMapID)) and self.CurOpts.NXInstanceMaps then
-            v.Enabled = true
-            v.Lvl = 20
-        end
-    end
-    for k, v in pairs (d) do
-
---        Nx.prt ("UpdateIcons %s %s", k, v.DrawMode)
-
-        if v.Enabled then
-
-            if v.DrawMode == "ZP" then        -- Zone point
-                local scale = self.IconScale
-                local w = v.W * scale
-                local h = v.H * scale
-                -- Cache values outside loop for performance
-                local mapDungeonLevel = Nx.Map.DungeonLevel
-                local vLvl = v.Lvl
-                local vTex = v.Tex
-
-                for n = 1, v.Num do
-                    local vn = v[n]
-                    if (not vn.Level and mapDungeonLevel == 0) or (vn.Level and vn.Level == mapDungeonLevel) then
-                        local icon = vn
-                        local f = self:GetIconStatic(vLvl)
-                        if self:ClipFrameZ(f, icon.X, icon.Y, w, h, 0) then
-                            f.NxTip = icon.Tip
-
-                            local iconTex = icon.Tex
-                            if iconTex then
-                                f.texture:SetTexture(iconTex)
-                                if icon.Color then
-                                    f.texture:SetVertexColor(c2rgb(icon.Color))
-                                end
-                            elseif vTex then
-                                f.texture:SetTexture(vTex)
-                            else
-                                f.texture:SetColorTexture(c2rgb(icon.Color))
-                            end
-                            if icon.TX1 then
-                                f.texture:SetTexCoord(icon.TX1, icon.TY1, icon.TX2, icon.TY2)
-                            end
-                        end
-                    end
-                end
-
-            elseif v.DrawMode == "WP" then        -- World point
-
-                local scale = self.IconScale * v.Scale * wpScale
-                local w = max (v.W * scale, wpMin)
-                local h = max (v.H * scale, wpMin)
-
-                -- Pre-calculate visible bounds for quick culling (huge performance win for many icons)
-                local scaleDraw = self.ScaleDraw
-                local clipW = self.MapW
-                local clipH = self.MapH
-                local mapPosX = self.MapPosXDraw
-                local mapPosY = self.MapPosYDraw
-                -- Calculate world-space bounds of visible area with some margin
-                local margin = (w > h and w or h) / scaleDraw
-                local visMinX = mapPosX - clipW * 0.5 / scaleDraw - margin
-                local visMaxX = mapPosX + clipW * 0.5 / scaleDraw + margin
-                local visMinY = mapPosY - clipH * 0.5 / scaleDraw - margin
-                local visMaxY = mapPosY + clipH * 0.5 / scaleDraw + margin
-
-                local curMapId = Nx.Map:GetCurrentMapAreaID()
-                if self.Win:IsSizeMax() then
-                    local myzone = curMapId
-                    if (myzone == 87) or (myzone == 125) then
-                        w = w / 2
-                        h = h / 2
-                    end
-                end
-
-                if (self:IsInstanceMap(Nx.Map.UpdateMapID) or self:IsBattleGroundMap(Nx.Map.UpdateMapID)) then
-                    w = Nx.db.profile.Map.InstanceScale
-                    h = Nx.db.profile.Map.InstanceScale
-                end
-
-                -- Compute docked-minimap exclusion rect in map-frame pixels for icon types that opt in
-                local mmSX1, mmSY1, mmSX2, mmSY2
-                if v.NoDockMinimap and self.MMOwn and self.MMZoomType == 0 then
-                    local mmSz = 140 * self.MMFScale
-                    local mmX = Nx.db.profile.MiniMap.DockRight and (clipW - mmSz) or 0
-                    local mmY = Nx.db.profile.MiniMap.DockBottom and (clipH - mmSz) or 0
-                    mmSX1 = mmX + (Nx.db.profile.MiniMap.DXO or 0)
-                    mmSY1 = mmY + (Nx.db.profile.MiniMap.DYO or 0)
-                    mmSX2 = mmSX1 + mmSz
-                    mmSY2 = mmSY1 + mmSz
-                end
-
-                if v.AlphaNear then
-
-                    local aNear = v.AlphaNear * (abs (GetTime() % .7 - .35) / .7 + .5)    -- 50% to 100% pulse
-                    -- Cache values outside loop for performance
-                    local mapDungeonLevel = Nx.Map.DungeonLevel
-                    local vLvl = v.Lvl
-                    local vTex = v.Tex
-                    local vAlpha = v.Alpha
-                    local plyrX = self.PlyrX
-                    local plyrY = self.PlyrY
-
-                    for n = 1, v.Num do
-                        local vn = v[n]
-                        -- Quick visibility cull before allocating frame
-                        local iconX, iconY = vn.X, vn.Y
-                        if iconX >= visMinX and iconX <= visMaxX and iconY >= visMinY and iconY <= visMaxY then
-                        local skipForDockedMM = false
-                        if mmSX1 then
-                            local sx = (iconX - self.MapPosXDraw) * scaleDraw + clipW * .5
-                            local sy = (iconY - self.MapPosYDraw) * scaleDraw + clipH * .5
-                            skipForDockedMM = sx >= mmSX1 and sx <= mmSX2 and sy >= mmSY1 and sy <= mmSY2
-                        end
-                        if not skipForDockedMM and ((not vn.Level and mapDungeonLevel == 0) or (vn.Level and vn.Level == mapDungeonLevel)) then
-                            local icon = vn
-                            local f = self:GetIconStatic(vLvl)
-                            if self:ClipFrameByMapType (f, icon.X, icon.Y, w, h, 0) then
-                                f.NxTip = icon.Tip
-                                f.NXType = 3000
-                                f.NXData = icon
-                                local iconTex = icon.Tex
-                                if iconTex then
-                                    -- Cache atlas lookup on first use
-                                    if icon._isAtlas == nil then
-                                        icon._isAtlas = string.find(iconTex, "atlas:") and true or false
-                                        if icon._isAtlas then
-                                            icon._atlasName = string.sub(iconTex, 7)
-                                        end
-                                    end
-                                    if icon._isAtlas then
-                                        f.texture:SetAtlas(icon._atlasName)
-                                    else
-                                        f.texture:SetTexture(iconTex)
-                                    end
-                                    if icon.Color then
-                                        f.texture:SetVertexColor(c2rgb(icon.Color))
-                                    end
-                                elseif vTex then
-                                    f.texture:SetTexture(vTex)
-                                else
-                                    f.texture:SetColorTexture(c2rgb(icon.Color))
-                                end
-                                local a = vAlpha
-                                local dist = (icon.X - plyrX) ^ 2 + (icon.Y - plyrY) ^ 2
-                                if dist < 306 then    -- 80 yards * 4.575 ^ 2
-                                    a = aNear
-                                end
-                                f.texture:SetVertexColor(1, 1, 1, a)
-                            end
-                        end
-                        end -- visibility cull
-                    end
-                else
-                    -- Cache these values outside the loop for performance
-                    local _h = 3 * (668 / 768)
-                    local currentDungeonLevel = Nx.Map:GetCurrentMapDungeonLevel()
-                    local _dungeonLevel = currentDungeonLevel > 0 and currentDungeonLevel - 1 or 0
-                    local isInstanceMap = Nx.Map:IsInstanceMap(Nx.Map.RMapId)
-                    local calcOffY = isInstanceMap and not self.CurOpts.NXInstanceMaps
-                    local offY = calcOffY and (_h * _dungeonLevel) or 0
-                    local mapDungeonLevel = Nx.Map.DungeonLevel
-                    local vLvl = v.Lvl
-                    local vTex = v.Tex
-                    local vAlpha = v.Alpha
-                    local frameLevelBase = self.Level + (vLvl or 0)
-
-                    for n = 1, v.Num do
-                        local vn = v[n]
-                        -- Quick visibility cull before allocating frame
-                        local iconX, iconY = vn.X, vn.Y
-                        if iconX >= visMinX and iconX <= visMaxX and iconY >= visMinY and iconY <= visMaxY then
-                        local Level = vn.Level
-                        local skipForDockedMM = false
-                        if mmSX1 then
-                            local sx = (iconX - self.MapPosXDraw) * scaleDraw + clipW * .5
-                            local sy = ((iconY + offY) - self.MapPosYDraw) * scaleDraw + clipH * .5
-                            skipForDockedMM = sx >= mmSX1 and sx <= mmSX2 and sy >= mmSY1 and sy <= mmSY2
-                        end
-                        if not skipForDockedMM and ((not Level and mapDungeonLevel == 0) or (Level and Level == mapDungeonLevel)) then
-                            local icon = vn
-                            local iconTex = icon.Tex
-                            local actuallyIcon = type(iconTex) == "table"
-                            local f
-                            if actuallyIcon then
-                                f = iconTex
-                            else
-                                f = self:GetIconStatic(vLvl)
-                            end
-                            if self:ClipFrameByMapType (f, iconX, iconY + offY, w, h, 0) then
-                                f.NxTip = icon.Tip
-                                f.NXType = 3000
-                                f.NXData = icon
-                                if actuallyIcon then
-                                    f:SetFrameLevel(frameLevelBase)
-                                elseif iconTex then
-                                    -- Cache atlas lookup on first use
-                                    if icon._isAtlas == nil then
-                                        icon._isAtlas = string.find(iconTex, "atlas:") and true or false
-                                        if icon._isAtlas then
-                                            icon._atlasName = string.sub(iconTex, 7)
-                                        end
-                                    end
-                                    if icon._isAtlas then
-                                        f.texture:SetAtlas(icon._atlasName)
-                                    else
-                                        f.texture:SetTexture(iconTex)
-                                    end
-                                    if icon.Color then
-                                        f.texture:SetVertexColor(c2rgb(icon.Color))
-                                    end
-                                elseif vTex then
-                                    f.texture:SetTexture(vTex)
-                                else
-                                    f.texture:SetColorTexture(c2rgb(icon.Color))
-                                end
-                                if vAlpha and not actuallyIcon then
-                                    f.texture:SetVertexColor(1, 1, 1, vAlpha)
-                                end
-                                if icon.TX1 then
-                                    f.texture:SetTexCoord(icon.TX1, icon.TY1, icon.TX2, icon.TY2)
-                                end
-                            end
-                        end
-                        end -- visibility cull
-                    end
-                end
-            elseif v.DrawMode == "ZR" then    -- Zone rectangle
-                local x, y, x2, y2
---                local x0, y0, x2, y2 = self:GetWorldRect (self.MapId, 0, 0, 100, 100)
-
-                for n = 1, v.Num do
-                    if (not v[n].Level and Nx.Map.DungeonLevel == 0) or (v[n].Level and v[n].Level == Nx.Map.DungeonLevel) then
-                        local icon = v[n]
-                        local f = self:GetIconStatic (v.Lvl)
---                        Nx.prt ("ZR #%d %f %f %f %f", n, icon.X, icon.Y, icon.X2, icon.Y2)
-
-                        f.NxTip = icon.Tip
-
-                        x, y = self:GetWorldPos (icon.MapId, icon.X, icon.Y)
-                        x2, y2 = self:GetWorldPos (icon.MapId, icon.X2, icon.Y2)
-
-    --                    Nx.prt ("%f %f %f %f", x, y, x2, y2)
-
-                        if self:ClipFrameTL (f, x, y, x2-x, y2-y) then
-                            if v.Texture then
-                                f.texture:SetTexture (v.Tex)
-                            else
-                                f.texture:SetColorTexture (c2rgba (icon.Color))
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-    if Nx.Map:GetCurrentMapAreaID() == 85 and Nx.Map.DungeonLevel == 0 then
-        Nx.Map.DungeonLevel = 1
-    end
+    local R = Carbonite and Carbonite.Modules and Carbonite.Modules.Map
+            and Carbonite.Modules.Map.Renderer
+    if R then return R:Render(self, drawNonGuide) end
 end
+
 
 ------
 -- Reset icons
@@ -10008,6 +9545,10 @@ function Nx.Map:ResetIcons()
 
     local frms = self.IconStaticFrms
     frms.Used = frms.Next - 1        -- Save last frame used
+    frms.Next = 1
+
+    local frms = self.LineFrms
+    frms.Used = frms.Next - 1        -- Save last line used
     frms.Next = 1
 
     local data = self.TextFStrs
@@ -10042,6 +9583,12 @@ function Nx.Map:HideExtraIcons()
 
     for n = frms.Next, frms.Used do        -- Hide up to last frames used amount
         frms[n]:Hide()
+    end
+
+    local frms = self.LineFrms
+    for n = frms.Next, frms.Used do
+        local line = frms[n]
+        if line then line:Hide() end
     end
 
     local data = self.TextFStrs
@@ -10297,6 +9844,36 @@ end
 
 ------
 -- Get next available map static (for non moving stuff) icon or create one
+-- ret: line texture region (drawn on a shared host frame).
+-- Used by Renderer's LINE drawMode. Lines auto-cap at 1500 same as
+-- icons.
+
+function Nx.Map:GetLineStatic ()
+    local frms = self.LineFrms
+    local pos = frms.Next
+    if pos > 1500 then pos = 1500 end
+
+    local line = frms[pos]
+    if not line then
+        if not frms.Host then
+            local host = CreateFrame("Frame", "NxLineHost", self.Frm)
+            host:SetAllPoints(self.Frm)
+            host:SetFrameLevel(self.Level + 1)
+            frms.Host = host
+        end
+        line = frms.Host:CreateLine(nil, "OVERLAY")
+        frms[pos] = line
+    end
+
+    -- Reset to a known state in case the previous user left it
+    -- with thickness / colour / endpoints we don't want.
+    line:SetThickness(2)
+    line:SetVertexColor(1, 1, 1, 1)
+
+    frms.Next = pos + 1
+    return line
+end
+
 -- ret: icon frame
 
 function Nx.Map:GetIconStatic (levelAdd)
@@ -10535,8 +10112,39 @@ function Nx.Map:IconOnMouseDown(button)
                         if rspin.OnMouseDown then
                             rspin:OnMouseDown(button)
                         end
-                        Nx.Notes.PrevRSPins = 0
+                        if Nx.Notes.BustIntegrationCache then
+                            Nx.Notes:BustIntegrationCache("RareScanner")
+                        end
                         Nx.Notes:RareScanner(map.MapId)
+                    end
+                elseif map.ClickIcon and map.ClickIcon.iconType == "!HANDY" and HandyNotes then
+                    -- Route clicks back to the source HandyNotes
+                    -- plugin's OnClick handler. UData carries the
+                    -- {plugin, mapFile, coord} tuple stashed by
+                    -- Integrations/HandyNotes.lua.
+                    local ud = map.ClickIcon.UData
+                    if ud and ud.__handy then
+                        local handler = HandyNotes.plugins[ud.plugin]
+                        if handler and handler.OnClick then
+                            -- HandyNotes OnClick signature: (self, button, down, mapFile, coord)
+                            local ok = pcall(handler.OnClick, this, button, true, ud.mapFile, ud.coord)
+                            if not ok then
+                                -- Some plugins use the (button, down) signature without
+                                -- mapFile/coord — retry once with the shorter form.
+                                pcall(handler.OnClick, this, button, true)
+                            end
+                        end
+                    end
+                elseif map.ClickIcon and map.ClickIcon.iconType == "!QUE" and Questie then
+                    -- Questie stores its source pin frame as UData.
+                    -- Call its OnClick / OnMouseDown if either exists.
+                    local qframe = map.ClickIcon.UData
+                    if qframe then
+                        if qframe.OnClick then
+                            pcall(qframe.OnClick, qframe, button)
+                        elseif qframe.OnMouseDown then
+                            pcall(qframe.OnMouseDown, qframe, button)
+                        end
                     end
                 elseif cat == 9 then
                     -- Quest icon left-click → set the active quest. On retail /

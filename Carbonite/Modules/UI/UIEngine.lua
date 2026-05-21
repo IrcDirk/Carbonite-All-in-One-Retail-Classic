@@ -3125,6 +3125,11 @@ function Nx.Window:RecordLayoutData()
 
 --        Nx.prt ("Record %s(%s): %s %s %s %s %s %d", self.Name, self.LayoutMode, atPt, (relTo and relTo:GetName()) or "nil", relPt, x, y, scale)
 
+        -- A frame that's mid-drag can return nil from GetPoint when
+        -- StartMoving/StopMovingOrSizing fires on a frame with no
+        -- anchor. Bail out — there's nothing useful to record.
+        if not (atPt and x and y) then return end
+
         assert (atPt == relPt)
 
         if x < 0 and x >= -1 then    -- Neg small numbers used for % of screen W
@@ -7591,6 +7596,22 @@ function Nx.ToolBar:Create (name, parentFrm, size, alignR, alignB)
     end
     if f == nil then
         f = CreateFrame ("Frame", name, parentFrm, "BackdropTemplate")
+    else
+        -- Reused Frm — wipe out any button frames left over from a
+        -- previous bar instance. Without this, calling CreateToolBar
+        -- again (Notes/Warehouse Init does this on top of the map's
+        -- own call) leaves orphaned NxBut* children that still
+        -- intercept clicks at the same positions as the new buttons
+        -- and carry the old bar's UserFunc (= Nx.ToolBar:OnBut).
+        for _, child in ipairs({ f:GetChildren() }) do
+            if child.NxBut then
+                child:Hide()
+                child:ClearAllPoints()
+                child:SetParent(nil)
+                child:EnableMouse(false)
+                child.NxBut = nil
+            end
+        end
     end
     bar.Frm = f
     f.NxInst = bar
@@ -7667,6 +7688,16 @@ function Nx.ToolBar:OnBut (but, id, click, x, y)
 
     if click == "RightButton" then
 
+        -- Buttons whose TypeData opts into PassRightClick get their
+        -- handler called for the right-click as well, instead of the
+        -- bar's settings menu. Adopters like AddonButtons (Questie's
+        -- right-click opens its quest-menu, RareScanner's opens
+        -- AceConfigDialog) need the click; default toolbar buttons
+        -- keep the menu.
+        if but and but.Type and but.Type.PassRightClick and id then
+            id (self.User, but, click, x, y)
+            return
+        end
         Nx.ToolBar:OpenMenu (self)
 
     else
@@ -7924,6 +7955,33 @@ function Nx.Util_c2rgb (colors)
     local g = tonumber (strsub (colors, 3, 4), 16) / 255
     local b = tonumber (strsub (colors, 5, 6), 16) / 255
     return r, g, b
+end
+
+-- Hex colour with alpha. Accepts either:
+--   "AARRGGBB" (alpha first, the legacy format used by AddIconRect)
+--   {r, g, b, a} as a pre-decoded table
+-- Returns r, g, b, a in 0..1 range. Several callers (renderZR, the
+-- new renderLINE patrol-path path) need this; the legacy code
+-- assumed it existed but never defined it.
+function Nx.Util_c2rgba (colors)
+    if type(colors) == "table" then
+        return colors[1] or 1, colors[2] or 1, colors[3] or 1, colors[4] or 1
+    end
+    if type(colors) ~= "string" then
+        return 1, 1, 1, 1
+    end
+    if #colors >= 8 then
+        local a = tonumber(strsub(colors, 1, 2), 16) / 255
+        local r = tonumber(strsub(colors, 3, 4), 16) / 255
+        local g = tonumber(strsub(colors, 5, 6), 16) / 255
+        local b = tonumber(strsub(colors, 7, 8), 16) / 255
+        return r, g, b, a
+    end
+    -- 6-char fallback: treat as RGB with full alpha.
+    local r = tonumber(strsub(colors, 1, 2), 16) / 255
+    local g = tonumber(strsub(colors, 3, 4), 16) / 255
+    local b = tonumber(strsub(colors, 5, 6), 16) / 255
+    return r, g, b, 1
 end
 
 function Nx.Slider:OnMouseDown (button)

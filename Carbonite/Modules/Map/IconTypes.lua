@@ -1,161 +1,185 @@
 -- Carbonite | Modules / Map / IconTypes
--- The icon-type registry that the legacy NxMap.lua used to manage
--- through Nx.Map:InitIconType / SetIconType*. Each icon type defines
--- the shared draw mode, texture, dimensions, alpha curve, frame
--- level, and clipping behaviour for a class of icons (gather nodes,
--- quest givers, etc.). Individual icons added via AddIconPt /
--- AddIconRect inherit defaults from their type.
+-- Adapter that lets legacy callers (NxMapGuide, NxFav, UserEvents,
+-- etc.) keep their Nx.Map:InitIconType / AddIconPt / SetIconType*
+-- vocabulary while every icon flows through the new Pin/Layer/
+-- Renderer pipeline.
 --
--- This class owns the *type definitions and the point lists*. The
--- map renderer still reads Nx.Map.Data[<typeName>] each frame; that
--- storage layout is preserved verbatim so we do not have to rewrite
--- the renderer at the same time.
+-- Mapping:
+--   InitIconType(name, drawMode, tex, w, h)  -> Pin.Define(name,...)
+--                                              + Layer.Get(name):Clear()
+--   AddIconPt(name, x, y, lvl, color, ...)   -> Map:AddPin(name, name, opts)
+--   SetIconTypeXxx                           -> Pin.SetClassField(name, ...)
+--   AddIconRect / SetIconTip / etc.          -> Pin instance mutation
 --
--- Public API:
---   IconTypes:Define(name, opts)        register / replace a type
---   IconTypes:Clear(name)               drop a type and its icons
---   IconTypes:SetAlpha(name, a, near)
---   IconTypes:SetMinScale(name, scale)
---   IconTypes:SetLevel(name, frameLvl)
---   IconTypes:SetChop(name, on)
---   IconTypes:SetNoDockMinimap(name, on)
---   IconTypes:AddPoint(name, x, y, level, color, texture, tx1, ty1, tx2, ty2)
---   IconTypes:AddRect(name, mapId, x1, y1, x2, y2, color)
---   IconTypes:Count(name)
---   IconTypes:GetPoint(name, index)     world (x, y) when relevant level
---   IconTypes:SetIconTip(icon, tip)
---   IconTypes:SetIconUserData(icon, data)
+-- Each legacy "iconType" name becomes both a Pin class name and a
+-- Layer name. Pins land in the layer named after their type. The
+-- Renderer walks Layer.All() each frame and stamps pool frames.
 
 local Carbonite = _G.Carbonite
+local Pin = Carbonite.Modules.Map.Pin
+local Layer = Carbonite.Modules.Map.Layer
 
 local IconTypes = {}
 Carbonite.Modules.Map.IconTypes = IconTypes
 
-local function dataTable()
-    local NxMap = _G.Nx and _G.Nx.Map
-    return NxMap and NxMap.Data
-end
-
-local function typeEntry(name)
-    local d = dataTable()
-    return d and d[name] or nil
-end
-
 function IconTypes:Define(name, opts)
     opts = opts or {}
-    local d = dataTable()
-    if not d then return nil end
-    local existing = d[name]
-    if existing then wipe(existing) end
-    local t = existing or {}
-    d[name] = t
-
-    t.Num      = 0
-    t.Enabled  = true
-    t.DrawMode = opts.drawMode or "ZP"
-    t.Tex      = opts.texture
-    t.W        = opts.width  or opts.w
-    t.H        = opts.height or opts.h
-    t.Scale    = 1
-    return t
+    Pin.Define(name, {
+        drawMode = opts.drawMode or "ZP",
+        w        = opts.width  or opts.w,
+        h        = opts.height or opts.h,
+        tex      = opts.texture,
+        scale    = 1,
+        enabled  = true,
+    })
+    -- Wipe any pins already pooled under this name so re-init starts
+    -- from an empty array, matching the legacy `wipe(d[name] or {})`.
+    Layer.Get(name):Clear()
+    return Pin.GetClass(name)
 end
 
 function IconTypes:Clear(name)
-    local d = dataTable()
-    if d then d[name] = nil end
+    Layer.Remove(name)
+    Pin.classes[name] = nil
 end
 
-local function requireType(name)
-    local t = typeEntry(name)
-    assert(t, ("IconTypes: type %q not defined"):format(tostring(name)))
-    return t
+local function assertClass(name)
+    local c = Pin.GetClass(name)
+    assert(c, ("IconTypes: type %q not defined"):format(tostring(name)))
+    return c
 end
 
 function IconTypes:SetAlpha(name, alpha, alphaNear)
-    local t = requireType(name)
-    t.Alpha     = alpha
-    t.AlphaNear = alphaNear
+    assertClass(name)
+    Pin.SetClassField(name, "alpha",     alpha)
+    Pin.SetClassField(name, "alphaNear", alphaNear)
 end
 
 function IconTypes:SetMinScale(name, scale)
-    local t = requireType(name)
-    t.AtScale = scale
+    assertClass(name)
+    Pin.SetClassField(name, "atScale", scale)
 end
 
 function IconTypes:SetLevel(name, level)
-    local t = requireType(name)
-    t.Lvl = level
+    assertClass(name)
+    Pin.SetClassField(name, "frameLvl", level)
 end
 
 function IconTypes:SetChop(name, on)
-    local t = requireType(name)
-    local NxMap = _G.Nx and _G.Nx.Map
-    t.ClipFunc = on and NxMap and NxMap.ClipFrameWChop or NxMap and NxMap.ClipFrameW
+    assertClass(name)
+    Pin.SetClassField(name, "clipKind", on and "chop" or "w")
 end
 
 function IconTypes:SetNoDockMinimap(name, on)
-    local t = requireType(name)
-    t.NoDockMinimap = on
+    assertClass(name)
+    Pin.SetClassField(name, "noDockMinimap", on)
+end
+
+-- Pin instances for the legacy adapter. Same shape as the old icon
+-- tables: X/Y, Level, Color, Tex, TX1..TY2, Tip, UData, FavData. Kept
+-- with capitalised aliases so legacy code that reaches into icon.X /
+-- icon.Tip after AddIconPt keeps working.
+Pin.Define("__LegacyPin", {})
+
+local function defineLegacyPin(name)
+    -- Lazily clone the legacy mixin under the iconType's own name so
+    -- the Renderer can find class metadata via Pin.GetClass(name).
+    if not Pin.GetClass(name) then
+        Pin.Define(name, { drawMode = "WP" })
+    end
+end
+
+local function acquireLegacyPin(name, x, y, level, color, texture, tx1, ty1, tx2, ty2)
+    defineLegacyPin(name)
+    local pin = Pin.Acquire(name)
+    pin.x, pin.y       = x, y
+    pin.X, pin.Y       = x, y   -- legacy aliases
+    pin.level          = level
+    pin.Level          = level
+    pin.color          = color
+    pin.Color          = color
+    pin.tex            = texture
+    pin.Tex            = texture
+    pin.iconType       = name
+    -- Legacy AddIconPt only kept texcoords when all four were given.
+    -- NxMapGuide:1565 passes a stray `level` into the tx1 slot, so a
+    -- truthy tx1 alone isn't sufficient to mean "caller wants
+    -- texcoords applied". Always overwrite (including with nil) so
+    -- a recycled pin doesn't inherit the previous user's coords.
+    if tx1 and ty1 and tx2 and ty2 then
+        pin.tx1, pin.ty1, pin.tx2, pin.ty2 = tx1, ty1, tx2, ty2
+        pin.TX1, pin.TY1, pin.TX2, pin.TY2 = tx1, ty1, tx2, ty2
+    else
+        pin.tx1, pin.ty1, pin.tx2, pin.ty2 = nil, nil, nil, nil
+        pin.TX1, pin.TY1, pin.TX2, pin.TY2 = nil, nil, nil, nil
+    end
+    pin.show = true
+    return pin
 end
 
 function IconTypes:AddPoint(name, x, y, level, color, texture, tx1, ty1, tx2, ty2)
-    local t = requireType(name)
-    t.Num = t.Num + 1
-
-    local icon = {
-        X = x, Y = y,
-        iconType = name,
-        Level = level,
-        Color = color,
-        Tex   = texture,
-    }
-    if tx1 and ty1 and tx2 and ty2 then
-        icon.TX1, icon.TY1, icon.TX2, icon.TY2 = tx1, ty1, tx2, ty2
-    end
-    t[t.Num] = icon
-    assert(t.Tex or texture or color, "IconTypes:AddPoint requires either a texture or a color")
-    return icon
+    local cls = assertClass(name)
+    assert(cls.tex or texture or color,
+        "IconTypes:AddPoint requires either a texture or a color")
+    local pin = acquireLegacyPin(name, x, y, level, color, texture, tx1, ty1, tx2, ty2)
+    Layer.Get(name):Add(pin)
+    return pin
 end
 
 function IconTypes:AddRect(name, mapId, x, y, x2, y2, color)
-    local t = requireType(name)
-    t.Num = t.Num + 1
-    local icon = {
-        MapId = mapId,
-        X = x,  Y = y,
-        X2 = x2, Y2 = y2,
-        Color = color,
-    }
-    t[t.Num] = icon
-    return icon
+    assertClass(name)
+    local pin = Pin.Acquire(name)
+    pin.mapID, pin.MapId = mapId, mapId
+    pin.x,  pin.y,  pin.x2,  pin.y2  = x, y, x2, y2
+    pin.X,  pin.Y,  pin.X2,  pin.Y2  = x, y, x2, y2
+    pin.color, pin.Color = color, color
+    pin.iconType = name
+    pin.show = true
+    Layer.Get(name):Add(pin)
+    return pin
 end
 
 function IconTypes:Count(name)
-    local t = typeEntry(name)
-    if not t then return 0 end
-    return #t
+    local l = Layer.All()[name]
+    return l and l:Count() or 0
 end
 
 function IconTypes:GetPoint(name, index)
-    local t = typeEntry(name)
-    if not t then return nil end
-    local icon = t[index]
-    if not icon then return nil end
+    local l = Layer.All()[name]
+    if not l then return nil end
+    local pin = l.pins[index]
+    if not pin then return nil end
     local NxMap = _G.Nx and _G.Nx.Map
-    if icon.Level == (NxMap and NxMap.DungeonLevel) then
-        return icon.X, icon.Y
+    if pin.level == (NxMap and NxMap.DungeonLevel) then
+        return pin.x, pin.y
     end
 end
 
-function IconTypes:SetIconTip(icon, tip)
-    if icon then icon.Tip = tip end
+function IconTypes:SetIconTip(pin, tip)
+    if pin then pin.tip, pin.Tip = tip, tip end
 end
 
-function IconTypes:SetIconUserData(icon, data)
-    if icon then icon.UData = data end
+function IconTypes:SetIconUserData(pin, data)
+    if pin then pin.udata, pin.UData = data, data end
 end
 
--- Legacy rewire.
+function IconTypes:SetIconFavData(pin, d1, d2)
+    if pin then
+        pin.favData1, pin.FavData1 = d1, d1
+        pin.favData2, pin.FavData2 = d2, d2
+    end
+end
+
+function IconTypes:GetIconFavData(pin)
+    if not pin then return nil end
+    return pin.favData1 or pin.FavData1, pin.favData2 or pin.FavData2
+end
+
+-- Legacy rewire. Installs Nx.Map: vocabulary so the thousand existing
+-- callsites keep working unchanged. Subscribes both to CARBONITE_LOADED
+-- (post init) and CARBONITE_ENABLE (every /reload) because MapEngine's
+-- own definitions are reinstalled during NXOnLoad and must be
+-- overridden afterwards.
 local function rewireLegacy()
     local NxMap = _G.Nx and _G.Nx.Map
     if not NxMap then return end
@@ -179,6 +203,8 @@ local function rewireLegacy()
     NxMap.GetIconPt               = function(_, name, index) return IconTypes:GetPoint(name, index) end
     NxMap.SetIconTip              = function(_, icon, tip)   IconTypes:SetIconTip(icon, tip) end
     NxMap.SetIconUserData         = function(_, icon, data)  IconTypes:SetIconUserData(icon, data) end
+    NxMap.SetIconFavData          = function(_, icon, d1, d2) IconTypes:SetIconFavData(icon, d1, d2) end
+    NxMap.GetIconFavData          = function(_, icon)        return IconTypes:GetIconFavData(icon) end
 end
 
 Carbonite.Core.EventBus:Subscribe("CARBONITE_LOADED", rewireLegacy)

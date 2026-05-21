@@ -14,6 +14,32 @@
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
+-- Kill / Death pin classes. Registered once at file-load so
+-- UpdateMap doesn't have to re-declare metadata each pass. The Pin
+-- class metadata (drawMode / w / h / tex / clipKind / noDockMinimap)
+-- is read by the map renderer; per-event state (X/Y/tip) goes on
+-- each pin instance.
+do
+    local Pin = _G.Carbonite and _G.Carbonite.Modules
+        and _G.Carbonite.Modules.Map and _G.Carbonite.Modules.Map.Pin
+    if Pin then
+        Pin.Define("Kill", {
+            drawMode = "WP",
+            w = 32, h = 32,
+            tex = "Interface\\TargetingFrame\\UI-TargetingFrame-Skull",
+            clipKind = "chop",
+            noDockMinimap = true,
+        })
+        Pin.Define("Death", {
+            drawMode = "WP",
+            w = 32, h = 32,
+            tex = "Interface\\TargetingFrame\\UI-TargetingFrame-Seal",
+            clipKind = "chop",
+            noDockMinimap = true,
+        })
+    end
+end
+
 -------------------------------------------------------------------------------
 -- USER EVENTS SYSTEM
 -- Records and displays player activities (kills, deaths, gathering, etc.)
@@ -329,18 +355,15 @@ function Nx.UEvents:UpdateMap (upGuide)
             m.Guide:Update()
         end
 
-        -- "WP" draw mode + 32x32 makes these scale the same as RareScanner /
-        -- Notes pins (much smaller on screen than ZP-mode icons would be).
-        -- SetIconTypeChop / NoDockMinimap match the way other WP icon types
-        -- behave on a docked minimap.
-        m:InitIconType ("Kill", "WP", "Interface\\TargetingFrame\\UI-TargetingFrame-Skull", 32, 32)
-        m:InitIconType ("Death", "WP", "Interface\\TargetingFrame\\UI-TargetingFrame-Seal", 32, 32)
-        m:SetIconTypeChop ("Kill", true)
-        m:SetIconTypeChop ("Death", true)
-        m:SetIconTypeNoDockMinimap ("Kill", true)
-        m:SetIconTypeNoDockMinimap ("Death", true)
-
-        local icon
+        -- Pin classes are declared at file-load (see top of file).
+        -- Each UpdateMap pass refreshes the Kill / Death layers from
+        -- the saved event list.
+        local Pin   = Carbonite.Modules.Map.Pin
+        local Layer = Carbonite.Modules.Map.Layer
+        local killLayer  = Layer.Get("Kill")
+        local deathLayer = Layer.Get("Death")
+        killLayer:Clear()
+        deathLayer:Clear()
 
         -- Read kill-icon settings from Carbonite.Info if loaded; default to
         -- "show, no auto-expire" when Info isn't present.
@@ -397,15 +420,15 @@ function Nx.UEvents:UpdateMap (upGuide)
                 table.remove(events, k)
             elseif iMapId == mapId and isKillish and killEnabled and not expired then
                 local wx, wy = m:GetWorldPos (iMapId, x, y)
-                if typ == "K" then
-                    icon = m:AddIconPt ("Kill", wx, wy)
-                    icon.EventIndex = k
-                    m:SetIconTip (icon, buildKillTip(text, tm, data, false))
-                elseif typ == "D" then
-                    icon = m:AddIconPt ("Death", wx, wy)
-                    icon.EventIndex = k
-                    m:SetIconTip (icon, buildKillTip(text, tm, data, true))
-                end
+                local kind = (typ == "K") and "Kill" or "Death"
+                local pin = Pin.Acquire(kind)
+                pin.x, pin.y = wx, wy
+                pin.X, pin.Y = wx, wy   -- legacy aliases for IconOnEnter
+                pin.tip      = buildKillTip(text, tm, data, typ == "D")
+                pin.Tip      = pin.tip
+                pin.EventIndex = k
+                pin.iconType = kind     -- legacy field used by tooltip code
+                if typ == "K" then killLayer:Add(pin) else deathLayer:Add(pin) end
             end
             -- expired AND keepForever: silently skip drawing, keep record.
         end

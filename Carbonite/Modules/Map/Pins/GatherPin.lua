@@ -10,6 +10,12 @@ local Tooltip = Carbonite.UI.Tooltip
 local Expansion = Carbonite.Compat.Expansion
 
 local GatherPin = Pin.Define("Gather", {
+    -- Renderer metadata. Matches the legacy "!Ga" iconType:
+    -- world-point + chop, 12x12 base, atScale-gated so the dense
+    -- node fields disappear when the map is zoomed way out.
+    drawMode = "WP",
+    w = 12, h = 12,
+    clipKind = "chop",
     minScale = 0.6,
 })
 

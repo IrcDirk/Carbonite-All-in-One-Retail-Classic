@@ -144,13 +144,19 @@ Plugin.Bind(NotesAddon, "Notes", {
 })
 
 -- When the Map module asks for note pins to render, hand them over.
+-- Layer name must match the Pin kind so the Renderer's per-layer
+-- Pin.GetClass(layer.name) lookup finds the metadata. Currently the
+-- legacy NxFav:UpdateIcons populates the parallel "!Fav" layer per
+-- frame; this handler is the event-driven new path and only fires
+-- on explicit Map:Refresh(). We leave the legacy producer in place
+-- until the NxFav port migrates UpdateIcons over.
 Carbonite.Core.EventBus:Subscribe("MAP_REFRESH", function()
     local MapMod = Carbonite:GetModule("Map", true)
     if not MapMod then return end
-    local layer = MapMod:GetLayer("Notes")
+    local layer = MapMod:GetLayer("Note")
     layer:Clear()
     Notes:Each(function(note)
         if not note.mapID or not note.x or not note.y then return end
-        MapMod:AddPin("Notes", "Note", note)
+        MapMod:AddPin("Note", "Note", note)
     end)
 end)

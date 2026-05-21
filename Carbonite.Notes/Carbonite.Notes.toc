@@ -10,5 +10,19 @@
 
 Locales\locales.xml
 NxFav.lua
+# Per-feature blocks relocated from NxFav.lua. Each file overwrites
+# the corresponding Nx.Notes:* function with the same behaviour so
+# legacy callers keep working unchanged. Order matters: Options is
+# read by Init's OnInitialize, so Options has to be loaded first.
+Options.lua
+Init.lua
+Storage.lua
+Record.lua
+MapIcons.lua
+AddNote.lua
+WindowEngine.lua
+Integrations\HandyNotes.lua
+Integrations\Questie.lua
+Integrations\RareScanner.lua
 Plugin.lua
 

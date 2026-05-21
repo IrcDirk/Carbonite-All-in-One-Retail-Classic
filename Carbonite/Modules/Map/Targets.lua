@@ -39,19 +39,47 @@ end
 -- created target table (now in self.Targets).
 function Targets:Add(spec)
     local map = primaryMap()
-    if not map then return nil end
+    if not map or not spec then return nil end
 
-    spec = spec or {}
-    spec.UniqueId = spec.UniqueId or bumpUid(map)
-    map.Targets = map.Targets or {}
+    -- Match the legacy soft-fail: if coords aren't resolved (happens
+    -- on Era/MoP/TBC when a quest objective lacks a DB entry) the
+    -- caller still wants to proceed with other work (ClearAll, etc.)
+    -- so we bail before touching state.
+    if not spec.TargetX1 or not spec.TargetY1 then return end
 
-    -- The legacy Nx.Map:AddTarget had extra side effects around
-    -- "keep" (preserve existing targets) and scale capture. Honor
-    -- those behaviors for backwards compat.
-    if not spec.keep then map.Targets = {} end
+    map.Targets        = map.Targets or {}
+    map.UpdateTrackingDelay = 0
+    local sbt          = map.ScaleBeforeTarget
+    map.ScaleBeforeTarget = false
+
+    if not spec.keep then
+        -- Use the legacy method so any cleanup it does also fires.
+        if map.ClearTargets then map:ClearTargets() else map.Targets = {} end
+    end
+
+    map.ScaleBeforeTarget = sbt
+        or (not next(map.Targets)
+            and _G.Nx and _G.Nx.db and _G.Nx.db.profile.Map.RestoreScaleAfterTrack
+            and map.Scale)
+        or false
 
     table.insert(map.Targets, spec)
-    map.Tracking = {}        -- invalidate the cached tracking path
+
+    -- Default MapId to the player's current map and pre-compute the
+    -- mid-point coords downstream readers (MapEngine 5314 / 7102 /
+    -- 7176 / 7219, Pathing, Travel) expect on every target.
+    if not spec.MapId then spec.MapId = map.MapId end
+    spec.TargetMX = (spec.TargetX1 + spec.TargetX2) * 0.5
+    spec.TargetMY = (spec.TargetY1 + spec.TargetY2) * 0.5
+
+    spec.UniqueId = spec.UniqueId or bumpUid(map)
+    map.Tracking  = {}
+
+    if _G.Nx and _G.Nx.Notes and _G.Nx.Notes.Record then
+        local zx, zy = map:GetZonePos(spec.MapId, spec.TargetMX, spec.TargetMY)
+        _G.Nx.Notes:Record(spec.keep and "Target" or "TargetS",
+                           spec.TargetName, spec.MapId, zx, zy)
+    end
 
     Carbonite.Core.EventBus:Fire("MAP_TARGET_ADDED", spec)
     return spec

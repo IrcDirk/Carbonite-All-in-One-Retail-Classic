@@ -53,7 +53,7 @@ Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
     lastType = PartyState:GetGroupType()
     local f = CreateFrame("Frame", "CarbPartyState")
     f:RegisterEvent("GROUP_ROSTER_UPDATE")
-    f:RegisterEvent("PARTY_MEMBERS_CHANGED")
+    pcall(f.RegisterEvent, f, "PARTY_MEMBERS_CHANGED")  -- Classic-era only
     f:RegisterEvent("PLAYER_ENTERING_WORLD")
     f:SetScript("OnEvent", function()
         local now = PartyState:GetGroupType()

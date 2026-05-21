@@ -93,6 +93,11 @@ function Hotspots:Build()
                 end
 
                 local spot = {
+                    -- Legacy readers (MapEngine 7509/7515/7521/7523)
+                    -- read `MapId` with the capital I, so keep that
+                    -- spelling as canonical. `mapID` is an alias for
+                    -- new code.
+                    MapId = mapId,
                     mapID = mapId,
                     zx    = zx,
                     zy    = zy,

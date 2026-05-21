@@ -8,6 +8,21 @@
 -- Pin types extend this base via Carbonite.UI.Mixin.Apply (see
 -- Pins/*.lua). Concrete pins live in Pins/<Kind>Pin.lua and only
 -- override `OnAcquire`, `OnRelease`, and optionally `Update`.
+--
+-- Per-class metadata lives directly on the class table (set via
+-- Pin.Define). The renderer reads these fields to know how to draw
+-- every pin of this kind:
+--   drawMode      "ZP" zone-point, "WP" world-point, "ZR" zone-rect
+--   w, h          pixel size at scale 1
+--   tex           default texture path (per-instance .tex overrides)
+--   scale         per-type scale multiplier (default 1)
+--   atScale       min map zoom below which the whole class is hidden
+--   alpha         base alpha
+--   alphaNear     pulse alpha when player within 80yd (nil = no pulse)
+--   frameLvl      frame-level offset added to map base level
+--   clipKind      "z" / "map" / "w" / "chop" / "tl"; defaults from drawMode
+--   noDockMinimap when true, hide pins overlapping the docked minimap
+--   enabled       per-class visibility (mutable; see Pin.SetClassEnabled)
 
 local Carbonite = _G.Carbonite
 local Mixin = Carbonite.UI.Mixin
@@ -20,10 +35,29 @@ Carbonite.Modules.Map.Pin = Pin
 -- All known pin classes by kind string.
 Pin.classes = {}
 
+local DEFAULT_CLIP_KIND = { ZP = "z", WP = "map", ZR = "tl", LINE = "none" }
+
 function Pin.Define(kind, mixin)
     mixin.kind = kind
+    if mixin.clipKind == nil and mixin.drawMode then
+        mixin.clipKind = DEFAULT_CLIP_KIND[mixin.drawMode]
+    end
+    if mixin.scale == nil then mixin.scale = 1 end
+    if mixin.enabled == nil then mixin.enabled = true end
     Pin.classes[kind] = mixin
     return mixin
+end
+
+function Pin.GetClass(kind)
+    return Pin.classes[kind]
+end
+
+-- Mutates a per-class field. Used by the legacy IconType setters
+-- (SetIconTypeAlpha / SetIconTypeAtScale / ...) and by anything that
+-- wants to retune a whole pin kind at runtime.
+function Pin.SetClassField(kind, field, value)
+    local c = Pin.classes[kind]
+    if c then c[field] = value end
 end
 
 -- Static factory. Allocates a generic table, applies the kind's
@@ -67,6 +101,9 @@ end
 function Pin:OnRelease()
     self.mapID, self.x, self.y, self.icon, self.text = nil, nil, nil, nil, nil
     self.show = false
+    -- Older Renderer revisions cached atlas state on the pin; clear
+    -- so a recycled pin starts fresh.
+    self._isAtlas, self._atlasName = nil, nil
 end
 
 -- Updates rendered position. Renderer calls this each frame; cheap
@@ -78,7 +115,7 @@ function Pin:Update() end
 -- Hot-path; keep it allocation-free.
 function Pin:ShouldDraw(viewMapID, scale)
     if not self.show then return false end
-    if self.mapID ~= viewMapID then return false end
+    if self.mapID and viewMapID and self.mapID ~= viewMapID then return false end
     if self.minScale and scale < self.minScale then return false end
     if self.maxScale and scale > self.maxScale then return false end
     return true
