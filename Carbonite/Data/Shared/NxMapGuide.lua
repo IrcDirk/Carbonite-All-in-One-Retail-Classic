@@ -293,11 +293,10 @@ Nx.GuideInfo = {
             Tx = "INV_Ore_Copper_01",
             Persist = "ShowGatherM",
         },
-        {
-            Name = L["Timber"],
-            Tx = "INV_Tradeskillitem_03",
-            Persist = "ShowGatherL",
-        },
+        -- Timber, Artifacts, Everfrost and Gas entries are added by
+        -- PatchFolder below, gated on the expansion flags (WODMaps /
+        -- CataMaps / WOTLKMaps / TBCMaps). Don't hard-code them here
+        -- or they'd show on pre-expansion flavors.
     },
     {
         Name = L["Instances"],
