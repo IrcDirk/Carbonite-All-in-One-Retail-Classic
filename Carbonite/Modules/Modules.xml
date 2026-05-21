@@ -82,6 +82,9 @@
     <Script file="Whatsnew\WhatsnewEngine.lua" />
     <Script file="CombatStats\CombatStats.lua" />
     <Script file="TitleScreen\TitleScreen.lua" />
+    <!-- Splash-frame animation extracted from Carbonite.lua;
+         driven by Nx.Proc tick callbacks. -->
+    <Script file="TitleScreen\TitleScreenEngine.lua" />
     <Script file="UserEvents\UserEvents.lua" />
     <!-- WoW event handlers (OnPlayer_regen_*, OnUnit_spellcast_sent,
          OnZone_changed_new_area, OnPlayer_level_up,
@@ -95,6 +98,9 @@
     <Script file="GroupMembers\GroupMembers.lua" />
     <Script file="ItemRegistry\ItemRegistry.lua" />
     <Script file="AuctionAssist\AuctionAssist.lua" />
+    <!-- Engine extracted from Carbonite.lua: AH browse hook plus
+         the event-routed AceEvent callbacks. -->
+    <Script file="AuctionAssist\AuctionAssistEngine.lua" />
     <Script file="SlashHandler\SlashHandler.lua" />
     <Script file="EventDispatcher\EventDispatcher.lua" />
     <Script file="ChatHooks\ChatHooks.lua" />
