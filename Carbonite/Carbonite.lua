@@ -1781,17 +1781,6 @@ function Nx:NXOnUpdate (elapsed)
         end
     end
 
-    --[[if Nx.WhatsNewUnread() then
-        if Nx.Tick % 50 == 0 then
-            if Nx.GlowOn then
-                NXMiniMapBut:SetNormalTexture("Interface\\AddOns\\Carbonite\\Gfx\\MMBut")
-                Nx.GlowOn = false
-            else
-                NXMiniMapBut:SetNormalTexture("Interface\\AddOns\\Carbonite\\Gfx\\MMButFilled")
-                Nx.GlowOn = true
-            end
-        end
-    end]]--
     if not Nx.Whatsnew.HasWhatsNew then -- Adding it here to be at bottom of menu always.
         Nx.Whatsnew.HasWhatsNew = true
         Nx.NXMiniMapBut.Menu:AddItem(0,"")
