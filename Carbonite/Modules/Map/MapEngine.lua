@@ -4932,6 +4932,7 @@ function Nx.Map:Update (elapsed)
         return
     end
     local Nx = Nx
+    local Map = Nx.Map
 
     -- Debug profiling for stutter detection
     local debugProfile = Nx.db.profile.Debug.DebugMap
