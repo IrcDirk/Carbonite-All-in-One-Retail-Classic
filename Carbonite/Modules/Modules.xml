@@ -103,6 +103,10 @@
     <Script file="Window\WindowAttach.lua" />
     <Script file="ZoneTransition\ZoneTransition.lua" />
     <Script file="PlayerCharacter\PlayerCharacter.lua" />
+    <!-- Saved-variable character record management
+         (Init/Find/Copy/Delete/Calc + small data accessors)
+         extracted from Carbonite.lua. -->
+    <Script file="PlayerCharacter\CharacterData.lua" />
     <Script file="EditModeHooks\EditModeHooks.lua" />
     <Script file="Map\GuideLocations.lua" />
     <Script file="Map\WorldMapIntegration.lua" />
