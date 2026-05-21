@@ -172,6 +172,10 @@
          extracted from Carbonite.lua; data files in Data/Shared/NxMapGuide.lua
          still call these as Nx:... methods. -->
     <Script file="Gather\GatherEngine.lua" />
+    <!-- The big chunk: Nx.GatherInfo data, GatherRemap, the in-memory
+         cache and every Nx:Gather* recording/lookup/delete/import
+         function extracted from Carbonite.lua (~1080 lines). -->
+    <Script file="Gather\GatherStorage.lua" />
 
     <!-- Integrations with sibling addons. -->
     <Script file="Integrations\TomTom.lua" />
