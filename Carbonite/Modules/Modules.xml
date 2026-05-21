@@ -89,6 +89,10 @@
          OnParty_members_changed, OnUpdate_battlefield_score)
          extracted from Carbonite.lua. -->
     <Script file="UserEvents\EventHandlers.lua" />
+    <!-- Per-character event log (kills/deaths/gathers) extracted
+         from Carbonite.lua. Nx.UEvents:Add* (in NXOnUpdate) still
+         calls Nx:Add<Kind>Event. -->
+    <Script file="UserEvents\EventLog.lua" />
     <Script file="GroupMembers\GroupMembers.lua" />
     <Script file="ItemRegistry\ItemRegistry.lua" />
     <Script file="AuctionAssist\AuctionAssist.lua" />
