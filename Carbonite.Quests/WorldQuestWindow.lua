@@ -699,7 +699,20 @@ function Nx.Quest:GetQuestOffersForMap(mapID)
     local questLines = C_QuestLine.GetAvailableQuestLines(mapID)
     if questLines then
         for _, info in ipairs(questLines) do
-            if info.questID and not info.inProgress then
+            -- C_QuestLine.GetAvailableQuestLines returns every node
+            -- in every quest line known for this map — including
+            -- accepted quests (inProgress=true) and mid-line nodes
+            -- (isQuestStart=false). Only ones that are actually a
+            -- "new quest available to pick up here" deserve the
+            -- yellow ! marker. isQuestStart may not exist on older
+            -- flavors (MoP Classic etc.) — treat nil as "yes,
+            -- counts as a start" so we don't filter everything out.
+            -- (isAccountCompleted means the player has done it
+            -- before on this account — not relevant for a fresh
+            -- character, so don't filter on that.)
+            local isStart = info.isQuestStart
+            if isStart == nil then isStart = true end
+            if info.questID and isStart and not info.inProgress then
                 -- Skip quests that are related to a non-toggled Quest Hub (they'll show in hub tooltip)
                 -- If a hub is toggled on (expanded), show its quests on the map
                 if not isQuestRelatedToNonToggledHub(info.questID) then
@@ -810,8 +823,12 @@ function Nx.Quest:UpdateQuestOfferIcons(map)
             
             -- Get icon frame
             local icon = map:GetIcon(1)
-            
-            if map:ClipFrameTL(icon, wx - 8, wy - 8, 16, 16, 0) then
+
+            -- 10-unit footprint (was 16) — ClipFrameTL multiplies by
+            -- map.ScaleDraw so the previous 16 ended up huge at
+            -- typical zoom levels. Half-offset keeps the icon
+            -- centered on (wx, wy).
+            if map:ClipFrameTL(icon, wx - 5, wy - 5, 10, 10, 0) then
                 -- Set atlas texture
                 if offer.atlas then
                     icon.texture:SetAtlas(offer.atlas)

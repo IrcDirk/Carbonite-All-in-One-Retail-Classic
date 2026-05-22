@@ -55,15 +55,42 @@ function Nx.Quest:UpdateIcons (map)
     local qLocColors = Quest.QLocColors
     local ptSz = 4 * map.ScaleDraw
 
-    -- Dirty-check fingerprint. Every POI / area / distance-arrow
-    -- site now lives on the persistent Pin/Layer-backed provider —
-    -- the Renderer iterates the pin layer every frame regardless of
-    -- whether this producer runs, so on a clean frame we skip the
-    -- entire per-quest walk. The fingerprint coalesces ticks into
-    -- 10-frame buckets (matching the tracking-rebuild cadence at
-    -- line ~143), plus map / super-track / hover state so visual
-    -- feedback stays snappy. Quest log changes are picked up at
-    -- the next 10-tick bucket.
+    -- Update target — runs every frame regardless of dirty-check.
+    -- TrackOnMap re-anchors the quest blob (ClipZoneFrm SetPoint to
+    -- the QuestPOIFrame). The blob's anchor is parent-relative; the
+    -- parent scrolls with the player when the map follows, so if we
+    -- skip this re-anchor on most frames the blob visually drifts
+    -- with the character and only "snaps back" on the rare frame
+    -- the dirty-check decides to rebuild.
+    local navscale = Map.Maps[1].IconNavScale * 16
+    local showOnMap = Quest.Watch.ButShowOnMap:GetPressed()
+
+    local typ, tid = Map:GetTargetInfo()
+    if typ == "Q" then
+
+--        Nx.prt ("QTar %s", tid)
+
+        local qid = floor (tid / 100)
+        local i, cur = Quest:FindCur (qid)
+
+        if cur then
+            Quest:CalcDistances (cur.Index, cur.Index)
+            Quest:TrackOnMap (cur.QId, tid % 100, cur.QI > 0 or cur.Party, true, true)
+
+--            Nx.prt ("UpIcons target %s %s", typ or "nil", tid or "nil")
+        end
+    end
+
+    -- Dirty-check fingerprint for the heavier per-quest POI walk
+    -- below. Every POI / area / distance-arrow site now lives on
+    -- the persistent Pin/Layer-backed provider — the Renderer
+    -- iterates the pin layer every frame regardless of whether this
+    -- producer runs, so on a clean frame we skip the entire
+    -- per-quest walk. The fingerprint coalesces ticks into 10-frame
+    -- buckets (matching the tracking-rebuild cadence at line ~143),
+    -- plus map / super-track / hover state so visual feedback stays
+    -- snappy. Quest log changes are picked up at the next 10-tick
+    -- bucket.
     local activeQID = (C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
         and C_SuperTrack.GetSuperTrackedQuestID()) or 0
     if activeQID == 0 then activeQID = Nx.Quest.ActiveQID or 0 end
@@ -87,31 +114,10 @@ function Nx.Quest:UpdateIcons (map)
         Nx.Quest:ClearProviderPins()
     end
 
-    local navscale = Map.Maps[1].IconNavScale * 16
-    local showOnMap = Quest.Watch.ButShowOnMap:GetPressed()
-
     local opts = self.GOpts
     local showWatchAreas = Nx.qdb.profile.Quest.MapShowWatchAreas
     local trkR, trkG, trkB, trkA =  Nx.Quest.Cols["trkR"], Nx.Quest.Cols["trkG"], Nx.Quest.Cols["trkB"], Nx.Quest.Cols["trkA"]
     local hovR, hovG, hovB, hovA =  Nx.Quest.Cols["hovR"], Nx.Quest.Cols["hovG"], Nx.Quest.Cols["hovB"], Nx.Quest.Cols["hovA"]
-
-    -- Update target
-
-    local typ, tid = Map:GetTargetInfo()
-    if typ == "Q" then
-
---        Nx.prt ("QTar %s", tid)
-
-        local qid = floor (tid / 100)
-        local i, cur = Quest:FindCur (qid)
-
-        if cur then
-            Quest:CalcDistances (cur.Index, cur.Index)
-            Quest:TrackOnMap (cur.QId, tid % 100, cur.QI > 0 or cur.Party, true, true)
-
---            Nx.prt ("UpIcons target %s %s", typ or "nil", tid or "nil")
-        end
-    end
 
     -- Blob
 
@@ -427,11 +433,11 @@ function Nx.Quest:UpdateIcons (map)
                                     local ax = cur["OX"..n]
                                     local ay = cur["OY"..n]
                                     if ax and ay then
-                                        if Nx.Quest.AddPOI then
+                                        if Nx.Quest.AddArrow then
                                             local avc = tracking
                                                 and {.8, .8, .8, 1}
                                                 or  {r, g, b, .7}
-                                            Nx.Quest:AddPOI(ax, ay, {
+                                            Nx.Quest:AddArrow(ax, ay, {
                                                 tip         = tip,
                                                 tex         = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconAreaArrows",
                                                 NXType      = 9000 + n,

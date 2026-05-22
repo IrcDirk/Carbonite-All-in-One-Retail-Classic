@@ -88,8 +88,17 @@ function Nx.Quest:ProcessQuestDB(questTotal)
             end
         else
             local name, side, level, minlevel, qnext = self:Unpack (q["Quest"])
+            -- Used to `Nx.Quests[mungeId] = nil` here for opposite-
+            -- faction / out-of-level-range quests as a memory
+            -- optimization. The wipe caused the patch code to later
+            -- synthesize a single-point stub over rich bundled data
+            -- (e.g. quest 10302's many area-rect objectives) when the
+            -- player accepted the quest anyway — and even when fully
+            -- filtered, the quest vanished from Carbonite's watch
+            -- panel entirely. Keep the data; just skip the chain-
+            -- walker / sort-insert work for irrelevant quests.
             if side == enFact or level > 0 and (maxLoadLevel and level > qLoadLevel) or level > qMaxLevel then
-                Nx.Quests[mungeId] = nil
+                -- skip processing, but preserve the bundled data
             else
                 --[[if q["End"] and q["End"] == q["Start"] then
                 no enders
@@ -127,6 +136,14 @@ function Nx.Quest:ProcessQuestDB(questTotal)
             end
         end
     end
+
+    -- Invalidate the bundled-name → bundled-id reverse index so the
+    -- next PatchQuestFromBlizzard miss rebuilds it from the now-
+    -- complete Nx.Quests (the per-flavor Load1/Load2/... chunks
+    -- finish over several C_Timer.After ticks). Used to recover
+    -- bundled data when Blizzard renumbered a quest, e.g. TBC 9303
+    -- "Inoculation" → retail 37444.
+    Nx.QuestsByTitle = nil
 
 --[[
     for lvl = 0, 110 do

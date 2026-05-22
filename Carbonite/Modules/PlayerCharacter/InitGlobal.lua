@@ -92,7 +92,7 @@ function Nx:InitGlobal()
 
     local opts = Nx.db.profile.HUDOpts
 
-    if not opts or opts.Version < Nx.VERSIONHUDOPTS then
+    if not opts or not opts.Version or opts.Version < Nx.VERSIONHUDOPTS then
 
         if opts then
             Nx.prt (L["Reset old HUD options"] .. " %f", opts.Version)
@@ -109,7 +109,7 @@ function Nx:InitGlobal()
 
     local tr = Nx.db.char.Travel
 
-    if not tr or tr.Version < Nx.VERSIONTRAVEL then
+    if not tr or not tr.Version or tr.Version < Nx.VERSIONTRAVEL then
 
         if tr then
             Nx.prt (L["Reset old travel data"] .. " %f", tr.Version)
@@ -124,7 +124,7 @@ function Nx:InitGlobal()
 
     local cd = Nx.db.char.Travel.Taxi
 
-    if not cd or cd.Version < Nx.VERSIONCharData then
+    if not cd or not cd.Version or cd.Version < Nx.VERSIONCharData then
         cd = {}
         Nx.db.char.Travel.Taxi = cd
         cd.Version = Nx.VERSIONCharData
@@ -137,9 +137,9 @@ function Nx:InitGlobal()
 
     local gath = Nx.db.profile.GatherData
 
-    if not gath or gath.Version < Nx.VERSIONGATHER then
+    if not gath or not gath.Version or gath.Version < Nx.VERSIONGATHER then
 
-        if gath and gath.Version < 0 then
+        if gath and gath.Version and gath.Version < 0 then
             Nx.DoGatherUpgrade = gath.Version
 
         else
@@ -166,7 +166,7 @@ function Nx:InitGlobal()
 
 --    cap = nil        -- Nuke test
 
-    if not cap or cap.Version < Nx.VERSIONCAP then
+    if not cap or not cap.Version or cap.Version < Nx.VERSIONCAP then
 
 --        if cap then
 --            Nx.prt ("Reset old cap %f", cap.Version)

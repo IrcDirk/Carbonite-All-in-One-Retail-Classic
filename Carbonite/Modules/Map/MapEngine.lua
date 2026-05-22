@@ -1944,12 +1944,17 @@ function Nx.Map:UpdateWorldMap()
                 self.QuestWin:Hide()
             elseif Nx.db.char.Map.ShowQuestBlobs then
                 self.QuestWin:DrawBlob(superTrackedQuestID, true)
-                self:ClipZoneFrm(self.Cont, self.Zone, self.QuestWin, 1)
                 self.QuestWin:SetFrameLevel(self.Level)
                 self.QuestWin:SetFillAlpha(255 * self.QuestAlpha)
                 self.QuestWin:SetBorderAlpha(255 * self.QuestAlpha)
                 self.QuestWin:SetMapID(Nx.Map:GetCurrentMapAreaID())
                 self.QuestWin:Show()
+                -- Anchor AFTER Show — on retail the QuestPOIFrame
+                -- repositions itself during Show/SetMapID; running
+                -- our ClipZoneFrm last keeps the blob pinned to
+                -- the zone's world rect. See the matching change in
+                -- Carbonite.Quests/Tracking.lua.
+                self:ClipZoneFrm(self.Cont, self.Zone, self.QuestWin, 1)
             else
                 self.QuestWin:Hide()
             end
@@ -5898,8 +5903,16 @@ function Nx.Map:Update (elapsed)
                         pX, pY = self:GetWorldPos(self.MapId, pX, pY)
                         -- Use ClipFrameWNoChop for all POI icons to avoid squishing at map edges
                         -- Parent frame clips overflow via SetClipsChildren(true)
-                        local iconW = txW * self.ScaleDraw
-                        local iconH = txH * self.ScaleDraw
+                        -- Render Blizzard POI icons (available quest
+                        -- markers from C_QuestLine.GetAvailableQuestLines,
+                        -- area-POI hubs, vignettes, ...) at their
+                        -- texture-native size — no `* ScaleDraw`.
+                        -- ClipFrameWNoChop treats w/h as raw pixels, so
+                        -- multiplying by ScaleDraw made them grow with
+                        -- map zoom up to 4-5× native (80-160 px); native
+                        -- size keeps them readable but not dominant.
+                        local iconW = txW
+                        local iconH = txH
                         if self:ClipFrameWNoChop(f, pX, pY, iconW, iconH) then
                             if atlasIcon then
                                 f.texture:SetAtlas(atlasIcon)

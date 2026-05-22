@@ -1751,6 +1751,78 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             -- the new objective. Cheap: it just re-runs TrackOnMap for
             -- the active quest.
             Nx.Quest:OnSuperTrackChanged()
+            -- Broad cur.QId self-heal. OnSuperTrackChanged only
+            -- repairs the cur tied to the live super-tracked quest;
+            -- other cur entries can still hold a stale QId from
+            -- before a quest was accepted/abandoned mid-RecordQuestsLog
+            -- pass. Walk every cur, resolve via its log index, and
+            -- re-key Nx.Quest.QIds / IdToCurQ when the ID drifted —
+            -- otherwise the skew persists until the user opens the
+            -- quest log (which triggers a full RecordQuestsLog scan).
+            if Nx.Quest.CurQ and C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+                for _, c in ipairs(Nx.Quest.CurQ) do
+                    if c.QI and c.QI > 0 then
+                        local live = C_QuestLog.GetQuestIDForLogIndex(c.QI)
+                        if live and live > 0 and live ~= c.QId then
+                            -- Title-check guard: log indices shift when a
+                            -- quest is accepted/abandoned, so c.QI may
+                            -- now point at a *different* quest. Only
+                            -- re-key when titles still match (Blizzard
+                            -- renumbered the same quest, e.g. Inoculation
+                            -- 9303 -> 37444). On a title mismatch the
+                            -- cur is stale from a log shift -- leave it
+                            -- for RecordQuestsLog to rebuild rather than
+                            -- silently inheriting the wrong ID.
+                            local liveTitle
+                            if C_QuestLog.GetInfo then
+                                local info = C_QuestLog.GetInfo(c.QI)
+                                liveTitle = info and info.title
+                            end
+                            if not liveTitle and GetQuestLogTitle then
+                                liveTitle = GetQuestLogTitle(c.QI)
+                            end
+                            if liveTitle and c.Title and liveTitle == c.Title then
+                                local oldQId = c.QId
+                                c.QId = live
+                                if Nx.Quest.QIds then
+                                    if oldQId then Nx.Quest.QIds[oldQId] = nil end
+                                    Nx.Quest.QIds[live] = c
+                                end
+                                if Nx.Quest.IdToCurQ then
+                                    if oldQId then Nx.Quest.IdToCurQ[oldQId] = nil end
+                                    Nx.Quest.IdToCurQ[live] = c
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            -- Map-icon producer caches its tooltip text (`pin.tip`,
+            -- which embeds cur[n+400] progress strings) at stamp
+            -- time. The fingerprint dirty-check in UpdateIcons only
+            -- includes hover / super-track / tick-bucket, so objective
+            -- progress changes ("0/5" → "1/5") would otherwise wait
+            -- up to a 10-tick bucket (~166ms) before being reflected.
+            -- Flagging dirty here forces the rebuild on the very next
+            -- producer pass.
+            Nx.Quest._iconDirty = true
+            -- The Questie integration scrapes Questie's tooltip data
+            -- (data.ObjectiveData.Description, etc.) into pin.tip at
+            -- icon-stamp time. Its own hash doesn't include progress
+            -- text, so without busting the cache here the icon
+            -- tooltip would still show the pre-progress objective
+            -- text until the next zone change. (HandyNotes /
+            -- RareScanner tooltips don't depend on quest progress.)
+            if Nx.Notes and Nx.Notes.BustIntegrationCache then
+                Nx.Notes:BustIntegrationCache("Questie")
+            end
+            -- Bust the quest-offer cache in WorldQuestWindow so a
+            -- just-accepted quest stops rendering as an available
+            -- POI icon on the map. GetQuestOffersForMap caches its
+            -- C_QuestLine.GetAvailableQuestLines result for 2s, which
+            -- otherwise makes the accepted quest's "available"
+            -- marker linger until the cache naturally expires.
+            Nx.Quest.QuestOfferCacheTime = 0
         end
     elseif event == "GARRISON_MISSION_COMPLETE_RESPONSE" then
         Nx.Quest.List:LogUpdate()

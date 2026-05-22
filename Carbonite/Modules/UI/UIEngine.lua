@@ -998,12 +998,20 @@ function Nx:SetTooltipText(str)
     if s1 then
         local t = { Nx.Split("\n", str) }
 
+        if Nx._dbgTip then
+            _G.print("|cffff8800TT|r lines=" .. #t .. " first=" .. tostring(t[1]))
+        end
+
         Nx.TooltipText:SetText(t[1], 1, 1, 1, 1, true)  -- First line with wrap
         tremove(t, 1)
 
         for _, line in ipairs(t) do
             -- Check for tab-separated double columns
             local s1, s2 = Nx.Split("\t", line)
+            if Nx._dbgTip then
+                _G.print("|cffff8800TT|r  line=" .. tostring(line)
+                    .. " s1=" .. tostring(s1) .. " s2=" .. tostring(s2))
+            end
             if s2 then
                 Nx.TooltipText:AddDoubleLine(s1, s2, 1, 1, 1, 1, 1, 1)
             else
@@ -1016,6 +1024,9 @@ function Nx:SetTooltipText(str)
 
     -- Always call Show() to ensure tooltip is properly sized and displayed
     Nx.TooltipText:Show()
+    if Nx._dbgTip then
+        _G.print("|cffff8800TT|r shown, lines=" .. tostring(Nx.TooltipText:NumLines()))
+    end
 end
 
 -------------------------------------------------------------------------------

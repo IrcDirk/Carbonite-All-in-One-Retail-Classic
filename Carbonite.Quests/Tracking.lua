@@ -245,12 +245,19 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                     QMap.QuestWin:Hide()
                 elseif Nx.db.char.Map.ShowQuestBlobs and Nx.Quests[-qId] then
                     QMap.QuestWin:DrawBlob(qId,true)
-                    QMap:ClipZoneFrm( QMap.Cont, QMap.Zone, QMap.QuestWin, 1 )
                     QMap.QuestWin:SetFrameLevel(QMap.Level)
                     QMap.QuestWin:SetFillAlpha(255 * QMap.QuestAlpha)
                     QMap.QuestWin:SetBorderAlpha( 255 * QMap.QuestAlpha )
                     QMap.QuestWin:SetMapID(QMap.Zone)
                     QMap.QuestWin:Show()
+                    -- Re-anchor AFTER Show() — on retail the
+                    -- QuestPOIFrame's internal SetMapID/Show path
+                    -- repositions itself relative to the player,
+                    -- producing the "blob follows character, snaps
+                    -- back" symptom when ClipZoneFrm runs before.
+                    -- Putting our clip last gives us the final word
+                    -- on position.
+                    QMap:ClipZoneFrm( QMap.Cont, QMap.Zone, QMap.QuestWin, 1 )
                 else
                     QMap.QuestWin:Hide()
                 end
@@ -275,6 +282,57 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
 
 --                        x1, y1, x2, y2 = Quest:GetClosestObjectiveRect (questObj, mId, px, py)
                         x1, y1 = Quest:GetClosestObjectivePos (questObj, loc, mId, px, py)
+
+                        -- On retail/Wrath+, prefer Blizzard's live
+                        -- waypoint over the bundled coord whenever
+                        -- the API has one. Bundled DB carries legacy
+                        -- mapIds that may no longer resolve (e.g.
+                        -- quest 37444 "Inoculation" lists mapId 468
+                        -- but retail Azuremyst Isle is uiMapID 97)
+                        -- — GetWorldPos either returns 0,0 or a
+                        -- stale-but-wrong coord, sending tracking to
+                        -- the wrong place. The API knows the live
+                        -- current-objective coord regardless.
+                        if C_QuestLog then
+                            local wpMapID, wpX, wpY
+                            if C_QuestLog.GetNextWaypoint then
+                                wpMapID, wpX, wpY = C_QuestLog.GetNextWaypoint(qId)
+                            end
+                            if not wpMapID and C_QuestLog.GetQuestsOnMap then
+                                local function tryMap(m)
+                                    if wpMapID or not m then return end
+                                    local list = C_QuestLog.GetQuestsOnMap(m)
+                                    if not list then return end
+                                    for _, e in ipairs(list) do
+                                        if e.questID == qId and e.x and e.y then
+                                            wpMapID, wpX, wpY = m, e.x, e.y
+                                            return
+                                        end
+                                    end
+                                end
+                                if C_TaskQuest and C_TaskQuest.GetQuestZoneID then
+                                    tryMap(C_TaskQuest.GetQuestZoneID(qId))
+                                end
+                                tryMap(Map.GetCurrentMapId and Map:GetCurrentMapId())
+                            end
+                            if wpMapID and wpX and wpY then
+                                -- Blizzard returns uiMapIDs; Carbonite's
+                                -- GetWorldPos wants its own internal
+                                -- mapId. Convert via GetLegacyMapInfo if
+                                -- available.
+                                local mapForPos = wpMapID
+                                if Map.GetLegacyMapInfo then
+                                    local m = Map:GetLegacyMapInfo(wpMapID)
+                                    if m then mapForPos = m end
+                                end
+                                local nx, ny = Map:GetWorldPos(mapForPos, wpX * 100, wpY * 100)
+                                if nx and ny and (nx ~= 0 or ny ~= 0) then
+                                    x1, y1 = nx, ny
+                                    mId = mapForPos
+                                end
+                            end
+                        end
+
                         x2 = x1
                         y2 = y1
                     else
@@ -334,11 +392,23 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                             tryMap(Map.GetCurrentMapId and Map:GetCurrentMapId())
                         end
                         if overrideMID then
-                            local nx, ny = Map:GetWorldPos(overrideMID,
+                            -- Blizzard returns uiMapIDs; Carbonite's
+                            -- GetWorldPos wants its own internal mapId.
+                            local mapForPos = overrideMID
+                            if Map.GetLegacyMapInfo then
+                                local m = Map:GetLegacyMapInfo(overrideMID)
+                                if m then mapForPos = m end
+                            end
+                            local nx, ny = Map:GetWorldPos(mapForPos,
                                 overrideX * 100, overrideY * 100)
-                            if nx and ny then
+                            -- Reject 0,0: GetWorldPos returns that when
+                            -- the mapForPos can't be resolved, and the
+                            -- bundled End coord (already converted above)
+                            -- is then clobbered by a world-origin point,
+                            -- sending the arrow ~15000y across the map.
+                            if nx and ny and (nx ~= 0 or ny ~= 0) then
                                 x1, y1, x2, y2 = nx, ny, nx, ny
-                                mId = overrideMID
+                                mId = mapForPos
                             end
                         end
 

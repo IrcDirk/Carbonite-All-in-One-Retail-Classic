@@ -71,10 +71,25 @@ local function provider()
         end
     end
 
+    -- POI size picked to roughly match the legacy navscale (16)
+    -- after the renderer's icon-scale multiplier kicks in. Going
+    -- much higher (32) made them dominate the map next to Questie's
+    -- own available-quest pins; sticking close to legacy keeps the
+    -- map readable.
     p:DefinePin("POI", {
         drawMode = "WP",
-        w        = 16,    -- mapIcons' navscale overrides per-frame via class field
-        h        = 16,
+        w        = 20,
+        h        = 20,
+        onStamp  = stampQuestFrame,
+    })
+
+    -- Distance-arrow pins stay smaller — they're directional
+    -- pointers along the edge of an objective area, drawn alongside
+    -- the main POI; matching POI size would crowd the map.
+    p:DefinePin("Arrow", {
+        drawMode = "WP",
+        w        = 14,
+        h        = 14,
         onStamp  = stampQuestFrame,
     })
 
@@ -114,6 +129,12 @@ function Nx.Quest:AddArea(wx, wy, opts)
     local p = provider()
     if not p then return nil end
     return p:Add("Area", wx, wy, opts)
+end
+
+function Nx.Quest:AddArrow(wx, wy, opts)
+    local p = provider()
+    if not p then return nil end
+    return p:Add("Arrow", wx, wy, opts)
 end
 
 function Nx.Quest:ClearProviderPins()

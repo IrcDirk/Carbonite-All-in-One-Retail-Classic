@@ -828,8 +828,14 @@ function Nx.Quest:ScanBlizzQuestDataZone(WatchUpdate)
                             -- If our slot has data, just rename its desc to
                             -- the live objective text (so tooltips / watch
                             -- list show real labels instead of "nil"). If
-                            -- the slot is empty, write a single Blizzard-
-                            -- derived POI as a fallback.
+                            -- the slot is empty AND we had no objective
+                            -- data at all, write a single Blizzard-derived
+                            -- POI as a fallback. When we already have
+                            -- curated objectives in the DB (e.g. quest
+                            -- 10302's many-area-rect data), don't
+                            -- synthesize over them — even when an
+                            -- individual slot is missing.
+                            local hadObjectives = quest["Objectives"] ~= nil
                             if not quest["Objectives"] then
                                 quest["Objectives"] = {}
                             end
@@ -840,9 +846,11 @@ function Nx.Quest:ScanBlizzQuestDataZone(WatchUpdate)
                                 objText = (objText:gsub("|", ""))
                                 local slot = quest["Objectives"][i]
                                 if not slot then
-                                    local obj = format ("%s|%s|32|%f|%f|6|6",
-                                        objText, mapId, x, y)
-                                    quest["Objectives"][i] = {obj}
+                                    if not hadObjectives then
+                                        local obj = format ("%s|%s|32|%f|%f|6|6",
+                                            objText, mapId, x, y)
+                                        quest["Objectives"][i] = {obj}
+                                    end
                                 else
                                     for j, poi in ipairs (slot) do
                                         if type(poi) == "string" then

@@ -49,6 +49,16 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
     if not qId or qId <= 0 then return false end
     if not C_QuestLog or not C_QuestLog.GetQuestObjectives then return false end
 
+    -- Note: a previous iteration of this function aliased renumbered
+    -- retail quests onto same-named bundled IDs (e.g. retail 37444
+    -- "Inoculation" → TBC 9303 "Inoculation"). That misroutes
+    -- tracking — the bundled coords were Outland Hellfire, the
+    -- retail remake is in a different zone. The right answer is to
+    -- let the patch fall through to its Blizzard-API synthesis
+    -- (GetQuestsOnMap / GetNextWaypoint coords) for unknown qIds;
+    -- you lose the bundled area-rect detail but tracking lands at
+    -- the actual live objective.
+
     local objectives = C_QuestLog.GetQuestObjectives (qId)
     local lbCnt = (objectives and #objectives) or 0
 
@@ -104,8 +114,14 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
         --     so tooltips / watch list show the real objective text instead
         --     of "nil". Don't append a new POI; that would render a ghost
         --     icon next to the real ones.
-        --   * If the slot is empty, write a single Blizzard-derived POI so
-        --     the watch list still shows something.
+        --   * If the slot is empty AND we never had any objective data at
+        --     all (quest was missing from our DB entirely), write a single
+        --     Blizzard-derived POI so the watch list still shows something.
+        --   * If our DB had any objectives (even partial), preserve its
+        --     structure — don't synthesize over curated data like quest
+        --     10302's many-area-rect objective which would otherwise be
+        --     reduced to a single type-32 point.
+        local hadObjectives = quest["Objectives"] ~= nil
         if not quest["Objectives"] then
             quest["Objectives"] = {}
         end
@@ -114,17 +130,21 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
             objText = (objText:gsub("|", ""))  -- strip pipes from desc
             local slot = quest["Objectives"][i]
             if not slot then
-                local obj
-                if mapId and x and y then
-                    obj = format ("%s|%s|32|%f|%f|6|6", objText, mapId, x, y)
-                else
-                    -- Best-effort: text-only entry with sentinel zone 0.
-                    -- Watch list shows it; map can't pin it until we get
-                    -- coords on a later QUEST_POI_UPDATE.
-                    obj = format ("%s|0|32|0|0|6|6", objText)
+                if not hadObjectives then
+                    local obj
+                    if mapId and x and y then
+                        obj = format ("%s|%s|32|%f|%f|6|6", objText, mapId, x, y)
+                    else
+                        -- Best-effort: text-only entry with sentinel zone 0.
+                        -- Watch list shows it; map can't pin it until we get
+                        -- coords on a later QUEST_POI_UPDATE.
+                        obj = format ("%s|0|32|0|0|6|6", objText)
+                    end
+                    quest["Objectives"][i] = { obj }
+                    touched = true
                 end
-                quest["Objectives"][i] = { obj }
-                touched = true
+                -- else: bundled quest had partial objectives; respect
+                -- the curated DB and skip synthesizing.
             else
                 for j, poi in ipairs (slot) do
                     if type(poi) == "string" then
