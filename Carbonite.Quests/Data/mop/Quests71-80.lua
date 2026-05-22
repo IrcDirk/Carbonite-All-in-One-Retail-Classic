@@ -24462,7 +24462,7 @@ function Nx.ModQuests:Data8()
         },
         [13347] = {
             Quest = [=[Reborn From The Ashes|1|74|71|13369|0|0]=],
-            End = "29611|1453|32|85.79|31.70",
+            End = "29611|84|32|85.79|31.70",
             Objectives = {
                 [1] = {
                     "nil|115|32|38.02|19.63|9.62|9.62",
@@ -24756,7 +24756,7 @@ function Nx.ModQuests:Data8()
         },
         [13370] = {
             Quest = [=[A Royal Coup|1|74|71|13371|0|0]=],
-            End = "29611|1453|32|85.79|31.70",
+            End = "29611|84|32|85.79|31.70",
         },
         [13371] = {
             Quest = [=[The Killing Time|1|74|71|13377|0|0]=],
@@ -24831,7 +24831,7 @@ function Nx.ModQuests:Data8()
         },
         [13377] = {
             Quest = [=[The Battle For The Undercity|1|74|71|0|0|0]=],
-            End = "29611|1453|32|85.79|31.70",
+            End = "29611|84|32|85.79|31.70",
         },
         [13378] = {
             Quest = [=[Chief Engineer Copperclaw||80|77|13373|0|0]=],
@@ -28480,7 +28480,7 @@ function Nx.ModQuests:Data8()
         },
         [14409] = {
             Quest = [=[A Cautious Return|1|73|71|0|0|0]=],
-            End = "36479|1457|32|50.12|15.99",
+            End = "36479|89|32|50.12|15.99",
         },
         [14443] = {
             Quest = [=[The Battered Hilt|1|80|80|14444|0|0]=],
@@ -30097,7 +30097,7 @@ function Nx.ModQuests:Data8()
         },
         [28825] = {
             Quest = [=[A Personal Summons||80|80|28826|0|0]=],
-            Start = "206111|1453|32|62.87|71.48",
+            Start = "206111|84|32|62.87|71.48",
             End = "45226|84|32|74.4|18.8",
         },
         [28826] = {

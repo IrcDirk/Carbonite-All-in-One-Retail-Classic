@@ -98,7 +98,7 @@ function Nx.ModQuests:Data7()
         },
         [10532] = {
             Quest = [=[Cut Arathor Supply Lines||70|70|0|0|0]=],
-            End = "15022|1417|32|68.57|30.44",
+            End = "15022|14|32|68.57|30.44",
         },
         [10533] = {
             Quest = [=[More Resource Crates||70|70|0|0|0]=],
@@ -106,7 +106,7 @@ function Nx.ModQuests:Data7()
         },
         [10535] = {
             Quest = [=[Arathi Basin Resources!||70|70|0|0|0]=],
-            End = "14984|1417|32|40.01|46.51",
+            End = "14984|14|32|40.01|46.51",
         },
         [10536] = {
             Quest = [=[More Resource Crates||70|70|0|0|0]=],
