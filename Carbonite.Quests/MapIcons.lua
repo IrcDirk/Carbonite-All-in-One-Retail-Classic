@@ -46,7 +46,19 @@ local taskInfoCacheTimer = nil
 if C_TaskQuest and C_TaskQuest.GetQuestsOnMap then
     taskInfoCacheTimer = C_Timer.NewTicker(1, function()
         if Nx.Map and Nx.Map.UpdateMapID then
-            taskInfoCache = C_TaskQuest.GetQuestsOnMap(Nx.Map.UpdateMapID)
+            -- Preserve the prior good cache when the API returns a nil
+            -- or empty list. C_TaskQuest.GetQuestsOnMap occasionally
+            -- replies empty mid-refresh on retail; clobbering the
+            -- cache then left the next UpdateIcons pass with nothing
+            -- to stamp, so ResetIcons/HideExtraIcons hid every WQ /
+            -- bonus-task icon for that frame. The next ticker tick
+            -- repopulated the cache and the icons came back -- visible
+            -- as a once-per-second blink of every retail world-quest
+            -- pin on the map.
+            local fresh = C_TaskQuest.GetQuestsOnMap(Nx.Map.UpdateMapID)
+            if fresh and #fresh > 0 then
+                taskInfoCache = fresh
+            end
         end
     end)
 end
@@ -106,11 +118,19 @@ function Nx.Quest:UpdateIcons (map)
     local fp = (map.MapId or 0) .. "|" .. activeQID .. "|"
             .. (hoverCur and hoverCur.QId or 0) .. "|" .. hoverObjI
             .. "|" .. tickBucket
-    if self._lastIconFP == fp and not self._iconDirty then
-        return
-    end
+    -- The dirty-check now guards only the heavy per-quest walk
+    -- (Pin/Layer-backed POIs). The BONUS TASKS / WORLD QUESTS block
+    -- below uses the legacy direct-stamp pool (IconWQFrms), which the
+    -- MapEngine resets to Next=1 every frame -- so on clean frames
+    -- where this early-returned we never re-stamped the WQ icons and
+    -- HideExtraIcons silently hid them. Player saw it as every retail
+    -- world-quest pin blinking at ~2 Hz (the dirty-frame cadence).
+    -- Run the per-quest walk only when dirty; always run the WQ block.
+    local _walkDirty = (self._lastIconFP ~= fp) or self._iconDirty
     self._lastIconFP = fp
     self._iconDirty  = false
+
+    if _walkDirty then
 
     -- Reset the Pin/Layer-backed POI provider for this pass. Every
     -- icon site below adds back into this same layer, so clearing
@@ -613,6 +633,8 @@ function Nx.Quest:UpdateIcons (map)
             end -- if quest
         end -- if not cur and not quest
     end
+
+    end -- if _walkDirty then (per-quest walk guarded by dirty-check)
 
     -- BONUS TASKS and WORLD QUESTS icons
     local taskIconIndex = 1
