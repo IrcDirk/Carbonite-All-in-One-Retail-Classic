@@ -14,12 +14,12 @@ function Nx.ModQuests:Data6()
         },
         [3503] = {
             Quest = [=[Meeting with the Master|1|55|45|0|0|0]=],
-            Start = "4485|85|32|75.00|34.20",
+            Start = "8395|76|32|28.0|50.0",
             End = "8395|76|32|28.0|50.0",
         },
         [3561] = {
             Quest = [=[Delivery to Archmage Xylem|1|52|45|3565|0|0]=],
-            Start = "4046|88|32|70.20|30.80",
+            Start = "8587|76|32|22.4|51.4",
             End = "8379|76|32|29.6|40.6",
             Objectives = {
                 [1] = {
@@ -29,7 +29,7 @@ function Nx.ModQuests:Data6()
         },
         [5534] = {
             Quest = [=[Kim'jael's "Missing" Equipment||53|47|0|0|0]=],
-            Start = "11548|76|32|11.40|78.20",
+            Start = "8420|76|32|53.4|21.8",
             End = "8420|76|32|53.4|21.8",
             Objectives = {
                 [1] = {
@@ -106,7 +106,7 @@ function Nx.ModQuests:Data6()
         },
         [7382] = {
             Quest = [=[Korrak the Everliving|2|60|50|0|0|0]=],
-            Start = "3515|57|32|55.80|53.90",
+            Start = "13841|21|32|89.8|60.11",
             End = "13841|21|32|89.8|60.11",
             Objectives = {
                 [1] = {
@@ -125,7 +125,7 @@ function Nx.ModQuests:Data6()
         },
         [7791] = {
             Quest = [=[A Donation of Wool|2|60|12|0|0|0]=],
-            Start = "20604|103|32|63.50|67.70",
+            Start = "14722|84|32|53.9|81.7",
             End = "14722|84|32|53.90|81.70",
             Objectives = {
                 [1] = {
@@ -243,7 +243,7 @@ function Nx.ModQuests:Data6()
         },
         [7792] = {
             Quest = [=[A Donation of Wool|2|60|12|0|0|0]=],
-            Start = "14722|84|32|53.90|81.70",
+            Start = "20604|103|32|63.5|67.7",
             End = "20604|103|32|63.50|67.70",
             Objectives = {
                 [1] = {
@@ -401,7 +401,7 @@ function Nx.ModQuests:Data6()
         },
         [7798] = {
             Quest = [=[A Donation of Silk|2|60|26|0|0|0]=],
-            Start = "14725|89|32|64.00|23.00",
+            Start = "20604|103|32|63.5|67.7",
             End = "20604|103|32|63.50|67.70",
             Objectives = {
                 [1] = {
@@ -431,7 +431,7 @@ function Nx.ModQuests:Data6()
         },
         [7801] = {
             Quest = [=[Additional Runecloth|2|60|50|0|0|0]=],
-            Start = "14723|87|32|43.20|31.90",
+            Start = "14725|89|32|64.0|23.0",
             End = "14725|89|32|64.00|23.00",
             Objectives = {
                 [1] = {
@@ -706,7 +706,7 @@ function Nx.ModQuests:Data6()
         },
         [7806] = {
             Quest = [=[Additional Runecloth|2|60|50|0|0|0]=],
-            Start = "14724|87|32|74.10|48.10",
+            Start = "14723|87|32|43.2|31.9",
             End = "14723|87|32|43.20|31.90",
             Objectives = {
                 [1] = {
@@ -844,7 +844,7 @@ function Nx.ModQuests:Data6()
         },
         [7809] = {
             Quest = [=[A Donation of Mageweave||60|40|0|0|0]=],
-            Start = "18706|210|32|46.60|26.10",
+            Start = "14724|87|32|74.1|48.1",
             End = "14724|87|32|74.10|48.10",
             Objectives = {
                 [1] = {
@@ -864,7 +864,7 @@ function Nx.ModQuests:Data6()
         },
         [7812] = {
             Quest = [=[Additional Runecloth|1|60|50|0|0|0]=],
-            Start = "14729|90|32|71.80|29.00",
+            Start = "14724|87|32|74.1|48.1",
             End = "14724|87|32|74.10|48.10",
             Objectives = {
                 [1] = {
@@ -992,7 +992,7 @@ function Nx.ModQuests:Data6()
         },
         [7814] = {
             Quest = [=[A Donation of Silk|1|60|26|0|0|0]=],
-            Start = "14740|26|32|80.20|81.40",
+            Start = "14729|90|32|71.8|29.0",
             End = "14729|90|32|71.80|29.00",
             Objectives = {
                 [1] = {
@@ -1022,7 +1022,7 @@ function Nx.ModQuests:Data6()
         },
         [7819] = {
             Quest = [=[Additional Runecloth|1|60|50|0|0|0]=],
-            Start = "14728|88|32|43.20|42.80",
+            Start = "14729|90|32|71.8|29.0",
             End = "14729|90|32|71.80|29.00",
             Objectives = {
                 [1] = {
@@ -1170,7 +1170,7 @@ function Nx.ModQuests:Data6()
         },
         [7823] = {
             Quest = [=[A Donation of Runecloth|1|60|50|0|0|0]=],
-            Start = "14726|85|32|63.40|51.00",
+            Start = "14728|88|32|43.2|42.8",
             End = "14728|88|32|43.20|42.80",
             Objectives = {
                 [1] = {
@@ -1180,7 +1180,7 @@ function Nx.ModQuests:Data6()
         },
         [7825] = {
             Quest = [=[Additional Runecloth|1|60|50|0|0|0]=],
-            Start = "14726|85|32|63.40|51.00",
+            Start = "14728|88|32|43.2|42.8",
             End = "14728|88|32|43.20|42.80",
             Objectives = {
                 [1] = {
@@ -1772,22 +1772,22 @@ function Nx.ModQuests:Data6()
         },
         [8792] = {
             Quest = [=[The Horde Needs Your Help!|1|60|1|0|0|0]=],
-            Start = "15703|90|32|62.80|49.20",
+            Start = "15702|362|32|40.0|52.0",
             End = "15700|85|32|30.3|67.6",
         },
         [8793] = {
             Quest = [=[The Horde Needs Your Help!|1|60|1|0|0|0]=],
-            Start = "15704|85|32|30.30|67.60",
+            Start = "15703|382|32|62.8|47.8",
             End = "15700|85|32|30.3|67.6",
         },
         [8794] = {
             Quest = [=[The Horde Needs Your Help!|2|60|1|0|0|0]=],
-            Start = "15707|87|32|27.50|73.30",
+            Start = "15704|321|32|51.6|66.4",
             End = "15700|85|32|30.3|67.6",
         },
         [8795] = {
             Quest = [=[The Alliance Needs Your Help!|2|60|1|0|0|0]=],
-            Start = "15708|84|32|54.10|59.60",
+            Start = "15707|341|32|27.6|73.0",
             End = "15701|87|32|61.3|74.2",
         },
         [8796] = {
@@ -1797,7 +1797,7 @@ function Nx.ModQuests:Data6()
         },
         [8797] = {
             Quest = [=[The Alliance Needs Your Help!||60|1|0|0|0]=],
-            Start = "10305|83|32|60.80|37.60",
+            Start = "15709|381|32|41.8|42.0",
             End = "15701|87|32|61.3|74.2",
         },
         [9296] = {
@@ -1832,7 +1832,7 @@ function Nx.ModQuests:Data6()
         },
         [10352] = {
             Quest = [=[A Donation of Wool||60|12|0|0|0]=],
-            Start = "20552|109|32|60.90|41.50",
+            Start = "14725|89|32|64.0|23.0",
             End = "14725|89|32|64.00|23.00",
             Objectives = {
                 [1] = {
@@ -1950,7 +1950,7 @@ function Nx.ModQuests:Data6()
         },
         [10354] = {
             Quest = [=[A Donation of Silk|2|60|26|0|0|0]=],
-            Start = "18007|102|32|68.60|48.80",
+            Start = "14725|89|32|64.0|23.0",
             End = "14725|89|32|64.00|23.00",
             Objectives = {
                 [1] = {
@@ -1980,7 +1980,7 @@ function Nx.ModQuests:Data6()
         },
         [10358] = {
             Quest = [=[Additional Runecloth|1|60|50|0|0|0]=],
-            Start = "20612|110|32|56.60|52.50",
+            Start = "20604|103|32|63.5|67.7",
             End = "20604|103|32|63.50|67.70",
             Objectives = {
                 [1] = {
@@ -2473,7 +2473,7 @@ function Nx.ModQuests:Data6()
         },
         [29464] = {
             Quest = [=[Tools of Divination||60|60|0|0|0]=],
-            Start = "71716|407|32|51.90|60.90",
+            Start = "53691|367|32|-1.0|-1.0",
             End = "14847|407|32|51.89|60.93",
             Objectives = {
                 [1] = {

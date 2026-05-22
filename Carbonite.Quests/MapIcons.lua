@@ -30,6 +30,12 @@ local InCombatLockdown = _G.InCombatLockdown or _G.InCombatLockdown
 -- Promoted from NxQuest.lua's file-local compat shim.
 local GetQuestTagInfoCompat = Nx.Quest.GetQuestTagInfoCompat
 
+-- File-local alias for the shared world-quest map. NxQuest.lua creates
+-- Nx.Quest.worldquestdb and aliases it; this module reads from the same
+-- table but the alias didn't survive the extraction, leaving line 745's
+-- `worldquestdb[questID]` indexing a nil global on retail flight maps.
+local worldquestdb = Nx.Quest.worldquestdb
+
 -------------------------------------------------------------------------------
 -- Update map icons (called by map)
 -------------------------------------------------------------------------------

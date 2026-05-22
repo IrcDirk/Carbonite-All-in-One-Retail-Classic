@@ -235,6 +235,26 @@ function Nx.Quest:RecordQuestsLog()
 
                     end
 
+                    -- Sync cur.Complete in the fast path. The block
+                    -- above only fires the "Quest Complete" toast on
+                    -- the rising edge; it doesn't write back. Without
+                    -- this assignment, cur.Complete stays at whatever
+                    -- it was at the last full rebuild — so a quest
+                    -- that completes (or un-completes via Abandon /
+                    -- partial-progress edge cases) mid-session leaves
+                    -- cur.Complete out of sync. Downstream effects:
+                    -- CalcAutoTrack's `if cur.Complete` branch never
+                    -- fires for the newly-complete quest, the
+                    -- CalcDistances loop keeps computing objective
+                    -- distances (instead of stopping at qObj=0), and
+                    -- the goto arrow lands on cur.CloseObjI (the
+                    -- closest leftover objective POI) instead of the
+                    -- End / turn-in NPC. Quest 9663 "The Kessel Run"
+                    -- surfaced this: arrow snapped to the last
+                    -- objective POI after the third warn instead of
+                    -- back to the ender.
+                    cur.Complete = isComplete
+
                     local lbCnt = GetNumQuestLeaderBoards (qi)
                     for n = 1, lbCnt do
 
@@ -270,6 +290,20 @@ function Nx.Quest:RecordQuestsLog()
                             lastChanged = cur
 
                             partySend = true
+                        end
+
+                        -- Persist the live leaderboard text + done flag
+                        -- onto cur. The change-check above only used
+                        -- these values to decide whether to fire the
+                        -- watch refresh; the actual sync to cur[n] /
+                        -- cur[n+100] used to wait for the next full
+                        -- rebuild. That left stale "0/3" descriptions
+                        -- and stale `done` flags driving CalcDistances
+                        -- / picker logic until the quest count itself
+                        -- changed (accept / abandon / turn-in).
+                        if desc then
+                            cur[n] = desc
+                            cur[n + 100] = done
                         end
                     end
 
@@ -371,6 +405,10 @@ function Nx.Quest:RecordQuestsLog()
 
                 cur.Q = quest
                 cur.QI = qn                        -- Blizzard index
+                if Nx._dbgQId and cur.QId and cur.QId ~= qId then
+                    Nx.prt("|cffff8000[QId-DBG]|r RecordQuestsLog:set cur#%s QI=%s QId %s->%s Title=%q",
+                        tostring(cur.Index), tostring(qn), tostring(cur.QId), tostring(qId), tostring(title or "?"))
+                end
                 cur.QId = qId
                 cur.Header = header
                 cur.Title = title
@@ -569,6 +607,10 @@ function Nx.Quest:RecordQuestsLog()
                     cur.PartyNames = cur.PartyDesc
                     cur.Q = quest
                     cur.QI = 0
+                    if Nx._dbgQId then
+                        Nx.prt("|cffff8000[QId-DBG]|r RecordQuestsLog:partyNew QId=%s plName=%s Title=%q",
+                            tostring(qId), tostring(plName), tostring(name or "?"))
+                    end
                     cur.QId = qId
                     cur.Header = "Party, " .. plName
                     cur.Title = name

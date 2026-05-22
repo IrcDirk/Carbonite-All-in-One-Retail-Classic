@@ -487,6 +487,13 @@ end
 -- Get closest position of objective or start/end
 -------------------------------------------------------------------------------
 
+-- Returns (closeX, closeY, closeMapId). `closeMapId` is the zone of the
+-- entry that won the distance race, which can differ from the caller's
+-- `mapId` when a multi-zone Objectives[] list mixes zones (e.g. kill
+-- areas spanning a zone border). TrackOnMap relies on the third return
+-- to set the goto target's mapId, otherwise CalcTracking sees src vs
+-- dst on different maps and the router detours through whatever
+-- transit zone connects them.
 function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
     local Map = Nx.Map
     if type(str) == "string" then
@@ -494,7 +501,7 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
         if tonumber(typ) <= 33 then  -- Point
             local x1, y1, x2, y2 = self:GetObjectiveRect (str, loc)
             x1, y1 = Map:GetWorldPos (mapId, (x1 + x2) / 2, (y1 + y2) / 2)
-            return x1, y1
+            return x1, y1, mapId
         else -- Multiple locations
             local closeDist = 999999999
             local closeX, closeY
@@ -514,7 +521,7 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
                 y = wy1
                 if px >= wx1 and px <= wx2 then
                     if py >= wy1 and py <= wy2 then        -- Within span?
-                        return px, py
+                        return px, py, mapId
                     end
                     x = px
                 elseif px >= wx2 then    -- Right of span?
@@ -533,11 +540,11 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
                     closeY = y
                 end
             end
-            return closeX, closeY
+            return closeX, closeY, mapId
         end
     elseif type(str) == "table" then
         local closeDist = 999999999
-        local closeX, closeY
+        local closeX, closeY, closeMapId
         cnt = 0
         for a,b in pairs(str) do
             local npc,zone,typ,x, y, w, h = Nx.Split ("|",b)
@@ -561,6 +568,7 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
                         closeDist = dist
                         closeX = wx
                         closeY = wy
+                        closeMapId = poiMap
                     end
                 end
             else
@@ -572,7 +580,7 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
             y = wy1
             if px >= wx1 and px <= wx2 then
                 if py >= wy1 and py <= wy2 then        -- Within span?
-                    return px, py
+                    return px, py, poiMap
                 end
                 x = px
             elseif px >= wx2 then    -- Right of span?
@@ -589,10 +597,11 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
                 closeDist = dist
                 closeX = x
                 closeY = y
+                closeMapId = poiMap
             end
             end -- end of else (span) branch
         end
-        return closeX, closeY
+        return closeX, closeY, closeMapId
     end
 end
 

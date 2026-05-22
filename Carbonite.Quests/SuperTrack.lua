@@ -543,8 +543,19 @@ function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
     -- arrow always points at the turn-in NPC even when the player is
     -- mid-quest. Mirror the picked objective into ActiveObjI so the
     -- (qId, objI) toggle logic in the click handlers can match it.
+    --
+    -- Complete-quest short-circuit: keep pickedObj at 0 so the title-
+    -- row path drives the arrow to the turn-in NPC. The objective
+    -- walker below misbehaves on delivery / collect-from-one-of-N
+    -- quests where bundled Objectives[] holds N alternative pickup
+    -- locations but Blizzard reports < N leaderboards: the trailing
+    -- cur[n+300] flags are nil (no leaderboard at that index), the
+    -- "not done" branch fires for them, and the arrow snaps to the
+    -- highest-indexed alternate spot instead of the ender. Quest
+    -- 9663 "The Kessel Run" hit this — three pickup waypoints, only
+    -- one Blizzard leaderboard, last-index alternate got picked.
     local pickedObj = 0
-    if cur and cur.Q and cur.Q["Objectives"] then
+    if cur and not cur.Complete and cur.Q and cur.Q["Objectives"] then
         for n = 1, 15 do
             local obj = cur.Q["Objectives"][n]
             if not obj then break end
@@ -654,6 +665,10 @@ function Nx.Quest:OnSuperTrackChanged()
     -- Self-heal stale cur.QId so downstream code (icon draw, watch
     -- list, blob render) sees the live ID.
     if cur.QId ~= liveQID then
+        if Nx._dbgQId then
+            Nx.prt("|cffff8000[QId-DBG]|r SuperTrack:heal cur#%s QI=%s QId %s->%s Title=%q",
+                tostring(cur.Index), tostring(cur.QI), tostring(cur.QId), tostring(liveQID), tostring(cur.Title or "?"))
+        end
         cur.QId = liveQID
         if Nx.Quest.QIds then
             Nx.Quest.QIds[liveQID] = cur

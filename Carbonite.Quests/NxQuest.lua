@@ -229,6 +229,7 @@ end
 -- AddQuestWatch shim for retail
 if C_QuestLog and C_QuestLog.AddQuestWatch and not AddQuestWatch then
     function AddQuestWatch(questIndex)
+        if not questIndex or questIndex <= 0 then return end
         local questID = C_QuestLog.GetQuestIDForLogIndex(questIndex)
         if questID then
             C_QuestLog.AddQuestWatch(questID, Enum.QuestWatchType.Manual)
@@ -239,6 +240,10 @@ end
 -- RemoveQuestWatch shim for retail
 if C_QuestLog and C_QuestLog.RemoveQuestWatch and not RemoveQuestWatch then
     function RemoveQuestWatch(questIndex)
+        -- nil / 0 = "not a Blizzard log entry" (e.g. Carbonite's
+        -- Goto cur entries have QI = 0). The native API errors on
+        -- non-integer args, so bail before the C call.
+        if not questIndex or questIndex <= 0 then return end
         local questID = C_QuestLog.GetQuestIDForLogIndex(questIndex)
         if questID then
             C_QuestLog.RemoveQuestWatch(questID)

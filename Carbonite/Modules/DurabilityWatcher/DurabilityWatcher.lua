@@ -23,7 +23,12 @@ local INV_SLOTS = {
 
 local function slotID(name)
     if not _G.GetInventorySlotInfo then return nil end
-    local id = _G.GetInventorySlotInfo(name)
+    -- GetInventorySlotInfo raises a hard Lua error on unknown slot
+    -- names (retail dropped RangedSlot in Cata/Legion). pcall so the
+    -- list above can include legacy slots without crashing the
+    -- whole averaging walk on flavors where they no longer exist.
+    local ok, id = pcall(_G.GetInventorySlotInfo, name)
+    if not ok then return nil end
     return id
 end
 

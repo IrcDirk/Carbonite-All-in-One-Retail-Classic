@@ -7271,7 +7271,16 @@ function Nx.Map:CalcTracking()
 
     local srcX = self.PlyrX
     local srcY = self.PlyrY
-    local srcMapId = MapUtil.GetDisplayableMapForPlayer()
+    -- Use C_Map.GetBestMapForUnit("player") for the routing source,
+    -- NOT MapUtil.GetDisplayableMapForPlayer(): on retail the latter
+    -- can return whatever WorldMapFrame is currently showing (cursor
+    -- mouseovers swap that), which made srcMapId flip per tick and
+    -- forced BuildPath to re-route from a different "source" every
+    -- frame the user hovered an adjacent zone. The path's actual
+    -- starting point is the player, not the displayed map.
+    local srcMapId = (C_Map and C_Map.GetBestMapForUnit
+        and C_Map.GetBestMapForUnit("player"))
+        or MapUtil.GetDisplayableMapForPlayer()
 
     -- Build path through all targets. Scalar-arg BuildPath signature
     -- because this is a hot path - wrapping the src/dst pairs in

@@ -1783,6 +1783,11 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                             end
                             if liveTitle and c.Title and liveTitle == c.Title then
                                 local oldQId = c.QId
+                                if Nx._dbgQId then
+                                    Nx.prt("|cffff8000[QId-DBG]|r broadHeal cur#%s QI=%s QId %s->%s Title=%q liveTitle=%q",
+                                        tostring(c.Index), tostring(c.QI), tostring(oldQId), tostring(live),
+                                        tostring(c.Title or "?"), tostring(liveTitle or "?"))
+                                end
                                 c.QId = live
                                 if Nx.Quest.QIds then
                                     if oldQId then Nx.Quest.QIds[oldQId] = nil end

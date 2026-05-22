@@ -74,7 +74,16 @@ function Nx.Quest:CalcAutoTrack (cur)
 --        Quest.Tracking[cur.QId] = cur.TrackMask
 
         local closeI = cur.CloseObjI
-        if closeI and closeI >= 0 then
+
+        -- Quest-complete branch: route to the turn-in NPC (End coord),
+        -- not whatever stale CloseObjI was left behind from the active
+        -- phase. Following objective POIs on a completed delivery /
+        -- talk-to-NPC quest sent the goto arrow ping-ponging between
+        -- the (now-irrelevant) objective and the actual ender.
+        if cur.Complete then
+            Quest.Tracking[cur.QId] = cur.TrackMask
+            Quest:TrackOnMap (cur.QId, 0, true, true, true)
+        elseif closeI and closeI >= 0 then
 
             Quest.Tracking[cur.QId] = cur.TrackMask            -- bit_lshift (1, closeI)
             Quest:TrackOnMap (cur.QId, closeI, cur.QI > 0 or cur.Party, true, true)
@@ -121,7 +130,24 @@ function Nx.Quest:IsTargeted (qId, qObj, x1, y1, x2, y2)
 
             if x1 then
                 local tx1, ty1, tx2, ty2 = Nx.Map:GetTargetPos()
-                if x1 ~= tx1 or y1 ~= ty1 or x2 ~= tx2 or y2 ~= ty2 then
+                -- Tolerance-based compare. Exact coord equality used
+                -- to break here: the C_QuestLog title-row override
+                -- can hand back two different uiMapIDs for the same
+                -- NPC (e.g. Exodar's hippogryph master shows as both
+                -- 97 Azuremyst and 103 Exodar in Blizzard's data
+                -- because the NPC sits at the city boundary). Each
+                -- response resolves to the same world point modulo
+                -- sub-yard float wobble, but `x1 ~= tx1` still
+                -- returned mismatch -> AddTarget fired on every
+                -- CalcAutoTrack tick (~5x/sec) -> UpdateTrackingDelay
+                -- reset to 0 every time -> CalcTracking rebuilt the
+                -- routing path every frame -> visible flicker plus
+                -- arrow direction jitter. ~5 world units ≈ 23 yards
+                -- is well below the smallest deliberate target move
+                -- the live API makes and well above the float noise.
+                local EPS = 5
+                if abs(x1 - tx1) > EPS or abs(y1 - ty1) > EPS
+                    or abs(x2 - tx2) > EPS or abs(y2 - ty2) > EPS then
                     return
                 end
             end
@@ -266,6 +292,11 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
     end
 
             local mId = zone
+            -- Reject sentinel mapId 0: bundled DB writes "<npc>|0|32|0|0"
+            -- when an extractor couldn't resolve a position. Letting it
+            -- through would call GetWorldPos(0, ...) which returns (0,0)
+            -- and the arrow snaps to world origin.
+            if mId == 0 then mId = nil end
             if mId then
 
                 if target then
@@ -281,7 +312,24 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                         -- FIX!!!!!!!!!!!!
 
 --                        x1, y1, x2, y2 = Quest:GetClosestObjectiveRect (questObj, mId, px, py)
-                        x1, y1 = Quest:GetClosestObjectivePos (questObj, loc, mId, px, py)
+                        -- The third return value is the zone of the
+                        -- winning entry. Necessary when a multi-zone
+                        -- Objectives[] list (e.g. an area straddling
+                        -- a zone border) puts the geometrically
+                        -- closest entry in a different zone than the
+                        -- first-listed one. Without this, mId stays
+                        -- on the first entry's zone and CalcTracking
+                        -- sees src/dst on different maps -> router
+                        -- builds a detour through whatever transit
+                        -- zone connects them (e.g. Azuremyst player +
+                        -- Exodar-tagged first entry sent the path
+                        -- through Exodar even when the closest
+                        -- Azuremyst entry was 10y away).
+                        local closeMapId
+                        x1, y1, closeMapId = Quest:GetClosestObjectivePos (questObj, loc, mId, px, py)
+                        if closeMapId then
+                            mId = closeMapId
+                        end
 
                         -- On retail/Wrath+, prefer Blizzard's live
                         -- waypoint over the bundled coord whenever
@@ -313,18 +361,33 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                                 if C_TaskQuest and C_TaskQuest.GetQuestZoneID then
                                     tryMap(C_TaskQuest.GetQuestZoneID(qId))
                                 end
-                                tryMap(Map.GetCurrentMapId and Map:GetCurrentMapId())
+                                -- Use the PLAYER's actual zone, NOT
+                                -- Map:GetCurrentMapId() (returns the
+                                -- displayed map, which Carbonite swaps
+                                -- on mouseover) and NOT MapUtil's
+                                -- GetDisplayableMapForPlayer (can also
+                                -- follow WorldMapFrame's override on
+                                -- retail). C_Map.GetBestMapForUnit
+                                -- always returns the player's true
+                                -- zone, independent of UI state.
+                                tryMap(C_Map and C_Map.GetBestMapForUnit
+                                    and C_Map.GetBestMapForUnit("player"))
                             end
                             if wpMapID and wpX and wpY then
-                                -- Blizzard returns uiMapIDs; Carbonite's
-                                -- GetWorldPos wants its own internal
-                                -- mapId. Convert via GetLegacyMapInfo if
-                                -- available.
+                                -- Retail's MapWorldInfo is keyed by the
+                                -- same uiMapIDs that Blizzard hands us,
+                                -- so use wpMapID directly. Earlier code
+                                -- ran wpMapID through GetLegacyMapInfo,
+                                -- which translates to HBD's legacy ids
+                                -- (e.g. uiMapID 103 -> 471). Those
+                                -- collide with unrelated Carbonite
+                                -- mapIds — 471 in Carbonite is the
+                                -- Mogu'shan Vaults raid-entry record,
+                                -- so the translated GetWorldPos call
+                                -- handed back the Pandaria dungeon
+                                -- entrance and the arrow snapped to
+                                -- the wrong continent.
                                 local mapForPos = wpMapID
-                                if Map.GetLegacyMapInfo then
-                                    local m = Map:GetLegacyMapInfo(wpMapID)
-                                    if m then mapForPos = m end
-                                end
                                 local nx, ny = Map:GetWorldPos(mapForPos, wpX * 100, wpY * 100)
                                 if nx and ny and (nx ~= 0 or ny ~= 0) then
                                     x1, y1 = nx, ny
@@ -392,13 +455,15 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                             tryMap(Map.GetCurrentMapId and Map:GetCurrentMapId())
                         end
                         if overrideMID then
-                            -- Blizzard returns uiMapIDs; Carbonite's
-                            -- GetWorldPos wants its own internal mapId.
+                            -- See the matching note in the qObj>0 path
+                            -- above: use the Blizzard uiMapID directly,
+                            -- not the GetLegacyMapInfo translation.
+                            -- That HBD-legacy id collides with
+                            -- unrelated Carbonite mapIds (uiMapID 103
+                            -- -> 471 = Mogu'shan Vaults instance),
+                            -- which is the "arrow snaps to wrong
+                            -- continent / world origin" symptom.
                             local mapForPos = overrideMID
-                            if Map.GetLegacyMapInfo then
-                                local m = Map:GetLegacyMapInfo(overrideMID)
-                                if m then mapForPos = m end
-                            end
                             local nx, ny = Map:GetWorldPos(mapForPos,
                                 overrideX * 100, overrideY * 100)
                             -- Reject 0,0: GetWorldPos returns that when
@@ -481,6 +546,18 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                         x1, y1 = entryX, entryY
                         x2, y2 = entryX, entryY
                         name = name .. " |cff80c0ff" .. L["(dungeon entrance)"]
+                    end
+
+                    -- Zero-coord guard: if every coord resolved to 0,
+                    -- the source data is unusable (typical for the
+                    -- "<npc>|0|32|0|0" sentinel that backfillers write
+                    -- when no live position was available). Bailing
+                    -- here keeps the arrow on the previous target
+                    -- rather than snapping it to world origin and
+                    -- thrashing the path on every CalcAutoTrack tick.
+                    if (not x1) or (not y1)
+                        or (x1 == 0 and y1 == 0 and x2 == 0 and y2 == 0) then
+                        return
                     end
 
                     if skipSame then

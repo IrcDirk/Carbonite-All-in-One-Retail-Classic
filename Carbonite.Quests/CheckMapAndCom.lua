@@ -18,6 +18,11 @@ local gsub     = gsub    or string.gsub
 local tinsert  = tinsert or table.insert
 local tremove  = tremove or table.remove
 
+-- Retail removed the bare GetAbandonQuestItems global; it now lives
+-- under C_QuestLog. Mirror the NxQuest.lua shim so Abandon doesn't hit
+-- a nil global when the user confirms a quest cancel on retail.
+local GetAbandonQuestItems = (C_QuestLog and C_QuestLog.GetAbandonQuestItems) or GetAbandonQuestItems
+
 
 -------------------------------------------------------------------------------
 -- Check if any part of quest in the map
@@ -138,6 +143,10 @@ function Nx.Quest:Goto (qId)
     cur.Goto = true
     cur.Q = quest
     cur.QI = 0
+    if Nx._dbgQId then
+        Nx.prt("|cffff8000[QId-DBG]|r Goto:new QId=%s Title=%q",
+            tostring(qId), tostring(name or "?"))
+    end
     cur.QId = qId
     cur.Header = L["Goto"]
     cur.Title = L["Goto: "] .. name
