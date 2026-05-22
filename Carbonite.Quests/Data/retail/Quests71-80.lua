@@ -29,25 +29,35 @@ function Nx.ModQuests:Data8()
         [12156] = {
             Quest = [=[DEPRECAED|2|74|72|12171|0|0]=],
             Start = "26186|114|32|82.00|46.40",
-            End = "26875|0|32|0.00|0.00",
+            End = "26875|116|32|31.8|60.1",
         },
         [12452] = {
             Quest = [=[zzOLD The Fate of the Ruby Dragonshrine|1|74|72|0|0|0]=],
             Start = "27262|116|32|22.50|62.80",
-            End = "26917|0|32|0.00|0.00",
+            End = "26917|115|32|59.8|54.7",
         },
         [12601] = {
             Quest = [=[The Alchemist's Apprentice||76|74|0|0|0]=],
-            End = "28205|0|32|0.00|0.00",
+            End = "28205|121|32|35.0|52.1",
+            Objectives = {
+                [1] = {
+                    "|120|32|58.44|89.18|9.62|9.62",
+                },
+            },
         },
         [12602] = {
             Quest = [=[The Alchemist's Apprentice||76|74|0|0|0]=],
             Start = "28376|119|32|42.30|28.70",
-            End = "28205|0|32|0.00|0.00",
+            End = "28205|121|32|35.0|52.1",
+            Objectives = {
+                [1] = {
+                    "|120|32|58.44|89.18|9.62|9.62",
+                },
+            },
         },
         [12780] = {
             Quest = [=[DEPRICATED>>Enemy of Our Enemy||75|74|0|0|0]=],
-            End = "28518|0|32|0.00|0.00",
+            End = "28518|121|32|28.4|44.9",
         },
         [12825] = {
             Quest = [=[Expressions of Gratitude||78|77|0|0|0]=],
@@ -108,12 +118,12 @@ function Nx.ModQuests:Data8()
         [13378] = {
             Quest = [=[Chief Engineer Copperclaw|1|80|77|13373|0|0]=],
             Start = "30825|118|32|69.47|35.14",
-            End = "30825|0|32|0.00|0.00",
+            End = "30825|118|32|64.78|28.41",
         },
         [13417] = {
             Quest = [=[The Brothers Bronzebeard|2|80|77|0|0|0]=],
             Start = "31081|125|32|67.70|47.20",
-            End = "30401|0|32|0.00|0.00",
+            End = "30401|118|32|91.76|66.49",
         },
         [13686] = {
             Quest = [=[Alliance Tournament Eligibility Marker|2|80|77|0|0|0]=],
@@ -136,7 +146,7 @@ function Nx.ModQuests:Data8()
         },
         [14488] = {
             Quest = [=[You've Been Served||80|75|0|0|0]=],
-            End = "36296|0|32|0.00|0.00",
+            End = "36296|310|32|-1.0|-1.0",
             Objectives = {
                 [1] = {
                     "nil|0|35|0|0|0|0",
@@ -185,41 +195,41 @@ function Nx.ModQuests:Data8()
         },
         [24914] = {
             Quest = [=[Personal Property|2|80|80|0|0|0]=],
-            End = "37120|0|32|0.00|0.00",
+            End = "37120|186|32|43.1|23.0",
         },
         [24915] = {
             Quest = [=[Mograine's Reunion||80|80|0|0|0]=],
             Start = "37120|0|32|0.00|0.00",
-            End = "37120|0|32|0.00|0.00",
+            End = "37120|186|32|43.1|23.0",
         },
         [24916] = {
             Quest = [=[Jaina's Locket||80|80|0|0|0]=],
             Start = "38606|0|32|0.00|0.00",
-            End = "38606|0|32|0.00|0.00",
+            End = "38606|186|32|39.0|20.6",
         },
         [24917] = {
             Quest = [=[Muradin's Lament||80|80|0|0|0]=],
             Start = "38607|0|32|0.00|0.00",
-            End = "38607|0|32|0.00|0.00",
+            End = "38607|186|32|39.2|20.6",
         },
         [24918] = {
             Quest = [=[Sylvanas' Vengeance||80|80|0|0|0]=],
             Start = "38609|0|32|0.00|0.00",
-            End = "38609|0|32|0.00|0.00",
+            End = "38609|186|32|38.1|19.9",
         },
         [24919] = {
             Quest = [=[The Lightbringer's Redemption||80|80|0|0|0]=],
             Start = "38608|0|32|0.00|0.00",
-            End = "38608|0|32|0.00|0.00",
+            End = "38608|186|32|39.0|18.2",
         },
         [25286] = {
             Quest = [=[Words for Delivery|2|75|75|25287|0|0]=],
             Start = "39678|27|32|49.32|48.27",
-            End = "39675|0|32|0.00|0.00",
+            End = "39675|27|32|50.18|48.36",
         },
         [26054] = {
             Quest = [=[Water They Up To?|2|80|78|0|0|0]=],
-            End = "466|0|32|0.00|0.00",
+            End = "466|37|32|29.23|43.83",
             Objectives = {
                 [1] = {
                     "Kai'ju Gahz'rilla|84|32|17.28|30.82|0|0",
@@ -228,7 +238,7 @@ function Nx.ModQuests:Data8()
         },
         [26178] = {
             Quest = [=[Planning for the Future||72|71|0|0|0]=],
-            End = "26228|0|32|0.00|0.00",
+            End = "26228|115|32|48.2|74.3",
             Objectives = {
                 [1] = {
                     "nil|0|35|0|0|0|0",
@@ -237,7 +247,7 @@ function Nx.ModQuests:Data8()
         },
         [26990] = {
             Quest = [=[Water They Up To?|1|80|78|0|0|0]=],
-            End = "5769|0|32|0.00|0.00",
+            End = "5769|7|32|46.02|24.22",
             Objectives = {
                 [1] = {
                     "Kai'ju Gahz'rilla|88|32|71.40|21.37|0|0",
@@ -246,7 +256,7 @@ function Nx.ModQuests:Data8()
         },
         [27122] = {
             Quest = [=[Fired Up and Not So Good To Go.|2|80|78|0|0|0]=],
-            End = "42805|0|32|0.00|0.00",
+            End = "42805|27|32|68.36|23.11",
             Objectives = {
                 [1] = {
                     "Grand Ambassador Flamelash|87|32|23.09|77.69|0|0",
@@ -255,7 +265,7 @@ function Nx.ModQuests:Data8()
         },
         [27127] = {
             Quest = [=[Fired Up and Not So Good To Go.|1|80|78|0|0|0]=],
-            End = "45320|0|32|0.00|0.00",
+            End = "45320|1|32|45.26|10.65",
             Objectives = {
                 [1] = {
                     "Grand Ambassador Flamelash|85|32|9.39|51.15|0|0",
@@ -264,7 +274,7 @@ function Nx.ModQuests:Data8()
         },
         [27207] = {
             Quest = [=[This Blows|2|80|78|0|0|0]=],
-            End = "466|0|32|0.00|0.00",
+            End = "466|37|32|29.23|43.83",
             Objectives = {
                 [1] = {
                     "Prince Sarsarun|84|35|17.28|30.82|0|0",
@@ -273,7 +283,7 @@ function Nx.ModQuests:Data8()
         },
         [27209] = {
             Quest = [=[This Blows|1|80|78|0|0|0]=],
-            End = "5769|0|32|0.00|0.00",
+            End = "5769|7|32|46.02|24.22",
             Objectives = {
                 [1] = {
                     "Prince Sarsarun|88|35|71.40|21.37|0|0",
