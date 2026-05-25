@@ -132,6 +132,37 @@ function Nx.Notes:GetOptionsConfig()
                     end,
                     disabled = function() return not _G.Questie end,
                 },
+                rxp = {
+                    order = 9, type = "toggle", width = "full",
+                    name = L["Display RXPGuides waypoints On Map"],
+                    desc = L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"],
+                    get = function() return Nx.fdb.profile.Notes.RXP end,
+                    set = function()
+                        local map = Nx.Map:GetMap(1)
+                        Nx.fdb.profile.Notes.RXP = not Nx.fdb.profile.Notes.RXP
+                        if Nx.fdb.profile.Notes.RXP then
+                            Nx.Notes:BustIntegrationCache("RXP")
+                            Nx.Notes:RXP(Nx.Map:GetCurrentMapAreaID())
+                        else
+                            map:ClearIconType("!RXP")
+                        end
+                    end,
+                    disabled = function() return not _G.RXP end,
+                },
+                rxpsize = {
+                    order = 10, type = "range", width = "normal",
+                    min = 16, max = 48, step = 2,
+                    name = L["RXPGuides Icon Size"],
+                    get = function() return Nx.fdb.profile.Notes.RXPSize end,
+                    set = function(_, value)
+                        local map = Nx.Map:GetMap(1)
+                        Nx.fdb.profile.Notes.RXPSize = value
+                        map:ClearIconType("!RXP")
+                        Nx.Notes:BustIntegrationCache("RXP")
+                        Nx.Notes:RXP(Nx.Map:GetCurrentMapAreaID())
+                    end,
+                    disabled = function() return not _G.RXP end,
+                },
             },
         }
     end

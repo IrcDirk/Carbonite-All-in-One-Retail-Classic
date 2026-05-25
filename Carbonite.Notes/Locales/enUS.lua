@@ -51,6 +51,10 @@ L["Display icons for Available quests from Questie on Carbonite Map"] = true
 L["If you have Questie installed, allows its icons for available quests on the Carbonite map"] = true
 L["Questie Icon Size"] = true
 
+L["Display RXPGuides waypoints On Map"] = true
+L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = true
+L["RXPGuides Icon Size"] = true
+
 -- Keybinds
 L["Carbonite Notes"] = "Carbonite Notes"
 L["NxTOGGLEFAV"] = "show/hide Notes"

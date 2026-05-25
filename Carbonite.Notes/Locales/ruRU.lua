@@ -55,6 +55,10 @@ L["Display icons for Available quests from Questie on Carbonite Map"] = "Пок�
 L["If you have Questie installed, allows its icons for available quests on the Carbonite map"] =  "Включить отображение иконок Questie для доступных для вас, но не взятых заданий на карте Carbonite (требуется плагин Questie)"
 L["Questie Icon Size"] = "Размер иконки Questie"
 
+L["Display RXPGuides waypoints On Map"] = "Показывать на карте точки маршрута RXPGuides"
+L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = "Если установлен RXPGuides, дублирует его метки активных шагов на карте Carbonite"
+L["RXPGuides Icon Size"] = "Размер иконки RXPGuides"
+
 -- Keybinds
 L["Carbonite Notes"] = "Заметки Carbonite"
 L["NxTOGGLEFAV"] = "Показать/Скрыть Заметки"

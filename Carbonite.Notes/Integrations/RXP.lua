@@ -94,13 +94,20 @@ function Nx.Notes:RXP(mapId)
     -- the same coord (RXP advances the active step) busts the cache.
     -- Resolve a step label string for the RXP pin: prefer the live
     -- rendered text (set by RXP's pool render() — includes inline
-    -- |T..|t icons and the "+" stack suffix); fall back to the step
-    -- index / activeObject so we still print something useful when
-    -- the frame's text hasn't been populated yet (WorldMapFrame
-    -- never opened this session).
+    -- |T..|t icons); fall back to the step index / activeObject so
+    -- we still print something useful when the frame's text hasn't
+    -- been populated yet (WorldMapFrame never opened this session).
+    --
+    -- Strip the trailing "+" RXP appends to denote stacked pins
+    -- (`label .. "+"` in MapPinPool.creationFunc). The RXP logo
+    -- already identifies this as an RXP pin, and the cluster of
+    -- adjacent steps speaks to the stack — the suffix is just noise
+    -- on the smaller Carbonite icon.
     local function pinLabel(icon)
         local t = icon.text and icon.text.GetText and icon.text:GetText()
-        if t and t ~= "" then return t end
+        if t and t ~= "" then
+            return (t:gsub("%+$", ""))
+        end
         local active  = icon.activeObject
         local element = active and active.elements and active.elements[1]
         local step    = element and (element.step or active.step)
@@ -164,10 +171,11 @@ function Nx.Notes:RXP(mapId)
         -- HBDPins stores x / y as 0..1 fractions; Nx expects 0..100
         -- zone-percent before converting to world coords.
         local wx, wy = Nx.Map:GetWorldPos(mapId, ic.x * 100, ic.y * 100)
-        -- RXP logo as the icon background; onStamp overlays the step
-        -- label on top in player class color so the pin is both
-        -- identifiable as "RXP" and shows the step number.
-        local pin = map:AddIconPt("!RXP", wx, wy, nil, "FFFFFFFF", RXP_TEX)
+        -- Text-only pin: fully transparent backdrop colour (alpha 0)
+        -- so the step label floats over the map. The class-coloured,
+        -- outlined text is the visual identifier; the icon frame
+        -- keeps a 24x24 mouse-hit area for the tooltip.
+        local pin = map:AddIconPt("!RXP", wx, wy, nil, "00000000", nil)
         pin.label   = ic.label
         pin.labelR  = cr
         pin.labelG  = cg
