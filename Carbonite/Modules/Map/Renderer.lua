@@ -433,6 +433,18 @@ local function ensureHoverTicker()
     -- us hide our own tooltip without clobbering an icon's tooltip
     -- that started showing in the same frame.
     local lastPin, lastT, pathTooltipActive = nil, 0, false
+    -- Resolve our private tooltip frame (Nx.TooltipText) on demand.
+    -- Writing patrol-line text to Blizzard's GameTooltip taints it,
+    -- and that taint propagates into Blizzard secure code that reads
+    -- the same tooltip later — most visibly the FlightMap money
+    -- tooltip ("attempt to perform arithmetic on a secret number
+    -- value (execution tainted by 'Carbonite')"). See memory note
+    -- feedback_gametooltip_taint.
+    local function getTip()
+        if _G.Nx and _G.Nx.TooltipText then return _G.Nx.TooltipText end
+        local T = Carbonite and Carbonite.UI and Carbonite.UI.Tooltip
+        return T and T:Get()
+    end
     hoverTicker:SetScript("OnUpdate", function(_, elapsed)
         -- Fast exit when there's no LINE work this pass and we
         -- aren't holding a tooltip open. The host frame ticks every
@@ -446,10 +458,11 @@ local function ensureHoverTicker()
         if lastT < 0.1 then return end
         lastT = 0
 
+        local tt = getTip()
         local map = lastLineMap
         if not (map and map.Frm and map.Frm:IsShown()) then
-            if pathTooltipActive then
-                GameTooltip:Hide()
+            if pathTooltipActive and tt then
+                tt:Hide()
                 pathTooltipActive = false
             end
             lastPin = nil
@@ -475,34 +488,28 @@ local function ensureHoverTicker()
             end
         end
 
-        -- Yield to existing tooltip owners (icon hovers etc.) unless
-        -- we already own the tooltip. Two cases:
-        --   1. GameTooltip belongs to someone else (an external addon's
-        --      pin OnEnter).
-        --   2. Carbonite's own icon tooltip (Nx.TooltipText) is showing
-        --      — that happens when the cursor is over a Carbonite map
-        --      icon, including the icons our HandyNotes / Questie
-        --      integrations harvested. Without this yield the path tip
-        --      visually stacks on top of the icon tip for the same NPC.
+        -- Yield when another tooltip is already on screen. GameTooltip
+        -- (Blizzard or third-party owned) takes precedence; if our own
+        -- Nx.TooltipText is up for an icon hover we also yield so the
+        -- patrol tip doesn't stack over the icon tip for the same NPC.
         if bestPin then
-            local owner = GameTooltip:GetOwner()
-            if GameTooltip:IsShown() and owner and owner ~= map.Frm and not pathTooltipActive then
-                lastPin = nil
-                return
-            end
-            if Nx.TooltipText and Nx.TooltipText:IsShown() then
-                if pathTooltipActive then
-                    GameTooltip:Hide()
-                    pathTooltipActive = false
+            if GameTooltip:IsShown() and not pathTooltipActive then
+                local owner = GameTooltip:GetOwner()
+                if owner and owner ~= map.Frm then
+                    lastPin = nil
+                    return
                 end
+            end
+            if tt and tt:IsShown() and not pathTooltipActive then
                 lastPin = nil
                 return
             end
         end
 
-        if bestPin and bestPin ~= lastPin then
+        if bestPin and bestPin ~= lastPin and tt then
             lastPin = bestPin
-            GameTooltip:SetOwner(map.Frm, "ANCHOR_CURSOR")
+            tt:ClearLines()
+            tt:SetOwner(map.Frm, "ANCHOR_CURSOR")
             local layerName = bestPin.kind
             local isQuestie = layerName == "!QuestiePath"
             local isHandy   = layerName == "!HandyNotesPath"
@@ -514,8 +521,7 @@ local function ensureHoverTicker()
             -- build the source addon's own tooltip into pin.tip:
             -- multi-line, with |cFFRRGGBB color codes, and a trailing
             -- " \t<sourceTag>" line that should render as a
-            -- right-aligned AddDoubleLine (matches how Nx.TooltipText
-            -- handles the same icon tip for hovered icons).
+            -- right-aligned AddDoubleLine.
             local tip = bestPin.tip
             if (isHandy or isQuestie) and tip and tip:find("\n") then
                 local sawTabbedTag = false
@@ -523,13 +529,13 @@ local function ensureHoverTicker()
                     local lhs, rhs = line:match("^(.-)\t(.+)$")
                     if lhs and rhs then
                         sawTabbedTag = true
-                        GameTooltip:AddDoubleLine(lhs, rhs, 1, 1, 1, 0.7, 0.7, 0.7)
+                        tt:AddDoubleLine(lhs, rhs, 1, 1, 1, 0.7, 0.7, 0.7)
                     else
-                        GameTooltip:AddLine(line, 1, 1, 1, true)
+                        tt:AddLine(line, 1, 1, 1, true)
                     end
                 end
                 if not sawTabbedTag then
-                    GameTooltip:AddDoubleLine(" ", sourceTag, 1, 1, 1, 0.7, 0.7, 0.7)
+                    tt:AddDoubleLine(" ", sourceTag, 1, 1, 1, 0.7, 0.7, 0.7)
                 end
             else
                 local name = tip
@@ -538,19 +544,19 @@ local function ensureHoverTicker()
                     if viaDB then name = viaDB end
                 end
                 if name then
-                    GameTooltip:AddDoubleLine(name, sourceTag, 1, 1, 1, 0.7, 0.7, 0.7)
+                    tt:AddDoubleLine(name, sourceTag, 1, 1, 1, 0.7, 0.7, 0.7)
                 else
-                    GameTooltip:AddLine(sourceTag .. " patrol")
+                    tt:AddLine(sourceTag .. " patrol")
                 end
                 if bestPin.npcId then
-                    GameTooltip:AddLine("NPC #" .. tostring(bestPin.npcId), 0.6, 0.6, 0.6)
+                    tt:AddLine("NPC #" .. tostring(bestPin.npcId), 0.6, 0.6, 0.6)
                 end
             end
-            GameTooltip:Show()
+            tt:Show()
             pathTooltipActive = true
         elseif not bestPin and lastPin then
-            if pathTooltipActive then
-                GameTooltip:Hide()
+            if pathTooltipActive and tt then
+                tt:Hide()
                 pathTooltipActive = false
             end
             lastPin = nil
