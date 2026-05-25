@@ -9060,6 +9060,22 @@ end
 
 function Nx.Map:ClipFrameWChop (frm, bx, by, w, h)
 
+    -- Instance / BG maps render via a fixed canvas (the instance map
+    -- texture doesn't pan with the player). Their POI overlay must
+    -- use zone-coord placement, not world-coord projection — otherwise
+    -- the icons drift relative to the fixed background as the player
+    -- walks (because MapPosXDraw follows the player via NXPlyrFollow).
+    -- ClipFrameByMapType already gates ClipFrameMF this way; mirror
+    -- the gate here for chop-clipped layers (e.g. NxMapGuide's "!POI"
+    -- mailbox / innkeeper / vendor icons, which set clipKind=chop via
+    -- SetIconTypeChop). Before the texture-native icon-size fix, !POI
+    -- icons were huge enough to mask the drift on city / dungeon maps;
+    -- with the smaller native size the drift became visible.
+    if (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
+        and self.CurOpts.NXInstanceMaps then
+        return self:ClipFrameMF (frm, bx, by, w, h, 0)
+    end
+
     local bw = w
     local bh = h
     local clipW = self.MapW
