@@ -27,6 +27,7 @@ AddonButtons.Adopted = {}    -- typeId -> { handler = fn }
 
 local QUESTIE_ICON    = "Interface\\AddOns\\Questie\\Icons\\available.blp"
 local RARESCAN_ICON   = "Interface\\AddOns\\RareScanner\\Media\\Icons\\OriginalSkull.blp"
+local RXP_ICON        = "Interface\\AddOns\\RXPGuides\\Textures\\rxp_logo-128"
 local FALLBACK_ICON   = "Interface\\Icons\\INV_Misc_QuestionMark"
 
 -- HandyNotes itself doesn't ship a brandable toolbar texture; the
@@ -346,6 +347,55 @@ local function initialRareScannerPressed()
         and Nx.fdb.profile.Notes.RareScanner or false
 end
 
+local RXP_TIP = {
+    title = "RXPGuides",
+    rows = {
+        { L["Left click"],  L["Toggle icons"] },
+        { L["Right click"], L["Open settings"] },
+    },
+}
+
+local function initialRXPPressed()
+    local Nx = _G.Nx
+    return Nx and Nx.fdb and Nx.fdb.profile and Nx.fdb.profile.Notes
+        and Nx.fdb.profile.Notes.RXP or false
+end
+
+-- Right-click on the RXP button opens RXPGuides' settings panel.
+-- RXP exposes the opener at `addon.settings.OpenSettings()` and the
+-- internal addon table at `_G.RXP` (RXPGuides.lua line ~2223 stashes
+-- it "for debug purposes" but it's stable and the only reliable way
+-- to drive the panel programmatically — the public _G.RXPGuides API
+-- table doesn't include settings).
+local function openRXPSettings()
+    local rxp = _G.RXP
+    if rxp and rxp.settings and type(rxp.settings.OpenSettings) == "function" then
+        pcall(rxp.settings.OpenSettings)
+    end
+end
+
+local function rxpHandler(_, _, click)
+    local Nx, rxp = _G.Nx, _G.RXP
+    if not rxp or not Nx or not Nx.fdb then return end
+    if click == "RightButton" then
+        openRXPSettings()
+        return
+    end
+    local enabled = not Nx.fdb.profile.Notes.RXP
+    Nx.fdb.profile.Notes.RXP = enabled
+    if Nx.Notes and Nx.Notes.BustIntegrationCache then
+        Nx.Notes:BustIntegrationCache("RXP")
+    end
+    if enabled then
+        if Nx.Notes and Nx.Notes.RXP then
+            Nx.Notes:RXP(Nx.Map:GetCurrentMapAreaID())
+        end
+    else
+        local map = Nx.Map:GetMap(1)
+        if map then map:ClearIconType("!RXP") end
+    end
+end
+
 -- Make sure decorations survive any future Nx.Map:CreateToolBar
 -- rebuild — Notes/Warehouse Init each call it, and #2's phantom
 -- cleanup now destroys the old button frames (including our
@@ -383,6 +433,13 @@ local function tryAdopt()
             rareScannerHandler, initialRareScannerPressed(), RARESCAN_TIP)
         appendOne("AddonBtn_RareScanner", "RareScanner",
             rareScannerHandler, initialRareScannerPressed(), RARESCAN_TIP)
+    end
+    if _G.RXP
+        and not AddonButtons.Adopted["AddonBtn_RXP"] then
+        registerOne("AddonBtn_RXP", RXP_ICON, "RXPGuides",
+            rxpHandler, initialRXPPressed(), RXP_TIP)
+        appendOne("AddonBtn_RXP", "RXPGuides",
+            rxpHandler, initialRXPPressed(), RXP_TIP)
     end
 end
 

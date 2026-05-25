@@ -24,5 +24,6 @@ WindowEngine.lua
 Integrations\HandyNotes.lua
 Integrations\Questie.lua
 Integrations\RareScanner.lua
+Integrations\RXP.lua
 Plugin.lua
 

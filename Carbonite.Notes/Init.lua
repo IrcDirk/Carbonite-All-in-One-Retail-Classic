@@ -27,6 +27,8 @@ local defaults = {
             Questie         = false,   -- Show Questie quest objectives
             QuestieSE       = false,   -- Show Questie available quests
             QuestieSize     = 32,
+            RXP             = true,    -- Show RXPGuides waypoint pins
+            RXPSize         = 24,
         },
         Addons = {},
     },

@@ -37,6 +37,11 @@ local INTEGRATION_FIELDS = {
         PrevRSPins     = "nil",
         RSNeedsRefresh = "true",
     },
+    RXP = {
+        RXPCache     = "table",
+        RXPLastMapId = "nil",
+        PrevRXPPins  = "nil",
+    },
 }
 
 function Nx.Notes:BustIntegrationCache(name)
@@ -158,6 +163,9 @@ function Nx.Notes:UpdateIcons()
     end
     if Nx.fdb.profile.Notes.RareScanner and _G.RareScanner then
         self:RareScanner(mapId)
+    end
+    if Nx.fdb.profile.Notes.RXP and _G.RXP then
+        self:RXP(mapId)
     end
 
     -- Early-exit when nothing's changed since the last !Fav rebuild.
