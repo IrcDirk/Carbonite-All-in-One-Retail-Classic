@@ -49,6 +49,10 @@ L["Display RareScanner icons On Map"] = true
 L["If you have RareScanner installed, allows its icons on the Carbonite map"] = true
 L["RareScanner Icon Size"] = true
 
+L["Display RXPGuides waypoints On Map"] = "RXPGuides-Wegpunkte auf der Karte anzeigen"
+L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = "Falls RXPGuides installiert ist, werden seine aktiven Schritt-Wegpunkte auf der Carbonite-Karte gespiegelt"
+L["RXPGuides Icon Size"] = "RXPGuides Symbolgröße"
+
 -- Keybinds
 L["Carbonite Notes"] = "Carbonite Notizen"
 L["NxTOGGLEFAV"] = "Notizen ein/ausblenden"
