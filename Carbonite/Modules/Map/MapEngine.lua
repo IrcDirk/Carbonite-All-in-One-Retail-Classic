@@ -5641,6 +5641,84 @@ function Nx.Map:Update (elapsed)
                     aPOIs[offset + j] = C_AreaPoiInfo.GetAreaPOIInfo(rid, eventPOIId)
                 end
             end
+            -- Boss encounters from the dungeon journal. On instance
+            -- maps C_EncounterJournal.GetEncountersOnMap returns per-
+            -- boss positions; pair that with EJ_GetCreatureInfo for
+            -- the creature name + iconImage and EJ_GetEncounterInfo
+            -- for the encounter description. Emit POI-shaped entries
+            -- that flow through the same render iteration as everything
+            -- else in aPOIs. Marked with _bossEncounter so the texture-
+            -- set branch below routes through SetTexture(iconImage)
+            -- instead of the atlas / textureIndex path.
+            --
+            -- Skip entries with no position: GetEncountersOnMap can
+            -- list trash / scripted encounters whose position table is
+            -- nil, and the iteration below does `pX = pX * 100` which
+            -- crashes on nil.
+            -- Boss encounters from the dungeon journal. Built into
+            -- their OWN array (NOT appended to aPOIs) so ArrayConcatReuse
+            -- below stamps them with a distinct _type. aPOIs entries
+            -- collide with the iteration's stale "type == 4 means
+            -- Archaeology dig site" gate (a leftover from the old
+            -- C_WorldMap.GetMapLandmarkInfo API; the reused _type field
+            -- now means source-array index, not landmark kind) — so
+            -- anything dumped into aPOIs gets filtered by ShowArchBlobs.
+            local ePOIs = POI_Pool.ePOIs
+            if not ePOIs then
+                ePOIs = {}
+                POI_Pool.ePOIs = ePOIs
+            end
+            wipe(ePOIs)
+            if rid and rid > 0
+                and _G.C_EncounterJournal
+                and _G.C_EncounterJournal.GetEncountersOnMap then
+                local bosses = _G.C_EncounterJournal.GetEncountersOnMap(rid) or POI_EMPTY
+                for _, b in ipairs(bosses) do
+                    local encID = b.journalEncounterID or b.encounterID
+                    local mapX, mapY = b.mapX, b.mapY
+                    -- Drop encID from the guard: some flavours may
+                    -- leave the field nil but still hand us a usable
+                    -- name + position. Without encID we just lose the
+                    -- creature-portrait and description lookups.
+                    if mapX and mapY then
+                        local creatureName, iconImage, desc, instanceID
+                        if encID and _G.EJ_GetCreatureInfo then
+                            local _, nm, _, _, img = _G.EJ_GetCreatureInfo(1, encID)
+                            creatureName = nm
+                            iconImage    = img
+                        end
+                        if encID and _G.EJ_GetEncounterInfo then
+                            -- 6th return is journalInstanceID — needed
+                            -- by EncounterJournal_OpenJournal so we land
+                            -- on the right instance section.
+                            local _, d, _, _, _, jiID = _G.EJ_GetEncounterInfo(encID)
+                            desc = d
+                            instanceID = jiID
+                        end
+                        ePOIs[#ePOIs + 1] = {
+                            -- The POI iteration reads either zPOI.position.x/y
+                            -- or zPOI.x/y; wrap the flat mapX/mapY in a
+                            -- position table to match the AreaPOI shape.
+                            position       = { x = mapX, y = mapY },
+                            name           = creatureName or b.name
+                                            or ("Boss " .. tostring(encID or "?")),
+                            description    = desc,
+                            -- Fall back to a known texture path when no
+                            -- creature image is returned.
+                            -- Fall back to a known texture path when
+                            -- EJ_GetCreatureInfo returns no iconImage
+                            -- (rare but happens for placeholder bosses).
+                            tex            = iconImage
+                                            or "Interface\\TargetingFrame\\UI-TargetingFrame-Skull",
+                            textureWidth   = 21,
+                            textureHeight  = 21,
+                            _bossEncounter = true,
+                            _bossEncID     = encID,
+                            _bossInstID    = instanceID,
+                        }
+                    end
+                end
+            end
 
             local bgPOIs = C_PvP.GetBattlefieldVehicles(rid) or POI_EMPTY
 
@@ -5672,9 +5750,12 @@ function Nx.Map:Update (elapsed)
                 end
             end
 
-            -- Use pooled table for concatenation
+            -- Use pooled table for concatenation. ePOIs (boss
+            -- encounters) lands at index 7, getting _type = 7 — distinct
+            -- from aPOIs' _type = 4 so the Archaeology gate in the
+            -- iteration doesn't filter them out.
             zPOIs = POI_Pool.zPOIs
-            Nx.ArrayConcatReuse(zPOIs, tPOIs, pPOIs, dPOIs, aPOIs, bgPOIs, vPOIs)
+            Nx.ArrayConcatReuse(zPOIs, tPOIs, pPOIs, dPOIs, aPOIs, bgPOIs, vPOIs, ePOIs)
 
             -- Cache the POI data
             POI_Cache.mapID = rid
@@ -5717,15 +5798,18 @@ function Nx.Map:Update (elapsed)
 
             local skip = false
 
-            local _, splitname = strsplit(",", name)
-            if type == 1 and not Nx.strpos(Nx.Map:GetMapNameByID(rid), strtrim(splitname and splitname or name)) then
+            local _, splitname
+            if name then
+                _, splitname = strsplit(",", name)
+            end
+            if type == 1 and name and not Nx.strpos(Nx.Map:GetMapNameByID(rid), strtrim(splitname or name)) then
                 skip = true
             end
 
             -- type, name, desc, txIndex, pX, pY = C_WorldMap.GetMapLandmarkInfo (i)
             -- local type, name, desc, txIndex, pX, pY, mapLinkID, inBattleMap, graveyardID, areaID, poiID, isObjectIcon, atlasIcon = C_WorldMap.GetMapLandmarkInfo(i);
             -- Nx.prtCtrl ("LandMs %s, %s, %s, %s, %s, %s, %s, %s", i, poiID, txIndex or '-', name, type, isObjectIcon, atlasIcon, WorldMap_IsSpecialPOI(poiID))
-            if (atlasIcon or (pX and txIndex ~= 0)) and not skip then        -- WotLK has 0 index POIs for named locations
+            if (atlasIcon or zPOI.tex or (pX and txIndex ~= 0)) and not skip then        -- WotLK has 0 index POIs for named locations
                 if (type ~= 4 or (type == 4 and Nx.db.char.Map.ShowArchBlobs)) and (faction == nil or faction == 0 or Nx.PlFactionNum == faction) then
                     local tip = name
                     if desc then
@@ -5914,7 +5998,64 @@ function Nx.Map:Update (elapsed)
                         local iconW = txW
                         local iconH = txH
                         if self:ClipFrameWNoChop(f, pX, pY, iconW, iconH) then
-                            if atlasIcon then
+                            if zPOI._bossEncounter then
+                                -- Boss POIs need a frame-level bump on
+                                -- instance maps: ClipFrameMF stamps the
+                                -- instance-map icon overlay at level
+                                -- 50, and the legacy GetIcon(5) we use
+                                -- lands at self.Level + 5 ≈ 11. Without
+                                -- the bump the boss pin renders below
+                                -- the overlay and is invisible.
+                                f:SetFrameLevel(self.Level + 51)
+                                -- Wire up click routing. NXType 5000
+                                -- (cat = 5) is the boss-encounter band;
+                                -- IconOnMouseDown's cat==5 branches open
+                                -- the Dungeon Journal on left-click and
+                                -- the standard icon menu on right-click.
+                                -- NXData carries the encounter / instance
+                                -- IDs (for EJ) plus X/Y/Tip so the menu's
+                                -- Goto / Paste Link items have data to
+                                -- read.
+                                f.NXType = 5000
+                                f.NXData = {
+                                    X           = pX,
+                                    Y           = pY,
+                                    Tip         = name,
+                                    encounterID = zPOI._bossEncID,
+                                    instanceID  = zPOI._bossInstID,
+                                }
+                                -- And re-anchor using zone-coord
+                                -- placement on instance / BG maps.
+                                -- ClipFrameWNoChop projects via world
+                                -- coords + ScaleDraw, but the instance
+                                -- canvas shows zone [0..1] stretched to
+                                -- [0..MapW] directly. Carbonite assigns
+                                -- instances a generic small world-scale
+                                -- (1002/25600 ≈ 0.039) that's tighter
+                                -- than the actual instance extent, so
+                                -- world-coord placement compresses
+                                -- positions toward the canvas centre.
+                                if (self:IsInstanceMap(self.MapId)
+                                    or self:IsBattleGroundMap(self.MapId))
+                                    and self.CurOpts.NXInstanceMaps then
+                                    local mx = (zPOI.position and zPOI.position.x) or 0
+                                    local my = (zPOI.position and zPOI.position.y) or 0
+                                    f:ClearAllPoints()
+                                    f:SetPoint("TOPLEFT",
+                                        mx * self.MapW - iconW * 0.5,
+                                        -my * self.MapH + iconH * 0.5 - (self.TitleH or 0))
+                                end
+                            end
+                            if zPOI.tex then
+                                -- Boss-encounter POIs (and any future
+                                -- entry that hands us a raw texture
+                                -- path / FileDataID) use SetTexture
+                                -- directly. atlas / Minimap-atlas
+                                -- paths don't know about FileDataIDs.
+                                f.texture:SetTexture(zPOI.tex)
+                                f.texture:SetTexCoord(0, 1, 0, 1)
+                                f.texture:SetVertexColor(1, 1, 1, 1)
+                            elseif atlasIcon then
                                 f.texture:SetAtlas(atlasIcon)
                             else
                                 f.texture:SetTexture ("Interface\\Minimap\\POIIcons")
@@ -10103,6 +10244,33 @@ function Nx.Map:IconOnMouseDown(button)
                     map:GMenu_OnGoto()
                 end
             else
+                -- Boss-encounter pin: toggle the Dungeon Journal at
+                -- this boss. Second click on the same boss (with the
+                -- journal still showing it) closes the panel; click on
+                -- a different boss switches the journal to that one.
+                if cat == 5 and this.NXData and this.NXData.encounterID then
+                    local encID = this.NXData.encounterID
+                    if _G.EncounterJournal and _G.EncounterJournal:IsShown()
+                        and Nx.Map._lastBossClick == encID then
+                        if _G.HideUIPanel then
+                            _G.HideUIPanel(_G.EncounterJournal)
+                        else
+                            _G.EncounterJournal:Hide()
+                        end
+                        Nx.Map._lastBossClick = nil
+                    else
+                        if not _G.EncounterJournal and _G.EncounterJournal_LoadUI then
+                            _G.EncounterJournal_LoadUI()
+                        end
+                        if _G.EncounterJournal_OpenJournal then
+                            _G.EncounterJournal_OpenJournal(0,
+                                this.NXData.instanceID or 0,
+                                encID)
+                        end
+                        Nx.Map._lastBossClick = encID
+                    end
+                    return
+                end
                 -- Handle Quest Hub click - toggle quest offers display
                 if cat == 4 and this.NXData and this.NXData.hubPoiID then
                     local hubData = this.NXData
@@ -10326,6 +10494,15 @@ function Nx.Map:IconOnMouseDown(button)
                 elseif i == 3 then
                     -- General icon - show general menu
                     map:GMenuOpen(this.NXData, typ)
+
+                elseif i == 5 then
+                    -- Boss encounter pin: show the same standard
+                    -- icon menu (Goto / Clear Goto / Paste Link).
+                    -- Pass typ=3000 so GMenuOpen takes the general
+                    -- POI branch — it reads icon.UData / FavData1 /
+                    -- iconType conditionally, all nil for bosses,
+                    -- so only the always-on items show.
+                    map:GMenuOpen(this.NXData, 3000)
 
                 elseif i == 9 then
                     -- Quest icon

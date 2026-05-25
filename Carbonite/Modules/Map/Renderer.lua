@@ -143,7 +143,9 @@ local function renderWP(map, layer, cls, frameLvl, wpScale, wpMin)
         end
     end
 
-    if map:IsInstanceMap(map.UpdateMapID) or map:IsBattleGroundMap(map.UpdateMapID) then
+    local isInst = map:IsInstanceMap(map.UpdateMapID)
+        or map:IsBattleGroundMap(map.UpdateMapID)
+    if isInst then
         w = Nx.db.profile.Map.InstanceScale
         h = Nx.db.profile.Map.InstanceScale
     end
@@ -203,10 +205,20 @@ local function renderWP(map, layer, cls, frameLvl, wpScale, wpMin)
                 if rawSize then
                     if pin.w then pw = pin.w end
                     if pin.h then ph = pin.h end
-                else
+                elseif not isInst then
                     -- POI / regular WP pins: any per-pin w/h still
                     -- gets the renderer's icon-scale applied (the
                     -- legacy semantics that integration pins rely on).
+                    --
+                    -- Skipped on instance / BG maps: Pin.Acquire runs
+                    -- Mixin.Apply, which copies the class's w/h onto
+                    -- the pin instance — so pin.w is truthy for every
+                    -- pin, not just ones that explicitly opted into a
+                    -- per-instance size. On tight-scale instance maps
+                    -- (Scale ≈ 0.039 → ScaleDraw 100+ → wpScale 10+)
+                    -- this branch would immediately clobber the
+                    -- InstanceScale override above with pin.w * scale,
+                    -- producing icons the size of the entire map.
                     if pin.w then pw = max(pin.w * scale, wpMin) end
                     if pin.h then ph = max(pin.h * scale, wpMin) end
                 end
