@@ -175,3 +175,10 @@ L["kill"] = true
 L["death"] = true
 L["kills: %s"] = true
 L["NPC ID: %s"] = true
+
+-- AddonButtons toolbar tooltips (Questie / HandyNotes / RareScanner)
+L["Left click"] = true
+L["Right click"] = true
+L["Toggle icons"] = true
+L["Context menu"] = true
+L["Open settings"] = true

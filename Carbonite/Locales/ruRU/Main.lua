@@ -185,3 +185,10 @@ L["kill"] = "убийство"
 L["death"] = "смерть"
 L["kills: %s"] = "убийств: %s"
 L["NPC ID: %s"] = "ID моба: %s"
+
+-- AddonButtons toolbar tooltips (Questie / HandyNotes / RareScanner)
+L["Left click"] = "Левый клик"
+L["Right click"] = "Правый клик"
+L["Toggle icons"] = "Показать/скрыть иконки"
+L["Context menu"] = "Контекстное меню"
+L["Open settings"] = "Открыть настройки"

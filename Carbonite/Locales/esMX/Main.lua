@@ -184,3 +184,10 @@ L["kill"] = "muerte"
 L["death"] = "fallecimiento"
 L["kills: %s"] = "muertes: %s"
 L["NPC ID: %s"] = "ID PNJ: %s"
+
+-- AddonButtons toolbar tooltips (Questie / HandyNotes / RareScanner)
+L["Left click"] = "Clic izquierdo"
+L["Right click"] = "Clic derecho"
+L["Toggle icons"] = "Alternar iconos"
+L["Context menu"] = "Menú contextual"
+L["Open settings"] = "Abrir ajustes"

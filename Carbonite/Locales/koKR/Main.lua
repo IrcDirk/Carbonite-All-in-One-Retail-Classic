@@ -226,3 +226,10 @@ L["kill"] = "처치"
 L["death"] = "사망"
 L["kills: %s"] = "처치 횟수: %s"
 L["NPC ID: %s"] = "NPC ID: %s"
+
+-- AddonButtons toolbar tooltips (Questie / HandyNotes / RareScanner)
+L["Left click"] = "왼쪽 클릭"
+L["Right click"] = "오른쪽 클릭"
+L["Toggle icons"] = "아이콘 전환"
+L["Context menu"] = "컨텍스트 메뉴"
+L["Open settings"] = "설정 열기"

@@ -18,6 +18,7 @@
 -- their own buttons on the Blizzard worldmap for now.
 
 local Carbonite = _G.Carbonite
+local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite", true)
 
 local AddonButtons = {}
 Carbonite.Modules.Map.AddonButtons = AddonButtons
@@ -25,9 +26,24 @@ Carbonite.Modules.Map.AddonButtons = AddonButtons
 AddonButtons.Adopted = {}    -- typeId -> { handler = fn }
 
 local QUESTIE_ICON    = "Interface\\AddOns\\Questie\\Icons\\available.blp"
-local HANDYNOTES_ICON = "Interface\\AddOns\\HandyNotes_WorldMapButton\\Buttons\\Default"
 local RARESCAN_ICON   = "Interface\\AddOns\\RareScanner\\Media\\Icons\\OriginalSkull.blp"
 local FALLBACK_ICON   = "Interface\\Icons\\INV_Misc_QuestionMark"
+
+-- HandyNotes itself doesn't ship a brandable toolbar texture; the
+-- nice "M on parchment" icon comes from the optional
+-- HandyNotes_WorldMapButton plugin. Resolve at register time so
+-- flavours without that plugin (e.g. MoP Classic users who only
+-- have HandyNotes core) get a sensible builtin instead of an
+-- empty texture region.
+local function handyNotesIcon()
+    local isLoaded = (_G.C_AddOns and _G.C_AddOns.IsAddOnLoaded
+                        and _G.C_AddOns.IsAddOnLoaded("HandyNotes_WorldMapButton"))
+                  or (_G.IsAddOnLoaded and _G.IsAddOnLoaded("HandyNotes_WorldMapButton"))
+    if isLoaded then
+        return "Interface\\AddOns\\HandyNotes_WorldMapButton\\Buttons\\Default"
+    end
+    return "Interface\\Icons\\INV_Misc_Map02"
+end
 
 local function carboniteMap()
     local Nx = _G.Nx
@@ -303,24 +319,24 @@ end
 local QUESTIE_TIP = {
     title = "Questie",
     rows = {
-        { "Left click",  "Toggle icons" },
-        { "Right click", "Context menu" },
+        { L["Left click"],  L["Toggle icons"] },
+        { L["Right click"], L["Context menu"] },
     },
 }
 
 local HANDYNOTES_TIP = {
     title = "HandyNotes",
     rows = {
-        { "Left click",  "Toggle icons" },
-        { "Right click", "Open settings" },
+        { L["Left click"],  L["Toggle icons"] },
+        { L["Right click"], L["Open settings"] },
     },
 }
 
 local RARESCAN_TIP = {
     title = "RareScanner",
     rows = {
-        { "Left click",  "Toggle icons" },
-        { "Right click", "Open settings" },
+        { L["Left click"],  L["Toggle icons"] },
+        { L["Right click"], L["Open settings"] },
     },
 }
 
@@ -356,7 +372,7 @@ local function tryAdopt()
     end
     if _G.HandyNotes
         and not AddonButtons.Adopted["AddonBtn_HandyNotes"] then
-        registerOne("AddonBtn_HandyNotes", HANDYNOTES_ICON, "HandyNotes",
+        registerOne("AddonBtn_HandyNotes", handyNotesIcon(), "HandyNotes",
             handyNotesHandler, initialHandyNotesPressed(), HANDYNOTES_TIP)
         appendOne("AddonBtn_HandyNotes", "HandyNotes",
             handyNotesHandler, initialHandyNotesPressed(), HANDYNOTES_TIP)
