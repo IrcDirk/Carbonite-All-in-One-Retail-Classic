@@ -43,6 +43,45 @@ Nx.Whatsnew.Maps = {
         "Updated Flight Masters data",
         "Updated Flight Masters locales for DE,ES,FR,KO,PT,RU,TW Languages",
         "Fixed various small errors caused by division by zero."
+    },
+    [1779796800] = {
+        "May 26th 2026", "",
+        "New map rendering engine (Pin / Layer system plus a",
+        "   Map Provider API) that third-party add-ons can",
+        "   plug into",
+        "",
+        "Added Carbonite-map integrations for Questie,",
+        "   HandyNotes and RareScanner, each with a toolbar",
+        "   toggle button and localized tooltips",
+        "",
+        "Added RXPGuides integration: its step waypoints now",
+        "   show on the Carbonite map, and its navigation",
+        "   arrow can be routed through Carbonite's own travel",
+        "   arrow with the current step's description (new",
+        "   option in the Notes settings)",
+        "",
+        "Retail & Mists quest database overhaul: rewrote",
+        "   ~13,400 outdated map IDs and backfilled ~8,400",
+        "   missing quest turn-in points and ~1,500 objective",
+        "   locations",
+        "",
+        "Quest tracking fixes: smoother tracking arrow,",
+        "   track-to-end, multi-zone objective handling,",
+        "   fewer combat crashes, and a reliable \"?\"",
+        "   auto-complete button",
+        "",
+        "Fixed map icon flickering (world-quest and",
+        "   bonus-objective icons blinking on retail)",
+        "",
+        "Instance maps: correct icon sizing plus",
+        "   boss-encounter pins from the Encounter Journal",
+        "",
+        "Performance: removed per-frame memory allocations in",
+        "   path building and the main update loop; pooled",
+        "   POIs and throttled title updates",
+        "",
+        "Various tooltip taint, clipping and localization",
+        "   fixes"
     }
 }
 Nx.Whatsnew.WhichCat = 1
@@ -93,7 +132,9 @@ function Nx.Whatsnew:Create()
     win:InitLayoutData(nil, -.25, -.15, -.5, -.6)
     win.Frm:SetToplevel(true)
     win:Show(false)
-    win.Frm:SetScript("OnHide", self.Recordtime)
+    -- Note: closing the window no longer marks the update read. Only
+    -- the explicit "Don't show this update again" button dismisses it,
+    -- so the window keeps popping each login until the player opts out.
     tinsert(UISpecialFrames, win.Frm:GetName())
 
     Nx.List:SetCreateFont("Font.Medium", 16)
@@ -106,13 +147,13 @@ function Nx.Whatsnew:Create()
     list:ColumnAdd("", 1, 24)
     list:ColumnAdd("Date", 2, 200)
     list:SetUser(self, self.OnListEvent)
-    win:Attach(list.Frm, 0, .2, 0, 1)
+    win:Attach(list.Frm, 0, .2, 0, .94)
 
     -- Right list: lines of the selected entry.
     local detail = Nx.List:Create(false, 0, 0, 1, 1, win.Frm)
     self.WhatsNewList = detail
     detail:ColumnAdd("", 1, 500)
-    win:Attach(detail.Frm, .2, 1, 0, 1)
+    win:Attach(detail.Frm, .2, 1, 0, .94)
 
     -- Category-selector buttons across the top.
     local _, bh = win:GetBorderSize()
@@ -124,6 +165,14 @@ function Nx.Whatsnew:Create()
         pos = pos + but.Frm:GetWidth()
     end
 
+    -- "Don't show this update again" button, bottom-left of the window.
+    -- Dismisses the current changelog so it won't auto-pop again until
+    -- a newer entry is added.
+    local dismissText = L["Don't show for this update again"]
+    Nx.Button:Create(win.Frm, "Txt64", dismissText, nil, 12, bh, "BOTTOMLEFT",
+        string.len(dismissText) * 8 + 20, 22,
+        function() Nx.Whatsnew:DismissUpdate() end, self)
+
     self:Update()
     self.List:Select(0)
     self.List:FullUpdate()
@@ -133,6 +182,33 @@ end
 function Nx.Whatsnew:Recordtime()
     Nx.db.profile.Whatsnew.lastreadtime = time()
     NXMiniMapBut:SetNormalTexture("Interface\\AddOns\\Carbonite\\Gfx\\MMBut")
+end
+
+--- Highest changelog timestamp across all categories.
+function Nx.Whatsnew:GetMaxTime()
+    local maxTs = 0
+    for _, cat in pairs(Nx.Whatsnew.Categories) do
+        for ts in pairs(Nx.Whatsnew[cat] or {}) do
+            if ts > maxTs then maxTs = ts end
+        end
+    end
+    return maxTs
+end
+
+--- True once the player has dismissed the current changelog: lastreadtime
+--- equals the newest entry's timestamp. Using equality (not <) means the
+--- auto-show fires until the player opts out, and any newer entry (a
+--- bigger max timestamp) re-arms it.
+function Nx.Whatsnew:DismissedCurrent()
+    return (Nx.db.profile.Whatsnew.lastreadtime or 0) == self:GetMaxTime()
+end
+
+--- "Don't show this update again": pin lastreadtime to the newest entry
+--- so the window stops auto-popping until a newer changelog is added.
+function Nx.Whatsnew:DismissUpdate()
+    Nx.db.profile.Whatsnew.lastreadtime = self:GetMaxTime()
+    NXMiniMapBut:SetNormalTexture("Interface\\AddOns\\Carbonite\\Gfx\\MMBut")
+    if self.Win then self.Win:Show(false) end
 end
 
 --- Switch to category N (1-based index into Nx.Whatsnew.Categories).
@@ -160,11 +236,17 @@ function Nx.Whatsnew:Update()
     local cnt = 1
     local display = {}
     local cat = Nx.Whatsnew.Categories[Nx.Whatsnew.WhichCat]
-    for ts, entry in pairs(Nx.Whatsnew[cat]) do
+    -- Numeric timestamp keys: pairs() yields them in hash order, so
+    -- sort newest-first before listing or the dates come out jumbled.
+    local entries = Nx.Whatsnew[cat] or {}
+    local keys = {}
+    for ts in pairs(entries) do keys[#keys + 1] = ts end
+    table.sort(keys, function(a, b) return a > b end)
+    for _, ts in ipairs(keys) do
         list:ItemAdd(cnt)
         list:ItemSet(2, date("%m/%d/%y", ts))
         if cnt == self.SelectedLine then
-            display = entry
+            display = entries[ts]
         end
         cnt = cnt + 1
     end
@@ -173,7 +255,9 @@ function Nx.Whatsnew:Update()
     list = self.WhatsNewList
     list:Empty()
     cnt = 1
-    for _, line in pairs(display) do
+    -- ipairs: the entry's lines are an ordered array; pairs() would
+    -- shuffle them.
+    for _, line in ipairs(display) do
         list:ItemAdd(cnt)
         list:ItemSet(1, line)
         cnt = cnt + 1

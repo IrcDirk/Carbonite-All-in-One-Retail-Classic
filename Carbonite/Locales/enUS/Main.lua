@@ -19,6 +19,7 @@ NXClassLocToCap = {		-- Convert localized class name to generic caps
 L["Carbonite"] = true
 L["CARBONITE"] = true
 L["Whats New!"] = true
+L["Don't show for this update again"] = true
 L["Loading"] = true
 L["Loading Done"] = true
 L["None"] = true

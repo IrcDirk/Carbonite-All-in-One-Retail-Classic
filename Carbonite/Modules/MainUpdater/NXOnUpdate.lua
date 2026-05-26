@@ -136,6 +136,24 @@ function Nx:NXOnUpdate (elapsed)
             Nx.Whatsnew:ToggleShow()
         end
         Nx.NXMiniMapBut.Menu:AddItem(0, L["Whats New!"], func, Nx.NXMiniMapBut)
+
+        -- Auto-open the What's New window on login / reload while there
+        -- is an undismissed changelog. The window keeps popping until the
+        -- player clicks "Don't show this update again" (which pins
+        -- lastreadtime to the newest entry); a newer entry re-arms it.
+        -- Closing with the X does not dismiss, so it reappears next login.
+        local function showWhatsNew()
+            if Nx.Whatsnew and Nx.Whatsnew.DismissedCurrent and not Nx.Whatsnew:DismissedCurrent()
+                and Nx.Whatsnew.ToggleShow
+                and not (Nx.Whatsnew.Win and Nx.Whatsnew.Win:IsShown()) then
+                Nx.Whatsnew:ToggleShow()
+            end
+        end
+        if C_Timer and C_Timer.After then
+            C_Timer.After(1, showWhatsNew)
+        else
+            showWhatsNew()
+        end
     end
 
 end
