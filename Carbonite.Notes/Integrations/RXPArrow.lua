@@ -25,8 +25,11 @@ Nx.Notes = Nx.Notes or {}
 
 -- Active Carbonite goto-target UniqueId and the last element signature
 -- we pushed, so we only churn the target when the RXP step changes.
+-- lastTitle tracks the waypoint label so a live objective update (e.g.
+-- "3/10 mobs slain") refreshes the name in place without rebuilding.
 local activeUid
 local lastSig
+local lastTitle
 
 -- Arrow-suppression state. We swap RXPG_ARROW's OnUpdate (its render
 -- driver, addon.DrawArrow) for a no-op and zero its alpha, rather than
@@ -177,20 +180,30 @@ local function clearTarget()
     end
     activeUid = nil
     lastSig   = nil
+    lastTitle = nil
 end
 
--- Whether our active target still exists in the queue (the user may
--- have cleared the goto manually, or a guide reload wiped it).
-local function targetAlive()
-    if not activeUid then return false end
+-- Resolve our live Carbonite target object (nil if it no longer exists,
+-- e.g. the user cleared the goto or a guide reload wiped it).
+local function findTarget()
+    if not activeUid then return nil end
     local Carbonite = _G.Carbonite
     local Targets   = Carbonite and Carbonite.Modules
                       and Carbonite.Modules.Map
                       and Carbonite.Modules.Map.Targets
     if Targets and Targets.Find then
-        return Targets:Find(activeUid) ~= nil
+        return Targets:Find(activeUid)
     end
-    return true
+    return nil
+end
+
+-- Update the live target's label in place. The HUD / track arrow builds
+-- its caption from tar.TargetName every frame (MapEngine), so this is
+-- enough to reflect a changing objective counter without re-adding the
+-- waypoint (which would clear the auto-target and reorder the queue).
+local function updateTargetName(title)
+    local tar = findTarget()
+    if tar then tar.TargetName = title end
 end
 
 -- Hide / restore RXP's own navigation arrow. Suppression replaces the
@@ -248,8 +261,18 @@ function Nx.Notes:RXPArrowSync()
         return
     end
 
-    -- Unchanged step and our target is still live: nothing to do.
-    if sig == lastSig and targetAlive() then return end
+    local title = elementTitle(el)
+
+    -- Same destination and our target is still live: the coords didn't
+    -- change, but the objective label might have (a kill / collect
+    -- counter ticking up), so refresh the name in place and bail.
+    if sig == lastSig and findTarget() then
+        if title ~= lastTitle then
+            updateTargetName(title)
+            lastTitle = title
+        end
+        return
+    end
 
     local map, x, y = elementTarget(el)
     if not map then
@@ -262,9 +285,9 @@ function Nx.Notes:RXPArrowSync()
         Nx:TTRemoveWaypoint(activeUid)
     end
 
-    local title = elementTitle(el)
     activeUid = Nx.TTAddWaypoint and Nx:TTAddWaypoint(map, x, y, { title = title }) or nil
     lastSig   = sig
+    lastTitle = title
     if activeUid and Nx.TTSetCrazyArrow then
         Nx:TTSetCrazyArrow(activeUid, 0, title)
     end
