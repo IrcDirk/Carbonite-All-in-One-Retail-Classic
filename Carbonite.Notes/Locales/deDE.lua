@@ -52,6 +52,8 @@ L["RareScanner Icon Size"] = true
 L["Display RXPGuides waypoints On Map"] = "RXPGuides-Wegpunkte auf der Karte anzeigen"
 L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = "Falls RXPGuides installiert ist, werden seine aktiven Schritt-Wegpunkte auf der Carbonite-Karte gespiegelt"
 L["RXPGuides Icon Size"] = "RXPGuides Symbolgröße"
+L["Route RXPGuides arrow through Carbonite"] = "RXPGuides-Pfeil über Carbonite leiten"
+L["Replaces the RXPGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = "Ersetzt den Navigationspfeil von RXPGuides durch Carbonites eigenen HUD-Wegpfeil, der auf den aktuellen Schritt zeigt"
 
 -- Keybinds
 L["Carbonite Notes"] = "Carbonite Notizen"

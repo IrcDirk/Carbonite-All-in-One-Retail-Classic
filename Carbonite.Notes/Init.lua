@@ -29,6 +29,7 @@ local defaults = {
             QuestieSize     = 32,
             RXP             = true,    -- Show RXPGuides waypoint pins
             RXPSize         = 24,
+            RXPArrow        = true,    -- Route RXPGuides arrow through Carbonite HUD
         },
         Addons = {},
     },

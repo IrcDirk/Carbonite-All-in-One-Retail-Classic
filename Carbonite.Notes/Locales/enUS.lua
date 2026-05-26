@@ -54,6 +54,8 @@ L["Questie Icon Size"] = true
 L["Display RXPGuides waypoints On Map"] = true
 L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = true
 L["RXPGuides Icon Size"] = true
+L["Route RXPGuides arrow through Carbonite"] = true
+L["Replaces the RXPGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = true
 
 -- Keybinds
 L["Carbonite Notes"] = "Carbonite Notes"

@@ -163,6 +163,17 @@ function Nx.Notes:GetOptionsConfig()
                     end,
                     disabled = function() return not _G.RXP end,
                 },
+                rxparrow = {
+                    order = 11, type = "toggle", width = "full",
+                    name = L["Route RXPGuides arrow through Carbonite"],
+                    desc = L["Replaces the RXPGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"],
+                    get = function() return Nx.fdb.profile.Notes.RXPArrow end,
+                    set = function()
+                        Nx.fdb.profile.Notes.RXPArrow = not Nx.fdb.profile.Notes.RXPArrow
+                        if Nx.Notes.RXPArrowSync then Nx.Notes:RXPArrowSync() end
+                    end,
+                    disabled = function() return not _G.RXP end,
+                },
             },
         }
     end

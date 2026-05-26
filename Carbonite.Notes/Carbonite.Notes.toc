@@ -25,5 +25,6 @@ Integrations\HandyNotes.lua
 Integrations\Questie.lua
 Integrations\RareScanner.lua
 Integrations\RXP.lua
+Integrations\RXPArrow.lua
 Plugin.lua
 
