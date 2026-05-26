@@ -68,11 +68,19 @@ function HUD:Create()
 
     Nx.Window:SetCreateFade(1, .15)
 
-    local win = Nx.Window:Create("NxHUD", nil, nil, nil, 2, 1, nil, true)
+    -- 4 title rows: the target name can span up to 3 of them (RXP
+    -- steps with several sub-objectives stack each on its own line),
+    -- with distance / ETA on the row below. Update() lays the caption
+    -- out bottom-aligned so unused rows fall at the invisible top.
+    local win = Nx.Window:Create("NxHUD", nil, nil, nil, 4, 1, nil, true)
     inst.Win = win
 
-    win:SetTitleJustify("CENTER", 1)
-    win:SetTitleJustify("CENTER", 2)
+    -- Objective rows are left-aligned so they read as a bulleted list;
+    -- the distance / ETA row (always the last title line, per Update's
+    -- bottom-aligned layout) stays centred under the arrow.
+    for n = 1, win.TitleLines do
+        win:SetTitleJustify(n == win.TitleLines and "CENTER" or "LEFT", n)
+    end
 
     -- Transparent background while locked.
     win:SetBGAlpha(0, 1)
@@ -225,8 +233,6 @@ function HUD:Update(map)
         -- 0..180 angular distance; how far we are from facing.
         local dirDist = dir <= 180 and dir or 360 - dir
 
-        win:SetTitle(map.TrackName or "")
-
         if map.TrackPlayer and noLockDown then
             but:SetAttribute("unit1",       map.TrackPlayer)
             but:SetAttribute("shift-unit1", map.TrackPlayer .. "-target")
@@ -258,7 +264,29 @@ function HUD:Update(map)
             self.ETAStr = ""
         end
 
-        win:SetTitle(str, 2)
+        -- Caption layout: the target name may span several rows (RXP
+        -- sub-objectives joined with "\n"); distance / ETA goes on the
+        -- row beneath it. Bottom-align within the fixed title block so
+        -- the caption always sits right above the arrow and any unused
+        -- rows fall at the (invisible) top.
+        local maxLines  = win.TitleLines
+        local nameLines = {}
+        for ln in (tostring(map.TrackName or "") .. "\n"):gmatch("(.-)\n") do
+            nameLines[#nameLines + 1] = ln
+        end
+        -- Fold any overflow beyond (maxLines - 1) name rows into the last.
+        local maxName = maxLines - 1
+        if #nameLines > maxName then
+            for i = maxName + 1, #nameLines do
+                nameLines[maxName] = nameLines[maxName] .. " " .. nameLines[i]
+                nameLines[i] = nil
+            end
+        end
+        local used  = #nameLines + 1            -- name rows + distance row
+        local first = maxLines - used + 1
+        for n = 1, first - 1 do win:SetTitle("", n) end
+        for i = 1, #nameLines do win:SetTitle(nameLines[i], first + i - 1) end
+        win:SetTitle(str, maxLines)
 
         -- Resize window to fit the title; anchor side determines
         -- which way the center has to drift.

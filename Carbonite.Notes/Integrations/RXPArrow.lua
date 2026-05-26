@@ -102,7 +102,8 @@ end
 -- colour markup. RXP wraps coloured words as `|cRXP_FOO_word|r`; we
 -- convert the RXP_FOO_ token into its real |cAARRGGBB hex (exactly what
 -- RXP's own arrow does) so the title renders coloured rather than
--- stripped. Newlines are flattened to spaces.
+-- stripped. Newlines are kept (each sub-objective stays on its own row
+-- in the multi-line HUD caption); only surrounding whitespace is trimmed.
 local function formatText(s, rxp)
     if type(s) ~= "string" then return nil end
     local gtc = rxp and rxp.guideTextColors
@@ -111,7 +112,7 @@ local function formatText(s, rxp)
             return gtc[tok] or (gtc.default and gtc.default[tok]) or tok
         end)
     end
-    s = s:gsub("%s*\n%s*", " ")              -- newlines -> single space
+    s = s:gsub("%s*\n%s*", "\n")             -- trim around newlines, collapse blanks
     s = s:gsub("^%s+", ""):gsub("%s+$", "")
     if s == "" then return nil end
     return s
@@ -148,7 +149,14 @@ local function objectiveText(step)
         end
     end
     if #parts == 0 then return nil end
-    return table.concat(parts, " / ")
+    -- One objective per line: the HUD arrow caption renders the target
+    -- name across multiple title rows, so newline-separated sub-objectives
+    -- stack instead of running into one long line. With several of them,
+    -- prefix a bullet so the (left-aligned) caption reads as a list.
+    if #parts > 1 then
+        for i = 1, #parts do parts[i] = "• " .. parts[i] end
+    end
+    return table.concat(parts, "\n")
 end
 
 -- Waypoint title: just the current step's description, one line. Prefer
