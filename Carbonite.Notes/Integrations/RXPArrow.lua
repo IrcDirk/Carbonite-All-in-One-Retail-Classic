@@ -149,13 +149,10 @@ local function objectiveText(step)
         end
     end
     if #parts == 0 then return nil end
-    -- One objective per line: the HUD arrow caption renders the target
-    -- name across multiple title rows, so newline-separated sub-objectives
-    -- stack instead of running into one long line. With several of them,
-    -- prefix a bullet so the (left-aligned) caption reads as a list.
-    if #parts > 1 then
-        for i = 1, #parts do parts[i] = "• " .. parts[i] end
-    end
+    -- One objective per line in the multi-row HUD caption. The first
+    -- objective reads as the heading; any further ones become a bulleted
+    -- list beneath it (left-aligned).
+    for i = 2, #parts do parts[i] = "• " .. parts[i] end
     return table.concat(parts, "\n")
 end
 

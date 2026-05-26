@@ -68,18 +68,17 @@ function HUD:Create()
 
     Nx.Window:SetCreateFade(1, .15)
 
-    -- 4 title rows: the target name can span up to 3 of them (RXP
-    -- steps with several sub-objectives stack each on its own line),
-    -- with distance / ETA on the row below. Update() lays the caption
-    -- out bottom-aligned so unused rows fall at the invisible top.
-    local win = Nx.Window:Create("NxHUD", nil, nil, nil, 4, 1, nil, true)
+    -- 5 title rows: up to 3 for the target name (RXP steps with several
+    -- sub-objectives stack each on its own line), a cosmetic spacer row,
+    -- and the distance / ETA row. Update() sizes the block to the rows
+    -- actually used so short captions stay tight.
+    local win = Nx.Window:Create("NxHUD", nil, nil, nil, 5, 1, nil, true)
     inst.Win = win
 
-    -- Objective rows are left-aligned so they read as a bulleted list;
-    -- the distance / ETA row (always the last title line, per Update's
-    -- bottom-aligned layout) stays centred under the arrow.
+    -- Justification is finalised per-frame in Update (objective rows
+    -- left, the distance row centred under the arrow); default here.
     for n = 1, win.TitleLines do
-        win:SetTitleJustify(n == win.TitleLines and "CENTER" or "LEFT", n)
+        win:SetTitleJustify("LEFT", n)
     end
 
     -- Transparent background while locked.
@@ -265,28 +264,40 @@ function HUD:Update(map)
         end
 
         -- Caption layout: the target name may span several rows (RXP
-        -- sub-objectives joined with "\n"); distance / ETA goes on the
-        -- row beneath it. Bottom-align within the fixed title block so
-        -- the caption always sits right above the arrow and any unused
-        -- rows fall at the (invisible) top.
-        local maxLines  = win.TitleLines
+        -- sub-objectives joined with "\n"), then a cosmetic spacer, then
+        -- the distance / ETA row. Top-aligned, and we shrink the title
+        -- block to exactly the rows used so a plain single-line goto has
+        -- no empty padding and the arrow hugs the caption.
         local nameLines = {}
         for ln in (tostring(map.TrackName or "") .. "\n"):gmatch("(.-)\n") do
             nameLines[#nameLines + 1] = ln
         end
-        -- Fold any overflow beyond (maxLines - 1) name rows into the last.
-        local maxName = maxLines - 1
+        -- Reserve a spacer row + a distance row; fold overflow into the
+        -- last available name row.
+        local maxName = win.TitleLines - 2
         if #nameLines > maxName then
             for i = maxName + 1, #nameLines do
                 nameLines[maxName] = nameLines[maxName] .. " " .. nameLines[i]
                 nameLines[i] = nil
             end
         end
-        local used  = #nameLines + 1            -- name rows + distance row
-        local first = maxLines - used + 1
-        for n = 1, first - 1 do win:SetTitle("", n) end
-        for i = 1, #nameLines do win:SetTitle(nameLines[i], first + i - 1) end
-        win:SetTitle(str, maxLines)
+        for i = 1, #nameLines do
+            win:SetTitle(nameLines[i], i)
+            win:SetTitleJustify("LEFT", i)       -- objectives read as a list
+        end
+        local spacerRow = #nameLines + 1         -- cosmetic gap before distance
+        local distRow   = spacerRow + 1
+        win:SetTitle("", spacerRow)
+        win:SetTitle(str, distRow)
+        win:SetTitleJustify("CENTER", distRow)   -- distance centred under the arrow
+        for n = distRow + 1, win.TitleLines do win:SetTitle("", n) end
+
+        -- Size the title block to the rows used and re-hang the arrow
+        -- just below it (mirrors UpdateOptions' formula, per-frame).
+        win.TitleH = distRow * win.TitleLineH + 2
+        win.TopH   = win.TitleH + win.BorderH
+        frm:SetPoint("CENTER", Nx.db.profile.Track.AXO,
+                     -win.TitleH / 2 - 32 - Nx.db.profile.Track.AYO)
 
         -- Resize window to fit the title; anchor side determines
         -- which way the center has to drift.
