@@ -10550,6 +10550,21 @@ function Nx.Map:IconOnMouseDown(button)
                             Nx.Quest._addWatchSuppress = true
                         end
 
+                        -- Defer the secure C_SuperTrack mutations to next
+                        -- tick. Calling them synchronously from this
+                        -- click stack carries Carbonite taint through
+                        -- Blizzard's super-track CallbackRegistry chain
+                        -- and trips SetPassThroughButtons in
+                        -- QuestDataProvider:RefreshAllData (same pattern
+                        -- as the WQ-pin click fix). _addWatchSuppress
+                        -- has to stay TRUE through the deferred call so
+                        -- the AddQuestWatch hooksecurefunc doesn't
+                        -- double-toggle Carbonite's active quest, so the
+                        -- restore moves inside the closure; the outer
+                        -- restore below only fires on the classic /
+                        -- no-C_SuperTrack path that stays synchronous.
+                        local _deferredRestore = false
+
                         if toggleOff then
                             -- Mark the clear as user-initiated so
                             -- OnSuperTrackChanged's "restore previous"
@@ -10559,7 +10574,12 @@ function Nx.Map:IconOnMouseDown(button)
                                 Nx.Quest.UserClearedActive = true
                             end
                             if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
-                                C_SuperTrack.SetSuperTrackedQuestID(0)
+                                local _restore = _prevAddWatchSuppress
+                                _deferredRestore = true
+                                C_Timer.After(0, function()
+                                    C_SuperTrack.SetSuperTrackedQuestID(0)
+                                    if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
+                                end)
                             elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
                                 -- Polyfill on classic — second call with the
                                 -- same id clears (toggle behavior).
@@ -10589,15 +10609,21 @@ function Nx.Map:IconOnMouseDown(button)
                             end
                         else
                             if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
-                                if C_SuperTrack.SetSuperTrackedUserWaypoint
-                                   and C_SuperTrack.IsSuperTrackingUserWaypoint
-                                   and C_SuperTrack.IsSuperTrackingUserWaypoint() then
-                                    C_SuperTrack.SetSuperTrackedUserWaypoint(false)
-                                end
-                                if C_SuperTrack.ClearAllSuperTracked then
-                                    C_SuperTrack.ClearAllSuperTracked()
-                                end
-                                C_SuperTrack.SetSuperTrackedQuestID(liveQID)
+                                local _restore = _prevAddWatchSuppress
+                                local _live = liveQID
+                                _deferredRestore = true
+                                C_Timer.After(0, function()
+                                    if C_SuperTrack.SetSuperTrackedUserWaypoint
+                                       and C_SuperTrack.IsSuperTrackingUserWaypoint
+                                       and C_SuperTrack.IsSuperTrackingUserWaypoint() then
+                                        C_SuperTrack.SetSuperTrackedUserWaypoint(false)
+                                    end
+                                    if C_SuperTrack.ClearAllSuperTracked then
+                                        C_SuperTrack.ClearAllSuperTracked()
+                                    end
+                                    C_SuperTrack.SetSuperTrackedQuestID(_live)
+                                    if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
+                                end)
                             elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
                                 -- Classic Era / TBC: no C_SuperTrack. Use
                                 -- Carbonite's own active-quest state. The
@@ -10623,7 +10649,7 @@ function Nx.Map:IconOnMouseDown(button)
                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                             end
                         end
-                        if Nx.Quest then
+                        if Nx.Quest and not _deferredRestore then
                             Nx.Quest._addWatchSuppress = _prevAddWatchSuppress
                         end
                     else
