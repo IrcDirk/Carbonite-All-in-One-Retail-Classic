@@ -52,6 +52,12 @@ function Nx.Notes:GetOptionsConfig()
                         local map = Nx.Map:GetMap(1)
                         Nx.fdb.profile.Notes.HandyNotesSize = value
                         map:ClearIconType("!HANDY")
+                        -- HandyNotes producer early-returns when
+                        -- (mapId, level) match the last run, so a
+                        -- ClearIconType + re-call alone leaves the map
+                        -- blank after a size change. Bust the cache so
+                        -- the rebuild branch fires with the new size.
+                        Nx.Notes:BustIntegrationCache("HandyNotes")
                         Nx.Notes:HandyNotes(Nx.Map:GetCurrentMapAreaID())
                     end,
                     disabled = function() return not _G.HandyNotes end,
@@ -82,6 +88,13 @@ function Nx.Notes:GetOptionsConfig()
                         local map = Nx.Map:GetMap(1)
                         Nx.fdb.profile.Notes.RareScannerSize = value
                         map:ClearIconType("!RSR")
+                        -- RareScanner producer gates the rebuild on a
+                        -- fingerprint hash of pin positions + state; a
+                        -- size-only change leaves the hash equal so the
+                        -- early-return skips InitIconType and the map
+                        -- stays empty until something else dirties the
+                        -- cache. Bust it so the new size takes effect.
+                        Nx.Notes:BustIntegrationCache("RareScanner")
                         Nx.Notes:RareScanner(Nx.Map:GetCurrentMapAreaID())
                     end,
                     disabled = function() return not _G.RareScanner end,

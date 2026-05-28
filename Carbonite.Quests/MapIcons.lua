@@ -654,6 +654,24 @@ function Nx.Quest:UpdateIcons (map)
                 -- Fetch the quest tag information using the new API function
                 local questTagInfo = GetQuestTagInfoCompat(questID)
 
+                -- C_TaskQuest.GetQuestsOnMap returns world quests AND
+                -- bonus objectives / threats. Bonus + threat are now
+                -- drawn by MapEngine's dedicated _type=9 slot under the
+                -- "Show Bonus Objectives" toggle with the Blizzard
+                -- Bonus-Objective-Star atlas, so skip them in BOTH
+                -- branches of this loop -- the questTagInfo branch
+                -- (WQ-style icon) AND the fallback else-branch (which
+                -- otherwise stamps a "Bonus Task" ObjectIconsAtlas
+                -- pin). Real world quests still pass through.
+                local skipBonusOrThreat = false
+                if _G.C_QuestInfoSystem and _G.C_QuestInfoSystem.GetQuestClassification
+                    and _G.Enum and _G.Enum.QuestClassification then
+                    local cls = _G.C_QuestInfoSystem.GetQuestClassification(questID)
+                    skipBonusOrThreat = cls == _G.Enum.QuestClassification.BonusObjective
+                                     or cls == _G.Enum.QuestClassification.Threat
+                end
+
+                if not skipBonusOrThreat then
                 if questTagInfo then
                     local isCriteria = false
                     local isElite = questTagInfo.isElite
@@ -703,7 +721,14 @@ function Nx.Quest:UpdateIcons (map)
                         f.numObjectives = info.numObjectives
                         f.Texture:SetDrawLayer("OVERLAY")
                         f:SetScript("OnClick", function(self, button)
-                            map:SetTargetAtStr(string.format("%s, %s", x, y))
+                            -- Toggle the Goto waypoint instead of
+                            -- unconditionally re-setting it; second
+                            -- click on the same WQ clears it (parity
+                            -- with the bonus-objective pin behaviour).
+                            local wx, wy = map:GetWorldPos(map.MapId, x, y)
+                            map:ToggleGotoQuest(self.questID, wx, wy,
+                                C_TaskQuest.GetQuestInfoByQuestID(self.questID),
+                                map.MapId)
                             if not InCombatLockdown() and self.worldQuest then
                                 if not ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
                                     local watchType = C_QuestLog.GetQuestWatchType(self.questID)
@@ -818,6 +843,7 @@ function Nx.Quest:UpdateIcons (map)
                         end
                     end
                 end
+                end -- if not skipBonusOrThreat
             end
         end
     end

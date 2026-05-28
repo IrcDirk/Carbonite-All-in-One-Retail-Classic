@@ -30,6 +30,8 @@ Nx.Defaults = {
             ShowCTown = false,
             ShowArchBlobs = true,
             ShowQuestBlobs = true,
+            ShowGossip = true,
+            ShowBonusObjective = true,
         },
     },
     global = {

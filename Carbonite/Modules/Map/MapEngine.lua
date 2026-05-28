@@ -1133,6 +1133,21 @@ function Nx.Map:Create(index)
         item:SetChecked(Nx.db.char.Map, "ShowQuestBlobs")
     end
 
+    -- Gossip POIs (retail C_GossipInfo.GetPoiForUiMapID; one per zone,
+    -- e.g. Renown Quartermasters, dynamic gossip hubs).
+    if _G.C_GossipInfo and _G.C_GossipInfo.GetPoiForUiMapID then
+        local item = showMenu:AddItem(0, L["Show Gossip POIs"], func, m)
+        item:SetChecked(Nx.db.char.Map, "ShowGossip")
+    end
+
+    -- Bonus objectives (retail C_TaskQuest.GetQuestsOnMap filtered by
+    -- Enum.QuestClassification.BonusObjective).
+    if _G.C_TaskQuest and _G.C_TaskQuest.GetQuestsOnMap
+        and _G.C_QuestInfoSystem and _G.C_QuestInfoSystem.GetQuestClassification then
+        local item = showMenu:AddItem(0, L["Show Bonus Objectives"], func, m)
+        item:SetChecked(Nx.db.char.Map, "ShowBonusObjective")
+    end
+
     -- Unexplored areas toggle
     local function func(self, item)
         self.ShowUnexplored = item:GetChecked()
@@ -4319,6 +4334,8 @@ local POI_Pool = {
     aPOIs = {},
     zPOIs = {},
     vPOIs = {},
+    gPOIs = {},  -- gossip (C_GossipInfo)
+    bPOIs = {},  -- bonus objectives (C_TaskQuest filtered to bonus)
 }
 
 -- Shared sentinel returned in place of `or {}` when a C_AreaPoiInfo /
@@ -5611,6 +5628,18 @@ function Nx.Map:Update (elapsed)
                     aPOIs[offset + j] = C_AreaPoiInfo.GetAreaPOIInfo(rid, eventPOIId)
                 end
             end
+            -- C_AreaPoiInfo.GetAreaPOIInfo returns textureWidth/Height
+            -- for some POI kinds (dragonriding races, area-POI events)
+            -- but not others (quest hubs, delves) — and the iteration
+            -- below would render those at the legacy txW/txH default,
+            -- producing a barely-visible dot. Backstop with 24 px so
+            -- pins read clearly. Per-API explicit sizes win.
+            for _, info in ipairs(aPOIs) do
+                if info and not info.textureWidth then
+                    info.textureWidth  = 24
+                    info.textureHeight = 24
+                end
+            end
             -- Boss encounters from the dungeon journal. On instance
             -- maps C_EncounterJournal.GetEncountersOnMap returns per-
             -- boss positions; pair that with EJ_GetCreatureInfo for
@@ -5720,12 +5749,82 @@ function Nx.Map:Update (elapsed)
                 end
             end
 
+            -- Gossip POI (retail). C_GossipInfo.GetPoiForUiMapID returns
+            -- at most one gossipPoiID per map (Renown Quartermaster /
+            -- DYNAMIC_GOSSIP_POI_UPDATED hubs). Wrap it in a POI-shaped
+            -- entry so the existing iteration's atlasName branch renders
+            -- it. Toggled at iteration via _type = 8 + ShowGossip gate.
+            local gPOIs = POI_Pool.gPOIs
+            wipe(gPOIs)
+            if _G.C_GossipInfo
+                and _G.C_GossipInfo.GetPoiForUiMapID
+                and _G.C_GossipInfo.GetPoiInfo then
+                local gossipPoiID = _G.C_GossipInfo.GetPoiForUiMapID(rid)
+                if gossipPoiID then
+                    local gInfo = _G.C_GossipInfo.GetPoiInfo(rid, gossipPoiID)
+                    if gInfo and gInfo.position then
+                        gPOIs[1] = {
+                            position      = gInfo.position,
+                            name          = gInfo.name,
+                            atlasName     = gInfo.atlasName,
+                            description   = gInfo.description,
+                            textureWidth  = 16,
+                            textureHeight = 16,
+                        }
+                    end
+                end
+            end
+
+            -- Bonus objectives (retail). C_TaskQuest.GetQuestsOnMap
+            -- returns all on-map tasks; filter to
+            -- Enum.QuestClassification.BonusObjective (and Threat,
+            -- which shares the visual category). C_TaskQuest entries
+            -- carry questID + x/y; we synthesize the rest. Toggled at
+            -- iteration via _type = 9 + ShowBonusObjective gate.
+            local bPOIs = POI_Pool.bPOIs
+            wipe(bPOIs)
+            if _G.C_TaskQuest and _G.C_TaskQuest.GetQuestsOnMap
+                and _G.C_QuestInfoSystem
+                and _G.C_QuestInfoSystem.GetQuestClassification
+                and _G.Enum and _G.Enum.QuestClassification then
+                local bonus = _G.Enum.QuestClassification.BonusObjective
+                local threat = _G.Enum.QuestClassification.Threat
+                local tasks = _G.C_TaskQuest.GetQuestsOnMap(rid) or POI_EMPTY
+                for _, t in ipairs(tasks) do
+                    local qid = t.questID
+                    if qid and t.x and t.y then
+                        local cls = _G.C_QuestInfoSystem.GetQuestClassification(qid)
+                        if cls == bonus or cls == threat then
+                            local title
+                            if _G.C_TaskQuest.GetQuestInfoByQuestID then
+                                title = _G.C_TaskQuest.GetQuestInfoByQuestID(qid)
+                            end
+                            -- "Bonus-Objective-Star" is the legend atlas
+                            -- Blizzard uses for BonusObjectivePinTemplate
+                            -- (see maplegendframe.lua). No dedicated
+                            -- threat atlas exists; reuse the star so v1
+                            -- has a clean visual category for both.
+                            bPOIs[#bPOIs + 1] = {
+                                position      = { x = t.x, y = t.y },
+                                name          = title or (cls == threat and "Threat" or "Bonus Objective"),
+                                atlasName     = "Bonus-Objective-Star",
+                                textureWidth  = 18,
+                                textureHeight = 18,
+                                _bonusQuestID = qid,
+                                _bonusThreat  = (cls == threat) or nil,
+                            }
+                        end
+                    end
+                end
+            end
+
             -- Use pooled table for concatenation. ePOIs (boss
             -- encounters) lands at index 7, getting _type = 7 — distinct
             -- from aPOIs' _type = 4 so the Archaeology gate in the
-            -- iteration doesn't filter them out.
+            -- iteration doesn't filter them out. gPOIs/bPOIs follow at
+            -- index 8/9 with their own toggle gates.
             zPOIs = POI_Pool.zPOIs
-            Nx.ArrayConcatReuse(zPOIs, tPOIs, pPOIs, dPOIs, aPOIs, bgPOIs, vPOIs, ePOIs)
+            Nx.ArrayConcatReuse(zPOIs, tPOIs, pPOIs, dPOIs, aPOIs, bgPOIs, vPOIs, ePOIs, gPOIs, bPOIs)
 
             -- Cache the POI data
             POI_Cache.mapID = rid
@@ -5760,8 +5859,8 @@ function Nx.Map:Update (elapsed)
             local widgetSet = zPOI.tooltipWidgetSet
             local areaPoiID = zPOI.areaPoiID
 
-            local txW = 6
-            local txH = 6
+            local txW = 16
+            local txH = 16
 
             if zPOI.textureWidth  and not inBG then txW = zPOI.textureWidth  end
             if zPOI.textureHeight and not inBG then txH = zPOI.textureHeight end
@@ -5780,7 +5879,10 @@ function Nx.Map:Update (elapsed)
             -- local type, name, desc, txIndex, pX, pY, mapLinkID, inBattleMap, graveyardID, areaID, poiID, isObjectIcon, atlasIcon = C_WorldMap.GetMapLandmarkInfo(i);
             -- Nx.prtCtrl ("LandMs %s, %s, %s, %s, %s, %s, %s, %s", i, poiID, txIndex or '-', name, type, isObjectIcon, atlasIcon, WorldMap_IsSpecialPOI(poiID))
             if (atlasIcon or zPOI.tex or (pX and txIndex ~= 0)) and not skip then        -- WotLK has 0 index POIs for named locations
-                if (type ~= 4 or (type == 4 and Nx.db.char.Map.ShowArchBlobs)) and (faction == nil or faction == 0 or Nx.PlFactionNum == faction) then
+                if (type ~= 4 or Nx.db.char.Map.ShowArchBlobs)
+                    and (type ~= 8 or Nx.db.char.Map.ShowGossip)
+                    and (type ~= 9 or Nx.db.char.Map.ShowBonusObjective)
+                    and (faction == nil or faction == 0 or Nx.PlFactionNum == faction) then
                     local tip = name
                     if desc then
                         tip = format ("%s\n%s", name, desc)
@@ -6016,6 +6118,20 @@ function Nx.Map:Update (elapsed)
                                         -my * self.MapH + iconH * 0.5 - (self.TitleH or 0))
                                 end
                             end
+                            -- Bonus objective: wire click to ToggleGoto
+                            -- (cat = 6 in IconOnMouseDown) and reset the
+                            -- circle bg below so we don't leak it onto
+                            -- a non-bonus icon that reuses the frame.
+                            if zPOI._bonusQuestID then
+                                f.NXType = 6000
+                                f.NXData = {
+                                    X       = pX,
+                                    Y       = pY,
+                                    Tip     = name,
+                                    questID = zPOI._bonusQuestID,
+                                }
+                            end
+                            if f.bgTex then f.bgTex:Hide() end
                             if zPOI.tex then
                                 -- Boss-encounter POIs (and any future
                                 -- entry that hands us a raw texture
@@ -6035,6 +6151,51 @@ function Nx.Map:Update (elapsed)
                             end
                             if zPOI.facing then
                                 f.texture:SetRotation(zPOI.facing)
+                            end
+                            -- Blizzard's BonusObjectivePinTemplate draws
+                            -- a "UI-QuestPoi-QuestNumber" ring behind the
+                            -- "Bonus-Objective-Star" foreground (see
+                            -- maplegendframe.lua + GetIconWQ's emissary
+                            -- ring for the in-Carbonite pattern). Use
+                            -- SetAtlas(name, true) so the ring keeps its
+                            -- native atlas dimensions and SetPoint
+                            -- "CENTER" so it sits behind the star
+                            -- regardless of the icon frame's own size.
+                            -- Lazy-created and stashed on the frame; the
+                            -- :Hide above clears it when the frame is
+                            -- reused for a non-bonus pin.
+                            --
+                            -- Swap to the SuperTracked variant when the
+                            -- bonus quest is the current super-track
+                            -- target; mirrors poibutton.lua's atlas pair.
+                            if zPOI._bonusQuestID then
+                                if not f.bgTex then
+                                    f.bgTex = f:CreateTexture(nil, "BACKGROUND")
+                                    f.bgTex:SetPoint("CENTER", 0, 0)
+                                end
+                                -- Highlight by checking our own Goto
+                                -- state instead of C_SuperTrack:
+                                -- SetSuperTrackedQuestID silently
+                                -- rejects bonus-objective IDs (they
+                                -- are implicitly super-tracked by
+                                -- proximity, not by user click), so
+                                -- relying on it left the bg permanently
+                                -- on the un-tracked variant. Each Goto
+                                -- target carries the questID we stamped
+                                -- in ToggleGotoQuest.
+                                local gotoActive = false
+                                for _, tar in ipairs(self.Targets or {}) do
+                                    if tar.TargetType == "Goto"
+                                        and tar.QuestID == zPOI._bonusQuestID then
+                                        gotoActive = true
+                                        break
+                                    end
+                                end
+                                local bgAtlas = gotoActive
+                                    and "UI-QuestPoi-QuestNumber-SuperTracked"
+                                    or  "UI-QuestPoi-QuestNumber"
+                                f.bgTex:SetAtlas(bgAtlas, true)
+                                f.bgTex:Show()
                             end
                         end
                     end
@@ -10257,6 +10418,20 @@ function Nx.Map:IconOnMouseDown(button)
                     end
                     return
                 end
+                -- Bonus / threat objective pin: toggle a Goto
+                -- waypoint to this objective. The pin's circle bg
+                -- swaps to the yellow "UI-QuestPoi-QuestNumber-
+                -- SuperTracked" atlas while the Goto is active (the
+                -- POI iteration checks our Targets list, not
+                -- C_SuperTrack, since SetSuperTrackedQuestID silently
+                -- rejects bonus-objective IDs). Second click clears.
+                -- cat == 6 is the Bonus-Objective band stamped in
+                -- Map:Update's POI iteration.
+                if cat == 6 and this.NXData and this.NXData.questID then
+                    local d = this.NXData
+                    map:ToggleGotoQuest(d.questID, d.X, d.Y, d.Tip, map.MapId)
+                    return
+                end
                 -- Handle Quest Hub click - toggle quest offers display
                 if cat == 4 and this.NXData and this.NXData.hubPoiID then
                     local hubData = this.NXData
@@ -10580,7 +10755,16 @@ function Nx.Map:IconOnEnter(motion)
     if this.NXData then
         if this.NXData.iconType == "!RSR" and RareScanner then
             local rspin = this.NXData.UData
-            if rspin and rspin.OnMouseEnter then
+            -- RareScanner releases pins back to its pool when their
+            -- canvas refreshes — at which point pin.POI is wiped while
+            -- the frame stays alive. We cache the pin reference on the
+            -- Carbonite icon during the Notes producer pass, so by the
+            -- time the user hovers it can already be stale. RS's own
+            -- RSTooltip.ShowSimpleTooltip indexes pin.POI without a
+            -- guard, so without this check we'd take their nil-index
+            -- error in our tooltip path. Skip silently when the pin
+            -- has been recycled; the next producer pass will rebind.
+            if rspin and rspin.OnMouseEnter and rspin.POI then
                 -- Cancel the leave ticker if a previous mouseout queued one;
                 -- otherwise it could fire after re-entering and close the
                 -- popup we just re-opened.
@@ -12506,6 +12690,32 @@ function Nx.Map:SetTargetAtStr (str, keep)
         end
         self:SetTarget ("Goto", wx, wy, wx, wy, nil, nil, str, keep, mId)
     end
+end
+
+---
+-- Toggle a "Goto" waypoint keyed by quest ID. Used by world-quest and
+-- bonus-objective pin clicks so that a second click on the same pin
+-- clears the goto instead of stomping it with a fresh one. Returns
+-- true if a goto was added, false if an existing one was cleared.
+--
+-- @param questID  Numeric quest id (the pin's super-track key)
+-- @param wx, wy   World coords of the pin (for the new Goto target)
+-- @param label    Tooltip / map-tracking label
+-- @param mapId    Carbonite map id for the Goto
+--
+function Nx.Map:ToggleGotoQuest (questID, wx, wy, label, mapId)
+    if not questID then return end
+    for _, tar in ipairs (self.Targets or {}) do
+        if tar.TargetType == "Goto" and tar.QuestID == questID then
+            self:ClearTargets ("Goto")
+            return false
+        end
+    end
+    local tar = self:SetTarget ("Goto", wx, wy, wx, wy, nil, nil,
+                                label or tostring(questID), false,
+                                mapId or self.MapId)
+    if tar then tar.QuestID = questID end
+    return true
 end
 
 --------
