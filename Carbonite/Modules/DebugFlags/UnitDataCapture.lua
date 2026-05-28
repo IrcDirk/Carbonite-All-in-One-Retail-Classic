@@ -21,6 +21,11 @@
 local Carbonite = _G.Carbonite
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
+-- See MouseoverHandler: retail UnitGUID("mouseover") can be a secure-tainted
+-- "secret" string for player units; strsub on it raises from a tainted
+-- code path. Hoisted helper keeps the pcall guard allocation-free.
+local function _guid_strsub(g, a, b) return strsub(g, a, b) end
+
 ---
 -- Get the unit-debug data table for `target` and parse the GUID into
 -- numeric id / type. Returns nothing when DebugUnit is off.
@@ -33,8 +38,11 @@ function Nx:UnitDGet(target)
     local guid = UnitGUID(target)
     if not guid then return end
 
-    local id  = tonumber(strsub(guid, 7, 10), 16)
-    local typ = tonumber(strsub(guid, 5,  5), 16)
+    local okId, sId = pcall(_guid_strsub, guid, 7, 10)
+    local okTyp, sTyp = pcall(_guid_strsub, guid, 5, 5)
+    if not okId or not okTyp then return end
+    local id  = tonumber(sId, 16)
+    local typ = tonumber(sTyp, 16)
 
     local data = Nx.db.profile.Debug.DBUnit or {}
     local ver = 2

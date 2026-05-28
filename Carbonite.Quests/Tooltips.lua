@@ -389,7 +389,13 @@ function Nx.Quest:TooltipProcess2 (stripColor, tipStr)
         local tipAddSuccess = false
         -- Check if our tooltip is on a unit first
         if unit then
-            local unitType, _, _, _, _, npcID = strsplit('-', UnitGUID(unit) or '')
+            -- Retail UnitGUID for player units can be a secure-tainted
+            -- "secret" string; strsplit on it raises ("attempt to index a
+            -- secret string value, while execution tainted by 'Carbonite'").
+            -- pcall lets the tooltip processor skip that case silently.
+            local rawGuid = UnitGUID(unit) or ''
+            local ok, unitType, _2, _3, _4, _5, npcID = pcall(strsplit, '-', rawGuid)
+            if not ok then unitType, npcID = nil, nil end
             local unitQuests = Nx.Units2Quests[tonumber(npcID)]
             if npcID and unitQuests then
                 local npcQuests = {Nx.Split('|', unitQuests)};

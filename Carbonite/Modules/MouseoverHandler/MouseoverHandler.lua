@@ -20,6 +20,15 @@ Carbonite.Modules.MouseoverHandler = MouseoverHandler
 
 local lastGUID
 
+-- Retail's UnitGUID("mouseover") can hand back a secure-tainted "secret"
+-- string for player units; touching it with `:sub` / `==` from an addon
+-- code path raises ("attempt to index/compare a secret string value,
+-- while execution tainted by 'Carbonite'"). File-scope helpers keep the
+-- pcall guard allocation-free (same pattern as NXOnUpdate's tooltip
+-- text scanner).
+local function _guid_sub(g, a, b) return g:sub(a, b) end
+local function _guid_neq(a, b) return a ~= b end
+
 function MouseoverHandler:GetUnitGUID()
     return _G.UnitGUID and _G.UnitGUID("mouseover") or nil
 end
@@ -28,14 +37,17 @@ function MouseoverHandler:GetUnitType()
     local guid = self:GetUnitGUID()
     if not guid then return nil end
     -- Legacy GUID parsing: hex digit at offset 5.
-    local typ = tonumber(guid:sub(5, 5), 16)
-    return typ
+    local ok, s = pcall(_guid_sub, guid, 5, 5)
+    if not ok then return nil end
+    return tonumber(s, 16)
 end
 
 function MouseoverHandler:GetUnitNpcID()
     local guid = self:GetUnitGUID()
     if not guid then return nil end
-    return tonumber(guid:sub(7, 10), 16)
+    local ok, s = pcall(_guid_sub, guid, 7, 10)
+    if not ok then return nil end
+    return tonumber(s, 16)
 end
 
 function MouseoverHandler:OnChanged(fn)
@@ -49,7 +61,9 @@ Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
     f:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
     f:SetScript("OnEvent", function()
         local guid = MouseoverHandler:GetUnitGUID()
-        if guid ~= lastGUID then
+        local ok, changed = pcall(_guid_neq, guid, lastGUID)
+        if not ok then changed = true end
+        if changed then
             lastGUID = guid
             Carbonite.Core.EventBus:Fire("MOUSEOVER_UNIT_CHANGED", guid,
                 MouseoverHandler:GetUnitType(),
