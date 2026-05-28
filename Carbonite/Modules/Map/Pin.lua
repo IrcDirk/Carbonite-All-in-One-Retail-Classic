@@ -88,6 +88,16 @@ function Pin.Release(pin)
     pool[#pool + 1] = pin
 end
 
+-- Wipe the recycled-pin pool for a kind. Needed when the kind's
+-- class is being re-defined (e.g. an icon size slider runs
+-- ClearIconType + InitIconType): Mixin.Apply only stamps cls.w/h
+-- onto a pin at fresh allocation, so without a pool wipe the next
+-- AddIconPt would hand back a pooled pin still carrying the old
+-- pin.w / pin.h and the size change would be invisible.
+function Pin.ClearPool(kind)
+    pools[kind] = nil
+end
+
 -- Default lifecycle methods. Concrete pin classes can override.
 function Pin:OnAcquire(mapID, x, y, icon, text)
     self.mapID = mapID

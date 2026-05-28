@@ -41,6 +41,13 @@ end
 function IconTypes:Clear(name)
     Layer.Remove(name)
     Pin.classes[name] = nil
+    -- Wipe the recycled-pin pool too. Pin.Acquire only stamps the
+    -- class's w / h / tex onto pin instances at fresh allocation, so
+    -- without this a subsequent InitIconType-with-new-size would hand
+    -- back pooled pins carrying the previous size and the change
+    -- would be invisible. This is what the RareScanner / HandyNotes
+    -- size sliders rely on to actually take effect.
+    Pin.ClearPool(name)
 end
 
 local function assertClass(name)
