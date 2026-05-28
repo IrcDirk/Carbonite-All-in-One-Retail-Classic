@@ -59,7 +59,10 @@ L["Display RXPGuides waypoints On Map"] = "Показывать на карте 
 L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = "Если установлен RXPGuides, дублирует его метки активных шагов на карте Carbonite"
 L["RXPGuides Icon Size"] = "Размер иконки RXPGuides"
 L["Route RXPGuides arrow through Carbonite"] = "Направлять стрелку RXPGuides через Carbonite"
+L["Step"] = "Шаг"
 L["Replaces the RXPGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = "Заменяет навигационную стрелку RXPGuides собственной путевой стрелкой Carbonite (HUD), указывающей на текущий шаг"
+L["Route ZygorGuides arrow through Carbonite"] = "Направлять стрелку ZygorGuides через Carbonite"
+L["Replaces the ZygorGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = "Заменяет навигационную стрелку ZygorGuides собственной путевой стрелкой Carbonite (HUD), указывающей на текущий шаг"
 
 -- Keybinds
 L["Carbonite Notes"] = "Заметки Carbonite"

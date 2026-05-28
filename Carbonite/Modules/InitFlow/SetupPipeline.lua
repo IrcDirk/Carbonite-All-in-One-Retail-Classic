@@ -70,27 +70,9 @@ function Nx:SetupEverything()
     Nx.Initialized = true
     Nx:OnPlayer_login("PLAYER_LOGIN")
 
-    -- Adding support for Zygor Waypoint system
-    if ZGV and ZGV.Pointer then
-        hooksecurefunc(ZGV.Pointer, "SetWaypoint", function (e, m, x, y, data, arrow)
-            local map = Nx.Map:GetMap (1)
-            if not m then
-                if WorldMapFrame:IsShown() then m=WorldMapFrame:GetMapID() else m=C_Map.GetBestMapForUnit("player") end
-            end
-
-            x = x or 0;
-            y = y or 0;
-
-            local wx, wy = map:GetWorldPos (m, x*100, y*100)
-            local title = (ZGV.CurrentStep and ZGV.CurrentStep.current_waypoint_goal_num and ZGV.CurrentStep.goals) and ZGV.CurrentStep.goals[ZGV.CurrentStep.current_waypoint_goal_num]:GetText() or ""
-
-            if ZygorGuidesViewerFrame:IsVisible() then
-                map:SetTarget ("Goto", wx, wy, wx, wy, nil, nil, title or "Zygor Waypoint (check step in Zygor Guide Viewer)", nil, m)
-            end
-
-            return waypoint
-        end)
-    end
+    -- Zygor Guides Viewer arrow integration moved to
+    -- Carbonite.Notes/Integrations/ZygorArrow.lua (toggle in the Notes
+    -- options, parity with the RXPGuides arrow bridge).
 
     --GuildControlPopupFrame.initialized = 1
 end

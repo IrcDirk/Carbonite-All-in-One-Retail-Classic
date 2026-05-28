@@ -53,7 +53,10 @@ L["Display RXPGuides waypoints On Map"] = "Mostrar puntos de ruta RXPGuides en e
 L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = "Si tienes RXPGuides instalado, refleja sus marcadores de paso activo en el mapa de Carbonite"
 L["RXPGuides Icon Size"] = "Tamaño del icono de RXPGuides"
 L["Route RXPGuides arrow through Carbonite"] = "Dirigir la flecha de RXPGuides a través de Carbonite"
+L["Step"] = "Paso"
 L["Replaces the RXPGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = "Reemplaza la flecha de navegación de RXPGuides con la propia flecha de viaje (HUD) de Carbonite, que apunta al paso actual"
+L["Route ZygorGuides arrow through Carbonite"] = "Dirigir la flecha de ZygorGuides a través de Carbonite"
+L["Replaces the ZygorGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = "Reemplaza la flecha de navegación de ZygorGuides con la propia flecha de viaje (HUD) de Carbonite, que apunta al paso actual"
 
 -- Keybinds
 L["Carbonite Notes"] = "Carbonite Notes"

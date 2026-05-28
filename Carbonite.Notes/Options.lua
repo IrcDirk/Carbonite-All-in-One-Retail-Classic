@@ -174,6 +174,17 @@ function Nx.Notes:GetOptionsConfig()
                     end,
                     disabled = function() return not _G.RXP end,
                 },
+                zygorarrow = {
+                    order = 12, type = "toggle", width = "full",
+                    name = L["Route ZygorGuides arrow through Carbonite"],
+                    desc = L["Replaces the ZygorGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"],
+                    get = function() return Nx.fdb.profile.Notes.ZygorArrow end,
+                    set = function()
+                        Nx.fdb.profile.Notes.ZygorArrow = not Nx.fdb.profile.Notes.ZygorArrow
+                        if Nx.Notes.ZygorArrowSync then Nx.Notes:ZygorArrowSync() end
+                    end,
+                    disabled = function() return not _G.ZGV end,
+                },
             },
         }
     end

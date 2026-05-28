@@ -26,5 +26,6 @@ Integrations\Questie.lua
 Integrations\RareScanner.lua
 Integrations\RXP.lua
 Integrations\RXPArrow.lua
+Integrations\ZygorArrow.lua
 Plugin.lua
 

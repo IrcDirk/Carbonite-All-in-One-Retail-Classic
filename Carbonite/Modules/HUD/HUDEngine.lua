@@ -68,11 +68,12 @@ function HUD:Create()
 
     Nx.Window:SetCreateFade(1, .15)
 
-    -- 5 title rows: up to 3 for the target name (RXP steps with several
-    -- sub-objectives stack each on its own line), a cosmetic spacer row,
-    -- and the distance / ETA row. Update() sizes the block to the rows
-    -- actually used so short captions stay tight.
-    local win = Nx.Window:Create("NxHUD", nil, nil, nil, 5, 1, nil, true)
+    -- 8 title rows: up to 6 for the target name (RXP steps with several
+    -- sub-objectives stack each on its own line, so allow enough rows that
+    -- realistic steps never fold two objectives onto one line), a cosmetic
+    -- spacer row, and the distance / ETA row. Update() sizes the block to
+    -- the rows actually used so short captions stay tight.
+    local win = Nx.Window:Create("NxHUD", nil, nil, nil, 8, 1, nil, true)
     inst.Win = win
 
     -- Justification is finalised per-frame in Update (objective rows

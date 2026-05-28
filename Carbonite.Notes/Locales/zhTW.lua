@@ -53,7 +53,10 @@ L["Display RXPGuides waypoints On Map"] = "在地圖上顯示 RXPGuides 路徑�
 L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = "如果安裝了 RXPGuides，將其活動步驟路徑點鏡像到 Carbonite 地圖上"
 L["RXPGuides Icon Size"] = "RXPGuides 圖示大小"
 L["Route RXPGuides arrow through Carbonite"] = "透過 Carbonite 引導 RXPGuides 箭頭"
+L["Step"] = "步驟"
 L["Replaces the RXPGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = "以 Carbonite 自己的 HUD 導航箭頭取代 RXPGuides 的導航箭頭，指向目前步驟"
+L["Route ZygorGuides arrow through Carbonite"] = "透過 Carbonite 引導 ZygorGuides 箭頭"
+L["Replaces the ZygorGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = "以 Carbonite 自己的 HUD 導航箭頭取代 ZygorGuides 的導航箭頭，指向目前步驟"
 
 -- Keybinds
 L["Carbonite Notes"] = "Carbonite Notes"

@@ -23,6 +23,10 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Notes = Nx.Notes or {}
 
+-- Notes-module locale, for the "Step N:" caption prefix. Silent fetch
+-- (locale files load before this integration, but guard regardless).
+local L = LibStub and LibStub("AceLocale-3.0"):GetLocale("Carbonite.Notes", true)
+
 -- Active Carbonite goto-target UniqueId and the last element signature
 -- we pushed, so we only churn the target when the RXP step changes.
 -- lastTitle tracks the waypoint label so a live objective update (e.g.
@@ -168,14 +172,29 @@ local function elementTitle(el)
         or (step and step.arrowtext)
         or objectiveText(step)
         or (step and (step.mapTooltip or step.title))
-        or (step and step.index and ("Step " .. tostring(step.index)))
 
     if rxp and rxp.ReplaceNpcIds and type(t) == "string" then
         local ok, res = pcall(rxp.ReplaceNpcIds, t)
         if ok and type(res) == "string" then t = res end
     end
 
-    return formatText(t, rxp) or "RXPGuides"
+    local title = formatText(t, rxp) or "RXPGuides"
+
+    -- Prefix the heading (first line only) with the localized step
+    -- number, e.g. "Step 11: ...". Any further bulleted objective lines
+    -- are left untouched.
+    local idx = step and step.index
+    if type(idx) == "number" then
+        local prefix = (L and L["Step"] or "Step") .. " " .. idx .. ": "
+        local nl = title:find("\n", 1, true)
+        if nl then
+            title = prefix .. title:sub(1, nl - 1) .. title:sub(nl)
+        else
+            title = prefix .. title
+        end
+    end
+
+    return title
 end
 
 -- Drop our goto target if we have one.
