@@ -1568,13 +1568,66 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                                 --   Retail (11.x):                ShowQuestComplete(questID)
                                 -- Carbonite has historically passed the log index
                                 -- everywhere, which silently no-ops on retail.
+                                --
+                                -- Defer the call to next tick via C_Timer.After.
+                                -- Calling ShowQuestComplete from this click
+                                -- handler runs in a Carbonite-tainted stack;
+                                -- the popup processing chain that follows
+                                -- (AutoQuestPopupTracker + map data refresh)
+                                -- inherits our taint and the popup silently
+                                -- no-ops — auto-turnin via RecordQuestsLog
+                                -- works because that path fires from a clean
+                                -- event-handler context.
                                 if ShowQuestComplete then
+                                    -- Resolve the LIVE questID via the log
+                                    -- index. cur.QId is matched out of
+                                    -- Carbonite's bundled DB by title and
+                                    -- can pin to a legacy/story ID that no
+                                    -- longer matches the player's actual
+                                    -- live questID (the debug example was
+                                    -- qId=28827 "The Eye of the Storm" /
+                                    -- cata "In die Tiefe" — IsOnQuest=false
+                                    -- and AddAutoQuestPopUp -> false because
+                                    -- 28827 isn't anywhere in the live log).
+                                    -- C_QuestLog.GetQuestIDForLogIndex on the
+                                    -- log index Carbonite has stored as cur.QI
+                                    -- gives Blizzard's real questID; that's
+                                    -- what ShowQuestComplete /
+                                    -- AddAutoQuestPopUp expect.
+                                    local _liveID = qId
+                                    if qIndex and qIndex > 0
+                                        and C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+                                        local id = C_QuestLog.GetQuestIDForLogIndex(qIndex)
+                                        if id and id > 0 then _liveID = id end
+                                    end
+                                    local _qIndex = qIndex
                                     if Nx.isRetail then
-                                        ShowQuestComplete(qId)
+                                        C_Timer.After(0, function()
+                                            -- Force the quest into Blizzard's
+                                            -- AutoQuestPopUp queue first. The
+                                            -- queue is populated on the
+                                            -- QUEST_AUTOCOMPLETE event (rising
+                                            -- edge of completion) and emptied
+                                            -- when the popup is dismissed or
+                                            -- the user finishes via a NPC, so
+                                            -- a "?" click after that point
+                                            -- hits ShowQuestComplete with an
+                                            -- empty queue and the call
+                                            -- silently no-ops. Re-queueing
+                                            -- replicates what the QUEST_-
+                                            -- AUTOCOMPLETE handler does in
+                                            -- blizzard_questobjectivetracker.
+                                            if AddAutoQuestPopUp then
+                                                AddAutoQuestPopUp(_liveID, "COMPLETE")
+                                            end
+                                            ShowQuestComplete(_liveID)
+                                        end)
                                     else
-                                        local qi = (GetQuestLogIndexByID and GetQuestLogIndexByID(qId)) or qIndex
+                                        local qi = (GetQuestLogIndexByID and GetQuestLogIndexByID(_qId)) or _qIndex
                                         if qi and qi > 0 then
-                                            ShowQuestComplete(qi)
+                                            C_Timer.After(0, function()
+                                                ShowQuestComplete(qi)
+                                            end)
                                         end
                                     end
                                 end
