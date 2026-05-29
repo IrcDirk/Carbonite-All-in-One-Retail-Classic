@@ -3405,18 +3405,87 @@ function Nx.Opts:NXCmdCamForceMaxDist()
     end
 end
 
----
--- Show or hide action bar gryphon graphics
+-- Show or hide action bar gryphon / wyvern endcap graphics.
 --
+-- Retail / Midnight clients use MainActionBar.EndCaps.
+-- Older clients may still expose MainMenuBarLeftEndCap and MainMenuBarRightEndCap.
+-- Blizzard can re-show modern endcaps from MainActionBar:UpdateEndCaps(), so this
+-- function installs a small post-hook once and reapplies Carbonite's preference.
 function Nx.Opts:NXCmdGryphonsUpdate()
-    if not Nx.isRetail then
-        if Nx.db.profile.General.GryphonsHide then
-            MainMenuBarLeftEndCap:Hide()
-            MainMenuBarRightEndCap:Hide()
-        else
-            MainMenuBarLeftEndCap:Show()
-            MainMenuBarRightEndCap:Show()
+    local hideGryphons = Nx
+        and Nx.db
+        and Nx.db.profile
+        and Nx.db.profile.General
+        and Nx.db.profile.General.GryphonsHide
+
+    local function SetShownSafe(frame, show)
+        if frame and frame.SetShown then
+            frame:SetShown(show)
+        elseif frame then
+            if show and frame.Show then
+                frame:Show()
+            elseif not show and frame.Hide then
+                frame:Hide()
+            end
         end
+    end
+
+    local function ApplyLegacyEndCaps()
+        SetShownSafe(_G.MainMenuBarLeftEndCap, not hideGryphons)
+        SetShownSafe(_G.MainMenuBarRightEndCap, not hideGryphons)
+    end
+
+    local function ApplyModernEndCaps()
+        local mainActionBar = _G.MainActionBar
+        local endCaps = mainActionBar and mainActionBar.EndCaps
+
+        if not endCaps then
+            return
+        end
+
+        SetShownSafe(endCaps, not hideGryphons)
+        SetShownSafe(endCaps.LeftEndCap, not hideGryphons)
+        SetShownSafe(endCaps.RightEndCap, not hideGryphons)
+
+        -- Let Blizzard's own EditMode refresh path know the art should stay hidden.
+        -- MainActionBar:UpdateEndCaps(self.hideBarArt) reads this value.
+        if mainActionBar then
+            mainActionBar.hideBarArt = hideGryphons and true or false
+        end
+    end
+
+    ApplyLegacyEndCaps()
+    ApplyModernEndCaps()
+
+    local mainActionBar = _G.MainActionBar
+    if mainActionBar and mainActionBar.UpdateEndCaps and not self._carboniteGryphonHooked then
+        self._carboniteGryphonHooked = true
+
+        hooksecurefunc(mainActionBar, "UpdateEndCaps", function()
+            local shouldHide = Nx
+                and Nx.db
+                and Nx.db.profile
+                and Nx.db.profile.General
+                and Nx.db.profile.General.GryphonsHide
+
+            local endCaps = mainActionBar.EndCaps
+            if not endCaps then
+                return
+            end
+
+            if shouldHide then
+                mainActionBar.hideBarArt = true
+                endCaps:Hide()
+
+                if endCaps.LeftEndCap then
+                    endCaps.LeftEndCap:Hide()
+                end
+
+                if endCaps.RightEndCap then
+                    endCaps.RightEndCap:Hide()
+                end
+            end
+        end)
     end
 end
 
