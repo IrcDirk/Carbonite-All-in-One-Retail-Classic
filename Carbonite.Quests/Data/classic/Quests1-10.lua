@@ -11540,7 +11540,7 @@ function Nx.ModQuests:Data1()
         },
         [12781] = {
             Quest = [=[Welcome!||1|1|0|0|0]=],
-            End = "27928|1423|32|83.37|49.29",
+            End = "27928|1423|32|89.46|55.03",
         },
         [12816] = {
             Quest = [=[Investigate the Scourge of Silvermoon|2|10|1|0|0|0]=],

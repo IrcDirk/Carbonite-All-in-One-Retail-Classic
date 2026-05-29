@@ -38,7 +38,7 @@ function CarboniteQuest:OnInitialize()
     Nx.Quest:InitQuestCharacter()
     Nx.Font:ModuleAdd("Quest.QuestFont",{ "NxFontQ", "GameFontNormal","qdb" })
     Nx.Font:ModuleAdd("QuestWatch.WatchFont",{ "NxFontW", "GameFontNormal","qdb" })
-    Nx.Map.Maps[1].PIconMenu:AddItem (0, "Get Quests", Nx.Map.Menu_OnGetQuests,Nx.Map.Maps[1])
+    Nx.Map.Maps[1].PIconMenu:AddItem (0, L["Get Quests"] or "Get Quests", Nx.Map.Menu_OnGetQuests,Nx.Map.Maps[1])
     Nx.Quest.List.LoggingIn = true
     local qopts = Nx.qdb.profile.QuestOpts
 

@@ -358,6 +358,10 @@ L["Loads all the carbonite quest data between player level - level threshold to 
 L["Level Threshold"] = "等级阈值"
 L["Levels under player level to load quest data on reload"] = "重载后将会加载的低于玩家等级的任务数据"
 
+L["Show Quest Offers on Map"] = "在地图上显示任务提供"
+L["When enabled, shows available quest offers from quest lines on the map"] = "启用后，在地图上显示任务链中可用的任务提供"
+L["Get Quests"] = "获取任务"
+
 -- Keybinds
 L["Carbonite Quests"] = "Carbonite 任务模块"
 L["NxTOGGLEWATCHMINI"] = "任务监视列表 最小/最大化"

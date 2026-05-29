@@ -3441,9 +3441,11 @@ function Nx.Map:GMenu_OnGoto()
     end
 
     if self.ClickType == 3001 then
-        -- Punk target
-        if Nx.Punks then
-            Nx.Punks:GotoPunk(self.ClickIcon)
+        -- Enemy player target (Spy integration; legacy NXType from
+        -- the deleted Punks module kept so existing routing stays
+        -- valid).
+        if Nx.Spy and Nx.Spy.GotoPlayer then
+            Nx.Spy:GotoPlayer(self.ClickIcon)
         end
     else
         -- Standard icon target
@@ -3463,8 +3465,8 @@ function Nx.Map:GMenu_OnPasteLink()
     local name
 
     if self.ClickType == 3001 then
-        if Nx.Punks then
-            name = Nx.Punks:GetPunkPasteInfo(self.ClickIcon)
+        if Nx.Spy and Nx.Spy.GetPlayerPasteInfo then
+            name = Nx.Spy:GetPlayerPasteInfo(self.ClickIcon)
         end
     else
         local icon = self.ClickIcon
@@ -5533,11 +5535,10 @@ function Nx.Map:Update (elapsed)
         self:UpdateHotspotsDebug()
     end
 --]]
-    if Nx.Punks and Nx.pkdb then
-        if Nx.pkdb.profile.Punks.MapShowPunks then
-            Nx.Punks:UpdateIcons (self)
-        end
-    end
+    -- Enemy-player icons used to come from the in-house Nx.Punks
+    -- producer. Punks is gone; the Carbonite.Spy integration draws
+    -- pins through the MapProvider system instead, so MapIcons.lua
+    -- picks them up automatically and there's nothing to call here.
 
     -- map BG Flags
 
@@ -10866,6 +10867,14 @@ function Nx.Map:IconOnEnter(motion)
                 this.NxTip = TooltipText
             end
         end
+    end
+
+    -- Spy KOS-proximity augment: if a KOS-flagged enemy from Spy's
+    -- NearbyList is near this pin's coords, append a one-line warning
+    -- so quest / POI tooltips surface the PvP threat. No-op when Spy
+    -- isn't installed or no proximity hit found.
+    if Nx.Spy and Nx.Spy.AugmentTooltip then
+        Nx.Spy:AugmentTooltip(this)
     end
 
 --    map.BackgndAlphaTarget = map.BackgndAlphaFull

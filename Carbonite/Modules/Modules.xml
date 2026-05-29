@@ -224,4 +224,5 @@
     <Script file="Integrations\TomTom.lua" />
     <Script file="Integrations\TomTomWaypoints.lua" />
     <Script file="Integrations\LDB.lua" />
+    <Script file="Integrations\Spy.lua" />
 </Ui>

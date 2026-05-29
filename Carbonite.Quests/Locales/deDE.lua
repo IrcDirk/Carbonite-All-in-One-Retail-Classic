@@ -359,6 +359,10 @@ L["Loads all the carbonite quest data between player level - level threshold to 
 L["Level Threshold"] = "Levelgrenze"
 L["Levels under player level to load quest data on reload"] = "Level unter dem Spielerlevel zum laden der Questdaten nach dem Neuladen"
 
+L["Show Quest Offers on Map"] = "Quest-Angebote auf der Karte anzeigen"
+L["When enabled, shows available quest offers from quest lines on the map"] = "Wenn aktiviert, werden verfügbare Quest-Angebote aus Quest-Reihen auf der Karte angezeigt"
+L["Get Quests"] = "Quests holen"
+
 -- Keybinds/Tastaturbelegungen
 L["Carbonite Quests"] = "Carbonite Quests"
 L["NxTOGGLEWATCHMINI"] = "Questleiste mini/maximieren"

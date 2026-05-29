@@ -4,8 +4,9 @@
 -- via Nx.OnParty_members_changed; this class is the canonical owner
 -- with a clean event-driven rebuild plus a small lookup API.
 --
--- The legacy global Nx.GroupMembers stays populated so existing
--- readers (Nx.Punks at NxPunks.lua:643) continue to work.
+-- The legacy global Nx.GroupMembers stays populated for any older
+-- modules that still poll it (Punks was a notable reader; module is
+-- now retired in favour of the Carbonite.Spy integration).
 --
 -- Public API:
 --   GroupMembers:Refresh()              -> rebuild the cache now

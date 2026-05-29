@@ -358,6 +358,10 @@ L["Loads all the carbonite quest data between player level - level threshold to 
 L["Level Threshold"] = true
 L["Levels under player level to load quest data on reload"] = true
 
+L["Show Quest Offers on Map"] = "지도에 퀘스트 제안 표시"
+L["When enabled, shows available quest offers from quest lines on the map"] = "활성화하면 지도에 퀘스트 라인의 사용 가능한 퀘스트 제안을 표시합니다"
+L["Get Quests"] = "퀘스트 가져오기"
+
 -- Keybinds
 L["Carbonite Quests"] = "Carbonite Quests"
 L["NxTOGGLEWATCHMINI"] = "QuestWatchlist mini/maximize"

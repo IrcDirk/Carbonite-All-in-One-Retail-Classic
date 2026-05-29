@@ -252,6 +252,11 @@ function CarboniteInfo:OnInitialize()
 	-- only called on zone change, which isn't enough when the user is standing
 	-- around expecting markers to fade after N seconds. Cheap call (just walks
 	-- the events list and re-acquires icons), so a 5s cadence is fine.
+	-- Defensive: cancel any prior ticker before creating a new one so a
+	-- second OnInitialize entry can't double up tickers.
+	if Nx.Info.KillExpireTicker then
+		Nx.Info.KillExpireTicker:Cancel()
+	end
 	Nx.Info.KillExpireTicker = C_Timer.NewTicker(5, function()
 		local secs = Nx.idb and Nx.idb.profile.Info and Nx.idb.profile.Info.KillIconAutoClearSecs
 		if secs and secs > 0 and Nx.UEvents and Nx.UEvents.UpdateMap then
@@ -279,10 +284,12 @@ end
 function CarboniteInfo:PLAYER_LOGIN()
 	local ch = Nx.CurCharacter
 	local xprest = GetXPExhaustion() or 0
-	local xpmax = UnitXPMax ("player")
+	local xpmax = UnitXPMax ("player") or 0
 	Nx.InfoStats["ArenaPts"] = GetConquestAmount()
 	Nx.InfoStats["Honor"] = GetHonorAmount()
-	Nx.InfoStats["XPRest%"] = xprest / xpmax * 100
+	-- UnitXPMax returns 0 at max level on some flavors; guard against
+	-- divide-by-zero so the Rested stat just reads "0" instead of NaN.
+	Nx.InfoStats["XPRest%"] = xpmax > 0 and (xprest / xpmax * 100) or 0
 end
 
 
@@ -1432,19 +1439,6 @@ function Nx.Info:ResetFrames()
 end
 
 ---------------------------------------------------------------------------------------
--- Hide extra frames
----------------------------------------------------------------------------------------
-
-function Nx.Map:HideExtraFrames()
-
-	local frms = self.Frms
-
-	for n = frms.Next, frms.Used do		-- Hide up to last frames used amount
-		frms[n]:Hide()
-	end
-end
-
----------------------------------------------------------------------------------------
 -- Get next available frame or create one
 -- ret: frame
 ---------------------------------------------------------------------------------------
@@ -1724,7 +1718,13 @@ function Nx.Info.Combat:OnEvent (event, ...)
 		local OBJ_TYPE_PET			= 0x00001000
 		local OBJ_TYPE_GUARDIAN		= 0x00002000
 
-		local time, cEvent, _hideCaster, sId, sName, sFlags, sf2, dId, dName, dFlags, df2, a1, a2, a3, a4 = select (1, unpack({CombatLogGetCurrentEventInfo()}))
+		-- Pack the CLEU payload once; the old code was calling
+		-- `select(N, unpack({CombatLogGetCurrentEventInfo()}))` up to three
+		-- times per event, which on busy fights is a measurable per-tick
+		-- table churn for no benefit.
+		local cleu = { CombatLogGetCurrentEventInfo() }
+		local time, cEvent, _hideCaster, sId, sName, sFlags, sf2, dId, dName, dFlags, df2 =
+			cleu[1], cleu[2], cleu[3], cleu[4], cleu[5], cleu[6], cleu[7], cleu[8], cleu[9], cleu[10], cleu[11]
 		local pre, mid, post = Nx.Split ("_", cEvent)
 		if not post then
 			post = mid
@@ -1736,11 +1736,11 @@ function Nx.Info.Combat:OnEvent (event, ...)
 			local i = 12
 
 			if pre ~= "SWING" then
-				spellId, spellName, spellSchool = select (12, unpack({CombatLogGetCurrentEventInfo()}))
+				spellId, spellName, spellSchool = cleu[12], cleu[13], cleu[14]
 				i = 15
 			end
 
-			local amount, school, resist, block, absorb, crit = select (i, unpack({CombatLogGetCurrentEventInfo()}))
+			local amount, school, resist, block, absorb, crit = cleu[i], cleu[i+1], cleu[i+2], cleu[i+3], cleu[i+4], cleu[i+5]
 
 			if post == "DAMAGE" then
 

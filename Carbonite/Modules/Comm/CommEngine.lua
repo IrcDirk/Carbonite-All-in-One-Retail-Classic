@@ -41,6 +41,37 @@
 -- Localization library reference
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
+-- Localised classic clients (RU, KR, ...) deliver player/realm strings
+-- with a trailing " (RU)" / " (EN)" / ... locale tag attached: e.g.
+-- arg2 from CHAT_MSG_CHANNEL = "Name-Realm (RU)" and
+-- GetRealmName() = "Realm (RU)". Without stripping this, identity
+-- comparisons against self.PlyrName (which is the canonical
+-- "Name-Realm") fail and the player's own broadcasts get treated as
+-- a separate, third-party player — rendering a Whisper/Invite icon
+-- right under our own arrow.
+local function _stripLocaleTag(s)
+    return s and (s:gsub("%s*%(%a+%)%s*$", "")) or s
+end
+
+-- Canonicalise a sender name to the "Name-Realm" form self.PlyrName
+-- uses. Handles three input shapes seen in the wild:
+--   * "Name"                  - bare classic same-realm delivery
+--   * "Name-Realm"            - cross-realm or already-qualified
+--   * "Name-Realm (RU)"       - localised classic clients
+-- and the realm GetRealmName() returns may itself carry the (RU)
+-- tag, which we strip before appending.
+local function _normaliseSenderName(name)
+    if not name then return nil end
+    name = _stripLocaleTag(name)
+    if not Nx.strpos(name, "-") then
+        local r = _stripLocaleTag(GetRealmName())
+        if r and r ~= "" then
+            name = name .. "-" .. r
+        end
+    end
+    return name
+end
+
 ---------------------------------------------------------------------------------------
 -- Relocation note
 ---------------------------------------------------------------------------------------
@@ -221,9 +252,13 @@ function Nx.Com:OnEvent(event)
     local self = Nx.Com
 
     if event == "PLAYER_LOGIN" then
-        -- Initialize player info
+        -- Initialize player info. Localised classic clients may
+        -- return the realm with a "(RU)"-style locale tag — strip
+        -- it through the shared normaliser so inbound-message
+        -- comparisons stay symmetric.
         local playername, realmname = UnitFullName("player")
-        self.PlyrName = playername .. (realmname and "-" .. realmname or "")
+        realmname = _stripLocaleTag(realmname)
+        self.PlyrName = playername .. (realmname and realmname ~= "" and "-" .. realmname or "")
         self.PlyrMapId = Nx.Map:GetRealMapId()
         self.PlyrX = 0
         self.PlyrY = 0
@@ -382,11 +417,9 @@ function Nx.Com:OnFriendguild_update()
         local name = finfo.name
         local con = finfo.connected
 
-        -- Add realm name if not present
-        if not Nx.strpos(name, "-") then
-            local realmname = GetRealmName()
-            name = name .. (realmname and "-" .. realmname or "")
-        end
+        -- Canonicalise to "Name-Realm" (strips localiser tag, adds
+        -- realm slug if missing).
+        name = _normaliseSenderName(name)
 
         if con then
             if not gNames[name] then
@@ -482,11 +515,7 @@ function Nx.Com:OnChat_msg_channel(event, arg1, arg2, arg3, arg4, arg5, arg6, ar
         local name = strmatch(message, NOT_FOUND)
 
         if name then
-            -- Add realm if not present
-            if not Nx.strpos(name, "-") then
-                local realmname = GetRealmName()
-                name = name .. (realmname and "-" .. realmname or "")
-            end
+            name = _normaliseSenderName(name)
 
             -- Remove from friends list
             for k, v in ipairs(self.Friends) do
@@ -499,7 +528,13 @@ function Nx.Com:OnChat_msg_channel(event, arg1, arg2, arg3, arg4, arg5, arg6, ar
 
     -- Process messages from our channels
     if strsub(arg9, 1, 3) == self.Name then
-        local name = arg2
+        -- Canonicalise sender before the self-skip below. On RU /
+        -- other localised classic clients arg2 arrives as
+        -- "Name-Realm (RU)" and previously slipped past the
+        -- comparison, causing our own broadcasts to be stored in
+        -- ZPInfo and rendered as a Whisper/Invite/Track-Player icon
+        -- under our own position arrow.
+        local name = _normaliseSenderName(arg2)
 
         -- Ignore our own messages
         if name ~= self.PlyrName then
@@ -536,13 +571,7 @@ end
 function Nx.Com:OnChat_msg_addon(args, distribution, target)
     local self = Nx.Com
 
-    local name = target
-
-    -- Add realm if not present
-    if not Nx.strpos(name, "-") then
-        local realmname = GetRealmName()
-        name = name .. (realmname and "-" .. realmname or "")
-    end
+    local name = _normaliseSenderName(target)
 
     -- Ignore our own messages
     if name ~= self.PlyrName then
