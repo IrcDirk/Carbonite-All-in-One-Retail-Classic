@@ -63,9 +63,27 @@ function CarboniteWarehouse:OnInitialize()
     CarboniteWarehouse:RegisterEvent("TRADE_SKILL_SHOW", "EventHandler")
     CarboniteWarehouse:RegisterEvent("PLAYER_LOGIN","EventHandler")
     CarboniteWarehouse:RegisterEvent("TIME_PLAYED_MSG","EventHandler")
-    CarboniteWarehouse:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("UNIT_SPELLCAST_FAILED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "EventHandler")
+    -- UNIT_SPELLCAST_* via a dedicated unit-filtered frame instead of
+    -- AceEvent. AceEvent funnels every event onto one shared frame
+    -- registered with the unfiltered RegisterEvent; that frame sits in the
+    -- same global secure-dispatch list as Blizzard's CastingBarFrame, so
+    -- Carbonite's taint leaks onto the casting bar's staged/empowered-cast
+    -- animation code ("attempted to iterate a table that cannot be accessed
+    -- while tainted ... CastingBarFrame StopAnims/StopFinishAnims").
+    -- RegisterUnitEvent scoped to "player" routes us through the
+    -- filtered-event path, which dispatches separately and keeps our taint
+    -- off the casting bar. The handlers only ever act on arg1 == "player",
+    -- so behaviour is unchanged.
+    if not Nx.Warehouse.SpellcastFrame then
+        local castFrame = CreateFrame("Frame", "CarboniteWarehouseSpellcastFrame")
+        castFrame:SetScript("OnEvent", function (_, event, ...)
+            CarboniteWarehouse:EventHandler(event, ...)
+        end)
+        castFrame:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
+        castFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "player")
+        castFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "player")
+        Nx.Warehouse.SpellcastFrame = castFrame
+    end
     CarboniteWarehouse:RegisterEvent("CURRENCY_DISPLAY_UPDATE", "EventHandler")
     GuildBank.RegisterCallback(CarboniteWarehouse,"GuildBankComm_PageUpdate", "OnPageSync")
     GuildBank.RegisterCallback(CarboniteWarehouse, "GuildBankComm_FundsUpdate", "OnMoneySync")
