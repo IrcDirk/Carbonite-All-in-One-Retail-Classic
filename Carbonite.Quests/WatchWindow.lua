@@ -1623,7 +1623,7 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                                             ShowQuestComplete(_liveID)
                                         end)
                                     else
-                                        local qi = (GetQuestLogIndexByID and GetQuestLogIndexByID(_qId)) or _qIndex
+                                        local qi = (GetQuestLogIndexByID and GetQuestLogIndexByID(_liveID)) or _qIndex
                                         if qi and qi > 0 then
                                             C_Timer.After(0, function()
                                                 ShowQuestComplete(qi)
