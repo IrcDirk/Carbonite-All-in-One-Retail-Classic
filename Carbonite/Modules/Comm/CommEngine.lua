@@ -669,7 +669,7 @@ function Nx.Com:ParsePlyrStatus(name, info, msg)
     end
 
     -- Parse coordinates (hex encoded)
-    info.X = tonumber(strsub(msg, 7, 9), 16) / 0xfff * 100
+    info.X = (tonumber(strsub(msg, 7, 9), 16) or 0) / 0xfff * 100
     info.Y = (tonumber(strsub(msg, 10, 13), 16) or 0) / 0xfff * 100    -- Includes dungeon level offset
 
     -- Parse health, level, class
