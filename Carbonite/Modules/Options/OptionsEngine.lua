@@ -3447,11 +3447,15 @@ function Nx.Opts:NXCmdGryphonsUpdate()
         SetShownSafe(endCaps.LeftEndCap, not hideGryphons)
         SetShownSafe(endCaps.RightEndCap, not hideGryphons)
 
-        -- Let Blizzard's own EditMode refresh path know the art should stay hidden.
-        -- MainActionBar:UpdateEndCaps(self.hideBarArt) reads this value.
-        if mainActionBar then
-            mainActionBar.hideBarArt = hideGryphons and true or false
-        end
+        -- NOTE: do NOT write `mainActionBar.hideBarArt` here. Writing a field
+        -- onto the MainActionBar table from insecure (addon) code taints the
+        -- MainActionBar frame itself, which then makes its protected methods
+        -- fail with ADDON_ACTION_BLOCKED -- e.g. picking up a bag item fires
+        -- ACTIONBAR_SHOWGRID -> SetShowGrid -> UpdateVisibility ->
+        -- MainActionBar:SetShownBase(), blocked "tried to call a protected
+        -- function". Hiding the EndCaps child above (plus the UpdateEndCaps
+        -- post-hook below) already keeps the gryphons hidden without touching
+        -- the secure parent frame.
     end
 
     ApplyLegacyEndCaps()
@@ -3474,7 +3478,10 @@ function Nx.Opts:NXCmdGryphonsUpdate()
             end
 
             if shouldHide then
-                mainActionBar.hideBarArt = true
+                -- No `mainActionBar.hideBarArt = true` here: that insecure
+                -- field write taints MainActionBar and gets its protected
+                -- SetShownBase blocked (see ApplyModernEndCaps note). Hiding
+                -- the EndCaps child is enough and stays off the secure parent.
                 endCaps:Hide()
 
                 if endCaps.LeftEndCap then
