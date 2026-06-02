@@ -4391,22 +4391,27 @@ function Nx.Map.OnUpdate(this, elapsed)
     end
     ttl = 0
 
-    -- Fix for ReputationFrame event spam
-    if _G['ReputationFrame'] then
-        if not _G['ReputationFrame'].CarbFix then
-            _G['ReputationFrame'].CarbFix = true
-            _G['ReputationFrame']:UnregisterEvent('QUEST_LOG_UPDATE')
-            _G['ReputationFrame']:RegisterEvent('UNIT_QUEST_LOG_CHANGED')
-            _G['ReputationFrame']:HookScript('OnShow', function(self, event, ...)
-                _G['ReputationFrame']:UnregisterEvent('QUEST_LOG_UPDATE')
-                _G['ReputationFrame']:RegisterEvent('UNIT_QUEST_LOG_CHANGED')
-            end)
-            _G['ReputationFrame']:HookScript('OnEvent', function(self, event, ...)
-                if (event == "UPDATE_FACTION" or event == "LFG_BONUS_FACTION_ID_UPDATED" or event == "UNIT_QUEST_LOG_CHANGED") and ReputationFrame_Update then
-                    ReputationFrame_Update()
-                end
-            end)
-        end
+    -- Keep Blizzard's Reputation panel refreshed on faction / quest-log
+    -- changes WITHOUT tainting it. The previous version wrote a `CarbFix`
+    -- flag straight onto the ReputationFrame table and called
+    -- Unregister/RegisterEvent + HookScript on the Blizzard frame from this
+    -- insecure update loop -- all of which taint ReputationFrame. Instead we
+    -- drive the refresh from our own dedicated frame, never touch the Blizzard
+    -- frame's fields or event registrations, and only invoke the public
+    -- ReputationFrame_Update() while the panel is actually shown (so it also
+    -- does less work than the old hook, which fired even when hidden).
+    if not Nx.Map.RepRefreshFrame then
+        local f = CreateFrame("Frame")
+        f:RegisterEvent("UPDATE_FACTION")
+        f:RegisterEvent("LFG_BONUS_FACTION_ID_UPDATED")
+        f:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
+        f:SetScript("OnEvent", function()
+            local rf = _G.ReputationFrame
+            if rf and rf:IsShown() and _G.ReputationFrame_Update then
+                _G.ReputationFrame_Update()
+            end
+        end)
+        Nx.Map.RepRefreshFrame = f
     end
 
     local Nx = Nx

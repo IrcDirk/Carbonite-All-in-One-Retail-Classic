@@ -198,6 +198,9 @@ end
 function Nx.UEvents:GetPlyrPos()
     local mapId = Nx.Map:GetRealMapId()
     local map = Nx.Map:GetMap (1)
+    if not map then
+        return mapId, nil, nil, Nx.Map.DungeonLevel
+    end
     return mapId, map.PlyrRZX, map.PlyrRZY, Nx.Map.DungeonLevel
 end
 

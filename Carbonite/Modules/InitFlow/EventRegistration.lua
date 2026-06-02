@@ -104,7 +104,16 @@ function Nx:InitEvents()
         f:SetScript("OnEvent", function (_, event, ...)
             Nx:OnUnit_spellcast_sent(event, ...)
         end)
-        f:RegisterUnitEvent("UNIT_SPELLCAST_SENT", "player")
+        -- On TBC/Classic UNIT_SPELLCAST_SENT is not a "unit event" in the C
+        -- engine, so RegisterUnitEvent throws ("unknown event"). A dedicated
+        -- frame already isolates us from AceEvent's shared dispatch (the taint
+        -- source), and Classic has no "secret values", so falling back to a
+        -- plain RegisterEvent on this frame is safe. The handler still bails on
+        -- arg1 ~= "player", so behaviour is unchanged.
+        local ok = pcall(f.RegisterUnitEvent, f, "UNIT_SPELLCAST_SENT", "player")
+        if not ok then
+            f:RegisterEvent("UNIT_SPELLCAST_SENT")
+        end
         Nx.SpellcastSentFrame = f
     end
 end
