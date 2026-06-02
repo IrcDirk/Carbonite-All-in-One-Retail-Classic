@@ -226,7 +226,6 @@ Nx.Initialized = false      -- Full initialization complete
 Nx.RealTom = false          -- Real TomTom addon detected
 Nx.PlayerFnd = false        -- Player unit found
 Nx.ModQAction = ""          -- Module quest action
-Nx.ModPAction = ""          -- Module player action
 Nx.GlowOn = false           -- Minimap button glow state
 
 -------------------------------------------------------------------------------

@@ -150,7 +150,6 @@ function Nx.Com:Init()
     self.MemberNames = {}    -- Names in current party or raid
 
     self.Friends = {}        -- Online friends list
-    self.Punks = {}          -- Enemy player tracking
 
     -- Zone channel info
     self.ZPInfo = {}         -- Zone player info (positions of non-pals)
@@ -609,7 +608,7 @@ function Nx.Com:OnChat_msg_addon(args, distribution, target)
                 end
 
             elseif id == 76 then    -- L (Level up)
-                if Nx.db.profile.Comm.LvlUpShow then
+                if Nx.db.profile.Comm.LvlUpShow and #msg >= 2 then
                     local s = format("%s " .. L["reached level"] .. " %d!", name, strbyte(msg, 2) - 35)
                     Nx.prt(s)
                     Nx.UEvents:AddInfo(s)
@@ -641,7 +640,7 @@ function Nx.Com:ParsePlyrStatus(name, info, msg)
     -- Bit 1: In combat
     -- Bit 2: Has target data
     -- Bit 4: Has quest data
-    -- Bit 8: Has punks data
+    -- Bit 8: (retired) was punks data; no longer sent or parsed
 
     local flags = strbyte(msg, 2) - 35
     info.F = flags
@@ -683,7 +682,9 @@ function Nx.Com:ParsePlyrStatus(name, info, msg)
     local off = 17
 
     -- Parse target data (if present)
-    if bit.band(flags, 2) > 0 then
+    -- Bytes 17-21 hold the fixed target header before the name; a truncated
+    -- payload that still sets the flag would make strbyte() return nil here.
+    if bit.band(flags, 2) > 0 and #msg >= 21 then
         -- Target format: Type, level, class, health, name length, name
         info.TType = strbyte(msg, 17) - 35
         local col = self.TypeColors[info.TType] or ""
@@ -718,20 +719,9 @@ function Nx.Com:ParsePlyrStatus(name, info, msg)
             Nx.ModQAction = "QUEST_DECODE"
         end
 
-        if not Nx.qTEMPmsg or #Nx.qTEMPmsg > 7 then
+        if Nx.qTEMPmsg and #Nx.qTEMPmsg > 7 then
             local tmp = (strbyte(Nx.qTEMPmsg, 7) - 35)
             off = off + (7 + tmp * 2)
-        end
-    end
-
-    -- Parse punks data (if present)
-    if bit.band(flags, 8) > 0 then
-        Nx.pTEMPinfo = info
-        Nx.pTEMPname = name
-        Nx.pTEMPmsg = strsub(msg, off + 1)
-
-        if Nx.pTEMPinfo and Nx.pTEMPname and Nx.pTEMPmsg then
-            Nx.ModPAction = "PUNK_DECODE"
         end
     end
 end
@@ -1378,11 +1368,6 @@ function Nx.Com:OnUpdate(elapsed)
         delay = 120
     end
 
-    -- Override for punk alerts
-    if next(self.Punks) then
-        delay = min(6, delay)
-    end
-
     -- Send position update if enough time has passed
     if tm - self.SendPosTime >= delay then
         self.SendPosTime = tm
@@ -1490,27 +1475,9 @@ function Nx.Com:OnUpdate(elapsed)
             flgs = flgs + qFlg
         end
 
-        -- Build punks (enemy players) string
-        local enStr = ""
-        if next(self.Punks) then
-            for name, lvl in pairs(self.Punks) do
-                enStr = enStr .. format("%2x%s!", lvl >= 0 and lvl or 0, name)
-                if #enStr > 50 then
-                    break
-                end
-            end
-
-            self.Punks = {}
-            self.SendZSkip = 1
-
-            flgs = flgs + 8
-
-            enStr = strchar(#enStr - 1 + 35) .. strsub(enStr, 1, -2)
-        end
-
         -- Send status message
-        self:SendPals(format("S%c%4x%3x%4x%c%c%c%s%s%s",
-            flgs + 35, self.PlyrMapId, x, y, hper + 48, plyrLvl + 35, self.PlyrClassI + 35, tStr, qStr, enStr))
+        self:SendPals(format("S%c%4x%3x%4x%c%c%c%s%s",
+            flgs + 35, self.PlyrMapId, x, y, hper + 48, plyrLvl + 35, self.PlyrClassI + 35, tStr, qStr))
     end
 
     -- Check for queued pals messages
