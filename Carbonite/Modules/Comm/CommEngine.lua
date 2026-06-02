@@ -1320,6 +1320,15 @@ function Nx.Com:OnUpdate(elapsed)
     local bgmap = Nx.InBG
 
     local targetName = UnitName("target")
+    -- Retail hands back a "secret" target name inside instances; the bare
+    -- `if targetName then` test (and the name broadcast) below would otherwise
+    -- throw "boolean test on a secret value". This OnUpdate runs on Carbonite's
+    -- own frame, so it's self-taint (it aborts the comm tick + spams the taint
+    -- log, it does NOT leak onto secure frames), but we still can't encode a
+    -- secret name into the pals message, so probe once and drop it to nil.
+    if not pcall(function () return targetName and #targetName end) then
+        targetName = nil
+    end
 
     local tm = GetTime()
     local tdiff = tm - self.SendTime

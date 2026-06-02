@@ -79,18 +79,26 @@ end
 
 function Nx.Quest:RecordQuestAcceptOrFinish()
 
-    local giver = UnitName ("npc") or "?"
+    -- Retail can hand back a "secret" name/GUID for the quest NPC inside
+    -- instances; a bare format()/strsplit on it throws ("secret value ...
+    -- tainted by Carbonite"). Probe the name once and fall back to "?", and
+    -- pcall the GUID parse, matching the guard already in Tooltips.lua.
+    local giver = UnitName ("npc")
+    if not pcall(function () return giver and #giver end) or giver == nil then
+        giver = "?"
+    end
 
     local guid = UnitGUID ("npc")
     if guid then
-
-    local typ, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit ("-", guid)
-        if typ == "Player" then
-            giver = "p"
-        elseif typ == "GameObject" then
-            giver = format ("%s#o%x", giver, npc_id)
-        elseif typ == "Creature" then        -- NPC
-            giver = format ("%s#%x", giver, npc_id)
+        local ok, typ, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = pcall (strsplit, "-", guid)
+        if ok then
+            if typ == "Player" then
+                giver = "p"
+            elseif typ == "GameObject" then
+                giver = format ("%s#o%x", giver, npc_id)
+            elseif typ == "Creature" then        -- NPC
+                giver = format ("%s#%x", giver, npc_id)
+            end
         end
     end
 

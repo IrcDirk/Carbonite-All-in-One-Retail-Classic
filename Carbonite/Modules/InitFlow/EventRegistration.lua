@@ -28,7 +28,6 @@ function Nx:InitEvents()
     Nx:RegisterEvent("UPDATE_MOUSEOVER_UNIT", "OnUpdate_mouseover_unit")
     Nx:RegisterEvent("PLAYER_REGEN_DISABLED", "OnPlayer_regen_disabled")
     Nx:RegisterEvent("PLAYER_REGEN_ENABLED", "OnPlayer_regen_enabled")
-    Nx:RegisterEvent("UNIT_SPELLCAST_SENT", "OnUnit_spellcast_sent")
     Nx:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnZone_changed_new_area")
     Nx:RegisterEvent("PLAYER_LEVEL_UP", "OnPlayer_level_up")
     Nx:RegisterEvent("GROUP_ROSTER_UPDATE", "OnParty_members_changed")
@@ -83,4 +82,29 @@ function Nx:InitEvents()
     -- Travel Events (all versions)
     ---------------------------------------------------------------------------
     Travel:RegisterEvent("TAXIMAP_OPENED", "OnTaximap_opened")
+
+    ---------------------------------------------------------------------------
+    -- Spellcast (player) via a dedicated unit-filtered frame, NOT AceEvent.
+    ---------------------------------------------------------------------------
+    -- AceEvent funnels every event onto one shared frame registered with the
+    -- unfiltered RegisterEvent. That frame sits in the same global secure-
+    -- dispatch list as Blizzard's CastingBarFrame / action buttons, so when a
+    -- UNIT_SPELLCAST_SENT fires Carbonite's taint can leak onto that secure
+    -- code. In instances arg2 (the spell name) is also handed back as a
+    -- "secret" value; comparing it (OnUnit_spellcast_sent) from the shared
+    -- dispatch is what poisons e.g. ActionButton_ApplyCooldown -> SetCooldown
+    -- ("Secret values are only allowed during untainted execution") and
+    -- freezes action-bar cooldown swipes. RegisterUnitEvent scoped to "player"
+    -- routes us through the filtered-event path, which dispatches separately
+    -- and keeps our taint off the secure frames. The handler already bails on
+    -- arg1 ~= "player", so behaviour is unchanged. Same remediation as the
+    -- CarboniteWarehouse SpellcastFrame (see Carbonite.Warehouse/Init.lua).
+    if not Nx.SpellcastSentFrame then
+        local f = CreateFrame("Frame", "CarboniteSpellcastSentFrame")
+        f:SetScript("OnEvent", function (_, event, ...)
+            Nx:OnUnit_spellcast_sent(event, ...)
+        end)
+        f:RegisterUnitEvent("UNIT_SPELLCAST_SENT", "player")
+        Nx.SpellcastSentFrame = f
+    end
 end
