@@ -4402,9 +4402,13 @@ function Nx.Map.OnUpdate(this, elapsed)
     -- does less work than the old hook, which fired even when hidden).
     if not Nx.Map.RepRefreshFrame then
         local f = CreateFrame("Frame")
-        f:RegisterEvent("UPDATE_FACTION")
-        f:RegisterEvent("LFG_BONUS_FACTION_ID_UPDATED")
-        f:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
+        -- pcall each registration: LFG_BONUS_FACTION_ID_UPDATED is retail-only
+        -- and RegisterEvent throws "unknown event" on Classic/TBC. Guarding
+        -- per-event keeps the others registered and stops the throw from
+        -- aborting the per-frame OnUpdate loop.
+        pcall(f.RegisterEvent, f, "UPDATE_FACTION")
+        pcall(f.RegisterEvent, f, "LFG_BONUS_FACTION_ID_UPDATED")
+        pcall(f.RegisterEvent, f, "UNIT_QUEST_LOG_CHANGED")
         f:SetScript("OnEvent", function()
             local rf = _G.ReputationFrame
             if rf and rf:IsShown() and _G.ReputationFrame_Update then

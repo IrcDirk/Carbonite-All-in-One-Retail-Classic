@@ -50,8 +50,13 @@ end
 
 Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
     local f = CreateFrame("Frame", "CarbPlayerSpec")
-    f:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    f:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    -- pcall per event: which spec events exist depends on the flavor/client,
+    -- not a fixed expansion (e.g. TBC on the modern engine does expose specs).
+    -- RegisterEvent throws "unknown event" wherever a given one is absent, so
+    -- guard each independently -- keep whatever the client supports, skip the
+    -- rest. The getters already degrade to 0/1 when the spec APIs are missing.
+    pcall(f.RegisterEvent, f, "ACTIVE_TALENT_GROUP_CHANGED")
+    pcall(f.RegisterEvent, f, "PLAYER_SPECIALIZATION_CHANGED")
     f:SetScript("OnEvent", function()
         Carbonite.Core.EventBus:Fire("PLAYER_SPEC_CHANGED",
             PlayerSpec:GetActiveSpecID(),
