@@ -1101,8 +1101,9 @@ Map.MapWorldInfo = {
         Y = -389.5833984375,
         Overlay = "valeofeternalblossoms",
         Name=L["Vale of Eternal Blossoms"],
-        SubZones = {10000}, -- "miminap subzone as default minimap textures are for 5.4 phase, so this one is from 2864 minimap"
-        Phase = "phase0"
+--        No needed anymore as we're at final phase where default 5.4 became actual
+--        SubZones = {10000}, -- "miminap subzone as default minimap textures are for 5.4 phase, so this one is from 2864 minimap"
+--        Phase = "phase0"
     },
     [397] = {
         BaseMap = 112,
