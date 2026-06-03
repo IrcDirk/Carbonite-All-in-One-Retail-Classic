@@ -1,4 +1,4 @@
-## Interface: 50503, 11508, 20505, 120000, 120001
+## Interface: 50504, 11508, 20505, 120000, 120001
 ## Title: Carbonite All in One (Retail & Classic)
 ## Version: @project-version@
 ## Notes: Released Under GPL

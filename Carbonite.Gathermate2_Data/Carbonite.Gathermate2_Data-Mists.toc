@@ -1,4 +1,4 @@
-## Interface: 50503
+## Interface: 50504
 ## Notes: Wowhead Data dump for GatherMate2
 ## Title: Carbonite GatherMate2Data - Mists of Pandaria Classic @project-version@
 ## Version: @project-version@

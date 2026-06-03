@@ -1,4 +1,4 @@
-## Interface: 50503
+## Interface: 50504
 ## Title: Carbonite Quest - Mists of Pandaria Classic @project-version@
 ## Version: @project-version@
 ## Author: No One
