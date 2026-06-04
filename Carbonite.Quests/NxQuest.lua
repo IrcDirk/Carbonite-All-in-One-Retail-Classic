@@ -232,7 +232,13 @@ if C_QuestLog and C_QuestLog.AddQuestWatch and not AddQuestWatch then
         if not questIndex or questIndex <= 0 then return end
         local questID = C_QuestLog.GetQuestIDForLogIndex(questIndex)
         if questID then
-            C_QuestLog.AddQuestWatch(questID, Enum.QuestWatchType.Manual)
+            -- Combat-defer: insecure watch mutations run Blizzard's
+            -- QuestDataProvider refresh in our taint and trip the
+            -- combat-protected SetPassThroughButtons (same family as
+            -- the C_SuperTrack sites). Synchronous out of combat.
+            Nx.SuperTrackSafe(function()
+                C_QuestLog.AddQuestWatch(questID, Enum.QuestWatchType.Manual)
+            end)
         end
     end
 end
@@ -246,7 +252,10 @@ if C_QuestLog and C_QuestLog.RemoveQuestWatch and not RemoveQuestWatch then
         if not questIndex or questIndex <= 0 then return end
         local questID = C_QuestLog.GetQuestIDForLogIndex(questIndex)
         if questID then
-            C_QuestLog.RemoveQuestWatch(questID)
+            -- Combat-defer (see AddQuestWatch shim above).
+            Nx.SuperTrackSafe(function()
+                C_QuestLog.RemoveQuestWatch(questID)
+            end)
         end
     end
 end

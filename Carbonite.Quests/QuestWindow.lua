@@ -109,8 +109,16 @@ function Nx.Quest.List:Open()
                 -- the lockout so the user's "click off" decision sticks.
                 if Nx.Quest._stLockoutUntil and now < Nx.Quest._stLockoutUntil then
                     if qID > 0 then
-                        Nx.Quest._stSuppressHook = true
-                        C_SuperTrack.SetSuperTrackedQuestID(0)
+                        -- Defer in combat: this hook can run inside
+                        -- Blizzard's secure call chain, and re-firing
+                        -- SUPER_TRACKING_CHANGED from our taint trips the
+                        -- combat-protected SetPassThroughButtons in the
+                        -- QuestDataProvider listeners. The suppress flag
+                        -- moves inside so it's armed right before the call.
+                        Nx.SuperTrackSafe(function()
+                            Nx.Quest._stSuppressHook = true
+                            C_SuperTrack.SetSuperTrackedQuestID(0)
+                        end)
                     end
                     return
                 end
@@ -132,17 +140,15 @@ function Nx.Quest.List:Open()
                 -- Setting the same id that's already active -> toggle off.
                 if qID == Nx.Quest._stLastSet
                    and qID == (Nx.Quest.ActiveQID or 0) then
-                    Nx.Quest._stSuppressHook = true
-                    Nx.Quest.UserClearedActive = true
-                    C_SuperTrack.SetSuperTrackedQuestID(0)
-                    Nx.Quest.ActiveQID = 0
-                    Nx.Quest.ActiveObjI = 0
-                    if Nx.Quest.Tracking then
-                        Nx.Quest.Tracking[qID] = nil
-                    end
-                    if Nx.Map and Nx.Map.Maps and Nx.Map.Maps[1] then
-                        local m1 = Nx.Map.Maps[1]
-                        if m1.ClearTargets then m1:ClearTargets() end
+                    -- Secure clear + the flags it depends on go through
+                    -- SuperTrackSafe (deferred in combat — the tainted
+                    -- SUPER_TRACKING_CHANGED chain trips the protected
+                    -- SetPassThroughButtons). The blob hide rides along:
+                    -- WorldMapBlobFrame refuses insecure calls in combat.
+                    Nx.SuperTrackSafe(function()
+                        Nx.Quest._stSuppressHook = true
+                        Nx.Quest.UserClearedActive = true
+                        C_SuperTrack.SetSuperTrackedQuestID(0)
                         -- Blizzard quest area blob is drawn into a
                         -- separate WorldMapBlobFrame (QMap.QuestWin) and
                         -- doesn't auto-hide on super-track clear; do it
@@ -152,6 +158,15 @@ function Nx.Quest.List:Open()
                             if f.QuestWin.DrawNone then f.QuestWin:DrawNone() end
                             if f.QuestWin.Hide then f.QuestWin:Hide() end
                         end
+                    end)
+                    Nx.Quest.ActiveQID = 0
+                    Nx.Quest.ActiveObjI = 0
+                    if Nx.Quest.Tracking then
+                        Nx.Quest.Tracking[qID] = nil
+                    end
+                    if Nx.Map and Nx.Map.Maps and Nx.Map.Maps[1] then
+                        local m1 = Nx.Map.Maps[1]
+                        if m1.ClearTargets then m1:ClearTargets() end
                     end
                     Nx.Quest._stLastSet = 0
                     Nx.Quest._stLockoutUntil = now + 0.6
@@ -1316,8 +1331,14 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
             local toggleOff = (activeQID == liveQID and activeObjI == qObj)
 
             if toggleOff then
-                Quest.UserClearedActive = true
-                C_SuperTrack.SetSuperTrackedQuestID(0)
+                -- Secure clear goes through SuperTrackSafe (deferred in
+                -- combat — tainted SUPER_TRACKING_CHANGED chain trips the
+                -- protected SetPassThroughButtons). The flag arms inside
+                -- the closure so it's set when the call actually fires.
+                Nx.SuperTrackSafe(function()
+                    Quest.UserClearedActive = true
+                    C_SuperTrack.SetSuperTrackedQuestID(0)
+                end)
                 Quest.ActiveQID = 0
                 Quest.ActiveObjI = 0
                 Quest.Tracking[qId] = nil
@@ -1333,7 +1354,10 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
                 if Nx.Quest:GetQuest(id) ~= "W" then
                     Nx.Quest:SetQuest(id, "W")
                 end
-                C_SuperTrack.SetSuperTrackedQuestID(liveQID)
+                local _live = liveQID
+                Nx.SuperTrackSafe(function()
+                    C_SuperTrack.SetSuperTrackedQuestID(_live)
+                end)
                 Quest.ActiveObjI = qObj
                 if qObj > 0 and Quest.TrackOnMap then
                     Quest:TrackOnMap(qId, qObj, qIndex and qIndex > 0, true)
@@ -1682,7 +1706,13 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
         local questId = arg1
         if QuestUtils_IsQuestWorldQuest and QuestUtils_IsQuestWorldQuest(questId) then
             if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
-                C_SuperTrack.SetSuperTrackedQuestID(0)
+                -- QUEST_REMOVED fires mid-combat all the time (WQ done
+                -- while fighting); the secure clear must defer or the
+                -- tainted SUPER_TRACKING_CHANGED chain trips the
+                -- combat-protected SetPassThroughButtons.
+                Nx.SuperTrackSafe(function()
+                    C_SuperTrack.SetSuperTrackedQuestID(0)
+                end)
             end
             worldquestdb[questId] = nil
             if Nx.Quest.WQList then
@@ -1700,7 +1730,13 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 Nx.Quest.ActiveQID = 0
                 if C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
                    and C_SuperTrack.GetSuperTrackedQuestID() == questId then
-                    C_SuperTrack.SetSuperTrackedQuestID(0)
+                    -- Combat-defer (see WQ branch above). Re-check the id
+                    -- at fire time in case the super-track moved on.
+                    Nx.SuperTrackSafe(function()
+                        if C_SuperTrack.GetSuperTrackedQuestID() == questId then
+                            C_SuperTrack.SetSuperTrackedQuestID(0)
+                        end
+                    end)
                 end
             end
             -- Drop any map target pointing at this quest.

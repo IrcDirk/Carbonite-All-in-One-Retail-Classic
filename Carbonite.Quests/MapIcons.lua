@@ -760,6 +760,13 @@ function Nx.Quest:UpdateIcons (map)
                                     end
 
                                     C_Timer.After(0, function()
+                                        -- Combat may begin within the tick;
+                                        -- SuperTrackSafe re-defers to
+                                        -- PLAYER_REGEN_ENABLED then, since
+                                        -- the tainted SUPER_TRACKING_CHANGED
+                                        -- chain trips the combat-protected
+                                        -- SetPassThroughButtons.
+                                        Nx.SuperTrackSafe(function()
                                         if shift then
                                             if watchType == Enum.QuestWatchType.Manual or (watchType == Enum.QuestWatchType.Automatic and isSuperTracked) then
                                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
@@ -780,6 +787,7 @@ function Nx.Quest:UpdateIcons (map)
                                                 C_SuperTrack.SetSuperTrackedQuestID(questID)
                                             end
                                         end
+                                        end)
                                     end)
                                 end
                             end

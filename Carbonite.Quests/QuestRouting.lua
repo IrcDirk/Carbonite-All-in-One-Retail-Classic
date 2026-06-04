@@ -46,7 +46,12 @@ function QuestRouting:ClearActive()
     local q = quest()
     if q and q.SetActiveCarboniteQuest then q:SetActiveCarboniteQuest(0, 0) end
     if _G.C_SuperTrack and _G.C_SuperTrack.SetSuperTrackedQuestID then
-        _G.C_SuperTrack.SetSuperTrackedQuestID(0)
+        -- Combat-defer: insecure super-track mutations fire
+        -- SUPER_TRACKING_CHANGED in our taint and trip the protected
+        -- SetPassThroughButtons in Blizzard's QuestDataProvider.
+        _G.Nx.SuperTrackSafe(function()
+            _G.C_SuperTrack.SetSuperTrackedQuestID(0)
+        end)
     end
     Carbonite.Core.EventBus:Fire("QUEST_ROUTE_CLEARED")
 end

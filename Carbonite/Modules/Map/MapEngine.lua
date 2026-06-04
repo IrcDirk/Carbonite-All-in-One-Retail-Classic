@@ -10587,8 +10587,16 @@ function Nx.Map:IconOnMouseDown(button)
                                 local _restore = _prevAddWatchSuppress
                                 _deferredRestore = true
                                 C_Timer.After(0, function()
-                                    C_SuperTrack.SetSuperTrackedQuestID(0)
-                                    if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
+                                    -- Combat may have started within the
+                                    -- tick; SuperTrackSafe re-defers to
+                                    -- PLAYER_REGEN_ENABLED then (the
+                                    -- tainted SUPER_TRACKING_CHANGED chain
+                                    -- trips protected SetPassThroughButtons
+                                    -- in combat).
+                                    Nx.SuperTrackSafe(function()
+                                        C_SuperTrack.SetSuperTrackedQuestID(0)
+                                        if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
+                                    end)
                                 end)
                             elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
                                 -- Polyfill on classic — second call with the
@@ -10623,16 +10631,20 @@ function Nx.Map:IconOnMouseDown(button)
                                 local _live = liveQID
                                 _deferredRestore = true
                                 C_Timer.After(0, function()
-                                    if C_SuperTrack.SetSuperTrackedUserWaypoint
-                                       and C_SuperTrack.IsSuperTrackingUserWaypoint
-                                       and C_SuperTrack.IsSuperTrackingUserWaypoint() then
-                                        C_SuperTrack.SetSuperTrackedUserWaypoint(false)
-                                    end
-                                    if C_SuperTrack.ClearAllSuperTracked then
-                                        C_SuperTrack.ClearAllSuperTracked()
-                                    end
-                                    C_SuperTrack.SetSuperTrackedQuestID(_live)
-                                    if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
+                                    -- Combat re-check at fire time (see
+                                    -- toggle-off branch above).
+                                    Nx.SuperTrackSafe(function()
+                                        if C_SuperTrack.SetSuperTrackedUserWaypoint
+                                           and C_SuperTrack.IsSuperTrackingUserWaypoint
+                                           and C_SuperTrack.IsSuperTrackingUserWaypoint() then
+                                            C_SuperTrack.SetSuperTrackedUserWaypoint(false)
+                                        end
+                                        if C_SuperTrack.ClearAllSuperTracked then
+                                            C_SuperTrack.ClearAllSuperTracked()
+                                        end
+                                        C_SuperTrack.SetSuperTrackedQuestID(_live)
+                                        if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
+                                    end)
                                 end)
                             elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
                                 -- Classic Era / TBC: no C_SuperTrack. Use

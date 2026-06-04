@@ -625,7 +625,14 @@ function Nx.Quest:OnSuperTrackChanged()
         if prev and prev > 0
            and C_QuestLog and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest(prev)
            and C_SuperTrack.SetSuperTrackedQuestID then
-            C_SuperTrack.SetSuperTrackedQuestID(prev)
+            -- Combat-defer the restore: this listener runs off
+            -- SUPER_TRACKING_CHANGED, which Blizzard fires mid-combat
+            -- (auto-track on quest complete etc.); re-entering the
+            -- secure API from our taint trips the combat-protected
+            -- SetPassThroughButtons in the QuestDataProvider chain.
+            Nx.SuperTrackSafe(function()
+                C_SuperTrack.SetSuperTrackedQuestID(prev)
+            end)
             return
         end
         self.ActiveQID = 0

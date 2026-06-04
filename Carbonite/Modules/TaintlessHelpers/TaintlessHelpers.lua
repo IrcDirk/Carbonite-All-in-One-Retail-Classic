@@ -28,6 +28,37 @@ function TaintlessHelpers:IsAvailable()
     return self:GetSandbox() ~= nil
 end
 
+-- Combat-safe wrapper for C_SuperTrack mutations
+-- (SetSuperTrackedQuestID / ClearAllSuperTracked / ...). Calling
+-- these from insecure code fires SUPER_TRACKING_CHANGED
+-- synchronously in OUR taint context; Blizzard's
+-- QuestDataProvider listener then reaches
+-- pin:SetPassThroughButtons() (MapCanvas AcquirePin →
+-- CheckMouseButtonPassthrough), which is protected during combat
+-- lockdown → ADDON_ACTION_BLOCKED blaming Carbonite. Surfaces
+-- whenever a quest-pin map (WorldMap / FlightMap) is visible while
+-- the player is in combat. Out of combat the tainted chain is
+-- permitted, so run synchronously to keep click-toggle ordering;
+-- in combat defer to PLAYER_REGEN_ENABLED via CombatLockdown.
+function TaintlessHelpers:SuperTrackCall(fn)
+    if type(fn) ~= "function" then return end
+    if _G.InCombatLockdown and _G.InCombatLockdown() then
+        local CL = Carbonite.Modules.CombatLockdown
+        if CL then
+            CL:RunWhenSafe(fn)
+            return
+        end
+    end
+    fn()
+end
+
+-- Nx-level alias so legacy Carbonite code and the Carbonite.Quests
+-- addon (which load after this module) can reach the wrapper
+-- without going through Carbonite.Modules.
+if _G.Nx then
+    _G.Nx.SuperTrackSafe = function(fn) TaintlessHelpers:SuperTrackCall(fn) end
+end
+
 function TaintlessHelpers:ProxyCall(fn, ...)
     if type(fn) ~= "function" then return end
     local args = { ... }
