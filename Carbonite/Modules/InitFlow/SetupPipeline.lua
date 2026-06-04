@@ -62,10 +62,21 @@ function Nx:SetupEverything()
         Nx.Font:AddonLoaded()
     end
 
-    ShowUIPanel(WorldMapFrame)
-    HideUIPanel(WorldMapFrame)
-
-    if Nx.db.profile.Map.MaxOverride then Nx.Map:ToggleSize() end
+    -- Legacy WorldMapFrame priming (ShowUIPanel + HideUIPanel) removed:
+    -- writing WorldMapFrame's shown state from insecure code taints it for
+    -- the whole session. Blizzard's ActionBarController reads it back
+    -- (ValidateActionBarTransition -> MicroMenu:ResetMicroMenuPosition ->
+    -- UpdateMicroButtons -> QuestLogMicroButton:UpdateMicroButton ->
+    -- WorldMapFrame:IsShown()) right before the protected
+    -- OverrideActionBar:Show(), so the tainted read blocked the action-bar
+    -- transition when leaving a vehicle in combat (Argent Tournament
+    -- ADDON_ACTION_BLOCKED report). With MaxOverride the priming Show fired
+    -- our WMFOnShow redirect (ToggleSize) and the line below toggled back;
+    -- replicate that size priming directly without touching WorldMapFrame.
+    if Nx.db.profile.Map.MaxOverride then
+        Nx.Map:ToggleSize()
+        Nx.Map:ToggleSize()
+    end
 
     Nx.Initialized = true
     Nx:OnPlayer_login("PLAYER_LOGIN")

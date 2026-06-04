@@ -3616,6 +3616,13 @@ end
 Nx.Map.WMFOnShow = true
 
 -- Hook WorldMapFrame OnShow to intercept and potentially redirect to Carbonite map
+-- NOTE: the HideUIPanel redirect below writes WorldMapFrame's shown state
+-- from insecure code, tainting it until /reload. Secure code reads it back
+-- in ActionBarController (UpdateMicroButtons -> QuestLogMicroButton), which
+-- can block OverrideActionBar:Show() on vehicle transitions in combat.
+-- Unavoidable while we redirect the Blizzard map; the per-login variant of
+-- this taint (SetupPipeline's old ShowUIPanel/HideUIPanel priming) has been
+-- removed, so this only bites in sessions where the Blizzard map was opened.
 WorldMapFrame:HookScript("OnShow", function()
     -- Fix for ElvUI constant WorldMapFrame Show and Hide
     if ElvUI then
