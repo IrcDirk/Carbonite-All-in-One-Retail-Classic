@@ -8278,10 +8278,12 @@ local function GetCachedLayerInfo(mapId)
     end
 
     -- Try to get layer index from WorldMapFrame (Retail), fallback to 1 (Classic)
+    -- zoomLevels is only populated after the Blizzard map has been shown at least
+    -- once (SetMapID -> SetZoomLevels); GetCurrentLayerIndex errors before that
     local layerIndex = 1
     if WorldMapFrame and WorldMapFrame.GetCanvasContainer then
         local canvas = WorldMapFrame:GetCanvasContainer()
-        if canvas and canvas.GetCurrentLayerIndex then
+        if canvas and canvas.GetCurrentLayerIndex and canvas.zoomLevels then
             layerIndex = canvas:GetCurrentLayerIndex() or 1
         end
     end
