@@ -37,6 +37,13 @@ function Nx.Quest:TrackerHider_Init()
     end
 
     local hiddenParent = CreateFrame("Frame", nil, UIParent)
+    -- The hider needs a valid rect: MoP Classic's Wrath-style
+    -- WatchFrame_Update computes (WatchFrame:GetTop() -
+    -- WatchFrame:GetParent():GetBottom()) on every quest-log event,
+    -- even while the tracker is hidden. An unanchored, unsized parent
+    -- has no rect, so GetBottom() returns nil and Blizzard's arithmetic
+    -- errors out (WatchFrame.lua:471 "arithmetic on a nil value").
+    hiddenParent:SetAllPoints(UIParent)
     hiddenParent:Hide()
 
     self._trackerHider = {
