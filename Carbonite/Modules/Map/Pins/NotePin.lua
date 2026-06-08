@@ -14,6 +14,10 @@ local NotePin = Pin.Define("Note", {
     w = 17, h = 17,
     clipKind = "chop",
     minScale = 0.3,
+    -- User-created notes must show regardless of guide/KillShow mode,
+    -- matching the legacy "!Fav" iconType (which was always-on via its
+    -- "!" prefix). See computeEnabled in Renderer.lua.
+    alwaysShow = true,
 })
 
 function NotePin:OnAcquire(opts)

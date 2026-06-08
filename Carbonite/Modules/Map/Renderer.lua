@@ -81,7 +81,11 @@ end
 -- guide vs non-guide gate, atScale gate, instance-map override).
 local function computeEnabled(cls, layer, drawNonGuide, map)
     if not layer.visible then return false, nil end
-    local enabled = drawNonGuide or strbyte(layer.name, 1) == 33   -- "!" prefix
+    -- "!" prefix OR cls.alwaysShow == user content that ignores the
+    -- guide-mode (KillShow) gate. The Notes layer is named "Note"
+    -- (no "!" prefix) because clicks route by FavData, not layer name;
+    -- alwaysShow restores the legacy "!Fav" always-on behaviour.
+    local enabled = drawNonGuide or cls.alwaysShow or strbyte(layer.name, 1) == 33
     if cls.enabled == false then enabled = false end
     if cls.atScale and map.ScaleDraw < cls.atScale then enabled = false end
     local frameLvl = cls.frameLvl

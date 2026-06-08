@@ -6887,11 +6887,19 @@ function Nx.Map:UpdateGroup(plX, plY)
         end
 
         local name, realm = UnitName(unit)
-        if not name or name == "" then
+        if not name then
             return nil
         end
 
-        if realm and realm ~= "" then
+        if type(issecretvalue) == "function" and issecretvalue(name) then
+            return nil
+        end
+
+        if name == "" then
+            return nil
+        end
+
+        if realm and realm ~= "" and (type(issecretvalue) ~= "function" or not issecretvalue(realm)) then
             return name .. "-" .. realm
         end
 
