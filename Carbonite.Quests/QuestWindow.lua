@@ -352,6 +352,12 @@ function Nx.Quest.List:Open()
 
     tinsert (menui3, menu:AddItem (0, L["Goto Quest Giver"], self.Menu_OnGoto, self))
 
+    -- Wowhead link only for accepted quests (menui1): those have a live
+    -- log index so the id resolves correctly. The Database tab keys quests
+    -- by Carbonite's scraped id, which can be stale/removed, so we don't
+    -- offer the link there.
+    tinsert (menui1, menu:AddItem (0, L["Wowhead Link"], self.Menu_OnWowhead, self))
+
     local item = menu:AddItem (0, "")
     tinsert (menui2, item)
     tinsert (menui3, item)
@@ -1110,6 +1116,16 @@ function Nx.Quest.List:Menu_OnAbandon (item)
     end
 end
 
+function Nx.Quest.List:Menu_OnWowhead (item)
+
+    local i = self.List:ItemGetData()
+    if i then
+        local qIndex = bit_band (i, 0xff)
+        local qId = bit_rshift (i, 16)
+        Nx.Quest:ShowWowheadLink (qId, qIndex)
+    end
+end
+
 --[[
 function Nx.Quest.List:Menu_OnTrackAll (item)
 
@@ -1696,6 +1712,33 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             -- Function self-checks for the C_QuestLog API.
             Quest:PatchQuestFromBlizzard(questId)
         end
+
+        -- Auto-super-track a world quest the player just activated by
+        -- entering its area, but only when nothing else is being tracked
+        -- -- so we never hijack the user's current target. Without this,
+        -- flying to a WQ you never clicked leaves it untracked and the
+        -- area blob doesn't draw. Mirrors the non-shift icon-click
+        -- "enable" branch (TrackWorldQuest Automatic + super-track) so the
+        -- result is identical to clicking the pin. Deferred + combat-safe
+        -- because it mutates C_SuperTrack.
+        if questId and questId > 0
+           and QuestUtils_IsQuestWorldQuest and QuestUtils_IsQuestWorldQuest(questId)
+           and C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
+           and C_SuperTrack.SetSuperTrackedQuestID
+           and (C_SuperTrack.GetSuperTrackedQuestID() or 0) == 0 then
+            Nx.SuperTrackSafe(function()
+                if (C_SuperTrack.GetSuperTrackedQuestID() or 0) ~= 0 then
+                    return        -- something got tracked in the meantime
+                end
+                if QuestUtil and QuestUtil.TrackWorldQuest and Enum and Enum.QuestWatchType
+                   and C_QuestLog and C_QuestLog.GetQuestWatchType
+                   and C_QuestLog.GetQuestWatchType(questId) ~= Enum.QuestWatchType.Manual then
+                    QuestUtil.TrackWorldQuest(questId, Enum.QuestWatchType.Automatic)
+                end
+                C_SuperTrack.SetSuperTrackedQuestID(questId)
+            end)
+        end
+
         Nx.Quest:RecordQuests()
         --Nx.Quest.List:Refresh(event)
         Nx.Quest.List:Refresh()
@@ -1713,6 +1756,20 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 Nx.SuperTrackSafe(function()
                     C_SuperTrack.SetSuperTrackedQuestID(0)
                 end)
+            end
+            -- Drop the Goto route if it was pointing at this WQ. Icon
+            -- clicks add/remove the route via ToggleGotoQuest, but flying
+            -- out of the area removes the task from the log without a
+            -- second click, so the goto arrow would otherwise linger on a
+            -- quest that no longer exists. (Regular quests do the same via
+            -- ClearTargets in the else branch below.)
+            if Quest.Map and Quest.Map.Targets then
+                for _, tar in ipairs (Quest.Map.Targets) do
+                    if tar.TargetType == "Goto" and tar.QuestID == questId then
+                        Quest.Map:ClearTargets ("Goto")
+                        break
+                    end
+                end
             end
             worldquestdb[questId] = nil
             if Nx.Quest.WQList then
@@ -1990,7 +2047,14 @@ function Nx.Quest.List:Update()
 
     -- Title
 
-    local _, i = GetNumQuestLogEntries()
+    -- Prefer the modern C_QuestLog API (2nd return = quest count without
+    -- headers); legacy global fallback for Classic flavors.
+    local _, i
+    if C_QuestLog and C_QuestLog.GetNumQuestLogEntries then
+        _, i = C_QuestLog.GetNumQuestLogEntries()
+    else
+        _, i = GetNumQuestLogEntries()
+    end
 
     local dailyStr = ""
     local dailysDone = GetDailyQuestsCompleted()

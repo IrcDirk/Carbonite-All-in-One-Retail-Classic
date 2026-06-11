@@ -135,6 +135,13 @@ L["Only uses the Alpha value, and is used to make clickable items in the watch l
 L["Quest Watch Font"] = true
 L["Sets the font to be used on the quest watch window"] = true
 L["Watch Font Size"] = true
+L["Watch Font Outline"] = "Contorno de la fuente"
+L["Sets the outline style of the quest watch font"] = "Establece el estilo de contorno de la fuente del visor de misiones"
+L["Watch Font Shadow"] = "Sombra de la fuente"
+L["Adds a drop shadow to the quest watch font"] = "Añade una sombra a la fuente del visor de misiones"
+L["None"] = "Ninguno"
+L["Outline"] = "Contorno"
+L["Thick Outline"] = "Contorno grueso"
 L["Sets the size of the quest watch font"] = true
 L["Watch Font Spacing"] = true
 L["Sets the spacing of the quest watch font"] = true
@@ -366,3 +373,15 @@ L["Get Quests"] = "Obtener misiones"
 L["Carbonite Quests"] = "Carbonite Quests"
 L["NxTOGGLEWATCHMINI"] = "QuestWatchlist mini/maximize"
 L["NxWATCHUSEITEM"] = "Use Questitem"
+
+-- Font outline/shadow options
+L["Font Outline"] = "Contorno de la fuente"
+L["Font Shadow"] = "Sombra de la fuente"
+L["Sets the outline style of this font"] = "Establece el estilo de contorno de esta fuente"
+L["Adds a drop shadow to this font"] = "Añade una sombra a esta fuente"
+L["None"] = "Ninguno"
+L["Outline"] = "Contorno"
+L["Thick Outline"] = "Contorno grueso"
+
+L["Wowhead Link"] = true
+L["Set as Active Quest"] = "Establecer como misión activa"

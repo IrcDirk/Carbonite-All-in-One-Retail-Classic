@@ -6887,15 +6887,14 @@ function Nx.Map:UpdateGroup(plX, plY)
         end
 
         local name, realm = UnitName(unit)
-        if not name then
-            return nil
-        end
-
+        -- Probe for a "secret" string BEFORE any truthiness/compare: per
+        -- CommEngine, even `if not name then` can throw "boolean test on a
+        -- secret value". issecretvalue(nil) is safe, so this runs first.
         if type(issecretvalue) == "function" and issecretvalue(name) then
             return nil
         end
 
-        if name == "" then
+        if not name or name == "" then
             return nil
         end
 

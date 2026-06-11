@@ -253,6 +253,7 @@ function Nx.Quest.Watch:Open()
     menu:AddItem (0, L["Set as Active Quest"], self.Menu_OnSetActive, self)
     menu:AddItem (0, L["Remove Watch"], self.Menu_OnRemoveWatch, self)
     menu:AddItem (0, L["Link Quest (shift right click)"], self.Menu_OnLinkQuest, self)
+    menu:AddItem (0, L["Wowhead Link"], self.Menu_OnWowhead, self)
     menu:AddItem (0, L["Show Quest Log (alt right click)"], self.Menu_OnShowQuest, self)
     menu:AddItem (0, L["Show On Map (shift left click)"], self.Menu_OnShowMap, self)
     menu:AddItem (0, L["Share"], self.Menu_OnShare, self)
@@ -314,6 +315,74 @@ end
 function Nx.Quest.Watch:Menu_OnLinkQuest()
 
     Nx.Quest:LinkChat (self.MenuQId)
+end
+
+-- Build the Wowhead URL for a quest, with the per-flavor subdomain.
+-- Retail uses the bare domain; Classic flavors use their slug
+-- (classic / tbc / wotlk / cata / mop-classic).
+function Nx.Quest:WowheadURL (qId)
+    local sub = ""
+    if Nx.isClassicEra then sub = "classic/"
+    elseif Nx.isTBCClassic then sub = "tbc/"
+    elseif Nx.isWotlkClassic then sub = "wotlk/"
+    elseif Nx.isCataClassic then sub = "cata/"
+    elseif Nx.isMoPClassic then sub = "mop-classic/"
+    end
+    return format ("https://www.wowhead.com/%squest=%d", sub, qId)
+end
+
+-- Show a small popup with the quest's Wowhead URL, pre-selected and
+-- locked to the URL so it can be copied (Ctrl+C) but not edited.
+-- Carbonite's packed/stored qId can drift from Blizzard's live questID
+-- (saved-vars from a previous session, story/display IDs, etc.), so when
+-- a quest-log index is available resolve the live ID off it -- the same
+-- guard the left-click super-track path uses.
+function Nx.Quest:ShowWowheadLink (qId, qIndex)
+    if qIndex and qIndex > 0 then
+        if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+            local q = C_QuestLog.GetQuestIDForLogIndex (qIndex)
+            if q and q > 0 then qId = q end
+        elseif GetQuestIDFromLogIndex then
+            local q = GetQuestIDFromLogIndex (qIndex)
+            if q and q > 0 then qId = q end
+        end
+    end
+    if not qId or qId == 0 then return end
+    local url = self:WowheadURL (qId)
+    if not StaticPopupDialogs["NxWowheadLink"] then
+        StaticPopupDialogs["NxWowheadLink"] = {
+            text = "Wowhead (Ctrl+C):",
+            button1 = OKAY or "Okay",
+            hasEditBox = 1,
+            editBoxWidth = 280,
+            whileDead = 1,
+            hideOnEscape = 1,
+            timeout = 0,
+            preferredIndex = 3,        -- avoid taint of the default index
+            OnShow = function (self)
+                local eb = self.editBox or (self.GetName and _G[self:GetName() .. "EditBox"])
+                if eb then
+                    eb:SetText (self.data or "")
+                    eb:HighlightText()
+                    eb:SetFocus()
+                end
+            end,
+            EditBoxOnTextChanged = function (eb)
+                local parent = eb:GetParent()
+                if eb:GetText() ~= parent.data then
+                    eb:SetText (parent.data or "")
+                    eb:HighlightText()
+                end
+            end,
+            EditBoxOnEnterPressed  = function (eb) eb:GetParent():Hide() end,
+            EditBoxOnEscapePressed = function (eb) eb:GetParent():Hide() end,
+        }
+    end
+    StaticPopup_Show ("NxWowheadLink", nil, nil, url)
+end
+
+function Nx.Quest.Watch:Menu_OnWowhead()
+    Nx.Quest:ShowWowheadLink (self.MenuQId, self.MenuQIndex)
 end
 
 function Nx.Quest.Watch:Menu_OnShare (item)
@@ -908,14 +977,28 @@ function Nx.Quest.Watch:UpdateList()
                     end
                 end]]--
                 local tasks = {}
-                --[[if Nx.qdb.profile.QuestWatch.BonusTask then
-                    local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(map.UpdateMapID);
+                -- World quests / bonus tasks feed. The 12.0 engine is unified
+                -- across flavors, but some C_TaskQuest functions are disabled
+                -- on individual Classic clients, and the old global GetTaskInfo
+                -- / C_TaskQuest.GetQuestsForPlayerByMapID are gone. Use the
+                -- surviving GetQuestsOnMap + per-entry numObjectives and gate
+                -- the whole feed on availability so a client missing the API
+                -- skips it cleanly instead of erroring on a nil call.
+                local taskApiOK = C_TaskQuest and C_TaskQuest.GetQuestsOnMap
+                    and C_TaskQuest.GetQuestInfoByQuestID
+                if Nx.qdb.profile.QuestWatch.BonusTask and taskApiOK then
+                    local taskInfo = C_TaskQuest.GetQuestsOnMap(Nx.Map.UpdateMapID)
                     if taskInfo then
                         for i=1,#taskInfo do
-                            local questId = taskInfo[i].questId;
-                            local inArea, onMap, numObjectives = GetTaskInfo(questId)
+                            local questId = taskInfo[i].questID
+                            local numObjectives = taskInfo[i].numObjectives
                             tasks[questId] = true
-                            if inArea then
+                            -- "In area / actively doing it": the task is in
+                            -- the player's quest log. Bonus objectives auto-add
+                            -- on area entry; accepted world quests are on-quest.
+                            -- Replaces the removed GetTaskInfo isInArea gate and
+                            -- avoids flooding the tracker with every map WQ.
+                            if C_QuestLog and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest(questId) then
                                 local title, factionID = C_TaskQuest.GetQuestInfoByQuestID(questId)
                                 local questTagInfo = GetQuestTagInfoCompat(questId)
                                 local tagID = questTagInfo and questTagInfo.tagID
@@ -929,7 +1012,7 @@ function Nx.Quest.Watch:UpdateList()
                                 list:ItemAdd(0)
                                 list:ItemSet(2,"|cffff00ff----[ |cffffff00" .. task_title .. " |cffff00ff]----")
                                 list:ItemAdd(questId * 0x10000 + 0)
-                                list:ItemSet(2,Nx.Util_str2colstr (Nx.qdb.profile.QuestWatch.OIncompleteColor) .. title)
+                                list:ItemSet(2,Nx.Util_str2colstr (Nx.qdb.profile.QuestWatch.OIncompleteColor) .. (title or ""))
                                 --local _,x,y = QuestPOIGetIconInfo(questId)
                                 --Nx.prt("====%s: %s, %s", title, x, y)
                                 if numObjectives and numObjectives > 0 then
@@ -938,7 +1021,7 @@ function Nx.Quest.Watch:UpdateList()
                                         if objectiveType == "progressbar" then
                                             list:ItemAdd(0)
                                             list:ItemSetOffset (16, -1)
-                                            local percent = GetQuestProgressBarPercent(questId) or 0
+                                            local percent = C_TaskQuest.GetQuestProgressBarInfo(questId) or 0
                                             if Nx.qdb.profile.QuestWatch.BonusBar then
                                                 -- Two-segment bar: filled (B) + remainder (BG).
                                                 -- Always 100px wide so the bar's full extent
@@ -993,14 +1076,15 @@ function Nx.Quest.Watch:UpdateList()
                                 list:ItemSet(2,"|cffff00ff----[ |cffffff00" .. task_title .. " |cffff00ff]----")
                                 list:ItemAdd(0)
                                 list:ItemSet(2,Nx.Util_str2colstr (Nx.qdb.profile.QuestWatch.OIncompleteColor) .. (title or ""))
-                                local _,_, numObjectives = GetTaskInfo(questId)
+                                local numObjectives = C_QuestLog and C_QuestLog.GetNumQuestObjectives
+                                    and C_QuestLog.GetNumQuestObjectives(questId)
                                 if numObjectives and numObjectives > 0 then
                                     for j=1,numObjectives do
                                         local text, objectiveType, finished = GetQuestObjectiveInfo (questId, j, false)
                                         if objectiveType == "progressbar" then
                                             list:ItemAdd(0)
                                             list:ItemSetOffset (16, -1)
-                                            local percent = GetQuestProgressBarPercent(questId) or 0
+                                            local percent = C_TaskQuest.GetQuestProgressBarInfo(questId) or 0
                                             if Nx.qdb.profile.QuestWatch.BonusBar then
                                                 -- Two-segment bar: filled (B) + remainder (BG).
                                                 -- Always 100px wide so the bar's full extent
@@ -1032,7 +1116,7 @@ function Nx.Quest.Watch:UpdateList()
                             end
                         end
                     end
-                end]]--
+                end
                 if Nx.qdb.profile.QuestWatch.AchTrack then
                     local achs = Nx.Quest.TrackedAchievements
                     for id, ach in pairs (achs) do
@@ -1364,7 +1448,15 @@ function Nx.Quest.Watch:UpdateList()
         if w < 127 then
             self.Win:SetTitle ("")
         else
-            local _, i = GetNumQuestLogEntries()
+            -- Prefer the modern C_QuestLog API; its 2nd return is the real
+            -- quest count (excludes headers). Fall back to the legacy global
+            -- on Classic flavors that lack C_QuestLog.GetNumQuestLogEntries.
+            local _, i
+            if C_QuestLog and C_QuestLog.GetNumQuestLogEntries then
+                _, i = C_QuestLog.GetNumQuestLogEntries()
+            else
+                _, i = GetNumQuestLogEntries()
+            end
             self.Win:SetTitle (format ("          |cff40af40%d/%d", i, MAX_QUESTS))
         end
 

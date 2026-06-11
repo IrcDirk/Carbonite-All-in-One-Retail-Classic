@@ -381,3 +381,12 @@ L["No"] = "Nein"
 L["Ok"] = "Ok"
 L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."] = "Die Spielminikarte in die Carbonite-Karte einf\195\188gen?\n\nDies erstellt eine einheitliche Karte. Die Minikarten-Kn\195\182pfe werden in das Carbonite-Kn\195\182pfe-Fenster verschoben. Diese Einstellung kann auch \195\188ber die Minikarten-Optionsseite ge\195\164ndert werden."
 L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."] = "Erw\195\164ge die Installation des Carbonite.Combined.Maps.%s addon f\195\188r bessere FPS durch komprimierte Karten."
+
+-- Font outline/shadow options
+L["Font Outline"] = "Schriftkontur"
+L["Font Shadow"] = "Schriftschatten"
+L["Sets the outline style of this font"] = "Legt den Konturstil dieser Schriftart fest"
+L["Adds a drop shadow to this font"] = "Fügt dieser Schriftart einen Schlagschatten hinzu"
+L["None"] = "Keine"
+L["Outline"] = "Kontur"
+L["Thick Outline"] = "Dicke Kontur"

@@ -48,3 +48,12 @@ L["Auto-clear kill markers after"] = "Удалять метки убийств �
 L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = "Секунд до автоматического удаления метки убийства. 0 = никогда (только ручная очистка)"
 L["Keep kill history"] = "Хранить историю убийств"
 L["When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log."] = "Если включено, таймер только скрывает истёкшие метки, но сохраняет записи об убийствах. Полезно для постоянного журнала убийств."
+
+-- Font outline/shadow options
+L["Font Outline"] = "Контур шрифта"
+L["Font Shadow"] = "Тень шрифта"
+L["Sets the outline style of this font"] = "Задаёт стиль контура шрифта"
+L["Adds a drop shadow to this font"] = "Добавляет тень к шрифту"
+L["None"] = "Нет"
+L["Outline"] = "Контур"
+L["Thick Outline"] = "Толстый контур"

@@ -131,6 +131,13 @@ L["Only uses the Alpha value, and is used to make clickable items in the watch l
 L["Quest Watch Font"] = true
 L["Sets the font to be used on the quest watch window"] = true
 L["Watch Font Size"] = true
+L["Watch Font Outline"] = true
+L["Sets the outline style of the quest watch font"] = true
+L["Watch Font Shadow"] = true
+L["Adds a drop shadow to the quest watch font"] = true
+L["None"] = true
+L["Outline"] = true
+L["Thick Outline"] = true
 L["Sets the size of the quest watch font"] = true
 L["Watch Font Spacing"] = true
 L["Sets the spacing of the quest watch font"] = true
@@ -362,3 +369,15 @@ L["Get Quests"] = true
 L["Carbonite Quests"] = "Carbonite Quests"
 L["NxTOGGLEWATCHMINI"] = "QuestWatchlist mini/maximize"
 L["NxWATCHUSEITEM"] = "Use Questitem"
+
+-- Font outline/shadow options
+L["Font Outline"] = true
+L["Font Shadow"] = true
+L["Sets the outline style of this font"] = true
+L["Adds a drop shadow to this font"] = true
+L["None"] = true
+L["Outline"] = true
+L["Thick Outline"] = true
+
+L["Wowhead Link"] = true
+L["Set as Active Quest"] = true

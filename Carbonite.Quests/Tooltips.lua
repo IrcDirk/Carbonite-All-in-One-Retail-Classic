@@ -311,6 +311,18 @@ end
 
 function    Nx.Quest:TooltipProcess (stripColor)
 
+    -- Don't augment tooltips during combat. Adding quest info mutates
+    -- GameTooltip from our insecure code (AddLine/Show/SetText below),
+    -- which taints the frame. In combat the hovered tooltip can carry
+    -- "secret" values -- e.g. an action button's money line -- and the
+    -- tainted frame then makes Blizzard's secret-money arithmetic throw
+    -- ("arithmetic on a secret number value, tainted by Carbonite.Quests"
+    -- in MoneyFrame_Update, fired on every action-button hover). The
+    -- quest-info append is purely cosmetic, so skip it while locked down.
+    if InCombatLockdown() then
+        return
+    end
+
     local tipStr = GameTooltipTextLeft1:GetText()
     if not tipStr then        -- Happens in WotLK on empty slots
         --return

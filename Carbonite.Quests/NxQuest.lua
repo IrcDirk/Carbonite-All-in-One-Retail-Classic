@@ -401,6 +401,8 @@ Nx.Quest.defaults = {
             QuestFont = "Friz",                         -- Quest list font
             QuestFontSize = 10,                         -- Font size
             QuestFontSpacing = 1,                       -- Line spacing
+            QuestFontOutline = "",                      -- Quest font outline
+            QuestFontShadow = false,                    -- Quest font drop shadow
             Enable = true,                              -- Enable quest module
             AddTooltip = true,                          -- Add quest info to tooltips
             AutoAccept = false,                         -- Auto-accept quests
@@ -508,6 +510,8 @@ Nx.Quest.defaults = {
             WatchFont = "Arial",                        -- Watch font
             WatchFontSize = 11,                         -- Watch font size
             WatchFontSpacing = 2,                       -- Watch line spacing
+            WatchFontOutline = "",                      -- Watch font outline ("", "OUTLINE", "THICKOUTLINE")
+            WatchFontShadow = false,                    -- Watch font drop shadow
         },
 
         -- World quest list options

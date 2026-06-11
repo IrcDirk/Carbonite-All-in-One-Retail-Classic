@@ -122,6 +122,15 @@ function Options:OnEnable()
     AceConfig:RegisterOptionsTable("Carbonite", buildRootGroup)
     self.frame, self.panelID = AceConfigDialog:AddToBlizOptions("Carbonite", "Carbonite")
 
+    -- The AceConfigDialog default (700 wide) is too narrow for the
+    -- multi-control rows on the font pages. Widen the default ONCE here;
+    -- SetDefaultSize overwrites the status size, so it must not run on
+    -- every Open or it would clobber the user's manual resize (which
+    -- AceConfigDialog otherwise remembers across opens).
+    if AceConfigDialog.SetDefaultSize then
+        AceConfigDialog:SetDefaultSize("Carbonite", 960, 600)
+    end
+
     Carbonite.Core.SlashCommands:Register("opts", function() self:Open() end, "open options panel")
     Carbonite.Core.SlashCommands:Register("options", function() self:Open() end, "open options panel")
     Carbonite.Core.SlashCommands:Register("config", function() self:Open() end, "open options panel")

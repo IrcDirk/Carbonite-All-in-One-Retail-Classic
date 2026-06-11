@@ -136,6 +136,13 @@ L["Only uses the Alpha value, and is used to make clickable items in the watch l
 L["Quest Watch Font"] = "Шрифт окна заданий"
 L["Sets the font to be used on the quest watch window"] = true
 L["Watch Font Size"] = "Размер текста"
+L["Watch Font Outline"] = "Контур шрифта"
+L["Sets the outline style of the quest watch font"] = "Задаёт стиль контура шрифта окна заданий"
+L["Watch Font Shadow"] = "Тень шрифта"
+L["Adds a drop shadow to the quest watch font"] = "Добавляет тень к шрифту окна заданий"
+L["None"] = "Нет"
+L["Outline"] = "Контур"
+L["Thick Outline"] = "Толстый контур"
 L["Sets the size of the quest watch font"] = true
 L["Watch Font Spacing"] = "Отступы текста"
 L["Sets the spacing of the quest watch font"] = true
@@ -367,3 +374,15 @@ L["Get Quests"] = "Получить задания"
 L["Carbonite Quests"] = "Carbonite Quests"
 L["NxTOGGLEWATCHMINI"] = "QuestWatchlist mini/maximize"
 L["NxWATCHUSEITEM"] = "Use Questitem"
+
+-- Font outline/shadow options
+L["Font Outline"] = "Контур шрифта"
+L["Font Shadow"] = "Тень шрифта"
+L["Sets the outline style of this font"] = "Задаёт стиль контура шрифта"
+L["Adds a drop shadow to this font"] = "Добавляет тень к шрифту"
+L["None"] = "Нет"
+L["Outline"] = "Контур"
+L["Thick Outline"] = "Толстый контур"
+
+L["Wowhead Link"] = "Ссылка Wowhead"
+L["Set as Active Quest"] = "Сделать активным заданием"

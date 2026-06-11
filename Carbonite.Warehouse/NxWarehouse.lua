@@ -176,6 +176,8 @@ Nx.Warehouse.defaults = {
             WarehouseFont = "Friz",
             WarehouseFontSize = 11,
             WarehouseFontSpacing = 6,
+            WarehouseFontOutline = "",
+            WarehouseFontShadow = false,
             -- General settings
             Enable = true,
             AddTooltip = true,                  -- Add warehouse info to tooltips

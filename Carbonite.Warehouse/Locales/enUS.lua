@@ -161,3 +161,12 @@ L["If enabled, don't show listed items in tooltips"] = true
 L["New Item To Ignore (Case Insensative)"] = true
 L["Enter the name of the item you want to not track in tooltips. You can drag and drop an item from your inventory aswell."] = true
 L["Ignore"] = true
+
+-- Font outline/shadow options
+L["Font Outline"] = true
+L["Font Shadow"] = true
+L["Sets the outline style of this font"] = true
+L["Adds a drop shadow to this font"] = true
+L["None"] = true
+L["Outline"] = true
+L["Thick Outline"] = true

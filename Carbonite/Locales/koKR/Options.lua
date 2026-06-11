@@ -392,3 +392,12 @@ L["No"] = "아니오"
 L["Ok"] = "확인"
 L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."] = "게임 미니맵을 Carbonite 지도에 통합하시겠습니까?\n\n하나의 통합된 지도를 생성하게 됩니다. 미니맵 버튼은 Carbonite 버튼 창으로 이동됩니다. 이 설정은 지도 미니맵 옵션 페이지에서도 변경할 수 있습니다."
 L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."] = "압축 지도를 사용하여 FPS를 향상시키려면 Carbonite.Combined.Maps.%s 애드온 설치를 고려하세요."
+
+-- Font outline/shadow options
+L["Font Outline"] = "글꼴 외곽선"
+L["Font Shadow"] = "글꼴 그림자"
+L["Sets the outline style of this font"] = "이 글꼴의 외곽선 스타일을 설정합니다"
+L["Adds a drop shadow to this font"] = "이 글꼴에 그림자를 추가합니다"
+L["None"] = "없음"
+L["Outline"] = "외곽선"
+L["Thick Outline"] = "굵은 외곽선"

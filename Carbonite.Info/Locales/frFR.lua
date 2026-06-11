@@ -50,3 +50,12 @@ L["Seconds before a kill marker disappears automatically. 0 = never (manual clea
 
 L["Keep kill history"] = "Conserver l'historique des tués pour toujours"
 L["When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log."] = "Lorsque activé, l'auto-effacement masque seulement les marqueurs expirés mais conserve les enregistrements. Utile comme journal permanent."
+
+-- Font outline/shadow options
+L["Font Outline"] = "Contour de la police"
+L["Font Shadow"] = "Ombre de la police"
+L["Sets the outline style of this font"] = "Définit le style de contour de cette police"
+L["Adds a drop shadow to this font"] = "Ajoute une ombre portée à cette police"
+L["None"] = "Aucun"
+L["Outline"] = "Contour"
+L["Thick Outline"] = "Contour épais"

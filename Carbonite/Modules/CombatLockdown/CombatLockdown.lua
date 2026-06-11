@@ -18,6 +18,10 @@ local Carbonite = _G.Carbonite
 local CombatLockdown = {}
 Carbonite.Modules.CombatLockdown = CombatLockdown
 
+-- WoW runs Lua 5.1 where `unpack` is the global; `table.unpack` (5.2+)
+-- is nil on some flavors of the 12.0 engine. Resolve once, portably.
+local unpack = table.unpack or unpack
+
 local queued = {}        -- pending { fn, args }
 local enterSubs, exitSubs = {}, {}
 
@@ -50,7 +54,7 @@ local function flushQueue()
     local snap = queued
     queued = {}
     for _, item in ipairs(snap) do
-        pcall(item.fn, table.unpack(item.args or {}))
+        pcall(item.fn, unpack(item.args or {}))
     end
 end
 

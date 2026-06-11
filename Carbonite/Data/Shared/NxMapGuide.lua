@@ -2474,8 +2474,17 @@ function Nx.Map.Guide:CaptureItems()
     if MerchantFrame:IsVisible() then
         local vcabr = Nx.VendorCostAbr
         local npc = self.PlayerNPCTarget
+        -- PlayerNPCTarget can be nil/single-field when SavePlayerNPCTarget
+        -- bailed (secret tooltip line on retail). Only re-normalize to
+        -- "tag~name" when the split actually yields a name; otherwise keep
+        -- the original so format() never gets a nil arg.
+        if not npc then
+            return
+        end
         local tag, name = Nx.Split ("~", npc)
-        npc = format ("%s~%s", tag, name)
+        if name then
+            npc = format ("%s~%s", tag, name)
+        end
         local links = {}
         links["POS"] = format ("%d^%s^%s", map.UpdateMapID, map.PlyrRZX, map.PlyrRZY)
         links["T"] = time()

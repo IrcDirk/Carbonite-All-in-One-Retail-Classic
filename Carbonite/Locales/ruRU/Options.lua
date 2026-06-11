@@ -379,3 +379,12 @@ L["No"] = "Нет"
 L["Ok"] = "Принять"
 L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."] = "Разместить миникарту в окне Carbonite?\n\nЭто позволит создать одну общую карту. Кнопки миникарты будут размещены в окне Carbonite. Этот функционал можно отключить в окне параметров миникарты."
 L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."] = "Для повышения FPS, особенно при включении отображения трав/руд мы рекомендуем установить аддон Carbonite.Combined.Maps.%s"
+
+-- Font outline/shadow options
+L["Font Outline"] = "Контур шрифта"
+L["Font Shadow"] = "Тень шрифта"
+L["Sets the outline style of this font"] = "Задаёт стиль контура шрифта"
+L["Adds a drop shadow to this font"] = "Добавляет тень к шрифту"
+L["None"] = "Нет"
+L["Outline"] = "Контур"
+L["Thick Outline"] = "Толстый контур"

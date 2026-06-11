@@ -377,3 +377,12 @@ L["No"] = "否"
 L["Ok"] = "确定"
 L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."] = "将游戏小地图整入Carbonite地图?\n\n这将创建一个统一的地图。小地图按钮将会移入Carbonite按钮窗口。此设置也可以在地图小地图选项页中修改。"
 L["Consider installing Carbonite.Combined.Maps.%s addon to gain FPS using compressed maps."] = "建议安装Carbonite.Combined.Maps.%s插件以通过压缩地图提高FPS。"
+
+-- Font outline/shadow options
+L["Font Outline"] = "字体描边"
+L["Font Shadow"] = "字体阴影"
+L["Sets the outline style of this font"] = "设置该字体的描边样式"
+L["Adds a drop shadow to this font"] = "为该字体添加阴影"
+L["None"] = "无"
+L["Outline"] = "描边"
+L["Thick Outline"] = "粗描边"

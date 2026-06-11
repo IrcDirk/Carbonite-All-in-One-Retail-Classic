@@ -20,6 +20,10 @@ local Carbonite = _G.Carbonite
 local TaintlessHelpers = {}
 Carbonite.Modules.TaintlessHelpers = TaintlessHelpers
 
+-- WoW Lua 5.1: `unpack` is the global; `table.unpack` (5.2+) is nil on
+-- some 12.0-engine flavors. Resolve portably.
+local unpack = table.unpack or unpack
+
 function TaintlessHelpers:GetSandbox()
     return _G.NxTaintlessFrame
 end
@@ -63,7 +67,7 @@ function TaintlessHelpers:ProxyCall(fn, ...)
     if type(fn) ~= "function" then return end
     local args = { ... }
     if _G.C_Timer and _G.C_Timer.After then
-        _G.C_Timer.After(0, function() pcall(fn, table.unpack(args)) end)
+        _G.C_Timer.After(0, function() pcall(fn, unpack(args)) end)
         return
     end
     -- Fallback: schedule via Carbonite's main updater.
@@ -71,7 +75,7 @@ function TaintlessHelpers:ProxyCall(fn, ...)
     if mu then
         mu:Subscribe(function()
             mu:Unsubscribe("Taintless.ProxyCall")
-            pcall(fn, table.unpack(args))
+            pcall(fn, unpack(args))
         end, "Taintless.ProxyCall", 1)
     else
         pcall(fn, ...)

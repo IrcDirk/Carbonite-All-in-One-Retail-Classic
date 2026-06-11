@@ -131,15 +131,43 @@ function Font:Update()
             if profileCat then
                 local file = self:GetFacePath(profileCat[sub])
                 local size = profileCat[sub .. "Size"] or 12
+                -- Optional per-slot outline flag ("", "OUTLINE",
+                -- "THICKOUTLINE"). Only slots whose profile defines a
+                -- <sub>Outline key are affected; others keep the flags
+                -- their font object already had.
+                local outline = profileCat[sub .. "Outline"]
+                if outline ~= nil then flags = outline end
                 obj:SetFont(file, size, flags)
+                -- Optional per-slot drop shadow (<sub>Shadow boolean).
+                local shadow = profileCat[sub .. "Shadow"]
+                if shadow ~= nil then
+                    if shadow then
+                        obj:SetShadowColor(0, 0, 0, 1)
+                        obj:SetShadowOffset(1, -1)
+                    else
+                        obj:SetShadowColor(0, 0, 0, 0)
+                        obj:SetShadowOffset(0, 0)
+                    end
+                end
                 slot.height = math.max(size + (profileCat[sub .. "Spacing"] or 0), 6)
             end
         end
     end
 
-    -- Tell the legacy List + Window subsystems to redraw. Done by name
-    -- so we do not fight the older Nx.List/Nx.Window load order.
-    if _G.Nx and _G.Nx.List and _G.Nx.List.NextUpdateFull then _G.Nx.List:NextUpdateFull() end
+    -- Redraw the legacy List + Window subsystems. A NextUpdateFull only
+    -- marks lists dirty (re-renders on the next SetSize); an outline/shadow
+    -- change doesn't alter line metrics, so it would never re-trigger a
+    -- SetSize and the glyphs would keep their old rendering. FullUpdate
+    -- forces SetSize -> CreateStrings now so the change shows immediately.
+    if _G.Nx and _G.Nx.List then
+        if _G.Nx.List.Lists then
+            for inst in pairs(_G.Nx.List.Lists) do
+                if inst.FullUpdate then inst:FullUpdate() end
+            end
+        elseif _G.Nx.List.NextUpdateFull then
+            _G.Nx.List:NextUpdateFull()
+        end
+    end
     if _G.Nx and _G.Nx.Window and _G.Nx.Window.AdjustAll then _G.Nx.Window:AdjustAll() end
 end
 

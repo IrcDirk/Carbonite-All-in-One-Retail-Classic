@@ -756,6 +756,33 @@ function Nx.Quest:GetOptionsConfig()
                                 Nx.Opts:NXCmdFontChange()
                             end,
                         },
+                        QuestFontOutline = {
+                            order = 49,
+                            type = "select",
+                            name = L["Font Outline"],
+                            desc = L["Sets the outline style of this font"],
+                            values = {
+                                [""]             = L["None"],
+                                ["OUTLINE"]      = L["Outline"],
+                                ["THICKOUTLINE"] = L["Thick Outline"],
+                            },
+                            get = function() return Nx.qdb.profile.Quest.QuestFontOutline or "" end,
+                            set = function(_, v)
+                                Nx.qdb.profile.Quest.QuestFontOutline = v
+                                Nx.Opts:NXCmdFontChange()
+                            end,
+                        },
+                        QuestFontShadow = {
+                            order = 50,
+                            type = "toggle",
+                            name = L["Font Shadow"],
+                            desc = L["Adds a drop shadow to this font"],
+                            get = function() return Nx.qdb.profile.Quest.QuestFontShadow end,
+                            set = function(_, v)
+                                Nx.qdb.profile.Quest.QuestFontShadow = v
+                                Nx.Opts:NXCmdFontChange()
+                            end,
+                        },
                     },
                 },
                 watch = {
@@ -1349,6 +1376,37 @@ function Nx.Quest:GetOptionsConfig()
                             end,
                             set = function(info,value)
                                 Nx.qdb.profile.QuestWatch.WatchFontSpacing = value
+                                Nx.Opts:NXCmdFontChange()
+                            end,
+                        },
+                        QuestWatchFontOutline = {
+                            order = 43,
+                            type = "select",
+                            name = L["Watch Font Outline"],
+                            desc = L["Sets the outline style of the quest watch font"],
+                            values = {
+                                [""]             = L["None"],
+                                ["OUTLINE"]      = L["Outline"],
+                                ["THICKOUTLINE"] = L["Thick Outline"],
+                            },
+                            get = function()
+                                return Nx.qdb.profile.QuestWatch.WatchFontOutline or ""
+                            end,
+                            set = function(info,value)
+                                Nx.qdb.profile.QuestWatch.WatchFontOutline = value
+                                Nx.Opts:NXCmdFontChange()
+                            end,
+                        },
+                        QuestWatchFontShadow = {
+                            order = 44,
+                            type = "toggle",
+                            name = L["Watch Font Shadow"],
+                            desc = L["Adds a drop shadow to the quest watch font"],
+                            get = function()
+                                return Nx.qdb.profile.QuestWatch.WatchFontShadow
+                            end,
+                            set = function(info,value)
+                                Nx.qdb.profile.QuestWatch.WatchFontShadow = value
                                 Nx.Opts:NXCmdFontChange()
                             end,
                         },

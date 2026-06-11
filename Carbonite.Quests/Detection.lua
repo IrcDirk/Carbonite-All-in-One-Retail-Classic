@@ -130,6 +130,15 @@ function CarboniteQuest:OnChat_msg_combat_faction_change (event, arg1)
 
 --    Nx.prt ("OnChat_msg_combat_faction_change %s", arg1)
 
+    -- Retail can hand back a "secret" string for the faction-change message;
+    -- strmatch/tonumber on it throws ("string conversion on a secret string
+    -- value, tainted by Carbonite.Quests"), aborting the whole AceEvent
+    -- callback chain. Probe once and bail — a missed rep capture is harmless.
+    if type(issecretvalue) == "function" and issecretvalue(arg1) then
+        self.CaptureQEndTime = nil
+        return
+    end
+
     local form = FACTION_STANDING_INCREASED
     form = gsub (form, "%%s", "(.+)")
     form = gsub (form, "%%d", "(%%d+)")

@@ -1919,6 +1919,45 @@ local function fontConfig()
                 },
             },
         }
+
+        -- Inject an Outline (style) + Shadow (toggle) control pair for each
+        -- built-in font slot. The font engine (Carbonite/UI/Font.lua
+        -- Font:Update) reads <sub>Outline / <sub>Shadow generically, so this
+        -- is purely the options surface.
+        local function addFontFx(key, baseOrder, sub)
+            font.args[key .. "Outline"] = {
+                order = baseOrder + 0.1,
+                type = "select",
+                name = L["Font Outline"],
+                desc = L["Sets the outline style of this font"],
+                values = {
+                    [""]             = L["None"],
+                    ["OUTLINE"]      = L["Outline"],
+                    ["THICKOUTLINE"] = L["Thick Outline"],
+                },
+                get = function() return Nx.db.profile.Font[sub .. "Outline"] or "" end,
+                set = function(_, v)
+                    Nx.db.profile.Font[sub .. "Outline"] = v
+                    Nx.Opts:NXCmdFontChange()
+                end,
+            }
+            font.args[key .. "Shadow"] = {
+                order = baseOrder + 0.2,
+                type = "toggle",
+                name = L["Font Shadow"],
+                desc = L["Adds a drop shadow to this font"],
+                get = function() return Nx.db.profile.Font[sub .. "Shadow"] end,
+                set = function(_, v)
+                    Nx.db.profile.Font[sub .. "Shadow"] = v
+                    Nx.Opts:NXCmdFontChange()
+                end,
+            }
+        end
+        addFontFx("SmallFont",  3,  "Small")
+        addFontFx("MediumFont", 6,  "Medium")
+        addFontFx("MapFont",    9,  "Map")
+        addFontFx("MapLocFont", 13, "MapLoc")
+        addFontFx("MenuFont",   17, "Menu")
     end
     return font
 end

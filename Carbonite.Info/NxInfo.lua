@@ -64,6 +64,8 @@ local defaults = {
 			InfoFont = "Arial",
 			InfoFontSize = 11,
 			InfoFontSpacing = 0,
+			InfoFontOutline = "",
+			InfoFontShadow = false,
 			-- Kill marker icons (skull) on the Carbonite map. PARTY_KILL events
 			-- captured by the combat tracker get persisted as map events and
 			-- rendered as Skull icons by Nx.UEvents:UpdateMap. Tooltip shows
@@ -176,6 +178,23 @@ local function createOptions()
 						Nx.idb.profile.Info.InfoFontSpacing = value
 						Nx.Opts:NXCmdFontChange()
 					end,
+				},
+				InfoFontOutline = {
+					order = 6,
+					type = "select",
+					name = L["Font Outline"],
+					desc = L["Sets the outline style of this font"],
+					values = { [""] = L["None"], ["OUTLINE"] = L["Outline"], ["THICKOUTLINE"] = L["Thick Outline"] },
+					get = function() return Nx.idb.profile.Info.InfoFontOutline or "" end,
+					set = function(_, v) Nx.idb.profile.Info.InfoFontOutline = v Nx.Opts:NXCmdFontChange() end,
+				},
+				InfoFontShadow = {
+					order = 7,
+					type = "toggle",
+					name = L["Font Shadow"],
+					desc = L["Adds a drop shadow to this font"],
+					get = function() return Nx.idb.profile.Info.InfoFontShadow end,
+					set = function(_, v) Nx.idb.profile.Info.InfoFontShadow = v Nx.Opts:NXCmdFontChange() end,
 				},
 				KillIconsHeader = {
 					order = 10,

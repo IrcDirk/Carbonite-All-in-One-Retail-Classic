@@ -30,6 +30,10 @@ local WireFormat = {}
 Carbonite.Modules.Comm = Carbonite.Modules.Comm or {}
 Carbonite.Modules.Comm.WireFormat = WireFormat
 
+-- WoW Lua 5.1: `unpack` is the global; `table.unpack` (5.2+) is nil on
+-- some 12.0-engine flavors. Resolve portably.
+local unpack = table.unpack or unpack
+
 local FIELD_SEP = "\t"
 local KIND_SEP  = "~"   -- legacy "Map~x~y~mapID" format also exists
 
@@ -121,5 +125,5 @@ function WireFormat:DecodeTilde(message)
     local parts = {}
     for f in message:gmatch("([^~]+)") do parts[#parts + 1] = f end
     if #parts == 0 then return nil end
-    return parts[1], { table.unpack(parts, 2) }
+    return parts[1], { unpack(parts, 2) }
 end

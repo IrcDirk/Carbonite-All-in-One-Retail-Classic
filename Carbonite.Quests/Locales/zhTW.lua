@@ -135,6 +135,13 @@ L["Only uses the Alpha value, and is used to make clickable items in the watch l
 L["Quest Watch Font"] = true
 L["Sets the font to be used on the quest watch window"] = true
 L["Watch Font Size"] = true
+L["Watch Font Outline"] = "字型描邊"
+L["Sets the outline style of the quest watch font"] = "設定任務監視視窗字型的描邊樣式"
+L["Watch Font Shadow"] = "字型陰影"
+L["Adds a drop shadow to the quest watch font"] = "為任務監視視窗字型加入陰影"
+L["None"] = "無"
+L["Outline"] = "描邊"
+L["Thick Outline"] = "粗描邊"
 L["Sets the size of the quest watch font"] = true
 L["Watch Font Spacing"] = true
 L["Sets the spacing of the quest watch font"] = true
@@ -366,3 +373,15 @@ L["Get Quests"] = "獲取任務"
 L["Carbonite Quests"] = "Carbonite Quests"
 L["NxTOGGLEWATCHMINI"] = "QuestWatchlist mini/maximize"
 L["NxWATCHUSEITEM"] = "Use Questitem"
+
+-- Font outline/shadow options
+L["Font Outline"] = "字型描邊"
+L["Font Shadow"] = "字型陰影"
+L["Sets the outline style of this font"] = "設定此字型的描邊樣式"
+L["Adds a drop shadow to this font"] = "為此字型加入陰影"
+L["None"] = "無"
+L["Outline"] = "描邊"
+L["Thick Outline"] = "粗描邊"
+
+L["Wowhead Link"] = "Wowhead 連結"
+L["Set as Active Quest"] = "設為當前任務"

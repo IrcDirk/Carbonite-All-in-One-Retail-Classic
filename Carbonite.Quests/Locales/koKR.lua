@@ -135,6 +135,13 @@ L["Only uses the Alpha value, and is used to make clickable items in the watch l
 L["Quest Watch Font"] = true
 L["Sets the font to be used on the quest watch window"] = true
 L["Watch Font Size"] = true
+L["Watch Font Outline"] = "글꼴 외곽선"
+L["Sets the outline style of the quest watch font"] = "퀘스트 감시 글꼴의 외곽선 스타일을 설정합니다"
+L["Watch Font Shadow"] = "글꼴 그림자"
+L["Adds a drop shadow to the quest watch font"] = "퀘스트 감시 글꼴에 그림자를 추가합니다"
+L["None"] = "없음"
+L["Outline"] = "외곽선"
+L["Thick Outline"] = "굵은 외곽선"
 L["Sets the size of the quest watch font"] = true
 L["Watch Font Spacing"] = true
 L["Sets the spacing of the quest watch font"] = true
@@ -366,3 +373,15 @@ L["Get Quests"] = "퀘스트 가져오기"
 L["Carbonite Quests"] = "Carbonite Quests"
 L["NxTOGGLEWATCHMINI"] = "QuestWatchlist mini/maximize"
 L["NxWATCHUSEITEM"] = "Use Questitem"
+
+-- Font outline/shadow options
+L["Font Outline"] = "글꼴 외곽선"
+L["Font Shadow"] = "글꼴 그림자"
+L["Sets the outline style of this font"] = "이 글꼴의 외곽선 스타일을 설정합니다"
+L["Adds a drop shadow to this font"] = "이 글꼴에 그림자를 추가합니다"
+L["None"] = "없음"
+L["Outline"] = "외곽선"
+L["Thick Outline"] = "굵은 외곽선"
+
+L["Wowhead Link"] = "Wowhead 링크"
+L["Set as Active Quest"] = "활성 퀘스트로 설정"

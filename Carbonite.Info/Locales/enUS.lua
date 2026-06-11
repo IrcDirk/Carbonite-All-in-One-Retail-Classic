@@ -45,3 +45,12 @@ L["Auto-clear kill markers after"] = true
 L["Seconds before a kill marker disappears automatically. 0 = never (manual clear only)"] = true
 L["Keep kill history"] = true
 L["When enabled, the auto-clear timer only hides expired markers but keeps the kill records in saved variables. Useful as a permanent kill log."] = true
+
+-- Font outline/shadow options
+L["Font Outline"] = true
+L["Font Shadow"] = true
+L["Sets the outline style of this font"] = true
+L["Adds a drop shadow to this font"] = true
+L["None"] = true
+L["Outline"] = true
+L["Thick Outline"] = true

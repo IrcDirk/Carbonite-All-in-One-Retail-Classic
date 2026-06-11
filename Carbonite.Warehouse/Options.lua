@@ -173,6 +173,33 @@ function Nx.Warehouse:GetOptionsConfig()
                                 Nx.Opts:NXCmdFontChange()
                             end,
                         },
+                        WareFontOutline = {
+                            order = 9,
+                            type = "select",
+                            name = L["Font Outline"],
+                            desc = L["Sets the outline style of this font"],
+                            values = {
+                                [""]             = L["None"],
+                                ["OUTLINE"]      = L["Outline"],
+                                ["THICKOUTLINE"] = L["Thick Outline"],
+                            },
+                            get = function() return Nx.wdb.profile.Warehouse.WarehouseFontOutline or "" end,
+                            set = function(_, v)
+                                Nx.wdb.profile.Warehouse.WarehouseFontOutline = v
+                                Nx.Opts:NXCmdFontChange()
+                            end,
+                        },
+                        WareFontShadow = {
+                            order = 10,
+                            type = "toggle",
+                            name = L["Font Shadow"],
+                            desc = L["Adds a drop shadow to this font"],
+                            get = function() return Nx.wdb.profile.Warehouse.WarehouseFontShadow end,
+                            set = function(_, v)
+                                Nx.wdb.profile.Warehouse.WarehouseFontShadow = v
+                                Nx.Opts:NXCmdFontChange()
+                            end,
+                        },
                     },
                 },
                 seller = {

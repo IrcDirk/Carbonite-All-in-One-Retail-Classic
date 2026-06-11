@@ -164,3 +164,12 @@ L["If enabled, don't show listed items in tooltips"] = "Quand activ\195\169, n'a
 L["New Item To Ignore (Case Insensative)"] = "Nouvel objet \195\160 ignorer (insensible \195\160 la casse)"
 L["Enter the name of the item you want to not track in tooltips. You can drag and drop an item from your inventory aswell."] = "Entrez le nom de l'objet que vous ne d\195\169sirez pas suivre dans l'infobulle. Vous pouvez aussi faire glisser/d\195\169poser l'objet \195\160 partir de votre inventaire"
 L["Ignore"] = "Ignorer"
+
+-- Font outline/shadow options
+L["Font Outline"] = "Contour de la police"
+L["Font Shadow"] = "Ombre de la police"
+L["Sets the outline style of this font"] = "Définit le style de contour de cette police"
+L["Adds a drop shadow to this font"] = "Ajoute une ombre portée à cette police"
+L["None"] = "Aucun"
+L["Outline"] = "Contour"
+L["Thick Outline"] = "Contour épais"
