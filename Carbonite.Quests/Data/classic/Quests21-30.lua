@@ -5761,7 +5761,7 @@ function Nx.ModQuests:Data3()
             End = "5641|1443|32|52.57|54.39",
         },
         [1442] = {
-            Quest = [=[Seeking the Kor Gem|1|22|20|0|0|0]=],
+            Quest = [=[Seeking the Kor Gem|1|22|20|0|7|0]=],
             Start = "3649|1439|32|37.40|40.13",
             End = "3649|1439|32|37.40|40.13",
             Objectives = {
@@ -5876,7 +5876,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [1655] = {
-            Quest = [=[Bailor's Ore Shipment|1|22|20|0|0|0]=],
+            Quest = [=[Bailor's Ore Shipment|1|22|20|0|7|0]=],
             Start = "6241|1432|32|35.95|44.91",
             End = "6241|1432|32|35.95|44.91",
             Objectives = {
@@ -7863,12 +7863,12 @@ function Nx.ModQuests:Data3()
             End = "15350|1454|32|80.68|30.51",
         },
         [8847] = {
-            Quest = [=[Ten Signets for War Supplies|1|29|20|0|0|0]=],
+            Quest = [=[Ten Signets for War Supplies|1|29|20|0|28|0]=],
             Start = "15701|1455|32|61.30|74.20",
             End = "15701|1455|32|61.30|74.20",
         },
         [8852] = {
-            Quest = [=[Ten Signets for War Supplies|2|29|20|0|0|0]=],
+            Quest = [=[Ten Signets for War Supplies|2|29|20|0|28|0]=],
             Start = "15700|1454|32|30.30|67.60",
             End = "15700|1454|32|30.30|67.60",
         },
@@ -7917,7 +7917,7 @@ function Nx.ModQuests:Data3()
             End = "16802|1954|32|53.80|20.23",
         },
         [9388] = {
-            Quest = [=[Flickering Flames in Kalimdor||25|1|0|0|0]=],
+            Quest = [=[Flickering Flames in Kalimdor||25|1|0|32|0]=],
             End = "16788|1454|32|42.61|34.21",
             Objectives = {
                 [1] = {
@@ -7935,7 +7935,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [9389] = {
-            Quest = [=[Flickering Flames in the Eastern Kingdoms||25|1|0|0|0]=],
+            Quest = [=[Flickering Flames in the Eastern Kingdoms||25|1|0|32|0]=],
             End = "16788|1454|32|42.61|34.21",
             Objectives = {
                 [1] = {
@@ -8389,7 +8389,7 @@ function Nx.ModQuests:Data3()
             End = "3401|1454|32|43.05|53.74",
         },
         [11917] = {
-            Quest = [=[Striking Back||22|16|0|0|0]=],
+            Quest = [=[Striking Back||22|16|0|32|0]=],
             End = "26221|1458|32|66.90|13.53",
             Objectives = {
                 [1] = {

@@ -8,6 +8,132 @@ end
 
 function Nx.ModQuests:Data9()
     local ModQuests = {
+        [7361] = {
+            Quest = [=[Favor Amongst the Darkspear|1|255|0|0|0|0]=],
+            End = "14185|91|32|-1.00|-1.00",
+        },
+        [7362] = {
+            Quest = [=[Ally of the Tauren|1|255|0|0|0|0]=],
+            Start = "13154|91|32|50.40|65.50",
+            End = "14186|91|32|-1.00|-1.00",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7363] = {
+            Quest = [=[The Human Condition|1|255|0|0|0|0]=],
+            Start = "13154|91|32|50.40|65.50",
+            End = "13154|91|32|50.40|65.50",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7364] = {
+            Quest = [=[Gnomeregan Bounty|2|255|0|0|0|0]=],
+            End = "14188|91|32|-1.00|-1.00",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7365] = {
+            Quest = [=[Staghelm's Requiem|2|255|0|0|0|0]=],
+            Start = "13320|91|32|50.90|30.80",
+            End = "14187|91|32|-1.00|-1.00",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7401] = {
+            Quest = [=[WANTED: Dwarves!|1|255|0|0|0|0]=],
+            End = "13448|91|32|-1.00|-1.00",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7421] = {
+            Quest = [=[Darkspear Defense|1|255|0|0|0|0]=],
+            End = "14185|91|32|-1.00|-1.00",
+        },
+        [7422] = {
+            Quest = [=[Tuft it Out|1|255|0|0|0|0]=],
+            Start = "13154|91|32|50.40|65.50",
+            End = "14186|91|32|-1.00|-1.00",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7423] = {
+            Quest = [=[I've Got A Fever For More Bone Chips|1|255|0|0|0|0]=],
+            Start = "13154|91|32|50.40|65.50",
+            End = "13154|91|32|50.40|65.50",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7424] = {
+            Quest = [=[What the Hoof?|2|255|0|0|0|0]=],
+            End = "14188|91|32|-1.00|-1.00",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7425] = {
+            Quest = [=[Staghelm's Mojo Jamboree|2|255|0|0|0|0]=],
+            Start = "13320|91|32|50.90|30.80",
+            End = "14187|91|32|-1.00|-1.00",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7426] = {
+            Quest = [=[One Man's Love|2|255|0|0|0|0]=],
+            Start = "13320|91|32|50.90|30.80",
+            End = "13320|91|32|50.90|30.80",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [7427] = {
+            Quest = [=[Wanted: MORE DWARVES!|1|255|0|0|0|0]=],
+            End = "13448|91|32|-1.00|-1.00",
+            Objectives = {
+                [1] = {
+                    "nil|91|32|-1.00|-1.00|9.62|9.62",
+                },
+            },
+        },
+        [37801] = {
+            Quest = [=[Garrison Campaign: The Siege Council|1|255|255|0|86|0]=],
+        },
+        [37806] = {
+            Quest = [=[Garrison Campaign: The Siege Council|2|255|255|0|86|0]=],
+        },
+        [47506] = {
+            Quest = [=[REUSE|2|255|0|0|0|0]=],
+        },
+        [78906] = {
+            Quest = [=[Hello World||93|93|0|0|0]=],
+        },
         [86509] = {
             Quest = [=[Friend or Fiend||88|0|0|0|0]=],
             Start = "240691|2405|32|41.16|72.66",
@@ -1057,7 +1183,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [86837] = {
-            Quest = [=[Meet at the Sunwell||83|0|0|0|0]=],
+            Quest = [=[Meet at the Sunwell||83|0|0|52|0]=],
             Start = "237565|2395|32|50.60|25.84",
             End = "0|2424|32|52.89|55.19",
             Objectives = {
@@ -1808,7 +1934,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88696] = {
-            Quest = [=[The Devouring Citadel||90|0|0|0|0]=],
+            Quest = [=[The Devouring Citadel||90|0|0|114|0]=],
             Start = "247414|2424|32|53.11|58.70",
             End = "0|2405|32|45.40|63.06",
             Objectives = {
@@ -1821,7 +1947,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88697] = {
-            Quest = [=[Clarity of Purpose||90|0|0|0|0]=],
+            Quest = [=[Clarity of Purpose||90|0|0|114|0]=],
             Start = "239810|2405|32|45.40|63.06",
             End = "0|2405|32|45.39|63.14",
             Objectives = {
@@ -1843,7 +1969,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88698] = {
-            Quest = [=[Master of Mayhem||90|0|0|0|0]=],
+            Quest = [=[Master of Mayhem||90|0|0|114|0]=],
             Start = "239828|2405|32|45.39|63.14",
             End = "0|2405|32|45.39|63.14",
             Objectives = {
@@ -1853,7 +1979,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88699] = {
-            Quest = [=[Powerless||90|0|0|0|0]=],
+            Quest = [=[Powerless||90|0|0|114|0]=],
             Start = "239828|2405|32|45.39|63.14",
             End = "0|2405|32|45.39|63.14",
             Objectives = {
@@ -1872,7 +1998,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88700] = {
-            Quest = [=[Two Tons of Metal and Holy Fire||90|0|0|0|0]=],
+            Quest = [=[Two Tons of Metal and Holy Fire||90|0|0|114|0]=],
             Start = "239810|2405|32|45.41|63.06",
             End = "0|2405|32|45.40|63.05",
             Objectives = {
@@ -1882,7 +2008,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88701] = {
-            Quest = [=[The Memory Remains||90|0|0|0|0]=],
+            Quest = [=[The Memory Remains||90|0|0|114|0]=],
             Start = "239827|2405|32|45.99|64.92",
             Objectives = {
                 [1] = {
@@ -1891,7 +2017,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88702] = {
-            Quest = [=[Aegis of the Redeemer||90|0|0|0|0]=],
+            Quest = [=[Aegis of the Redeemer||90|0|0|114|0]=],
             Start = "239827|2405|32|45.99|64.92",
             Objectives = {
                 [1] = {
@@ -1900,7 +2026,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88703] = {
-            Quest = [=[The Night Before||90|0|0|0|0]=],
+            Quest = [=[The Night Before||90|0|0|114|0]=],
             Start = "254884|2405|32|46.33|63.27",
             End = "0|2405|32|51.66|64.95",
             Objectives = {
@@ -1913,7 +2039,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88704] = {
-            Quest = [=[The Patient Hunter||90|0|0|0|0]=],
+            Quest = [=[The Patient Hunter||90|0|0|114|0]=],
             Start = "239826|2405|32|51.66|64.95",
             End = "0|2405|32|56.29|65.12",
             Objectives = {
@@ -1938,7 +2064,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88705] = {
-            Quest = [=[Killing Blow||90|0|0|0|0]=],
+            Quest = [=[Killing Blow||90|0|0|114|0]=],
             Start = "243886|2405|32|56.29|65.12",
             End = "0|2405|32|55.92|64.80",
             Objectives = {
@@ -1954,7 +2080,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88706] = {
-            Quest = [=[Nothing Stands Forever||90|0|0|0|0]=],
+            Quest = [=[Nothing Stands Forever||90|0|0|114|0]=],
             Start = "239826|2405|32|55.96|65.29",
             End = "0|2405|32|45.19|62.88",
             Objectives = {
@@ -1977,7 +2103,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88709] = {
-            Quest = [=[The Voidspire||90|0|0|0|0]=],
+            Quest = [=[The Voidspire||90|0|0|114|0]=],
             Start = "239810|2405|32|45.40|63.06",
             Objectives = {
                 [2] = {
@@ -1986,7 +2112,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [88710] = {
-            Quest = [=[March on Quel'Danas||90|0|0|0|0]=],
+            Quest = [=[March on Quel'Danas||90|0|0|114|0]=],
             Start = "245061|2424|32|52.59|90.23",
             Objectives = {
                 [1] = {
@@ -2014,6 +2140,18 @@ function Nx.ModQuests:Data9()
                     "nil|2405|32|37.76|85.47|0|0",
                 },
             },
+        },
+        [88926] = {
+            Quest = [=[Return to Belanaar||90|90|0|114|1350]=],
+        },
+        [88931] = {
+            Quest = [=[Children of Shadow||90|90|0|0|13700]=],
+        },
+        [88932] = {
+            Quest = [=[With the Shal'dorei||90|90|0|114|1350]=],
+        },
+        [88982] = {
+            Quest = [=[Prey Contract: Renegade Magister||90|90|0|0|0]=],
         },
         [88985] = {
             Quest = [=[Recuperating Returns||83|0|88986|0|0]=],
@@ -2117,7 +2255,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [89193] = {
-            Quest = [=[Arator||83|0|0|0|0]=],
+            Quest = [=[Arator||83|0|0|52|0]=],
             Start = "240523|2395|32|50.54|27.22",
             End = "0|2395|32|50.60|25.84",
         },
@@ -2263,6 +2401,9 @@ function Nx.ModQuests:Data9()
             Quest = [=[The Path of Mourning||83|0|0|0|0]=],
             Start = "242014|2437|32|45.36|69.74",
             End = "0|2437|32|45.87|72.44",
+        },
+        [90093] = {
+            Quest = [=[Prey Contract: Murloc Shadowhunter||90|90|0|0|0]=],
         },
         [90094] = {
             Quest = [=[Echo of the Hunt||83|0|0|0|0]=],
@@ -2496,6 +2637,9 @@ function Nx.ModQuests:Data9()
                     "nil|2413|32|48.81|32.14|0|0",
                 },
             },
+        },
+        [90538] = {
+            Quest = [=[Prey Contract: Zealous Crusader||90|90|0|0|0]=],
         },
         [90540] = {
             Quest = [=[Rutaani Rescue||83|0|0|0|0]=],
@@ -2763,15 +2907,15 @@ function Nx.ModQuests:Data9()
             },
         },
         [90690] = {
-            Quest = [=[Charge of the Vanguard||90|0|88709|0|0]=],
+            Quest = [=[Charge of the Vanguard||90|0|88709|114|0]=],
             Start = "235787|2393|32|45.40|70.30",
         },
         [90718] = {
-            Quest = [=[Request of the Arcantina||90|0|0|0|0]=],
+            Quest = [=[Request of the Arcantina||90|0|0|114|0]=],
             Start = "240265|2393|32|47.40|69.60",
         },
         [90724] = {
-            Quest = [=[The Broken Sky||90|0|0|0|0]=],
+            Quest = [=[The Broken Sky||90|0|0|114|0]=],
             Start = "253603|2393|32|45.70|49.30",
             End = "0|2395|32|50.49|27.20",
         },
@@ -2819,8 +2963,11 @@ function Nx.ModQuests:Data9()
             Quest = [=[Ritual Reinforcement||83|0|0|0|0]=],
             Start = "243794|2413|32|61.80|62.20",
         },
+        [90746] = {
+            Quest = [=[The Elves Assemble||90|90|0|114|1350]=],
+        },
         [90748] = {
-            Quest = [=[Quel'Danas||90|0|88710|0|0]=],
+            Quest = [=[Quel'Danas||90|0|88710|114|0]=],
             Start = "235787|2393|32|45.40|70.30",
         },
         [90749] = {
@@ -2844,7 +2991,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [90777] = {
-            Quest = [=[Feeding the Flame||90|0|0|0|0]=],
+            Quest = [=[Feeding the Flame||90|0|0|114|0]=],
             Start = "235787|2395|32|50.50|27.20",
             End = "0|2424|32|53.11|58.69",
             Objectives = {
@@ -2868,6 +3015,9 @@ function Nx.ModQuests:Data9()
                     "nil|2405|32|56.20|71.91|0|0",
                 },
             },
+        },
+        [90823] = {
+            Quest = [=[Akil'zon's Insight||83|83|0|0|1500]=],
         },
         [90824] = {
             Quest = [=[My Brother's Alive!||83|0|0|0|0]=],
@@ -3127,6 +3277,9 @@ function Nx.ModQuests:Data9()
                 },
             },
         },
+        [90890] = {
+            Quest = [=[[PH] Go Home||88|88|0|0|1600]=],
+        },
         [90910] = {
             Quest = [=[Overwhelming Darkness||88|0|0|0|0]=],
             Start = "239720|2405|32|42.40|75.38",
@@ -3266,6 +3419,9 @@ function Nx.ModQuests:Data9()
             Quest = [=[Caves of the Cleft||83|0|0|0|0]=],
             Start = "243053|2413|32|48.94|29.74",
             End = "0|2413|32|49.69|23.31",
+        },
+        [90993] = {
+            Quest = [=[Take the Darkwell!||90|90|0|114|1350]=],
         },
         [91000] = {
             Quest = [=[A Humble Servant||83|0|0|0|0]=],
@@ -3476,243 +3632,243 @@ function Nx.ModQuests:Data9()
             Start = "245976|2444|32|38.80|81.50",
         },
         [91210] = {
-            Quest = [=[Prey: Magister Sunbreaker (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Magister Sunbreaker (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91211] = {
-            Quest = [=[Prey: Magister Sunbreaker (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Magister Sunbreaker (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91212] = {
-            Quest = [=[Prey: Magistrix Emberlash (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Magistrix Emberlash (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91213] = {
-            Quest = [=[Prey: Magistrix Emberlash (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Magistrix Emberlash (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91214] = {
-            Quest = [=[Prey: Senior Tinker Ozwold (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Senior Tinker Ozwold (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91215] = {
-            Quest = [=[Prey: Senior Tinker Ozwold (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Senior Tinker Ozwold (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91216] = {
-            Quest = [=[Prey: L-N-0R the Recycler (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: L-N-0R the Recycler (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91217] = {
-            Quest = [=[Prey: L-N-0R the Recycler (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: L-N-0R the Recycler (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91218] = {
-            Quest = [=[Prey: Mordril Shadowfell (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Mordril Shadowfell (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91219] = {
-            Quest = [=[Prey: Mordril Shadowfell (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Mordril Shadowfell (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91220] = {
-            Quest = [=[Prey: Deliah Gloomsong (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Deliah Gloomsong (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91221] = {
-            Quest = [=[Prey: Deliah Gloomsong (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Deliah Gloomsong (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91222] = {
-            Quest = [=[Prey: Phaseblade Talasha (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Phaseblade Talasha (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91223] = {
-            Quest = [=[Prey: Phaseblade Talasha (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Phaseblade Talasha (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91224] = {
-            Quest = [=[Prey: Nexus-Edge Hadim (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Nexus-Edge Hadim (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91225] = {
-            Quest = [=[Prey: Nexus-Edge Hadim (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Nexus-Edge Hadim (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91226] = {
-            Quest = [=[Prey: Jo'zolo the Breaker (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Jo'zolo the Breaker (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91227] = {
-            Quest = [=[Prey: Jo'zolo the Breaker (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Jo'zolo the Breaker (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91228] = {
-            Quest = [=[Prey: Zadu, Fist of Nalorakk (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Zadu, Fist of Nalorakk (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91229] = {
-            Quest = [=[Prey: Zadu, Fist of Nalorakk (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Zadu, Fist of Nalorakk (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91230] = {
-            Quest = [=[Prey: The Talon of Jan'alai (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: The Talon of Jan'alai (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91231] = {
-            Quest = [=[Prey: The Talon of Jan'alai (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: The Talon of Jan'alai (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91232] = {
-            Quest = [=[Prey: The Wing of Akil'zon (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: The Wing of Akil'zon (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91233] = {
-            Quest = [=[Prey: The Wing of Akil'zon (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: The Wing of Akil'zon (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91234] = {
-            Quest = [=[Prey: Ranger Swiftglade (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Ranger Swiftglade (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91235] = {
-            Quest = [=[Prey: Ranger Swiftglade (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Ranger Swiftglade (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91236] = {
-            Quest = [=[Prey: Lieutenant Blazewing (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Lieutenant Blazewing (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91237] = {
-            Quest = [=[Prey: Lieutenant Blazewing (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Lieutenant Blazewing (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91238] = {
-            Quest = [=[Prey: Petyoll the Razorleaf (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Petyoll the Razorleaf (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91239] = {
-            Quest = [=[Prey: Petyoll the Razorleaf (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Petyoll the Razorleaf (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91240] = {
-            Quest = [=[Prey: Lamyne of the Undercroft (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Lamyne of the Undercroft (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91241] = {
-            Quest = [=[Prey: Lamyne of the Undercroft (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Lamyne of the Undercroft (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91242] = {
-            Quest = [=[Prey: High Vindicator Vureem (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: High Vindicator Vureem (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91243] = {
-            Quest = [=[Prey: Crusader Luxia Maxwell (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Crusader Luxia Maxwell (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91244] = {
-            Quest = [=[Prey: Praetor Singularis (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Praetor Singularis (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91245] = {
-            Quest = [=[Prey: Consul Nebulor (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Consul Nebulor (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91246] = {
-            Quest = [=[Prey: Executor Kaenius (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Executor Kaenius (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91247] = {
-            Quest = [=[Prey: Imperator Enigmalia (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Imperator Enigmalia (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91248] = {
-            Quest = [=[Prey: Knight-Errant Bloodshatter (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Knight-Errant Bloodshatter (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91249] = {
-            Quest = [=[Prey: Vylenna the Defector (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Vylenna the Defector (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91250] = {
-            Quest = [=[Prey: Lost Theldrin (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Lost Theldrin (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91251] = {
-            Quest = [=[Prey: Neydra the Starving (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Neydra the Starving (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91252] = {
-            Quest = [=[Prey: Thornspeaker Edgath (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Thornspeaker Edgath (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91253] = {
-            Quest = [=[Prey: Thorn-Witch Liset (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Thorn-Witch Liset (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91254] = {
-            Quest = [=[Prey: Grothoz, the Burning Shadow (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Grothoz, the Burning Shadow (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91255] = {
-            Quest = [=[Prey: Dengzag, the Darkened Blaze (Hard)||90|0|0|0|0]=],
+            Quest = [=[Prey: Dengzag, the Darkened Blaze (Hard)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91256] = {
-            Quest = [=[Prey: High Vindicator Vureem (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: High Vindicator Vureem (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91257] = {
-            Quest = [=[Prey: Crusader Luxia Maxwell (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Crusader Luxia Maxwell (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91258] = {
-            Quest = [=[Prey: Praetor Singularis (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Praetor Singularis (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91259] = {
-            Quest = [=[Prey: Consul Nebulor (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Consul Nebulor (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91260] = {
-            Quest = [=[Prey: Executor Kaenius (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Executor Kaenius (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91261] = {
-            Quest = [=[Prey: Imperator Enigmalia (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Imperator Enigmalia (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91262] = {
-            Quest = [=[Prey: Knight-Errant Bloodshatter (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Knight-Errant Bloodshatter (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91263] = {
-            Quest = [=[Prey: Vylenna the Defector (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Vylenna the Defector (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91264] = {
-            Quest = [=[Prey: Lost Theldrin (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Lost Theldrin (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91265] = {
-            Quest = [=[Prey: Neydra the Starving (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Neydra the Starving (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91266] = {
-            Quest = [=[Prey: Thornspeaker Edgath (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Thornspeaker Edgath (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91267] = {
-            Quest = [=[Prey: Thorn-Witch Liset (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Thorn-Witch Liset (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91268] = {
-            Quest = [=[Prey: Grothoz, the Burning Shadow (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Grothoz, the Burning Shadow (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91269] = {
-            Quest = [=[Prey: Dengzag, the Darkened Blaze (Nightmare)||90|0|0|0|0]=],
+            Quest = [=[Prey: Dengzag, the Darkened Blaze (Nightmare)||90|0|0|132|0]=],
             Start = "245824|2393|32|56.80|65.30",
         },
         [91270] = {
@@ -3823,6 +3979,9 @@ function Nx.ModQuests:Data9()
                     "nil|2405|32|54.34|71.35|0|0",
                 },
             },
+        },
+        [91364] = {
+            Quest = [=[[DNT] QUEST NOT USED||88|88|0|0|0]=],
         },
         [91375] = {
             Quest = [=[The Silence at Fungara Village||83|0|91376|0|0]=],
@@ -3949,12 +4108,12 @@ function Nx.ModQuests:Data9()
             Start = "246881|2437|32|25.50|74.60",
         },
         [91417] = {
-            Quest = [=[Seek out Arator||90|0|0|0|0]=],
+            Quest = [=[Seek out Arator||90|0|0|114|0]=],
             Start = "239810|2405|32|45.40|63.05",
             End = "0|2405|32|45.99|64.92",
         },
         [91426] = {
-            Quest = [=[The People's Champion||90|0|0|0|0]=],
+            Quest = [=[The People's Champion||90|0|0|114|0]=],
             Start = "239827|2405|32|46.30|63.20",
             End = "0|2405|32|46.33|63.27",
         },
@@ -4388,7 +4547,7 @@ function Nx.ModQuests:Data9()
             End = "0|2395|32|42.68|47.31",
         },
         [91694] = {
-            Quest = [=[Voidscar Arena: Breaking the Triad||88|0|0|0|0]=],
+            Quest = [=[Voidscar Arena: Breaking the Triad||88|0|0|77|0]=],
             Start = "248015|2444|32|53.60|11.00",
         },
         [91700] = {
@@ -4478,6 +4637,9 @@ function Nx.ModQuests:Data9()
                     "nil|2437|32|46.12|40.43|0|0",
                 },
             },
+        },
+        [91837] = {
+            Quest = [=[Bring Back De Bones||90|90|0|0|13700]=],
         },
         [91838] = {
             Quest = [=[De Vile Diminished||90|0|0|0|0]=],
@@ -4606,7 +4768,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [91918] = {
-            Quest = [=[Delves: Measure Once, Cut Twice||90|0|0|0|0]=],
+            Quest = [=[Delves: Measure Once, Cut Twice||90|0|0|70|0]=],
             Start = "250295|2437|32|40.40|71.70",
             End = "0|2395|32|52.61|29.57",
         },
@@ -4619,7 +4781,7 @@ function Nx.ModQuests:Data9()
             Start = "244749|2405|32|26.40|67.60",
         },
         [91958] = {
-            Quest = [=[Den of Nalorakk: Unforgiven||83|0|0|0|0]=],
+            Quest = [=[Den of Nalorakk: Unforgiven||83|0|0|77|0]=],
             Start = "240215|2437|32|33.61|78.77",
             End = "0|2437|32|31.57|83.87",
             Objectives = {
@@ -4652,6 +4814,10 @@ function Nx.ModQuests:Data9()
         },
         [91998] = {
             Quest = [=[WANTED: Muckmire's Choking Vines||88|0|0|0|0]=],
+            Start = "249361|2413|32|51.80|74.20",
+        },
+        [92010] = {
+            Quest = [=[WANTED: Slewstalk's Stalks||88|88|0|0|16050]=],
             Start = "249361|2413|32|51.80|74.20",
         },
         [92012] = {
@@ -4817,27 +4983,27 @@ function Nx.ModQuests:Data9()
             },
         },
         [92177] = {
-            Quest = [=[One Hero's Prey||90|0|0|0|0]=],
+            Quest = [=[One Hero's Prey||90|0|0|132|0]=],
             Start = "246231|2393|32|56.70|65.40",
         },
         [92178] = {
-            Quest = [=[Practical Magic||90|0|0|0|0]=],
+            Quest = [=[Practical Magic||90|0|0|132|0]=],
             Start = "246231|2393|32|56.70|65.40",
         },
         [92179] = {
-            Quest = [=[Dark Mending||90|0|0|0|0]=],
+            Quest = [=[Dark Mending||90|0|0|132|0]=],
             Start = "246231|2393|32|56.70|65.40",
         },
         [92180] = {
-            Quest = [=[Precious Jewels||90|0|0|0|0]=],
+            Quest = [=[Precious Jewels||90|0|0|132|0]=],
             Start = "246231|2393|32|56.70|65.40",
         },
         [92181] = {
-            Quest = [=[Garden Variety Sacrifices||90|0|0|0|0]=],
+            Quest = [=[Garden Variety Sacrifices||90|0|0|132|0]=],
             Start = "246231|2393|32|56.70|65.40",
         },
         [92182] = {
-            Quest = [=[The Sheep or the Wolf||90|0|0|0|0]=],
+            Quest = [=[The Sheep or the Wolf||90|0|0|132|0]=],
             Start = "246231|2393|32|56.70|65.40",
         },
         [92319] = {
@@ -5129,7 +5295,7 @@ function Nx.ModQuests:Data9()
             },
         },
         [92520] = {
-            Quest = [=[Wake of the Darkwell||90|0|0|0|0]=],
+            Quest = [=[Wake of the Darkwell||90|0|0|114|0]=],
             Start = "235787|2395|32|50.49|27.20",
             End = "0|2395|32|50.49|27.20",
             Objectives = {
@@ -5307,6 +5473,9 @@ function Nx.ModQuests:Data9()
                     "nil|2405|32|31.79|69.50|0|0",
                 },
             },
+        },
+        [92690] = {
+            Quest = [=[[DNT] Quest Test Test Quest||255|255|0|0|0]=],
         },
         [92694] = {
             Quest = [=[Dusk Among Pigments||83|0|0|0|0]=],
@@ -5517,6 +5686,27 @@ function Nx.ModQuests:Data9()
                     "nil|2413|32|68.70|54.20|0|0",
                 },
             },
+        },
+        [92917] = {
+            Quest = [=[[PH] RENAME||83|83|0|0|6100]=],
+        },
+        [92918] = {
+            Quest = [=[[PH] RENAME||83|83|0|0|6100]=],
+        },
+        [92919] = {
+            Quest = [=[[PH] RENAME||83|83|0|0|6100]=],
+        },
+        [92920] = {
+            Quest = [=[[PH] RENAME||83|83|0|0|6100]=],
+        },
+        [92921] = {
+            Quest = [=[[PH] RENAME||83|83|0|0|6100]=],
+        },
+        [92922] = {
+            Quest = [=[[PH] RENAME||83|83|0|0|6100]=],
+        },
+        [92923] = {
+            Quest = [=[[PH] RENAME||83|83|0|0|6100]=],
         },
         [92939] = {
             Quest = [=[It's Not Just a Rock!||88|0|0|0|0]=],
@@ -5833,6 +6023,123 @@ function Nx.ModQuests:Data9()
                 },
             },
         },
+        [93270] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|20550]=],
+        },
+        [93271] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|10250]=],
+        },
+        [93272] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93273] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93274] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93276] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93277] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93278] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93279] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93280] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93281] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93282] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93283] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93284] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93285] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|20550]=],
+        },
+        [93286] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|10250]=],
+        },
+        [93287] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93289] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93290] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|20550]=],
+        },
+        [93291] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|10250]=],
+        },
+        [93292] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93293] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93294] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93295] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93296] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93297] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93301] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93302] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93303] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93304] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|20550]=],
+        },
+        [93305] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|10250]=],
+        },
+        [93306] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93307] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93308] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93309] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|20550]=],
+        },
+        [93310] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|10250]=],
+        },
+        [93311] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93312] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [93313] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
         [93396] = {
             Quest = [=[Bursting at the Seams||88|0|0|0|0]=],
             Start = "244516|2405|32|36.30|43.97",
@@ -5956,6 +6263,9 @@ function Nx.ModQuests:Data9()
             Quest = [=[Enshrouded Solo||90|0|0|0|0]=],
             Start = "254971|2393|32|36.30|81.10",
         },
+        [93503] = {
+            Quest = [=[Enshrouded in Teamwork||90|90|0|0|0]=],
+        },
         [93504] = {
             Quest = [=[Enshrouded in Skirmishes||90|0|0|0|0]=],
             Start = "254971|2393|32|36.30|81.10",
@@ -5974,46 +6284,89 @@ function Nx.ModQuests:Data9()
         },
         [93519] = {
             Quest = [=[Midnight Delves!||90|0|0|0|0]=],
+            Start = "255103|2393|32|52.40|78.30",
+        },
+        [93520] = {
+            Quest = [=[LFGDungeons - 12.x Midnight - Raid Finder - Nth||90|90|0|0|0]=],
+        },
+        [93522] = {
+            Quest = [=[LFGDungeons - 12.x Midnight - Raid Finder - 1st||90|90|0|0|0]=],
+        },
+        [93523] = {
+            Quest = [=[Short-Supply Reward||90|90|0|0|0]=],
         },
         [93525] = {
             Quest = [=[Nulling Nullaeus||90|0|0|0|0]=],
             Start = "242381|2393|32|52.50|78.30",
         },
         [93575] = {
-            Quest = [=[Maisara Caverns: Maisara Hungers||83|0|0|0|0]=],
+            Quest = [=[Maisara Caverns: Maisara Hungers||83|0|0|77|0]=],
             Start = "244521|2437|32|44.14|34.49",
             End = "0|2437|32|44.13|34.48",
         },
+        [93581] = {
+            Quest = [=[Against Overwhelming Odds|1|90|90|0|182|0]=],
+        },
+        [93582] = {
+            Quest = [=[Against Overwhelming Odds|2|90|90|0|182|0]=],
+        },
         [93593] = {
-            Quest = [=[A Call to Battle||90|0|0|0|0]=],
+            Quest = [=[A Call to Battle||90|0|0|181|0]=],
             Start = "256212|2393|32|48.90|64.60",
         },
         [93595] = {
-            Quest = [=[A Call to Delves||90|0|0|0|0]=],
+            Quest = [=[A Call to Delves||90|0|0|181|0]=],
             Start = "256212|2393|32|48.80|64.60",
         },
         [93598] = {
-            Quest = [=[Emissary of War||90|0|0|0|0]=],
+            Quest = [=[Emissary of War||90|0|0|181|0]=],
             Start = "256212|2393|32|48.80|64.60",
         },
         [93599] = {
-            Quest = [=[The Very Best||90|0|0|0|0]=],
+            Quest = [=[The Very Best||90|0|0|181|0]=],
             Start = "256212|2393|32|48.90|64.60",
         },
         [93600] = {
-            Quest = [=[The Arena Calls||90|0|0|0|0]=],
+            Quest = [=[The Arena Calls||90|0|0|181|0]=],
             Start = "256212|2393|32|48.90|64.60",
         },
+        [93607] = {
+            Quest = [=[An Original Path Through Time||90|90|0|181|0]=],
+        },
+        [93608] = {
+            Quest = [=[A Burning Path Through Time||90|90|0|181|0]=],
+        },
+        [93610] = {
+            Quest = [=[A Frozen Path Through Time||90|90|0|181|0]=],
+        },
         [93611] = {
-            Quest = [=[A Shattered Path Through Time||90|0|0|0|0]=],
+            Quest = [=[A Shattered Path Through Time||90|0|0|181|0]=],
             Start = "256212|2393|32|48.90|64.60",
         },
         [93612] = {
-            Quest = [=[A Shrouded Path Through Time||90|0|0|0|0]=],
+            Quest = [=[A Shrouded Path Through Time||90|0|0|181|0]=],
             Start = "256212|2393|32|48.90|64.60",
         },
+        [93613] = {
+            Quest = [=[A Savage Path Through Time||90|90|0|181|0]=],
+        },
+        [93614] = {
+            Quest = [=[A Fel Path Through Time||90|90|0|181|0]=],
+        },
+        [93627] = {
+            Quest = [=[A Scarred Path Through Time||90|90|0|181|0]=],
+        },
+        [93628] = {
+            Quest = [=[A Shadowed Path Through Time||90|90|0|181|0]=],
+        },
+        [93641] = {
+            Quest = [=[Against Overwhelming Odds|1|90|90|0|182|0]=],
+        },
+        [93642] = {
+            Quest = [=[Against Overwhelming Odds|2|90|90|0|182|0]=],
+        },
         [93651] = {
-            Quest = [=[The Blinding Vale: Lightbloom Roots||83|0|0|0|0]=],
+            Quest = [=[The Blinding Vale: Lightbloom Roots||83|0|0|77|0]=],
             Start = "255822|2393|32|36.60|68.50",
         },
         [93667] = {
@@ -6030,35 +6383,35 @@ function Nx.ModQuests:Data9()
             Start = "256245|2413|32|54.20|53.30",
         },
         [93751] = {
-            Quest = [=[Windrunner Spire||90|0|0|0|0]=],
+            Quest = [=[Windrunner Spire||90|0|0|77|0]=],
             Start = "256210|2393|32|49.10|64.60",
         },
         [93752] = {
-            Quest = [=[Murder Row||90|0|0|0|0]=],
+            Quest = [=[Murder Row||90|0|0|77|0]=],
             Start = "256210|2393|32|49.10|64.60",
         },
         [93753] = {
-            Quest = [=[Magisters' Terrace||90|0|0|0|0]=],
+            Quest = [=[Magisters' Terrace||90|0|0|77|0]=],
             Start = "256210|2393|32|49.10|64.60",
         },
         [93754] = {
-            Quest = [=[Maisara Caverns||90|0|0|0|0]=],
+            Quest = [=[Maisara Caverns||90|0|0|77|0]=],
             Start = "256210|2393|32|49.10|64.60",
         },
         [93755] = {
-            Quest = [=[Den of Nalorakk||90|0|0|0|0]=],
+            Quest = [=[Den of Nalorakk||90|0|0|77|0]=],
             Start = "256210|2393|32|49.10|64.60",
         },
         [93756] = {
-            Quest = [=[The Blinding Vale||90|0|0|0|0]=],
+            Quest = [=[The Blinding Vale||90|0|0|77|0]=],
             Start = "256210|2393|32|49.10|64.60",
         },
         [93757] = {
-            Quest = [=[Voidscar Arena||90|0|0|0|0]=],
+            Quest = [=[Voidscar Arena||90|0|0|77|0]=],
             Start = "256210|2393|32|49.10|64.60",
         },
         [93758] = {
-            Quest = [=[Nexus-Point Xenas||90|0|0|0|0]=],
+            Quest = [=[Nexus-Point Xenas||90|0|0|77|0]=],
             Start = "256210|2393|32|49.10|64.60",
         },
         [93771] = {
@@ -6181,26 +6534,26 @@ function Nx.ModQuests:Data9()
             Start = "257502|2444|32|34.70|80.60",
         },
         [94417] = {
-            Quest = [=[Crests of the Dawn||90|0|0|0|0]=],
+            Quest = [=[Crests of the Dawn||90|0|0|171|0]=],
             Start = "239676|2393|32|48.60|62.00",
         },
         [94418] = {
-            Quest = [=[Crest Transmutation||90|0|0|0|0]=],
+            Quest = [=[Crest Transmutation||90|0|0|171|0]=],
             Start = "239676|2393|32|48.60|62.00",
         },
         [94423] = {
             Quest = [=[Sanctum Secure||90|0|0|0|0]=],
         },
         [94430] = {
-            Quest = [=[Adventuring Gear||90|0|0|0|0]=],
+            Quest = [=[Adventuring Gear||90|0|0|171|0]=],
             Start = "239676|2393|32|48.60|62.00",
         },
         [94432] = {
-            Quest = [=[Veteran Equipment||90|0|0|0|0]=],
+            Quest = [=[Veteran Equipment||90|0|0|171|0]=],
             Start = "239676|2393|32|48.60|62.00",
         },
         [94446] = {
-            Quest = [=[A Nightmarish Task||90|0|0|0|0]=],
+            Quest = [=[A Nightmarish Task||90|0|0|132|0]=],
             Start = "246231|2393|32|56.70|65.40",
         },
         [94474] = {
@@ -6215,6 +6568,9 @@ function Nx.ModQuests:Data9()
         },
         [94477] = {
             Quest = [=[The Voidspire: Flicker in the Hollow||90|0|0|0|0]=],
+        },
+        [94582] = {
+            Quest = [=[[PH] Abundant Power||90|90|0|0|0]=],
         },
         [94623] = {
             Quest = [=[Building the Voidforge||90|0|0|0|0]=],
@@ -6237,6 +6593,27 @@ function Nx.ModQuests:Data9()
                     "nil|2413|32|30.96|64.71|0|0",
                 },
             },
+        },
+        [94783] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|20550]=],
+        },
+        [94784] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|10250]=],
+        },
+        [94785] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [94786] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [94787] = {
+            Quest = [=[Midnight (90) E||90|90|0|0|5150]=],
+        },
+        [94811] = {
+            Quest = [=[LFGDungeons - Midnight - Heroic Random - 1st||90|90|0|0|27400]=],
+        },
+        [94812] = {
+            Quest = [=[LFGDungeons - Midnight - Heroic Random - Nth||90|90|0|0|27400]=],
         },
         [94834] = {
             Quest = [=[Blessings of Abundance||83|0|0|0|0]=],
@@ -6313,6 +6690,15 @@ function Nx.ModQuests:Data9()
             Start = "258950|2437|32|45.04|68.24",
             End = "0|2437|32|53.12|62.82",
         },
+        [94870] = {
+            Quest = [=[Extra Heat||83|83|0|0|0]=],
+        },
+        [94882] = {
+            Quest = [=[Perfect Timing||83|83|0|0|0]=],
+        },
+        [94883] = {
+            Quest = [=[Heat-Seeking Runaways||83|83|0|0|0]=],
+        },
         [94909] = {
             Quest = [=[Blessings of Pestilence||83|0|0|0|0]=],
         },
@@ -6328,6 +6714,45 @@ function Nx.ModQuests:Data9()
                     "nil|2424|32|53.12|58.67|0|0",
                 },
             },
+        },
+        [95268] = {
+            Quest = [=[New Tools, New Heights||90|90|0|0|27400]=],
+        },
+        [95269] = {
+            Quest = [=[Feeding the Nilhammer||90|90|0|0|27400]=],
+        },
+        [95271] = {
+            Quest = [=[The Ascendant Nilhammer||90|90|0|0|27400]=],
+        },
+        [95279] = {
+            Quest = [=[Nebulous Voidcores: Gold||90|90|0|0|0]=],
+        },
+        [95290] = {
+            Quest = [=[Nebulous Voidcores: Voidlight Marl||90|90|0|0|0]=],
+        },
+        [95304] = {
+            Quest = [=[Nebulous Voidcores: Veteran Dawncrest||90|90|0|0|0]=],
+        },
+        [95373] = {
+            Quest = [=[A Nebulous Endeavour||90|90|0|0|27400]=],
+        },
+        [95439] = {
+            Quest = [=[Lost Animals||90|90|0|0|0]=],
+        },
+        [95482] = {
+            Quest = [=[Lost Animals||90|90|0|0|0]=],
+        },
+        [95842] = {
+            Quest = [=[Midnight: Void Assaults||90|90|0|113|20550]=],
+        },
+        [95843] = {
+            Quest = [=[Midnight: Ritual Sites||90|90|0|113|20550]=],
+        },
+        [96245] = {
+            Quest = [=[You've Seen it All Before||90|90|0|0|0]=],
+        },
+        [96936] = {
+            Quest = [=[Accolades for the Umbral Contender||90|90|0|77|0]=],
         },
     }
     return ModQuests

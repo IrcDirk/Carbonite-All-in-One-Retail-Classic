@@ -5997,7 +5997,7 @@ function Nx.ModQuests:Data1()
             End = "5907|1413|32|56.03|19.89",
         },
         [1581] = {
-            Quest = [=[Elixirs for the Bladeleafs|1|8|4|0|0|0]=],
+            Quest = [=[Elixirs for the Bladeleafs|1|8|4|0|13|0]=],
             Start = "2083|1438|32|56.08|57.72",
             End = "2083|1438|32|56.08|57.72",
             Objectives = {
@@ -6276,7 +6276,7 @@ function Nx.ModQuests:Data1()
             End = "332|1453|32|78.31|70.74",
         },
         [2206] = {
-            Quest = [=[Snatch and Grab|1|10|10|0|0|0]=],
+            Quest = [=[Snatch and Grab|1|10|10|0|16|0]=],
             Start = "332|1453|32|78.31|70.74",
             End = "332|1453|32|78.31|70.74",
             Objectives = {
@@ -6724,7 +6724,7 @@ function Nx.ModQuests:Data1()
             End = "8584|1438|32|54.59|32.99",
         },
         [3861] = {
-            Quest = [=[CLUCK!|1|1|1|0|0|0]=],
+            Quest = [=[CLUCK!|1|1|1|0|4|0]=],
             Start = "620|1426|32|67.10|3.78",
             End = "620|1426|32|67.10|3.78",
             Objectives = {
@@ -9118,32 +9118,32 @@ function Nx.ModQuests:Data1()
             Quest = [=[Past Efforts in Warsong Gulch|2|1|1|0|0|0]=],
         },
         [8744] = {
-            Quest = [=[A Carefully Wrapped Present||1|1|0|0|0]=],
+            Quest = [=[A Carefully Wrapped Present||1|1|0|186|0]=],
             Start = "180743|1455|32|33.46|65.60",
             End = "180743|1455|32|33.46|65.60",
         },
         [8767] = {
-            Quest = [=[A Gently Shaken Gift||1|1|0|0|0]=],
+            Quest = [=[A Gently Shaken Gift||1|1|0|186|0]=],
             Start = "180746|1455|32|34.45|65.79",
             End = "180746|1455|32|34.45|65.79",
         },
         [8788] = {
-            Quest = [=[A Gently Shaken Gift||1|1|0|0|0]=],
+            Quest = [=[A Gently Shaken Gift||1|1|0|186|0]=],
             Start = "180746|1455|32|34.45|65.79",
             End = "180746|1455|32|34.45|65.79",
         },
         [8803] = {
-            Quest = [=[A Festive Gift||10|10|0|0|0]=],
+            Quest = [=[A Festive Gift||10|10|0|186|0]=],
             Start = "180793|1455|32|34.37|66.10",
             End = "180793|1455|32|34.37|66.10",
         },
         [8827] = {
-            Quest = [=[Winter's Presents|1|1|1|0|0|0]=],
+            Quest = [=[Winter's Presents|1|1|1|0|186|0]=],
             Start = "15732|1426|32|53.16|35.62",
             End = "13444|1455|32|33.20|65.41",
         },
         [8828] = {
-            Quest = [=[Winter's Presents|2|1|1|0|0|0]=],
+            Quest = [=[Winter's Presents|2|1|1|0|186|0]=],
             Start = "15732|1426|32|53.16|35.62",
             End = "13445|1454|32|52.49|69.18",
         },
@@ -9803,7 +9803,7 @@ function Nx.ModQuests:Data1()
             End = "15398|1941|32|34.06|80.02",
         },
         [9260] = {
-            Quest = [=[Investigate the Scourge of Stormwind|1|6|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Stormwind|1|6|1|0|31|0]=],
             Start = "16478|1453|32|63.80|75.60",
             End = "16478|1453|32|63.80|75.60",
             Objectives = {
@@ -9832,7 +9832,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9261] = {
-            Quest = [=[Investigate the Scourge of Ironforge|1|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Ironforge|1|10|1|0|31|0]=],
             Start = "16484|1455|32|53.00|35.00",
             End = "16484|1455|32|53.00|35.00",
             Objectives = {
@@ -9850,7 +9850,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9262] = {
-            Quest = [=[Investigate the Scourge of Darnassus|1|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Darnassus|1|10|1|0|31|0]=],
             Start = "16495|1457|32|78.20|41.40",
             End = "16495|1457|32|78.20|41.40",
             Objectives = {
@@ -9869,7 +9869,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9263] = {
-            Quest = [=[Investigate the Scourge of Orgrimmar|2|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Orgrimmar|2|10|1|0|31|0]=],
             Start = "16493|1454|32|51.60|82.00",
             End = "16493|1454|32|51.60|82.00",
             Objectives = {
@@ -9883,7 +9883,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9264] = {
-            Quest = [=[Investigate the Scourge of Thunder Bluff|2|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Thunder Bluff|2|10|1|0|31|0]=],
             Start = "16490|1456|32|31.40|70.40",
             End = "16490|1456|32|31.40|70.40",
             Objectives = {
@@ -9896,7 +9896,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9265] = {
-            Quest = [=[Investigate the Scourge of the Undercity|2|8|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of the Undercity|2|8|1|0|31|0]=],
             Start = "16494|1458|32|66.80|21.40",
             End = "16494|1458|32|66.80|21.40",
             Objectives = {
@@ -10231,7 +10231,7 @@ function Nx.ModQuests:Data1()
             End = "16144|1941|32|38.14|73.56",
         },
         [9402] = {
-            Quest = [=[Fetch!|2|10|10|9403|0|0]=],
+            Quest = [=[Fetch!|2|10|10|9403|17|0]=],
             Start = "15970|1941|32|55.70|54.51",
             End = "15970|1941|32|55.70|54.51",
             Objectives = {
@@ -10241,7 +10241,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9403] = {
-            Quest = [=[The Purest Water|2|10|10|9404|0|0]=],
+            Quest = [=[The Purest Water|2|10|10|9404|17|0]=],
             Start = "15970|1941|32|55.70|54.51",
             End = "15970|1941|32|55.70|54.51",
             Objectives = {
@@ -10251,7 +10251,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9404] = {
-            Quest = [=[Recently Living|2|10|10|0|0|0]=],
+            Quest = [=[Recently Living|2|10|10|0|17|0]=],
             Start = "15970|1941|32|55.70|54.51",
             End = "15970|1941|32|55.70|54.51",
             Objectives = {
@@ -11144,7 +11144,7 @@ function Nx.ModQuests:Data1()
             End = "17442|1943|32|44.76|23.91",
         },
         [9582] = {
-            Quest = [=[Strength of One|1|10|10|10350|0|0]=],
+            Quest = [=[Strength of One|1|10|10|10350|9|0]=],
             Start = "17480|1943|32|50.02|50.52",
             End = "17480|1943|32|50.02|50.52",
             Objectives = {
@@ -11477,7 +11477,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [10350] = {
-            Quest = [=[Behomat|1|10|10|0|0|0]=],
+            Quest = [=[Behomat|1|10|10|0|9|0]=],
             Start = "17480|1943|32|50.02|50.52",
             End = "17120|1947|32|55.59|82.27",
         },
@@ -11539,11 +11539,11 @@ function Nx.ModQuests:Data1()
             },
         },
         [12781] = {
-            Quest = [=[Welcome!||1|1|0|0|0]=],
+            Quest = [=[Welcome!||1|1|0|35|0]=],
             End = "27928|1423|32|89.46|55.03",
         },
         [12816] = {
-            Quest = [=[Investigate the Scourge of Silvermoon|2|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Silvermoon|2|10|1|0|31|0]=],
             Objectives = {
                 [1] = {
                     "Investigate a circle|1941|35|58|51.5|5.01|6.68",
@@ -11556,7 +11556,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [12817] = {
-            Quest = [=[Investigate the Scourge of Exodar|1|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Exodar|1|10|1|0|31|0]=],
             Objectives = {
                 [1] = {
                     "Investigate a circle|1943|35|38|48|10.02|6.68",

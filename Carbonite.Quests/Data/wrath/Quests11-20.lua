@@ -4976,7 +4976,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [866] = {
-            Quest = [=[Root Samples||16|9|0|0|0]=],
+            Quest = [=[Root Samples||16|9|0|6|0]=],
             Start = "3446|1413|32|62.37|37.62",
             End = "3446|1413|32|62.37|37.62",
             Objectives = {
@@ -6656,7 +6656,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [1578] = {
-            Quest = [=[Supplying the Front|1|12|1|0|0|0]=],
+            Quest = [=[Supplying the Front|1|12|1|0|11|0]=],
             Start = "6031|1455|32|48.64|42.48",
             End = "6030|1432|32|23.67|74.32",
             Objectives = {
@@ -6713,7 +6713,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [1582] = {
-            Quest = [=[Moonglow Vest|1|18|8|0|0|0]=],
+            Quest = [=[Moonglow Vest|1|18|8|0|14|0]=],
             Start = "6034|1457|32|64.40|22.22",
             End = "6034|1457|32|64.40|22.22",
             Objectives = {
@@ -6731,7 +6731,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [1618] = {
-            Quest = [=[Gearing Redridge|1|16|1|0|0|0]=],
+            Quest = [=[Gearing Redridge|1|16|1|0|11|0]=],
             Start = "6031|1455|32|48.64|42.48",
             End = "415|1433|32|30.97|47.27",
             Objectives = {
@@ -9137,17 +9137,17 @@ function Nx.ModQuests:Data2()
             },
         },
         [7883] = {
-            Quest = [=[The World's Largest Gnome!||20|20|0|0|0]=],
+            Quest = [=[The World's Largest Gnome!||20|20|0|24|0]=],
             Start = "14833|1952|32|33.82|35.96",
             End = "14833|1952|32|33.82|35.96",
         },
         [7891] = {
-            Quest = [=[Green Iron Bracers||20|20|0|0|0]=],
+            Quest = [=[Green Iron Bracers||20|20|0|24|0]=],
             Start = "14832|1952|32|34.84|35.15",
             End = "14832|1952|32|34.84|35.15",
         },
         [7896] = {
-            Quest = [=[Green Fireworks||20|20|0|0|0]=],
+            Quest = [=[Green Fireworks||20|20|0|24|0]=],
             Start = "14841|1952|32|34.04|34.82",
             End = "14841|1952|32|34.04|34.82",
             Objectives = {
@@ -9157,7 +9157,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [7901] = {
-            Quest = [=[Soft Bushy Tails||20|20|0|0|0]=],
+            Quest = [=[Soft Bushy Tails||20|20|0|24|0]=],
             Start = "14829|1952|32|34.33|35.73",
             End = "14829|1952|32|34.33|35.73",
             Objectives = {
@@ -9236,7 +9236,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [7931] = {
-            Quest = [=[5 Tickets - Minor Darkmoon Prize||15|15|0|0|0]=],
+            Quest = [=[5 Tickets - Minor Darkmoon Prize||15|15|0|24|0]=],
             Start = "14828|1952|32|34.68|34.36",
             End = "14828|1952|32|34.68|34.36",
         },
@@ -9277,17 +9277,17 @@ function Nx.ModQuests:Data2()
             },
         },
         [8768] = {
-            Quest = [=[A Gaily Wrapped Present||20|20|0|0|0]=],
+            Quest = [=[A Gaily Wrapped Present||20|20|0|186|0]=],
             Start = "180747|1455|32|33.86|65.79",
             End = "180747|1455|32|33.86|65.79",
         },
         [8846] = {
-            Quest = [=[Five Signets for War Supplies|1|19|10|0|0|0]=],
+            Quest = [=[Five Signets for War Supplies|1|19|10|0|28|0]=],
             Start = "15701|1455|32|61.30|74.20",
             End = "15701|1455|32|61.30|74.20",
         },
         [8851] = {
-            Quest = [=[Five Signets for War Supplies|2|19|10|0|0|0]=],
+            Quest = [=[Five Signets for War Supplies|2|19|10|0|28|0]=],
             Start = "15700|1454|32|30.30|67.60",
             End = "15700|1454|32|30.30|67.60",
         },
@@ -11021,7 +11021,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [9487] = {
-            Quest = [=[Arcane Reavers|2|16|15|9488|0|0]=],
+            Quest = [=[Arcane Reavers|2|16|15|9488|17|0]=],
             Start = "16197|1942|32|46.55|28.38",
             End = "16197|1942|32|46.55|28.38",
             Objectives = {
@@ -11036,7 +11036,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [9488] = {
-            Quest = [=[A Simple Robe|2|16|15|0|0|0]=],
+            Quest = [=[A Simple Robe|2|16|15|0|17|0]=],
             Start = "16197|1942|32|46.55|28.38",
             End = "16197|1942|32|46.55|28.38",
             Objectives = {
@@ -11640,7 +11640,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [9595] = {
-            Quest = [=[Control|2|11|10|0|0|0]=],
+            Quest = [=[Control|2|11|10|0|17|0]=],
             Start = "17481|1943|32|49.87|49.95",
             End = "17514|1947|32|46.35|63.48",
             Objectives = {
@@ -13109,7 +13109,7 @@ function Nx.ModQuests:Data2()
             End = "3691|1440|32|36.62|49.58",
         },
         [11886] = {
-            Quest = [=[Unusual Activity||16|16|11891|0|0]=],
+            Quest = [=[Unusual Activity||16|16|11891|32|0]=],
             Start = "26221|1458|32|66.90|13.53",
             End = "25324|1440|32|15.50|19.00",
             Objectives = {
@@ -13122,7 +13122,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [11891] = {
-            Quest = [=[An Innocent Disguise||16|16|12012|0|0]=],
+            Quest = [=[An Innocent Disguise||16|16|12012|32|0]=],
             Start = "25324|1440|32|15.50|19.00",
             End = "25324|1440|32|15.50|19.00",
             Objectives = {
@@ -13132,15 +13132,15 @@ function Nx.ModQuests:Data2()
             },
         },
         [12012] = {
-            Quest = [=[Inform the Elder||16|16|0|0|0]=],
+            Quest = [=[Inform the Elder||16|16|0|32|0]=],
             Start = "25324|1440|32|15.50|19.00",
             End = "26221|1458|32|66.90|13.53",
         },
         [12517] = {
-            Quest = [=[Rogues Deck||15|10|0|0|0]=],
+            Quest = [=[Rogues Deck||15|10|0|34|0]=],
         },
         [14079] = {
-            Quest = [=[Learn to Ride in Elwynn Forest|1|20|20|0|0|0]=],
+            Quest = [=[Learn to Ride in Elwynn Forest|1|20|20|0|142|0]=],
             End = "4732|1429|32|84.32|64.87",
         },
         [14081] = {
@@ -13152,11 +13152,11 @@ function Nx.ModQuests:Data2()
             End = "20914|1947|32|81.34|52.63",
         },
         [14083] = {
-            Quest = [=[Learn to Ride in Dun Morogh|1|20|20|0|0|0]=],
+            Quest = [=[Learn to Ride in Dun Morogh|1|20|20|0|142|0]=],
             End = "4772|1426|32|63.94|50.10",
         },
         [14084] = {
-            Quest = [=[Learn to Ride in Dun Morogh|1|20|20|0|0|0]=],
+            Quest = [=[Learn to Ride in Dun Morogh|1|20|20|0|142|0]=],
             End = "7954|1426|32|49.15|48.13",
         },
         [14085] = {
@@ -13176,7 +13176,7 @@ function Nx.ModQuests:Data2()
             End = "7953|1411|32|55.28|75.49",
         },
         [14089] = {
-            Quest = [=[Learn to Ride in Tirisfal Glades|2|20|20|0|0|0]=],
+            Quest = [=[Learn to Ride in Tirisfal Glades|2|20|20|0|142|0]=],
             End = "4773|1420|32|60.08|52.57",
         },
         [14356] = {
@@ -13247,7 +13247,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [24645] = {
-            Quest = [=[Crushing the Crown|2|14|14|0|0|0]=],
+            Quest = [=[Crushing the Crown|2|14|14|0|41|0]=],
             Objectives = {
                 [1] = {
                     "nil|127|35|48.00|46.08|28.86|9.62",
@@ -13259,7 +13259,7 @@ function Nx.ModQuests:Data2()
             },
         },
         [24659] = {
-            Quest = [=[Crushing the Crown|1|14|14|0|0|0]=],
+            Quest = [=[Crushing the Crown|1|14|14|0|41|0]=],
             Objectives = {
                 [1] = {
                     "nil|127|35|48.00|46.08|28.86|9.62",

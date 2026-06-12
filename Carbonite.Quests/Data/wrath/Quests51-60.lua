@@ -17151,12 +17151,12 @@ function Nx.ModQuests:Data6()
             End = "14392|1454|32|51.71|75.46",
         },
         [7785] = {
-            Quest = [=[Examine the Vessel||60|60|7786|0|0]=],
+            Quest = [=[Examine the Vessel||60|60|7786|23|0]=],
             Start = "14347|1451|32|21.71|8.57",
             End = "14347|1451|32|21.71|8.57",
         },
         [7786] = {
-            Quest = [=[Thunderaan the Windseeker||60|60|0|0|0]=],
+            Quest = [=[Thunderaan the Windseeker||60|60|0|23|0]=],
             Start = "14347|1451|32|21.71|8.57",
             End = "14347|1451|32|21.71|8.57",
             Objectives = {
@@ -17174,7 +17174,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [7787] = {
-            Quest = [=[Rise, Thunderfury!||60|60|0|0|0]=],
+            Quest = [=[Rise, Thunderfury!||60|60|0|23|0]=],
             End = "14347|1451|32|21.71|8.57",
         },
         [7810] = {
@@ -17367,12 +17367,12 @@ function Nx.ModQuests:Data6()
             End = "14781|1413|32|46.60|8.41",
         },
         [7940] = {
-            Quest = [=[1200 Tickets - Orb of the Darkmoon||55|55|0|0|0]=],
+            Quest = [=[1200 Tickets - Orb of the Darkmoon||55|55|0|24|0]=],
             Start = "14828|1952|32|34.68|34.36",
             End = "14828|1952|32|34.68|34.36",
         },
         [7946] = {
-            Quest = [=[Spawn of Jubjub||60|1|0|0|0]=],
+            Quest = [=[Spawn of Jubjub||60|1|0|24|0]=],
             Start = "14871|1952|32|33.67|35.93",
             End = "14871|1952|32|33.67|35.93",
             Objectives = {
@@ -17382,7 +17382,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [7981] = {
-            Quest = [=[1200 Tickets - Amulet of the Darkmoon||55|55|0|0|0]=],
+            Quest = [=[1200 Tickets - Amulet of the Darkmoon||55|55|0|24|0]=],
             Start = "14828|1952|32|34.68|34.36",
             End = "14828|1952|32|34.68|34.36",
         },
@@ -18580,7 +18580,7 @@ function Nx.ModQuests:Data6()
             End = "14921|1434|32|15.07|16.00",
         },
         [8249] = {
-            Quest = [=[Junkboxes Needed||60|50|0|0|0]=],
+            Quest = [=[Junkboxes Needed||60|50|0|16|0]=],
             Start = "6707|1416|32|84.45|80.32",
             End = "6707|1416|32|84.45|80.32",
             Objectives = {
@@ -19725,7 +19725,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8307] = {
-            Quest = [=[Desert Recipe||57|54|8313|0|0]=],
+            Quest = [=[Desert Recipe||57|54|8313|5|0]=],
             Start = "15174|1451|32|51.89|39.16",
             End = "180503|1451|32|37.94|45.31",
         },
@@ -19892,7 +19892,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8313] = {
-            Quest = [=[Sharing the Knowledge||57|54|8317|0|0]=],
+            Quest = [=[Sharing the Knowledge||57|54|8317|5|0]=],
             Start = "180503|1451|32|37.94|45.31",
             End = "15174|1451|32|51.89|39.16",
         },
@@ -19917,7 +19917,7 @@ function Nx.ModQuests:Data6()
             End = "15183|1451|32|49.67|37.46",
         },
         [8317] = {
-            Quest = [=[Kitchen Assistance||57|54|0|0|0]=],
+            Quest = [=[Kitchen Assistance||57|54|0|5|0]=],
             Start = "15174|1451|32|51.89|39.16",
             End = "15174|1451|32|51.89|39.16",
             Objectives = {
@@ -21350,12 +21350,12 @@ function Nx.ModQuests:Data6()
             Quest = [=[Conquering Arathi Basin|2|60|60|0|0|0]=],
         },
         [8446] = {
-            Quest = [=[Shrouded in Nightmare||60|60|8447|0|0]=],
+            Quest = [=[Shrouded in Nightmare||60|60|8447|27|0]=],
             Start = "14887|1431|32|46.64|48.08",
             End = "11832|1450|32|36.18|41.79",
         },
         [8447] = {
-            Quest = [=[Waking Legends||60|60|0|0|0]=],
+            Quest = [=[Waking Legends||60|60|0|27|0]=],
             Start = "11832|1450|32|36.18|41.79",
             End = "11832|1450|32|36.18|41.79",
             Objectives = {
@@ -21624,22 +21624,22 @@ function Nx.ModQuests:Data6()
             End = "4949|1454|32|31.61|37.83",
         },
         [8492] = {
-            Quest = [=[The Alliance Needs Copper Bars!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Copper Bars!|2|60|1|0|28|0]=],
             Start = "15383|1455|32|64.10|65.50",
             End = "15383|1455|32|64.10|65.50",
         },
         [8493] = {
-            Quest = [=[The Alliance Needs More Copper Bars!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Copper Bars!|2|60|1|0|28|0]=],
             Start = "15383|1455|32|64.10|65.50",
             End = "15383|1455|32|64.10|65.50",
         },
         [8494] = {
-            Quest = [=[The Alliance Needs Iron Bars!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Iron Bars!|2|60|1|0|28|0]=],
             Start = "15431|1455|32|65.50|63.90",
             End = "15431|1455|32|65.50|63.90",
         },
         [8495] = {
-            Quest = [=[The Alliance Needs More Iron Bars!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Iron Bars!|2|60|1|0|28|0]=],
             Start = "15431|1455|32|65.50|63.90",
             End = "15431|1455|32|65.50|63.90",
         },
@@ -21702,12 +21702,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [8499] = {
-            Quest = [=[The Alliance Needs Thorium Bars!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Thorium Bars!|2|60|1|0|28|0]=],
             Start = "15432|1455|32|63.90|68.20",
             End = "15432|1455|32|63.90|68.20",
         },
         [8500] = {
-            Quest = [=[The Alliance Needs More Thorium Bars!|1|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Thorium Bars!|1|60|1|0|28|0]=],
             Start = "15432|1455|32|63.90|68.20",
             End = "15432|1455|32|63.90|68.20",
         },
@@ -21794,7 +21794,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8503] = {
-            Quest = [=[The Alliance Needs Stranglekelp!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Stranglekelp!|2|60|1|0|28|0]=],
             Start = "15434|1455|32|70.30|74.30",
             End = "15434|1455|32|70.30|74.30",
             Objectives = {
@@ -21864,7 +21864,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8504] = {
-            Quest = [=[The Alliance Needs More Stranglekelp!|1|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Stranglekelp!|1|60|1|0|28|0]=],
             Start = "15434|1455|32|70.30|74.30",
             End = "15434|1455|32|70.30|74.30",
             Objectives = {
@@ -21934,7 +21934,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8505] = {
-            Quest = [=[The Alliance Needs Purple Lotus!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Purple Lotus!|2|60|1|0|28|0]=],
             Start = "15437|1455|32|71.90|70.40",
             End = "15437|1455|32|71.90|70.40",
             Objectives = {
@@ -22003,7 +22003,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8506] = {
-            Quest = [=[The Alliance Needs More Purple Lotus!|1|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Purple Lotus!|1|60|1|0|28|0]=],
             Start = "15437|1455|32|71.90|70.40",
             End = "15437|1455|32|71.90|70.40",
             Objectives = {
@@ -22087,7 +22087,7 @@ function Nx.ModQuests:Data6()
             End = "15440|1451|32|32.80|52.60",
         },
         [8509] = {
-            Quest = [=[The Alliance Needs Arthas' Tears!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Arthas' Tears!|2|60|1|0|28|0]=],
             Start = "15445|1455|32|71.30|71.40",
             End = "15445|1455|32|71.30|71.40",
             Objectives = {
@@ -22173,7 +22173,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8510] = {
-            Quest = [=[The Alliance Needs More Arthas' Tears!|1|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Arthas' Tears!|1|60|1|0|28|0]=],
             Start = "15445|1455|32|71.30|71.40",
             End = "15445|1455|32|71.30|71.40",
             Objectives = {
@@ -22259,7 +22259,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8511] = {
-            Quest = [=[The Alliance Needs Light Leather!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Light Leather!|2|60|1|0|28|0]=],
             Start = "15446|1455|32|58.00|75.90",
             End = "15446|1455|32|58.00|75.90",
             Objectives = {
@@ -22292,7 +22292,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8512] = {
-            Quest = [=[The Alliance Needs More Light Leather!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Light Leather!|2|60|1|0|28|0]=],
             Start = "15446|1455|32|58.00|75.90",
             End = "15446|1455|32|58.00|75.90",
             Objectives = {
@@ -22325,7 +22325,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8513] = {
-            Quest = [=[The Alliance Needs Medium Leather!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Medium Leather!|2|60|1|0|28|0]=],
             Start = "15448|1455|32|58.70|75.00",
             End = "15448|1455|32|58.70|75.00",
             Objectives = {
@@ -22359,7 +22359,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8514] = {
-            Quest = [=[The Alliance Needs More Medium Leather!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Medium Leather!|2|60|1|0|28|0]=],
             Start = "15448|1455|32|58.70|75.00",
             End = "15448|1455|32|58.70|75.00",
             Objectives = {
@@ -22393,7 +22393,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8515] = {
-            Quest = [=[The Alliance Needs Thick Leather!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Thick Leather!|2|60|1|0|28|0]=],
             Start = "15450|1455|32|57.10|75.00",
             End = "15450|1455|32|57.10|75.00",
             Objectives = {
@@ -22419,7 +22419,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8516] = {
-            Quest = [=[The Alliance Needs More Thick Leather!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Thick Leather!|2|60|1|0|28|0]=],
             Start = "15450|1455|32|57.10|75.00",
             End = "15450|1455|32|57.10|75.00",
             Objectives = {
@@ -22445,12 +22445,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [8517] = {
-            Quest = [=[The Alliance Needs Linen Bandages!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Linen Bandages!|2|60|1|0|28|0]=],
             Start = "15451|1455|32|54.50|77.90",
             End = "15451|1455|32|54.50|77.90",
         },
         [8518] = {
-            Quest = [=[The Alliance Needs More Linen Bandages!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Linen Bandages!|2|60|1|0|28|0]=],
             Start = "15451|1455|32|54.50|77.90",
             End = "15451|1455|32|54.50|77.90",
         },
@@ -22465,47 +22465,47 @@ function Nx.ModQuests:Data6()
             },
         },
         [8520] = {
-            Quest = [=[The Alliance Needs Silk Bandages!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Silk Bandages!|2|60|1|0|28|0]=],
             Start = "15452|1455|32|57.60|75.80",
             End = "15452|1455|32|57.60|75.80",
         },
         [8521] = {
-            Quest = [=[The Alliance Needs More Silk Bandages!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Silk Bandages!|2|60|1|0|28|0]=],
             Start = "15452|1455|32|57.60|75.80",
             End = "15452|1455|32|57.60|75.80",
         },
         [8522] = {
-            Quest = [=[The Alliance Needs Runecloth Bandages!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Runecloth Bandages!|2|60|1|0|28|0]=],
             Start = "15453|1455|32|55.70|75.90",
             End = "15453|1455|32|55.70|75.90",
         },
         [8523] = {
-            Quest = [=[The Alliance Needs More Runecloth Bandages!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Runecloth Bandages!|2|60|1|0|28|0]=],
             Start = "15453|1455|32|55.70|75.90",
             End = "15453|1455|32|55.70|75.90",
         },
         [8524] = {
-            Quest = [=[The Alliance Needs Rainbow Fin Albacore!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Rainbow Fin Albacore!|2|60|1|0|28|0]=],
             Start = "15455|1455|32|71.60|69.20",
             End = "15455|1455|32|71.60|69.20",
         },
         [8525] = {
-            Quest = [=[The Alliance Needs More Rainbow Fin Albacore!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Rainbow Fin Albacore!|2|60|1|0|28|0]=],
             Start = "15455|1455|32|71.60|69.20",
             End = "15455|1455|32|71.60|69.20",
         },
         [8526] = {
-            Quest = [=[The Alliance Needs Roast Raptor!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Roast Raptor!|2|60|1|0|28|0]=],
             Start = "15456|1455|32|72.10|69.60",
             End = "15456|1455|32|72.10|69.60",
         },
         [8527] = {
-            Quest = [=[The Alliance Needs More Roast Raptor!|1|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Roast Raptor!|1|60|1|0|28|0]=],
             Start = "15456|1455|32|72.10|69.60",
             End = "15456|1455|32|72.10|69.60",
         },
         [8528] = {
-            Quest = [=[The Alliance Needs Spotted Yellowtail!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs Spotted Yellowtail!|2|60|1|0|28|0]=],
             Start = "15457|1455|32|73.00|68.50",
             End = "15457|1455|32|73.00|68.50",
             Objectives = {
@@ -22571,7 +22571,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8529] = {
-            Quest = [=[The Alliance Needs More Spotted Yellowtail!|2|60|1|0|0|0]=],
+            Quest = [=[The Alliance Needs More Spotted Yellowtail!|2|60|1|0|28|0]=],
             Start = "15457|1455|32|73.00|68.50",
             End = "15457|1455|32|73.00|68.50",
             Objectives = {
@@ -22640,12 +22640,12 @@ function Nx.ModQuests:Data6()
             Quest = [=[The Alliance Needs Singed Corestones!||60|1|0|0|0]=],
         },
         [8532] = {
-            Quest = [=[The Horde Needs Copper Bars!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Copper Bars!|1|60|1|0|28|0]=],
             Start = "15459|1454|32|31.10|66.10",
             End = "15459|1454|32|31.10|66.10",
         },
         [8533] = {
-            Quest = [=[The Horde Needs More Copper Bars!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Copper Bars!|1|60|1|0|28|0]=],
             Start = "15459|1454|32|31.10|66.10",
             End = "15459|1454|32|31.10|66.10",
         },
@@ -22762,12 +22762,12 @@ function Nx.ModQuests:Data6()
             End = "15182|1451|32|50.75|33.65",
         },
         [8542] = {
-            Quest = [=[The Horde Needs Tin Bars!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Tin Bars!|1|60|1|0|28|0]=],
             Start = "15460|1454|32|30.90|65.40",
             End = "15460|1454|32|30.90|65.40",
         },
         [8543] = {
-            Quest = [=[The Horde Needs More Tin Bars!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Tin Bars!|1|60|1|0|28|0]=],
             Start = "15460|1454|32|30.90|65.40",
             End = "15460|1454|32|30.90|65.40",
         },
@@ -22785,12 +22785,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [8545] = {
-            Quest = [=[The Horde Needs Mithril Bars!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Mithril Bars!|1|60|1|0|28|0]=],
             Start = "15469|1454|32|31.50|66.80",
             End = "15469|1454|32|31.50|66.80",
         },
         [8546] = {
-            Quest = [=[The Horde Needs More Mithril Bars!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Mithril Bars!|1|60|1|0|28|0]=],
             Start = "15469|1454|32|31.50|66.80",
             End = "15469|1454|32|31.50|66.80",
         },
@@ -22800,7 +22800,7 @@ function Nx.ModQuests:Data6()
             End = "15176|1451|32|51.23|38.86",
         },
         [8549] = {
-            Quest = [=[The Horde Needs Peacebloom!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Peacebloom!|1|60|1|0|28|0]=],
             Start = "15477|1454|32|33.30|69.60",
             End = "15477|1454|32|33.30|69.60",
             Objectives = {
@@ -22810,7 +22810,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8550] = {
-            Quest = [=[The Horde Needs More Peacebloom!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Peacebloom!|1|60|1|0|28|0]=],
             Start = "15477|1454|32|33.30|69.60",
             End = "15477|1454|32|33.30|69.60",
             Objectives = {
@@ -22973,7 +22973,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8580] = {
-            Quest = [=[The Horde Needs Firebloom!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Firebloom!|1|60|1|0|28|0]=],
             Start = "15508|1454|32|32.80|70.40",
             End = "15508|1454|32|32.80|70.40",
             Objectives = {
@@ -23075,7 +23075,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8581] = {
-            Quest = [=[The Horde Needs More Firebloom!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Firebloom!|1|60|1|0|28|0]=],
             Start = "15508|1454|32|32.80|70.40",
             End = "15508|1454|32|32.80|70.40",
             Objectives = {
@@ -23177,7 +23177,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8582] = {
-            Quest = [=[The Horde Needs Purple Lotus!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Purple Lotus!|1|60|1|0|28|0]=],
             Start = "15512|1454|32|32.80|68.70",
             End = "15512|1454|32|32.80|68.70",
             Objectives = {
@@ -23246,7 +23246,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8583] = {
-            Quest = [=[The Horde Needs More Purple Lotus!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Purple Lotus!|1|60|1|0|28|0]=],
             Start = "15512|1454|32|32.80|68.70",
             End = "15512|1454|32|32.80|68.70",
             Objectives = {
@@ -23363,7 +23363,7 @@ function Nx.ModQuests:Data6()
             End = "11811|1446|32|65.24|18.58",
         },
         [8588] = {
-            Quest = [=[The Horde Needs Heavy Leather!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Heavy Leather!|1|60|1|0|28|0]=],
             Start = "15515|1454|32|36.00|73.40",
             End = "15515|1454|32|36.00|73.40",
             Objectives = {
@@ -23389,7 +23389,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8589] = {
-            Quest = [=[The Horde Needs More Heavy Leather!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Heavy Leather!|1|60|1|0|28|0]=],
             Start = "15515|1454|32|36.00|73.40",
             End = "15515|1454|32|36.00|73.40",
             Objectives = {
@@ -23415,7 +23415,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8590] = {
-            Quest = [=[The Horde Needs Thick Leather!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Thick Leather!|1|60|1|0|28|0]=],
             Start = "15522|1454|32|34.00|72.70",
             End = "15522|1454|32|34.00|72.70",
             Objectives = {
@@ -23441,7 +23441,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8591] = {
-            Quest = [=[The Horde Needs More Thick Leather!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Thick Leather!|1|60|1|0|28|0]=],
             Start = "15522|1454|32|34.00|72.70",
             End = "15522|1454|32|34.00|72.70",
             Objectives = {
@@ -23544,12 +23544,12 @@ function Nx.ModQuests:Data6()
             End = "11811|1446|32|65.24|18.58",
         },
         [8600] = {
-            Quest = [=[The Horde Needs Rugged Leather!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Rugged Leather!|1|60|1|0|28|0]=],
             Start = "15525|1454|32|35.10|72.60",
             End = "15525|1454|32|35.10|72.60",
         },
         [8601] = {
-            Quest = [=[The Horde Needs More Rugged Leather!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Rugged Leather!|1|60|1|0|28|0]=],
             Start = "15525|1454|32|35.10|72.60",
             End = "15525|1454|32|35.10|72.60",
         },
@@ -23580,12 +23580,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [8604] = {
-            Quest = [=[The Horde Needs Wool Bandages!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Wool Bandages!|1|60|1|0|28|0]=],
             Start = "15528|1454|32|31.20|74.10",
             End = "15528|1454|32|31.20|74.10",
         },
         [8605] = {
-            Quest = [=[The Horde Needs More Wool Bandages!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Wool Bandages!|1|60|1|0|28|0]=],
             Start = "15528|1454|32|31.20|74.10",
             End = "15528|1454|32|31.20|74.10",
         },
@@ -23600,37 +23600,37 @@ function Nx.ModQuests:Data6()
             },
         },
         [8607] = {
-            Quest = [=[The Horde Needs Mageweave Bandages!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Mageweave Bandages!|1|60|1|0|28|0]=],
             Start = "15529|1454|32|31.30|75.10",
             End = "15529|1454|32|31.30|75.10",
         },
         [8608] = {
-            Quest = [=[The Horde Needs More Mageweave Bandages!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Mageweave Bandages!|1|60|1|0|28|0]=],
             Start = "15529|1454|32|31.30|75.10",
             End = "15529|1454|32|31.30|75.10",
         },
         [8609] = {
-            Quest = [=[The Horde Needs Runecloth Bandages!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Runecloth Bandages!|1|60|1|0|28|0]=],
             Start = "15532|1454|32|32.20|75.30",
             End = "15532|1454|32|32.20|75.30",
         },
         [8610] = {
-            Quest = [=[The Horde Needs More Runecloth Bandages!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Runecloth Bandages!|1|60|1|0|28|0]=],
             Start = "15532|1454|32|32.20|75.30",
             End = "15532|1454|32|32.20|75.30",
         },
         [8611] = {
-            Quest = [=[The Horde Needs Lean Wolf Steaks!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Lean Wolf Steaks!|1|60|1|0|28|0]=],
             Start = "15533|1454|32|29.50|68.80",
             End = "15533|1454|32|29.50|68.80",
         },
         [8612] = {
-            Quest = [=[The Horde Needs More Lean Wolf Steaks!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Lean Wolf Steaks!|1|60|1|0|28|0]=],
             Start = "15533|1454|32|29.50|68.80",
             End = "15533|1454|32|29.50|68.80",
         },
         [8613] = {
-            Quest = [=[The Horde Needs Spotted Yellowtail!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Spotted Yellowtail!|1|60|1|0|28|0]=],
             Start = "15534|1454|32|29.00|68.50",
             End = "15534|1454|32|29.00|68.50",
             Objectives = {
@@ -23696,7 +23696,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [8614] = {
-            Quest = [=[The Horde Needs More Spotted Yellowtail!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Spotted Yellowtail!|1|60|1|0|28|0]=],
             Start = "15534|1454|32|29.00|68.50",
             End = "15534|1454|32|29.00|68.50",
             Objectives = {
@@ -23762,12 +23762,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [8615] = {
-            Quest = [=[The Horde Needs Baked Salmon!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs Baked Salmon!|1|60|1|0|28|0]=],
             Start = "15535|1454|32|28.80|67.80",
             End = "15535|1454|32|28.80|67.80",
         },
         [8616] = {
-            Quest = [=[The Horde Needs More Baked Salmon!|1|60|1|0|0|0]=],
+            Quest = [=[The Horde Needs More Baked Salmon!|1|60|1|0|28|0]=],
         },
         [8618] = {
             Quest = [=[The Horde Needs More Singed Corestones!||60|1|0|0|0]=],
@@ -26064,82 +26064,82 @@ function Nx.ModQuests:Data6()
             End = "15191|1451|32|51.15|38.29",
         },
         [8811] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
             Start = "15766|1453|32|62.42|74.53",
             End = "15766|1453|32|62.42|74.53",
         },
         [8812] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
             Start = "15764|1455|32|43.25|46.48",
             End = "15764|1455|32|43.25|46.48",
         },
         [8813] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
             Start = "15762|1457|32|38.23|38.65",
             End = "15762|1457|32|38.23|38.65",
         },
         [8814] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
             Start = "15763|1455|32|69.72|46.01",
             End = "15763|1455|32|69.72|46.01",
         },
         [8815] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
             Start = "15765|1454|32|42.50|38.72",
             End = "15765|1454|32|42.50|38.72",
         },
         [8816] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
             Start = "15768|1458|32|61.91|45.31",
             End = "15768|1458|32|61.91|45.31",
         },
         [8817] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
             Start = "15767|1456|32|42.39|56.98",
             End = "15767|1456|32|42.39|56.98",
         },
         [8818] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
             Start = "15761|1454|32|46.32|35.12",
             End = "15761|1454|32|46.32|35.12",
         },
         [8819] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
             Start = "15766|1453|32|62.42|74.53",
             End = "15766|1453|32|62.42|74.53",
         },
         [8820] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
             Start = "15764|1455|32|43.25|46.48",
             End = "15764|1455|32|43.25|46.48",
         },
         [8821] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
             Start = "15762|1457|32|38.23|38.65",
             End = "15762|1457|32|38.23|38.65",
         },
         [8822] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
             Start = "15763|1455|32|69.72|46.01",
             End = "15763|1455|32|69.72|46.01",
         },
         [8823] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
             Start = "15765|1454|32|42.50|38.72",
             End = "15765|1454|32|42.50|38.72",
         },
         [8824] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
             Start = "15768|1458|32|61.91|45.31",
             End = "15768|1458|32|61.91|45.31",
         },
         [8825] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
             Start = "15767|1456|32|42.39|56.98",
             End = "15767|1456|32|42.39|56.98",
         },
         [8826] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
             Start = "15761|1454|32|46.32|35.12",
             End = "15761|1454|32|46.32|35.12",
         },
@@ -26243,92 +26243,92 @@ function Nx.ModQuests:Data6()
             },
         },
         [8830] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
             Start = "15766|1453|32|62.42|74.53",
             End = "15766|1453|32|62.42|74.53",
         },
         [8831] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
             Start = "15766|1453|32|62.42|74.53",
             End = "15766|1453|32|62.42|74.53",
         },
         [8832] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
             Start = "15765|1454|32|42.50|38.72",
             End = "15765|1454|32|42.50|38.72",
         },
         [8833] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
             Start = "15765|1454|32|42.50|38.72",
             End = "15765|1454|32|42.50|38.72",
         },
         [8834] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
             Start = "15764|1455|32|43.25|46.48",
             End = "15764|1455|32|43.25|46.48",
         },
         [8835] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
             Start = "15764|1455|32|43.25|46.48",
             End = "15764|1455|32|43.25|46.48",
         },
         [8836] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
             Start = "15762|1457|32|38.23|38.65",
             End = "15762|1457|32|38.23|38.65",
         },
         [8837] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
             Start = "15762|1457|32|38.23|38.65",
             End = "15762|1457|32|38.23|38.65",
         },
         [8838] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
             Start = "15763|1455|32|69.72|46.01",
             End = "15763|1455|32|69.72|46.01",
         },
         [8839] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
             Start = "15763|1455|32|69.72|46.01",
             End = "15763|1455|32|69.72|46.01",
         },
         [8840] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
             Start = "15768|1458|32|61.91|45.31",
             End = "15768|1458|32|61.91|45.31",
         },
         [8841] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
             Start = "15768|1458|32|61.91|45.31",
             End = "15768|1458|32|61.91|45.31",
         },
         [8842] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
             Start = "15767|1456|32|42.39|56.98",
             End = "15767|1456|32|42.39|56.98",
         },
         [8843] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
             Start = "15767|1456|32|42.39|56.98",
             End = "15767|1456|32|42.39|56.98",
         },
         [8844] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
             Start = "15761|1454|32|46.32|35.12",
             End = "15761|1454|32|46.32|35.12",
         },
         [8845] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
             Start = "15761|1454|32|46.32|35.12",
             End = "15761|1454|32|46.32|35.12",
         },
         [8850] = {
-            Quest = [=[Thirty Signets for War Supplies|1|60|50|0|0|0]=],
+            Quest = [=[Thirty Signets for War Supplies|1|60|50|0|28|0]=],
             Start = "15701|1455|32|61.30|74.20",
             End = "15701|1455|32|61.30|74.20",
         },
         [8855] = {
-            Quest = [=[Thirty Signets for War Supplies|2|60|50|0|0|0]=],
+            Quest = [=[Thirty Signets for War Supplies|2|60|50|0|28|0]=],
             Start = "15700|1454|32|30.30|67.60",
             End = "15700|1454|32|30.30|67.60",
         },
@@ -26351,12 +26351,12 @@ function Nx.ModQuests:Data6()
             Quest = [=[Sweet Serenity||60|50|0|0|0]=],
         },
         [8881] = {
-            Quest = [=[Large Cluster Rockets||55|55|0|0|0]=],
+            Quest = [=[Large Cluster Rockets||55|55|0|29|0]=],
             Start = "15909|1450|32|53.79|35.32",
             End = "15909|1450|32|53.79|35.32",
         },
         [8882] = {
-            Quest = [=[Cluster Launcher||55|55|0|0|0]=],
+            Quest = [=[Cluster Launcher||55|55|0|29|0]=],
             Start = "15909|1450|32|53.79|35.32",
             End = "15909|1450|32|53.79|35.32",
         },
@@ -32590,11 +32590,11 @@ function Nx.ModQuests:Data6()
             },
         },
         [9250] = {
-            Quest = [=[Frame of Atiesh||60|60|9251|0|0]=],
+            Quest = [=[Frame of Atiesh||60|60|9251|23|0]=],
             End = "15192|1446|32|64.20|51.42",
         },
         [9251] = {
-            Quest = [=[Atiesh, the Befouled Greatstaff||60|60|0|0|0]=],
+            Quest = [=[Atiesh, the Befouled Greatstaff||60|60|0|23|0]=],
             Start = "15192|1446|32|64.20|51.42",
             End = "15192|1446|32|64.20|51.42",
             Objectives = {
@@ -32607,22 +32607,22 @@ function Nx.ModQuests:Data6()
             },
         },
         [9257] = {
-            Quest = [=[Atiesh, Greatstaff of the Guardian||60|60|0|0|0]=],
+            Quest = [=[Atiesh, Greatstaff of the Guardian||60|60|0|23|0]=],
             Start = "15192|1446|32|64.20|51.42",
             End = "15192|1446|32|64.20|51.42",
         },
         [9269] = {
-            Quest = [=[Atiesh, Greatstaff of the Guardian||60|60|0|0|0]=],
+            Quest = [=[Atiesh, Greatstaff of the Guardian||60|60|0|23|0]=],
             Start = "15192|1446|32|64.20|51.42",
             End = "15192|1446|32|64.20|51.42",
         },
         [9270] = {
-            Quest = [=[Atiesh, Greatstaff of the Guardian||60|60|0|0|0]=],
+            Quest = [=[Atiesh, Greatstaff of the Guardian||60|60|0|23|0]=],
             Start = "15192|1446|32|64.20|51.42",
             End = "15192|1446|32|64.20|51.42",
         },
         [9271] = {
-            Quest = [=[Atiesh, Greatstaff of the Guardian||60|60|0|0|0]=],
+            Quest = [=[Atiesh, Greatstaff of the Guardian||60|60|0|23|0]=],
             Start = "15192|1446|32|64.20|51.42",
             End = "15192|1446|32|64.20|51.42",
         },
@@ -32646,7 +32646,7 @@ function Nx.ModQuests:Data6()
             End = "15540|1451|32|49.98|36.35",
         },
         [9362] = {
-            Quest = [=[Warlord Krellian||60|60|9364|0|0]=],
+            Quest = [=[Warlord Krellian||60|60|9364|17|0]=],
             Start = "8379|1447|32|29.25|40.21",
             End = "8379|1447|32|29.25|40.21",
             Objectives = {
@@ -32656,7 +32656,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [9364] = {
-            Quest = [=[Fragmented Magic||60|60|0|0|0]=],
+            Quest = [=[Fragmented Magic||60|60|0|17|0]=],
             Start = "8379|1447|32|29.25|40.21",
             End = "8379|1447|32|29.25|40.21",
             Objectives = {
@@ -32771,7 +32771,7 @@ function Nx.ModQuests:Data6()
             End = "17099|1420|32|83.22|71.32",
         },
         [9635] = {
-            Quest = [=[The Zapthrottle Mote Extractor!|2|60|58|0|0|0]=],
+            Quest = [=[The Zapthrottle Mote Extractor!|2|60|58|0|10|0]=],
             Start = "17637|1946|32|34.03|50.93",
             End = "17637|1946|32|34.03|50.93",
             Objectives = {
@@ -32781,7 +32781,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [9636] = {
-            Quest = [=[The Zapthrottle Mote Extractor!|1|60|58|0|0|0]=],
+            Quest = [=[The Zapthrottle Mote Extractor!|1|60|58|0|10|0]=],
             Start = "17634|1946|32|68.65|50.21",
             End = "17634|1946|32|68.65|50.21",
             Objectives = {
@@ -33663,28 +33663,28 @@ function Nx.ModQuests:Data6()
             },
         },
         [10693] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
         },
         [10694] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
         },
         [10695] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
         },
         [10696] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
         },
         [10697] = {
-            Quest = [=[One Commendation Signet|2|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|2|60|1|0|30|0]=],
         },
         [10698] = {
-            Quest = [=[Ten Commendation Signets|2|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|2|60|1|0|30|0]=],
         },
         [10699] = {
-            Quest = [=[One Commendation Signet|1|60|1|0|0|0]=],
+            Quest = [=[One Commendation Signet|1|60|1|0|30|0]=],
         },
         [10700] = {
-            Quest = [=[Ten Commendation Signets|1|60|1|0|0|0]=],
+            Quest = [=[Ten Commendation Signets|1|60|1|0|30|0]=],
         },
         [10809] = {
             Quest = [=[Wanted: Worg Master Kruush|2|60|58|0|0|0]=],
@@ -33716,17 +33716,17 @@ function Nx.ModQuests:Data6()
             },
         },
         [10942] = {
-            Quest = [=[Children's Week|2|60|60|0|0|0]=],
+            Quest = [=[Children's Week|2|60|60|0|3|0]=],
             Start = "22819|1955|32|75.23|48.00",
             End = "22818|1955|32|75.23|48.00",
         },
         [10943] = {
-            Quest = [=[Children's Week|1|60|60|0|0|0]=],
+            Quest = [=[Children's Week|1|60|60|0|3|0]=],
             Start = "22819|1955|32|75.23|48.00",
             End = "22818|1955|32|75.23|48.00",
         },
         [10945] = {
-            Quest = [=[Hch'uu and the Mushroom People|2|60|60|0|0|0]=],
+            Quest = [=[Hch'uu and the Mushroom People|2|60|60|0|3|0]=],
             Start = "22817|1955|32|75.23|48.00",
             End = "22823|1946|32|18.40|51.66",
             Objectives = {
@@ -33737,7 +33737,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [10950] = {
-            Quest = [=[Auchindoun and the Ring of Observance|1|60|60|0|0|0]=],
+            Quest = [=[Auchindoun and the Ring of Observance|1|60|60|0|3|0]=],
             Start = "22818|1955|32|75.23|48.00",
             End = "22818|1955|32|75.23|48.00",
             Objectives = {
@@ -33747,7 +33747,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [10951] = {
-            Quest = [=[A Trip to the Dark Portal|2|60|60|0|0|0]=],
+            Quest = [=[A Trip to the Dark Portal|2|60|60|0|3|0]=],
             Start = "22817|1955|32|75.23|48.00",
             End = "22817|1955|32|75.23|48.00",
             Objectives = {
@@ -33758,7 +33758,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [10952] = {
-            Quest = [=[A Trip to the Dark Portal|1|60|60|0|0|0]=],
+            Quest = [=[A Trip to the Dark Portal|1|60|60|0|3|0]=],
             Start = "22818|1955|32|75.23|48.00",
             End = "22818|1955|32|75.23|48.00",
             Objectives = {
@@ -33768,7 +33768,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [10953] = {
-            Quest = [=[Visit the Throne of the Elements|2|60|60|0|0|0]=],
+            Quest = [=[Visit the Throne of the Elements|2|60|60|0|3|0]=],
             Start = "22817|1955|32|75.23|48.00",
             End = "18072|1951|32|60.66|22.10",
             Objectives = {
@@ -33779,7 +33779,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [10954] = {
-            Quest = [=[Jheel is at Aeris Landing!|1|60|60|0|0|0]=],
+            Quest = [=[Jheel is at Aeris Landing!|1|60|60|0|3|0]=],
             Start = "22818|1955|32|75.23|48.00",
             End = "22836|1951|32|31.49|57.61",
             Objectives = {
@@ -33789,7 +33789,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [10956] = {
-            Quest = [=[The Seat of the Naaru|1|60|60|10968|0|0]=],
+            Quest = [=[The Seat of the Naaru|1|60|60|10968|3|0]=],
             Start = "22818|1955|32|75.23|48.00",
             End = "17538|1947|32|57.95|41.42",
             Objectives = {
@@ -33801,12 +33801,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [10960] = {
-            Quest = [=[When I Grow Up...|2|60|60|0|0|0]=],
+            Quest = [=[When I Grow Up...|2|60|60|0|3|0]=],
             Start = "22817|1955|32|75.23|48.00",
             End = "17076|1954|32|92.20|36.40",
         },
         [10962] = {
-            Quest = [=[Time to Visit the Caverns|1|60|60|0|0|0]=],
+            Quest = [=[Time to Visit the Caverns|1|60|60|0|3|0]=],
             Start = "22818|1955|32|75.23|48.00",
             End = "22818|1955|32|75.23|48.00",
             Objectives = {
@@ -33819,7 +33819,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [10963] = {
-            Quest = [=[Time to Visit the Caverns|2|60|60|0|0|0]=],
+            Quest = [=[Time to Visit the Caverns|2|60|60|0|3|0]=],
             Start = "22817|1955|32|75.23|48.00",
             End = "22817|1955|32|75.23|48.00",
             Objectives = {
@@ -33833,17 +33833,17 @@ function Nx.ModQuests:Data6()
             },
         },
         [10966] = {
-            Quest = [=[Back to the Orphanage|1|60|60|0|0|0]=],
+            Quest = [=[Back to the Orphanage|1|60|60|0|3|0]=],
             Start = "22818|1955|32|75.23|48.00",
             End = "22819|1955|32|75.23|48.00",
         },
         [10967] = {
-            Quest = [=[Back to the Orphanage|2|60|60|0|0|0]=],
+            Quest = [=[Back to the Orphanage|2|60|60|0|3|0]=],
             Start = "22817|1955|32|75.23|48.00",
             End = "22819|1955|32|75.23|48.00",
         },
         [10968] = {
-            Quest = [=[Call on the Farseer|1|60|60|0|0|0]=],
+            Quest = [=[Call on the Farseer|1|60|60|0|3|0]=],
             Start = "17538|1947|32|57.95|41.42",
             End = "17204|1947|32|29.80|32.80",
             Objectives = {
@@ -33855,21 +33855,21 @@ function Nx.ModQuests:Data6()
             },
         },
         [11242] = {
-            Quest = [=[Free at Last!|1|60|60|0|0|0]=],
+            Quest = [=[Free at Last!|1|60|60|0|89|0]=],
             Start = "23904|302|32|-1.00|-1.00",
             End = "24519|1426|32|46.19|53.14",
         },
         [11403] = {
-            Quest = [=[Free at Last!|2|60|60|0|0|0]=],
+            Quest = [=[Free at Last!|2|60|60|0|89|0]=],
             Start = "23904|302|32|-1.00|-1.00",
             End = "23973|1420|32|60.87|53.05",
         },
         [11454] = {
-            Quest = [=[Seek the Saboteurs||52|48|0|0|0]=],
+            Quest = [=[Seek the Saboteurs||52|48|0|33|0]=],
             Start = "186881|1426|32|48.06|39.10",
         },
         [11952] = {
-            Quest = [=[Striking Back||51|49|0|0|0]=],
+            Quest = [=[Striking Back||51|49|0|32|0]=],
             End = "26221|1458|32|66.90|13.53",
             Objectives = {
                 [1] = {
@@ -33882,7 +33882,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [11953] = {
-            Quest = [=[Striking Back||60|56|0|0|0]=],
+            Quest = [=[Striking Back||60|56|0|32|0]=],
             End = "26221|1458|32|66.90|13.53",
             Objectives = {
                 [1] = {
@@ -33892,7 +33892,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [11975] = {
-            Quest = [=[Now, When I Grow Up...|2|60|60|0|0|0]=],
+            Quest = [=[Now, When I Grow Up...|2|60|60|0|3|0]=],
             Start = "22817|1955|32|75.23|48.00",
             End = "22817|1955|32|75.23|48.00",
             Objectives = {
@@ -33905,12 +33905,12 @@ function Nx.ModQuests:Data6()
             Quest = [=[Reacquiring the Magic [PH]||60|60|0|0|0]=],
         },
         [12593] = {
-            Quest = [=[In Service Of The Lich King||55|55|12619|0|0]=],
+            Quest = [=[In Service Of The Lich King||55|55|12619|35|0]=],
             Start = "25462|124|32|51.34|35.20",
             End = "28357|124|32|47.75|29.16",
         },
         [12619] = {
-            Quest = [=[The Emblazoned Runeblade||55|55|12842|0|0]=],
+            Quest = [=[The Emblazoned Runeblade||55|55|12842|35|0]=],
             Start = "28357|124|32|47.75|29.16",
             End = "28357|124|32|47.75|29.16",
             Objectives = {
@@ -33927,12 +33927,12 @@ function Nx.ModQuests:Data6()
             Quest = [=[Dominion Over Acherus||55|55|0|0|0]=],
         },
         [12636] = {
-            Quest = [=[The Eye Of Acherus||55|55|12641|0|0]=],
+            Quest = [=[The Eye Of Acherus||55|55|12641|35|0]=],
             Start = "28357|124|32|47.75|29.16",
             End = "25462|124|32|51.34|35.20",
         },
         [12641] = {
-            Quest = [=[Death Comes From On High||55|55|12657|0|0]=],
+            Quest = [=[Death Comes From On High||55|55|12657|35|0]=],
             Start = "25462|124|32|51.34|35.20",
             End = "25462|124|32|51.34|35.20",
             Objectives = {
@@ -33951,17 +33951,17 @@ function Nx.ModQuests:Data6()
             },
         },
         [12657] = {
-            Quest = [=[The Might Of The Scourge||55|55|12850|0|0]=],
+            Quest = [=[The Might Of The Scourge||55|55|12850|35|0]=],
             Start = "25462|124|32|51.34|35.20",
             End = "28444|124|32|48.87|29.74",
         },
         [12670] = {
-            Quest = [=[The Scarlet Harvest||55|55|12678|0|0]=],
+            Quest = [=[The Scarlet Harvest||55|55|12678|35|0]=],
             Start = "28510|124|32|50.71|35.29",
             End = "28377|124|32|52.27|33.97",
         },
         [12678] = {
-            Quest = [=[If Chaos Drives, Let Suffering Hold The Reins||55|55|0|0|0]=],
+            Quest = [=[If Chaos Drives, Let Suffering Hold The Reins||55|55|0|35|0]=],
             Start = "28377|124|32|52.27|33.97",
             End = "28377|124|32|52.27|33.97",
             Objectives = {
@@ -34022,7 +34022,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12679] = {
-            Quest = [=[Tonight We Dine In Havenshire||55|55|0|0|0]=],
+            Quest = [=[Tonight We Dine In Havenshire||55|55|0|35|0]=],
             Start = "28647|124|32|53.09|36.99",
             End = "28647|124|32|53.09|36.99",
             Objectives = {
@@ -34052,7 +34052,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12680] = {
-            Quest = [=[Grand Theft Palomino||55|55|12687|0|0]=],
+            Quest = [=[Grand Theft Palomino||55|55|12687|35|0]=],
             Start = "28653|124|32|52.28|34.89",
             End = "28653|124|32|52.28|34.89",
             Objectives = {
@@ -34064,7 +34064,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12687] = {
-            Quest = [=[Into the Realm of Shadows||55|55|0|0|0]=],
+            Quest = [=[Into the Realm of Shadows||55|55|0|35|0]=],
             Start = "28653|124|32|52.28|34.89",
             End = "28653|124|32|52.28|34.89",
             Objectives = {
@@ -34075,12 +34075,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [12697] = {
-            Quest = [=[Gothik the Harvester||55|55|12698|0|0]=],
+            Quest = [=[Gothik the Harvester||55|55|12698|35|0]=],
             Start = "28377|124|32|52.27|33.97",
             End = "28658|124|32|54.08|35.04",
         },
         [12698] = {
-            Quest = [=[The Gift That Keeps On Giving||55|55|12700|0|0]=],
+            Quest = [=[The Gift That Keeps On Giving||55|55|12700|35|0]=],
             Start = "28658|124|32|54.08|35.04",
             End = "28658|124|32|54.08|35.04",
             Objectives = {
@@ -34091,12 +34091,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [12700] = {
-            Quest = [=[An Attack Of Opportunity||55|55|12701|0|0]=],
+            Quest = [=[An Attack Of Opportunity||55|55|12701|35|0]=],
             Start = "28658|124|32|54.08|35.04",
             End = "28377|124|32|52.27|33.97",
         },
         [12701] = {
-            Quest = [=[Massacre At Light's Point||55|55|12706|0|0]=],
+            Quest = [=[Massacre At Light's Point||55|55|12706|35|0]=],
             Start = "28377|124|32|52.27|33.97",
             End = "28377|124|32|52.27|33.97",
             Objectives = {
@@ -34110,27 +34110,27 @@ function Nx.ModQuests:Data6()
             },
         },
         [12706] = {
-            Quest = [=[Victory At Death's Breach!||55|55|12714|0|0]=],
+            Quest = [=[Victory At Death's Breach!||55|55|12714|35|0]=],
             Start = "28377|124|32|52.27|33.97",
             End = "28444|124|32|48.87|29.74",
         },
         [12711] = {
-            Quest = [=[Abandoned Mail||55|55|0|0|0]=],
+            Quest = [=[Abandoned Mail||55|55|0|35|0]=],
             Start = "190917|124|32|55.26|46.18",
             End = "190917|124|32|55.26|46.18",
         },
         [12714] = {
-            Quest = [=[The Will Of The Lich King||55|55|12715|0|0]=],
+            Quest = [=[The Will Of The Lich King||55|55|12715|35|0]=],
             Start = "28444|124|32|48.87|29.74",
             End = "28907|124|32|53.46|36.56",
         },
         [12715] = {
-            Quest = [=[The Crypt of Remembrance||55|55|12719|0|0]=],
+            Quest = [=[The Crypt of Remembrance||55|55|12719|35|0]=],
             Start = "28907|124|32|53.46|36.56",
             End = "28911|124|32|54.30|57.30",
         },
         [12716] = {
-            Quest = [=[The Plaguebringer's Request||55|55|12717|0|0]=],
+            Quest = [=[The Plaguebringer's Request||55|55|12717|35|0]=],
             Start = "28919|124|32|55.89|52.40",
             End = "28919|124|32|55.89|52.40",
             Objectives = {
@@ -34174,12 +34174,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [12717] = {
-            Quest = [=[Noth's Special Brew||55|55|0|0|0]=],
+            Quest = [=[Noth's Special Brew||55|55|0|35|0]=],
             Start = "28919|124|32|55.89|52.40",
             End = "190936|124|32|56.23|51.91",
         },
         [12718] = {
-            Quest = [=[More Skulls For Brew||55|55|0|0|0]=],
+            Quest = [=[More Skulls For Brew||55|55|0|35|0]=],
             Start = "190936|124|32|56.23|51.91",
             End = "190936|124|32|56.23|51.91",
             Objectives = {
@@ -34206,7 +34206,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12719] = {
-            Quest = [=[Nowhere To Run And Nowhere To Hide||55|55|12720|0|0]=],
+            Quest = [=[Nowhere To Run And Nowhere To Hide||55|55|12720|35|0]=],
             Start = "28911|124|32|54.30|57.30",
             End = "28911|124|32|54.30|57.30",
             Objectives = {
@@ -34219,7 +34219,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12720] = {
-            Quest = [=[How To Win Friends And Influence Enemies||55|55|0|0|0]=],
+            Quest = [=[How To Win Friends And Influence Enemies||55|55|0|35|0]=],
             Start = "28911|124|32|54.30|57.30",
             End = "28911|124|32|54.30|57.30",
             Objectives = {
@@ -34258,7 +34258,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12722] = {
-            Quest = [=[Lambs To The Slaughter||55|55|0|0|0]=],
+            Quest = [=[Lambs To The Slaughter||55|55|0|35|0]=],
             Start = "28910|124|32|54.68|57.44",
             End = "28910|124|32|54.68|57.44",
             Objectives = {
@@ -34317,12 +34317,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [12723] = {
-            Quest = [=[Behind Scarlet Lines||55|55|12724|0|0]=],
+            Quest = [=[Behind Scarlet Lines||55|55|12724|35|0]=],
             Start = "28911|124|32|54.30|57.30",
             End = "28914|124|32|56.24|79.85",
         },
         [12724] = {
-            Quest = [=[The Path Of The Righteous Crusader||55|55|0|0|0]=],
+            Quest = [=[The Path Of The Righteous Crusader||55|55|0|35|0]=],
             Start = "28914|124|32|56.24|79.85",
             End = "28914|124|32|56.24|79.85",
             Objectives = {
@@ -34332,12 +34332,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [12725] = {
-            Quest = [=[Brothers In Death||55|55|12727|0|0]=],
+            Quest = [=[Brothers In Death||55|55|12727|35|0]=],
             Start = "28913|124|32|56.27|80.16",
             End = "28912|124|32|62.95|67.90",
         },
         [12727] = {
-            Quest = [=[Bloody Breakout||55|55|12738|0|0]=],
+            Quest = [=[Bloody Breakout||55|55|12738|35|0]=],
             Start = "28912|124|32|62.95|67.90",
             End = "28913|124|32|56.27|80.16",
             Objectives = {
@@ -34347,7 +34347,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12733] = {
-            Quest = [=[Death's Challenge||55|55|0|0|0]=],
+            Quest = [=[Death's Challenge||55|55|0|35|0]=],
             Start = "29047|124|32|55.04|33.95",
             End = "29047|124|32|55.04|33.95",
             Objectives = {
@@ -34385,12 +34385,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [12738] = {
-            Quest = [=[A Cry For Vengeance!||55|55|0|0|0]=],
+            Quest = [=[A Cry For Vengeance!||55|55|0|35|0]=],
             Start = "28913|124|32|56.27|80.16",
             End = "29053|124|32|52.86|81.38",
         },
         [12739] = {
-            Quest = [=[A Special Surprise|2|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|2|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34400,7 +34400,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12742] = {
-            Quest = [=[A Special Surprise|1|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|1|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34410,7 +34410,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12743] = {
-            Quest = [=[A Special Surprise|1|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|1|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34420,7 +34420,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12744] = {
-            Quest = [=[A Special Surprise|1|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|1|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34430,7 +34430,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12745] = {
-            Quest = [=[A Special Surprise|1|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|1|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34440,7 +34440,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12746] = {
-            Quest = [=[A Special Surprise|1|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|1|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34450,7 +34450,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12747] = {
-            Quest = [=[A Special Surprise|2|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|2|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34460,7 +34460,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12748] = {
-            Quest = [=[A Special Surprise|2|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|2|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34470,7 +34470,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12749] = {
-            Quest = [=[A Special Surprise|2|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|2|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34480,7 +34480,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12750] = {
-            Quest = [=[A Special Surprise|2|55|55|12751|0|0]=],
+            Quest = [=[A Special Surprise|2|55|55|12751|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "29053|124|32|52.86|81.38",
             Objectives = {
@@ -34490,12 +34490,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [12751] = {
-            Quest = [=[A Sort Of Homecoming||55|55|0|0|0]=],
+            Quest = [=[A Sort Of Homecoming||55|55|0|35|0]=],
             Start = "29053|124|32|52.86|81.38",
             End = "28913|124|32|56.27|80.16",
         },
         [12754] = {
-            Quest = [=[Ambush At The Overlook||55|55|12755|0|0]=],
+            Quest = [=[Ambush At The Overlook||55|55|12755|35|0]=],
             Start = "28914|124|32|56.24|79.85",
             End = "28914|124|32|56.24|79.85",
             Objectives = {
@@ -34508,27 +34508,27 @@ function Nx.ModQuests:Data6()
             },
         },
         [12755] = {
-            Quest = [=[A Meeting With Fate||55|55|12756|0|0]=],
+            Quest = [=[A Meeting With Fate||55|55|12756|35|0]=],
             Start = "28914|124|32|56.24|79.85",
             End = "29077|124|32|65.66|83.81",
         },
         [12756] = {
-            Quest = [=[The Scarlet Onslaught Emerges||55|55|12757|0|0]=],
+            Quest = [=[The Scarlet Onslaught Emerges||55|55|12757|35|0]=],
             Start = "29077|124|32|65.66|83.81",
             End = "28914|124|32|56.24|79.85",
         },
         [12757] = {
-            Quest = [=[Scarlet Armies Approach...||55|55|0|0|0]=],
+            Quest = [=[Scarlet Armies Approach...||55|55|0|35|0]=],
             Start = "28914|124|32|56.24|79.85",
             End = "28444|124|32|48.87|29.74",
         },
         [12778] = {
-            Quest = [=[The Scarlet Apocalypse||55|55|12779|0|0]=],
+            Quest = [=[The Scarlet Apocalypse||55|55|12779|35|0]=],
             Start = "28444|124|32|48.87|29.74",
             End = "29110|124|32|53.57|36.86",
         },
         [12779] = {
-            Quest = [=[An End To All Things...||55|55|12800|0|0]=],
+            Quest = [=[An End To All Things...||55|55|12800|35|0]=],
             Start = "29110|124|32|53.57|36.86",
             End = "29110|124|32|53.57|36.86",
             Objectives = {
@@ -34607,12 +34607,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [12800] = {
-            Quest = [=[The Lich King's Command||55|55|0|0|0]=],
+            Quest = [=[The Lich King's Command||55|55|0|35|0]=],
             Start = "29110|124|32|53.57|36.86",
             End = "31082|124|32|34.07|30.34",
         },
         [12801] = {
-            Quest = [=[The Light of Dawn||55|55|13165|0|0]=],
+            Quest = [=[The Light of Dawn||55|55|13165|35|0]=],
             Start = "31082|124|32|34.07|30.34",
             End = "29173|124|32|34.44|31.11",
             Objectives = {
@@ -34624,7 +34624,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12842] = {
-            Quest = [=[Runeforging: Preparation For Battle||55|55|12848|0|0]=],
+            Quest = [=[Runeforging: Preparation For Battle||55|55|12848|35|0]=],
             Start = "28357|124|32|47.75|29.16",
             End = "28357|124|32|47.75|29.16",
             Objectives = {
@@ -34640,7 +34640,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [12848] = {
-            Quest = [=[The Endless Hunger||55|55|12636|0|0]=],
+            Quest = [=[The Endless Hunger||55|55|12636|35|0]=],
             Start = "28357|124|32|47.75|29.16",
             End = "28357|124|32|47.75|29.16",
             Objectives = {
@@ -34650,22 +34650,22 @@ function Nx.ModQuests:Data6()
             },
         },
         [12849] = {
-            Quest = [=[The Power Of Blood, Frost And Unholy||55|55|0|0|0]=],
+            Quest = [=[The Power Of Blood, Frost And Unholy||55|55|0|35|0]=],
             Start = "28472|124|32|47.47|26.55",
             End = "28472|124|32|47.47|26.55",
         },
         [12850] = {
-            Quest = [=[Report To Scourge Commander Thalanor||55|55|12670|0|0]=],
+            Quest = [=[Report To Scourge Commander Thalanor||55|55|12670|35|0]=],
             Start = "28444|124|32|48.87|29.74",
             End = "28510|124|32|50.71|35.29",
         },
         [13165] = {
-            Quest = [=[Taking Back Acherus||55|55|13166|0|0]=],
+            Quest = [=[Taking Back Acherus||55|55|13166|35|0]=],
             Start = "29173|124|32|34.44|31.11",
             End = "31084|1423|32|83.43|49.44",
         },
         [13166] = {
-            Quest = [=[The Battle For The Ebon Hold||55|55|0|0|0]=],
+            Quest = [=[The Battle For The Ebon Hold||55|55|0|35|0]=],
             Start = "31084|1423|32|83.43|49.44",
             End = "31084|1423|32|83.43|49.44",
             Objectives = {
@@ -34693,12 +34693,12 @@ function Nx.ModQuests:Data6()
             },
         },
         [13188] = {
-            Quest = [=[Where Kings Walk|1|55|55|0|0|0]=],
+            Quest = [=[Where Kings Walk|1|55|55|0|35|0]=],
             Start = "31084|1423|32|83.43|49.44",
             End = "29611|1453|32|79.99|38.47",
         },
         [13189] = {
-            Quest = [=[Warchief's Blessing|2|55|55|0|0|0]=],
+            Quest = [=[Warchief's Blessing|2|55|55|0|35|0]=],
             Start = "31084|1423|32|83.43|49.44",
             End = "4949|1454|32|31.61|37.83",
         },
@@ -35269,7 +35269,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [24650] = {
-            Quest = [=[Crushing the Crown|2|51|51|0|0|0]=],
+            Quest = [=[Crushing the Crown|2|51|51|0|41|0]=],
             Objectives = {
                 [1] = {
                     "nil|127|35|48.00|46.08|28.86|9.62",
@@ -35287,7 +35287,7 @@ function Nx.ModQuests:Data6()
             },
         },
         [24664] = {
-            Quest = [=[Crushing the Crown|1|51|51|0|0|0]=],
+            Quest = [=[Crushing the Crown|1|51|51|0|41|0]=],
             Objectives = {
                 [1] = {
                     "nil|127|35|48.00|46.08|28.86|9.62",

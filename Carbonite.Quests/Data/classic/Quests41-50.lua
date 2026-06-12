@@ -926,7 +926,7 @@ function Nx.ModQuests:Data5()
             End = "2703|1417|32|73.80|33.96",
         },
         [648] = {
-            Quest = [=[Rescue OOX-17/TN!||48|43|0|0|0]=],
+            Quest = [=[Rescue OOX-17/TN!||48|43|0|143|0]=],
             Start = "7784|1446|32|60.23|64.72",
             End = "7406|1434|32|28.36|76.35",
             Objectives = {
@@ -1952,7 +1952,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [836] = {
-            Quest = [=[Rescue OOX-09/HL!||48|43|0|0|0]=],
+            Quest = [=[Rescue OOX-09/HL!||48|43|0|143|0]=],
             Start = "7806|1425|32|49.35|37.66",
             End = "7406|1434|32|28.36|76.35",
             Objectives = {
@@ -8041,7 +8041,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [6607] = {
-            Quest = [=[Nat Pagle, Angler Extreme||45|35|0|0|0]=],
+            Quest = [=[Nat Pagle, Angler Extreme||45|35|0|12|0]=],
             Start = "12919|1445|32|58.76|60.17",
             End = "12919|1445|32|58.76|60.17",
             Objectives = {
@@ -8092,7 +8092,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [6608] = {
-            Quest = [=[You Too Good.|2|45|35|6607|0|0]=],
+            Quest = [=[You Too Good.|2|45|35|6607|12|0]=],
             Start = "3332|1454|32|69.80|29.21",
             End = "12919|1445|32|58.76|60.17",
         },
@@ -8102,7 +8102,7 @@ function Nx.ModQuests:Data5()
             End = "12919|1445|32|58.76|60.17",
         },
         [6610] = {
-            Quest = [=[Clamlette Surprise||45|35|0|0|0]=],
+            Quest = [=[Clamlette Surprise||45|35|0|5|0]=],
             Start = "8125|1446|32|52.63|28.11",
             End = "8125|1446|32|52.63|28.11",
             Objectives = {
@@ -8170,7 +8170,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [6611] = {
-            Quest = [=[To Gadgetzan You Go!|2|45|35|13825|0|0]=],
+            Quest = [=[To Gadgetzan You Go!|2|45|35|13825|5|0]=],
             Start = "3399|1454|32|57.40|53.96",
             End = "8125|1446|32|52.63|28.11",
         },
@@ -8180,7 +8180,7 @@ function Nx.ModQuests:Data5()
             End = "8125|1446|32|52.63|28.11",
         },
         [6622] = {
-            Quest = [=[Triage|2|45|35|0|0|0]=],
+            Quest = [=[Triage|2|45|35|0|22|0]=],
             Start = "12920|1417|32|73.41|36.89",
             End = "12920|1417|32|73.41|36.89",
             Objectives = {
@@ -8190,12 +8190,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [6623] = {
-            Quest = [=[Horde Trauma|2|45|35|6622|0|0]=],
+            Quest = [=[Horde Trauma|2|45|35|6622|22|0]=],
             Start = "3373|1454|32|34.18|84.58",
             End = "12920|1417|32|73.41|36.89",
         },
         [6624] = {
-            Quest = [=[Triage|1|45|35|0|0|0]=],
+            Quest = [=[Triage|1|45|35|0|22|0]=],
             Start = "12939|1445|32|67.76|48.97",
             End = "12939|1445|32|67.76|48.97",
             Objectives = {
@@ -8205,7 +8205,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [6625] = {
-            Quest = [=[Alliance Trauma|1|45|35|6624|0|0]=],
+            Quest = [=[Alliance Trauma|1|45|35|6624|22|0]=],
             Start = "5150|1455|32|55.09|58.26",
             End = "12939|1445|32|67.76|48.97",
         },
@@ -9566,12 +9566,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [8849] = {
-            Quest = [=[Twenty Signets for War Supplies|1|49|40|0|0|0]=],
+            Quest = [=[Twenty Signets for War Supplies|1|49|40|0|28|0]=],
             Start = "15701|1455|32|61.30|74.20",
             End = "15701|1455|32|61.30|74.20",
         },
         [8854] = {
-            Quest = [=[Twenty Signets for War Supplies|2|49|40|0|0|0]=],
+            Quest = [=[Twenty Signets for War Supplies|2|49|40|0|28|0]=],
             Start = "15700|1454|32|30.30|67.60",
             End = "15700|1454|32|30.30|67.60",
         },
@@ -9747,7 +9747,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [11948] = {
-            Quest = [=[Striking Back||43|39|0|0|0]=],
+            Quest = [=[Striking Back||43|39|0|32|0]=],
             End = "26221|1458|32|66.90|13.53",
             Objectives = {
                 [1] = {

@@ -2008,7 +2008,7 @@ function Nx.Quest.List:LogUpdate()
             local curi, cur = Quest:FindCurByIndex (qi)
             if cur then
                 Quest.QIdsNew[cur.QId] = time()
-                if Nx.qdb.profile.QuestWatch.AddNew and not Quest.DailyPVPIds[cur.QId] then
+                if Nx.qdb.profile.QuestWatch.AddNew and (not Nx.QuestFreq or Nx.QuestFreq[cur.QId] ~= "dp") then
                     Quest.Watch:Add (curi,true)
                 end
                 Quest:Capture (curi)
@@ -2333,11 +2333,10 @@ function Nx.Quest.List:Update()
 
                 local dailyName = ""
 
-                local dailyStr = Quest.DailyIds[qId] or Quest.DailyDungeonIds[qId] or Quest.DailyPVPIds[qId]
-                if dailyStr then
+                local freq = Nx.QuestFreq and Nx.QuestFreq[qId]
+                if freq then
 
-                    local typ = Nx.Split ("^", dailyStr)
-                    dailyName = format (" |cffd060d0(%s)", Quest.DailyTypes[typ])
+                    dailyName = format (" |cffd060d0(%s)", Quest.QuestFreqLabels[freq] or L["Daily"])
 
                     local age = time() - qTime
                     local dayChange = 86400 - GetQuestResetTime()
@@ -2468,7 +2467,7 @@ function Nx.Quest.List:Update()
                 show = self:CheckShow (mapId, qsIndex)
             end
 
-            if not Quest.DailyIds[qId] then
+            if not (Nx.QuestFreq and Nx.QuestFreq[qId]) then
                 if (not showFinished and qCompleted) or showOnlyDailies then
                     show = false
                 end
@@ -2499,20 +2498,18 @@ function Nx.Quest.List:Update()
 
                 local tag = qCompleted and L["(History) "] or ""
 
-                local dailyStr = Quest.DailyIds[qId] or Quest.DailyDungeonIds[qId]
-                if dailyStr then
-                    local typ, money, rep, req = Nx.Split ("^", dailyStr)
-                    tag = format ("|cffd060d0(%s %.2fg", Quest.DailyTypes[typ], money / 100)
-                    for n = 0, 1 do    -- Only support 2 reps
-                        local i = n * 4 + 1
-                        local repChar = strsub (rep or "", i, i)
-                        if repChar == "" then
-                            break
+                local freq = Nx.QuestFreq and Nx.QuestFreq[qId]
+                if freq then
+                    local label = Quest.QuestFreqLabels[freq] or L["Daily"]
+                    local rew = Nx.QuestReward and Nx.QuestReward[qId]
+                    tag = "|cffd060d0(" .. label
+                    if rew then
+                        if (rew.m or 0) > 0 then
+                            tag = tag .. format (" %.2fg", rew.m / 10000)
                         end
-                        tag = format ("%s, %s %s", tag, strsub (rep, i + 1, i + 3), Quest.Reputations[repChar])
-                    end
-                    if req and Quest.Requirements[req] then    -- 1 and 2 (Ally, Horde) not in table
-                        tag = tag .. L[", |cffe0c020Need "] .. Quest.Requirements[req]
+                        for _, rp in ipairs (rew.r or {}) do    -- {faction, value}
+                            tag = format ("%s, +%d %s", tag, rp[2], rp[1])
+                        end
                     end
                     tag = tag .. ")"
                 end

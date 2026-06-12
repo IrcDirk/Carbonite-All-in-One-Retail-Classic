@@ -18,7 +18,7 @@ function Nx.ModQuests:Data0()
             Quest = [=[Collin's Test Quest||0|0|0|0|0]=],
         },
         [8788] = {
-            Quest = [=[A Gently Shaken Gift||0|0|0|0|0]=],
+            Quest = [=[A Gently Shaken Gift||0|0|0|186|0]=],
             Start = "180746|1455|32|34.45|65.79",
             End = "180746|1455|32|34.45|65.79",
         },
@@ -152,27 +152,27 @@ function Nx.ModQuests:Data0()
             },
         },
         [13265] = {
-            Quest = [=[Cloth Scavenging|1|0|0|0|0|0]=],
+            Quest = [=[Cloth Scavenging|1|0|0|0|21|0]=],
             Start = "27001|114|32|57.42|72.34",
             End = "27001|114|32|57.42|72.34",
         },
         [13268] = {
-            Quest = [=[Cloth Scavenging|1|0|0|0|0|0]=],
+            Quest = [=[Cloth Scavenging|1|0|0|0|21|0]=],
             Start = "26914|117|32|58.57|62.71",
             End = "26914|117|32|58.57|62.71",
         },
         [13269] = {
-            Quest = [=[Cloth Scavenging|2|0|0|0|0|0]=],
+            Quest = [=[Cloth Scavenging|2|0|0|0|21|0]=],
             Start = "26964|117|32|79.40|30.79",
             End = "26964|117|32|79.40|30.79",
         },
         [13270] = {
-            Quest = [=[Cloth Scavenging|2|0|0|0|0|0]=],
+            Quest = [=[Cloth Scavenging|2|0|0|0|21|0]=],
             Start = "26969|114|32|41.63|53.46",
             End = "26969|114|32|41.63|53.46",
         },
         [13272] = {
-            Quest = [=[Cloth Scavenging||0|0|0|0|0]=],
+            Quest = [=[Cloth Scavenging||0|0|0|21|0]=],
             Start = "28699|125|32|36.13|33.55",
             End = "28699|125|32|36.13|33.55",
         },
@@ -180,19 +180,19 @@ function Nx.ModQuests:Data0()
             Quest = [=[FLAG: Tournament Invitation||0|0|0|0|0]=],
         },
         [13825] = {
-            Quest = [=[Clamlette Surprise||0|0|0|0|0]=],
+            Quest = [=[Clamlette Surprise||0|0|0|5|0]=],
         },
         [13826] = {
-            Quest = [=[Nat Pagle, Angler Extreme||0|0|0|0|0]=],
+            Quest = [=[Nat Pagle, Angler Extreme||0|0|0|12|0]=],
         },
         [13990] = {
             Quest = [=[Upper Deck Promo - Chicken Mount||0|0|0|0|0]=],
         },
         [14064] = {
-            Quest = [=[Sharing a Bountiful Feast|1|0|0|0|0|0]=],
+            Quest = [=[Sharing a Bountiful Feast|1|0|0|0|40|0]=],
         },
         [14065] = {
-            Quest = [=[Sharing a Bountiful Feast|2|0|0|0|0|0]=],
+            Quest = [=[Sharing a Bountiful Feast|2|0|0|0|40|0]=],
         },
         [14106] = {
             Quest = [=[Na Kada's Quest Test||0|0|0|0|0]=],
@@ -437,7 +437,7 @@ function Nx.ModQuests:Data0()
             Quest = [=[FLAG: Riding Trainer Advertisement (70)||0|0|0|0|0]=],
         },
         [24597] = {
-            Quest = [=[A Gift for the King of Stormwind|1|0|0|0|0|0]=],
+            Quest = [=[A Gift for the King of Stormwind|1|0|0|0|41|0]=],
             Start = "37887|1453|32|62.53|74.96",
             End = "29611|1453|32|79.99|38.47",
             Objectives = {
@@ -468,7 +468,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24609] = {
-            Quest = [=[A Gift for the Lord of Ironforge|1|0|0|0|0|0]=],
+            Quest = [=[A Gift for the Lord of Ironforge|1|0|0|0|41|0]=],
             Start = "38041|1455|32|33.57|65.61",
             End = "2784|1455|32|39.09|56.20",
             Objectives = {
@@ -483,7 +483,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24610] = {
-            Quest = [=[A Gift for the High Priestess of Elune|1|0|0|0|0|0]=],
+            Quest = [=[A Gift for the High Priestess of Elune|1|0|0|0|41|0]=],
             Start = "38039|1457|32|42.52|52.00",
             End = "7999|1457|32|39.10|81.59",
             Objectives = {
@@ -494,7 +494,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24611] = {
-            Quest = [=[A Gift for the Prophet|1|0|0|0|0|0]=],
+            Quest = [=[A Gift for the Prophet|1|0|0|0|41|0]=],
             Start = "38040|1947|32|73.65|57.01",
             End = "17468|1947|32|32.87|54.50",
             Objectives = {
@@ -509,7 +509,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24612] = {
-            Quest = [=[A Gift for the Warchief|2|0|0|0|0|0]=],
+            Quest = [=[A Gift for the Warchief|2|0|0|0|41|0]=],
             Start = "38042|1454|32|52.80|76.80",
             End = "4949|1454|32|31.61|37.83",
             Objectives = {
@@ -542,7 +542,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24613] = {
-            Quest = [=[A Gift for the Banshee Queen|2|0|0|0|0|0]=],
+            Quest = [=[A Gift for the Banshee Queen|2|0|0|0|41|0]=],
             Start = "38045|1458|32|66.60|38.60",
             End = "10181|1458|32|58.05|91.79",
             Objectives = {
@@ -552,7 +552,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24614] = {
-            Quest = [=[A Gift for the High Chieftain|2|0|0|0|0|0]=],
+            Quest = [=[A Gift for the High Chieftain|2|0|0|0|41|0]=],
             Start = "38044|1456|32|44.00|52.80",
             End = "3057|1456|32|60.30|51.68",
             Objectives = {
@@ -563,7 +563,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24615] = {
-            Quest = [=[A Gift for the Regent Lord of Quel'Thalas|2|0|0|0|0|0]=],
+            Quest = [=[A Gift for the Regent Lord of Quel'Thalas|2|0|0|0|41|0]=],
             Start = "38043|1954|32|64.60|66.20",
             End = "16802|1954|32|53.80|20.23",
             Objectives = {
@@ -574,7 +574,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24629] = {
-            Quest = [=[A Perfect Puff of Perfume||0|0|0|0|0]=],
+            Quest = [=[A Perfect Puff of Perfume||0|0|0|41|0]=],
             Start = "37675|1453|32|62.41|75.38",
             End = "37675|1453|32|62.41|75.38",
             Objectives = {
@@ -600,7 +600,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24635] = {
-            Quest = [=[A Cloudlet of Classy Cologne||0|0|0|0|0]=],
+            Quest = [=[A Cloudlet of Classy Cologne||0|0|0|41|0]=],
             Start = "37675|1453|32|62.41|75.38",
             End = "37675|1453|32|62.41|75.38",
             Objectives = {
@@ -634,7 +634,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [24636] = {
-            Quest = [=[Bonbon Blitz||0|0|0|0|0]=],
+            Quest = [=[Bonbon Blitz||0|0|0|41|0]=],
             Start = "37675|1453|32|62.41|75.38",
             End = "37675|1453|32|62.41|75.38",
             Objectives = {
@@ -681,21 +681,6 @@ function Nx.ModQuests:Data0()
         },
         [25238] = {
             Quest = [=[Strength Ring Flag||0|0|0|0|0]=],
-        },
-        [26012] = {
-            Quest = [=[Trouble at Wyrmrest||82|80|26013|0|0]=],
-            Start = "16128|125|32|30.62|48.58",
-            End = "27990|115|32|59.79|54.70",
-        },
-        [26013] = {
-            Quest = [=[Assault on the Sanctum||82|80|26034|0|0]=],
-            Start = "27990|115|32|59.79|54.70",
-            End = "40429|200|32|74.42|54.50",
-        },
-        [26034] = {
-            Quest = [=[The Twilight Destroyer||82|80|0|0|0]=],
-            Start = "40429|200|32|74.42|54.50",
-            End = "27990|115|32|59.79|54.70",
         },
         [63866] = {
             Quest = [=[Claiming the Light|2|0|12|9685|0|0]=],

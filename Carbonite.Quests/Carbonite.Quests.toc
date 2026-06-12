@@ -14,6 +14,9 @@
 
 Locales\locales.xml
 Data\shared\QuestCats.lua
+Data\shared\QuestFreq.lua
+Data\shared\QuestReward.lua
+Data\shared\QuestPrev.lua
 Data\retail\QuestNPC.lua
 Data\retail\QuestData.xml
 NxQuest.lua

@@ -7572,7 +7572,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [2751] = {
-            Quest = [=[Barbaric Battlements|2|32|32|0|0|0]=],
+            Quest = [=[Barbaric Battlements|2|32|32|0|11|0]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
             Objectives = {
@@ -7588,7 +7588,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [2752] = {
-            Quest = [=[On Iron Pauldrons|2|32|32|0|0|0]=],
+            Quest = [=[On Iron Pauldrons|2|32|32|0|11|0]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
             Objectives = {
@@ -7601,7 +7601,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [2753] = {
-            Quest = [=[Trampled Under Foot|2|36|32|0|0|0]=],
+            Quest = [=[Trampled Under Foot|2|36|32|0|11|0]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
             Objectives = {
@@ -7611,7 +7611,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [2754] = {
-            Quest = [=[Horns of Frenzy|2|36|32|0|0|0]=],
+            Quest = [=[Horns of Frenzy|2|36|32|0|11|0]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
             Objectives = {
@@ -7630,7 +7630,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [2755] = {
-            Quest = [=[Joys of Omosh|2|36|32|0|0|0]=],
+            Quest = [=[Joys of Omosh|2|36|32|0|11|0]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
             Objectives = {
@@ -8531,7 +8531,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [6983] = {
-            Quest = [=[You're a Mean One...|2|35|30|6984|0|0]=],
+            Quest = [=[You're a Mean One...|2|35|30|6984|186|0]=],
             Start = "13636|1416|32|35.44|72.46",
             End = "13418|1454|32|53.33|66.49",
             Objectives = {
@@ -8560,7 +8560,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [7043] = {
-            Quest = [=[You're a Mean One...|1|35|30|7045|0|0]=],
+            Quest = [=[You're a Mean One...|1|35|30|7045|186|0]=],
             Start = "13636|1416|32|35.44|72.46",
             End = "13433|1455|32|33.70|67.23",
             Objectives = {
@@ -8833,17 +8833,17 @@ function Nx.ModQuests:Data4()
             End = "15350|1454|32|80.68|30.51",
         },
         [8769] = {
-            Quest = [=[A Ticking Present||40|40|0|0|0]=],
+            Quest = [=[A Ticking Present||40|40|0|186|0]=],
             Start = "180748|1455|32|33.81|66.18",
             End = "180748|1455|32|33.81|66.18",
         },
         [8848] = {
-            Quest = [=[Fifteen Signets for War Supplies|1|39|30|0|0|0]=],
+            Quest = [=[Fifteen Signets for War Supplies|1|39|30|0|28|0]=],
             Start = "15701|1455|32|61.30|74.20",
             End = "15701|1455|32|61.30|74.20",
         },
         [8853] = {
-            Quest = [=[Fifteen Signets for War Supplies|2|39|30|0|0|0]=],
+            Quest = [=[Fifteen Signets for War Supplies|2|39|30|0|28|0]=],
             Start = "15700|1454|32|30.30|67.60",
             End = "15700|1454|32|30.30|67.60",
         },
@@ -9736,7 +9736,7 @@ function Nx.ModQuests:Data4()
             End = "4792|1445|32|55.44|26.27",
         },
         [11947] = {
-            Quest = [=[Striking Back||32|29|0|0|0]=],
+            Quest = [=[Striking Back||32|29|0|32|0]=],
             End = "26221|1458|32|66.90|13.53",
             Objectives = {
                 [1] = {

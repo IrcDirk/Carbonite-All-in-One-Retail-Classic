@@ -306,11 +306,14 @@ function Nx.Map:Init()
         Nx.EmulateTomTom()
     end
 
-    -- Sync with Blizzard's world map (skip during combat to avoid taint)
+    -- Seed our current map id from Blizzard's, but do NOT push it back via
+    -- WorldMapFrame:SetMapID(): we'd be setting the frame to the id we just
+    -- read (a no-op for the id) while re-running ALL of WorldMapFrame's data
+    -- providers from insecure code, tainting them -- later AreaPOI/QuestOffer
+    -- tooltips then throw "secret number" compares / SetPassThroughButtons
+    -- blocks. Carbonite reads the hovered map from Nx.Map.MouseIsOverMap and
+    -- never needs the Blizzard frame's id to be set by us.
     Nx.Map.UpdateMapID = WorldMapFrame.mapID
-    if Nx.Map.UpdateMapID and not InCombatLockdown() then
-        WorldMapFrame:SetMapID(Nx.Map.UpdateMapID)
-    end
 end
 
 ---

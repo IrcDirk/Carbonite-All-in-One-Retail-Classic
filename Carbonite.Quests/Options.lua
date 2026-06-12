@@ -448,6 +448,19 @@ function Nx.Quest:GetOptionsConfig()
                                 Nx.qdb.profile.Quest.MapWatchColorPerQ = not Nx.qdb.profile.Quest.MapWatchColorPerQ
                             end,
                         },
+                        qhidelocked = {
+                            order = 31.5,
+                            type = "toggle",
+                            name = L["Hide Locked Quest Givers"],
+                            width = "full",
+                            desc = L["Hide quest givers whose quests are still locked behind an unfinished prerequisite (otherwise they are dimmed and marked locked)"],
+                            get = function()
+                                return Nx.qdb.profile.Quest.HideLockedQuests
+                            end,
+                            set = function()
+                                Nx.qdb.profile.Quest.HideLockedQuests = not Nx.qdb.profile.Quest.HideLockedQuests
+                            end,
+                        },
                         qttlcols = {
                             order = 32,
                             type = "range",

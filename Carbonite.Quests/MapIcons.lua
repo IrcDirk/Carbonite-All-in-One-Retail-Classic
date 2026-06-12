@@ -289,20 +289,39 @@ function Nx.Quest:UpdateIcons (map)
                         -- sites below still use the pool-stamp
                         -- GetIconStatic path until they're ported.
                         local wx, wy = map:GetWorldPos (mapId, x, y)
+                        -- Tint the available-quest "!": holiday/event quests
+                        -- (category in Nx.QuestCategoryHoliday) get GREEN,
+                        -- daily/weekly (Nx.QuestFreq) get BLUE. Holiday wins
+                        -- when a daily is also part of an event. nil = default
+                        -- white. Tables are absent until the metadata data
+                        -- files load, so both lookups are guarded.
+                        local exVC
+                        local qCat = Quest:UnpackCategory (quest["Quest"])
+                        if qCat and Nx.QuestCategoryHoliday and Nx.QuestCategoryHoliday[qCat] then
+                            exVC = {.4, 1, .4, 1}          -- holiday/event: green
+                        elseif Nx.QuestFreq and Nx.QuestFreq[trackId] then
+                            exVC = {.45, .7, 1, 1}         -- daily/weekly: blue
+                        end
                         if Nx.Quest.AddPOI then
                             local tip = format (L["%s\nStart: %s (%.1f %.1f)"], qname, startName, x, y)
                             Nx.Quest:AddPOI(wx, wy, {
-                                tip      = tip,
-                                tex      = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconExclaim",
-                                NXType   = 9000,
-                                NXData   = cur,
-                                mapID    = mapId,
+                                tip         = tip,
+                                tex         = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconExclaim",
+                                NXType      = 9000,
+                                NXData      = cur,
+                                mapID       = mapId,
+                                vertexColor = exVC,
                             })
                         else
                             local f = map:GetIconStatic (4)
                             if map:ClipFrameByMapType (f, wx, wy, navscale, navscale, 0) then
                                 f.NxTip = format (L["%s\nStart: %s (%.1f %.1f)"], qname, startName, x, y)
                                 f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconExclaim")
+                                if exVC then
+                                    f.texture:SetVertexColor (exVC[1], exVC[2], exVC[3], exVC[4])
+                                else
+                                    f.texture:SetVertexColor (1, 1, 1, 1)
+                                end
                             end
                         end
                     end

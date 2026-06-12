@@ -7543,7 +7543,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [2751] = {
-            Quest = [=[Barbaric Battlements|2|32|32|0|0|2710]=],
+            Quest = [=[Barbaric Battlements|2|32|32|0|11|2710]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
             Objectives = {
@@ -7656,22 +7656,22 @@ function Nx.ModQuests:Data4()
             },
         },
         [2752] = {
-            Quest = [=[On Iron Pauldrons|2|32|32|0|0|2710]=],
+            Quest = [=[On Iron Pauldrons|2|32|32|0|11|2710]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
         },
         [2753] = {
-            Quest = [=[Trampled Under Foot|2|36|32|0|0|3500]=],
+            Quest = [=[Trampled Under Foot|2|36|32|0|11|3500]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
         },
         [2754] = {
-            Quest = [=[Horns of Frenzy|2|36|32|0|0|3500]=],
+            Quest = [=[Horns of Frenzy|2|36|32|0|11|3500]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
         },
         [2755] = {
-            Quest = [=[Joys of Omosh|2|36|32|0|0|350]=],
+            Quest = [=[Joys of Omosh|2|36|32|0|11|350]=],
             Start = "7790|1454|32|79.24|22.40",
             End = "7790|1454|32|79.24|22.40",
             Objectives = {
@@ -8812,7 +8812,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [7063] = {
-            Quest = [=[The Feast of Winter Veil|1|36|36|0|0|955]=],
+            Quest = [=[The Feast of Winter Veil|1|36|36|0|186|955]=],
             Start = "2916|1455|32|77.54|11.82",
             End = "2784|1455|32|39.09|56.20",
         },
@@ -9544,7 +9544,7 @@ function Nx.ModQuests:Data4()
             End = "14781|1413|32|46.60|8.41",
         },
         [7885] = {
-            Quest = [=[Armor Kits||40|40|0|0|0]=],
+            Quest = [=[Armor Kits||40|40|0|24|0]=],
             Start = "14833|1412|32|36.16|35.18",
             End = "14833|1412|32|36.16|35.18",
             Objectives = {
@@ -9591,12 +9591,12 @@ function Nx.ModQuests:Data4()
             End = "14733|1440|32|61.85|83.90",
         },
         [7893] = {
-            Quest = [=[Rituals of Strength||40|40|0|0|0]=],
+            Quest = [=[Rituals of Strength||40|40|0|24|0]=],
             Start = "14832|1412|32|37.87|39.83",
             End = "14832|1412|32|37.87|39.83",
         },
         [7898] = {
-            Quest = [=[Thorium Widget||40|40|0|0|0]=],
+            Quest = [=[Thorium Widget||40|40|0|24|0]=],
             Start = "14841|1412|32|37.12|37.31",
             End = "14841|1412|32|37.12|37.31",
             Objectives = {
@@ -9606,7 +9606,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [7903] = {
-            Quest = [=[Evil Bat Eyes||40|40|0|0|0]=],
+            Quest = [=[Evil Bat Eyes||40|40|0|24|0]=],
             Start = "14829|1412|32|37.54|39.63",
             End = "14829|1412|32|37.54|39.63",
             Objectives = {
@@ -9726,12 +9726,12 @@ function Nx.ModQuests:Data4()
             End = "14781|1413|32|46.60|8.41",
         },
         [7939] = {
-            Quest = [=[More Dense Grinding Stones||40|40|0|0|0]=],
+            Quest = [=[More Dense Grinding Stones||40|40|0|24|0]=],
             Start = "14833|1412|32|36.16|35.18",
             End = "14832|1412|32|37.87|39.83",
         },
         [7941] = {
-            Quest = [=[More Armor Kits||40|40|0|0|0]=],
+            Quest = [=[More Armor Kits||40|40|0|24|0]=],
             Start = "14833|1412|32|36.16|35.18",
             End = "14833|1412|32|36.16|35.18",
             Objectives = {
@@ -9773,7 +9773,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [7942] = {
-            Quest = [=[More Thorium Widgets||40|40|0|0|0]=],
+            Quest = [=[More Thorium Widgets||40|40|0|24|0]=],
             Start = "14841|1412|32|37.12|37.31",
             End = "14841|1412|32|37.12|37.31",
             Objectives = {
@@ -9783,7 +9783,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [7943] = {
-            Quest = [=[More Bat Eyes||40|40|0|0|0]=],
+            Quest = [=[More Bat Eyes||40|40|0|24|0]=],
             Start = "14829|1412|32|37.54|39.63",
             End = "14829|1412|32|37.54|39.63",
             Objectives = {
@@ -9926,7 +9926,7 @@ function Nx.ModQuests:Data4()
             End = "15021|1417|32|73.25|29.73",
         },
         [8222] = {
-            Quest = [=[Glowing Scorpid Blood||40|40|0|0|0]=],
+            Quest = [=[Glowing Scorpid Blood||40|40|0|24|0]=],
             Start = "14829|1412|32|37.54|39.63",
             End = "14829|1412|32|37.54|39.63",
             Objectives = {
@@ -10031,7 +10031,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [8223] = {
-            Quest = [=[More Glowing Scorpid Blood||40|40|0|0|0]=],
+            Quest = [=[More Glowing Scorpid Blood||40|40|0|24|0]=],
             Start = "14829|1412|32|37.54|39.63",
             End = "14829|1412|32|37.54|39.63",
             Objectives = {
@@ -10180,7 +10180,7 @@ function Nx.ModQuests:Data4()
             Quest = [=[OLD Conquering Arathi Basin|2|39|30|0|0|2050]=],
         },
         [8746] = {
-            Quest = [=[Metzen the Reindeer||40|40|0|0|3250]=],
+            Quest = [=[Metzen the Reindeer||40|40|0|186|3250]=],
             Start = "13418|1454|32|53.33|66.49",
             End = "13418|1454|32|53.33|66.49",
             Objectives = {
@@ -10219,7 +10219,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [8762] = {
-            Quest = [=[Metzen the Reindeer||40|40|0|0|3250]=],
+            Quest = [=[Metzen the Reindeer||40|40|0|186|3250]=],
             Start = "13433|1455|32|33.70|67.23",
             End = "13433|1455|32|33.70|67.23",
             Objectives = {
@@ -10258,7 +10258,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [8763] = {
-            Quest = [=[The Hero of the Day|1|40|40|0|0|0]=],
+            Quest = [=[The Hero of the Day|1|40|40|0|186|0]=],
             Start = "13433|1455|32|33.70|67.23",
             End = "180715|1954|32|62.53|80.89",
             Objectives = {
@@ -10356,12 +10356,12 @@ function Nx.ModQuests:Data4()
             },
         },
         [8769] = {
-            Quest = [=[A Ticking Present||40|40|0|0|0]=],
+            Quest = [=[A Ticking Present||40|40|0|186|0]=],
             Start = "180748|1455|32|33.81|66.18",
             End = "180748|1455|32|33.81|66.18",
         },
         [8799] = {
-            Quest = [=[The Hero of the Day|2|40|40|0|0|0]=],
+            Quest = [=[The Hero of the Day|2|40|40|0|186|0]=],
             Start = "13418|1454|32|53.33|66.49",
             End = "180715|1954|32|62.53|80.89",
             Objectives = {
@@ -10459,17 +10459,17 @@ function Nx.ModQuests:Data4()
             },
         },
         [8848] = {
-            Quest = [=[Fifteen Signets for War Supplies|1|39|30|0|0|0]=],
+            Quest = [=[Fifteen Signets for War Supplies|1|39|30|0|28|0]=],
             Start = "15701|1455|32|61.30|74.20",
             End = "15701|1455|32|61.30|74.20",
         },
         [8853] = {
-            Quest = [=[Fifteen Signets for War Supplies|1|39|30|0|0|0]=],
+            Quest = [=[Fifteen Signets for War Supplies|1|39|30|0|28|0]=],
             Start = "15700|1454|32|30.30|67.60",
             End = "15700|1454|32|30.30|67.60",
         },
         [8868] = {
-            Quest = [=[Elune's Blessing||40|40|0|0|4370]=],
+            Quest = [=[Elune's Blessing||40|40|0|29|4370]=],
             Start = "15864|1450|32|53.65|35.26",
             End = "15864|1450|32|53.65|35.26",
             Objectives = {
@@ -10479,7 +10479,7 @@ function Nx.ModQuests:Data4()
             },
         },
         [8879] = {
-            Quest = [=[Large Rockets||35|35|0|0|0]=],
+            Quest = [=[Large Rockets||35|35|0|29|0]=],
             Start = "15909|1450|32|53.79|35.32",
             End = "15909|1450|32|53.79|35.32",
         },
@@ -11563,15 +11563,15 @@ function Nx.ModQuests:Data4()
             End = "4792|1445|32|55.44|26.27",
         },
         [11400] = {
-            Quest = [=[Brewfest Riding Rams|1|40|40|0|0|0]=],
+            Quest = [=[Brewfest Riding Rams|1|40|40|0|33|0]=],
             End = "24468|1426|32|46.43|40.32",
         },
         [11419] = {
-            Quest = [=[Brewfest Riding Rams|2|40|40|0|0|0]=],
+            Quest = [=[Brewfest Riding Rams|2|40|40|0|33|0]=],
             End = "24510|1411|32|46.29|14.84",
         },
         [11947] = {
-            Quest = [=[Striking Back||32|0|0|0|0]=],
+            Quest = [=[Striking Back||32|0|0|32|0]=],
         },
     }
     return ModQuests

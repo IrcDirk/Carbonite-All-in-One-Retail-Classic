@@ -10,6 +10,9 @@
 
 Locales\locales.xml
 Data\Shared\QuestCats.lua
+Data\Shared\QuestFreq.lua
+Data\Shared\QuestReward.lua
+Data\Shared\QuestPrev.lua
 Data\mop\QuestNPC.lua
 Data\mop\QuestStartEnd.xml
 Data\mop\QuestData.xml

@@ -729,6 +729,33 @@ function Nx.Quest:IsDaily(checkID)
     return isdaily
 end
 
+-------------------------------------------------------------------------------
+-- Is a quest's prerequisite satisfied (offerable right now)?
+--
+-- Carbonite stores chain links forward as nextId; the generated Nx.QuestPrev
+-- table is the reverse (Nx.QuestPrev[B] = A means A.nextId == B, i.e. A must be
+-- completed before B is offered). A quest with no entry has no known
+-- prerequisite -> treated as offerable. Checking only the IMMEDIATE previous
+-- part is enough: you cannot have completed part N-1 without N-2 ... N-1.
+--
+-- Used to stop showing quest givers / list entries for later parts of a chain
+-- the player hasn't reached yet (e.g. "Worgen in the Woods (Part 2/3/4)" while
+-- still on Part 1). Completion is read from C_QuestLog.IsQuestFlaggedCompleted
+-- (reliable on retail AND classic) with a fallback to Carbonite's own status.
+-------------------------------------------------------------------------------
+
+function Nx.Quest:PrereqMet (qId)
+    local prev = Nx.QuestPrev and Nx.QuestPrev[qId]
+    if not prev then
+        return true
+    end
+    if C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted
+            and C_QuestLog.IsQuestFlaggedCompleted (prev) then
+        return true
+    end
+    return self:GetQuest (prev) == "C"
+end
+
 function Nx.Quest:ScanBlizzQuestDataTimer()
     if IS_BACKGROUND_WORLD_CACHING then
         return
@@ -977,13 +1004,23 @@ function Nx.Quest:CalcPreviousDone (qId)
 
             local id = (mungeId + 3) / 2 - 7
             local qc = q
-            while qc do
+            -- Guard against cycles in the nextId chain (e.g. A->B->A). Without
+            -- a visited set a looped chain spins forever -> "script ran too
+            -- long" watchdog kill (surfaces in NxSplit/UnpackNext), which
+            -- aborts this timer mid-run and stalls dependent updates. The
+            -- inner walk also needs a qc nil-guard (a dangling nextId would
+            -- otherwise deref nil qc["Quest"]).
+            local seen = {}
+            while qc and not seen[id] do
+                seen[id] = true
 
                 if id == qId then        -- Found me in chain? Mark before me complete
 
                     local id = (mungeId + 3) / 2 - 7
                     local qc = q
-                    while id ~= qId do
+                    local seen2 = {}
+                    while qc and id ~= qId and not seen2[id] do
+                        seen2[id] = true
 
                         local qStatus = Nx.Quest:GetQuest (id)
                         if qStatus ~= "C" then

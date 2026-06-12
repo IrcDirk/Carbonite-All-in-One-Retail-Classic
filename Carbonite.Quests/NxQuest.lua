@@ -405,6 +405,7 @@ Nx.Quest.defaults = {
             QuestFontShadow = false,                    -- Quest font drop shadow
             Enable = true,                              -- Enable quest module
             AddTooltip = true,                          -- Add quest info to tooltips
+            HideLockedQuests = false,                   -- Hide (vs dim) quest givers whose quests are locked behind an unfinished prerequisite
             AutoAccept = false,                         -- Auto-accept quests
             AutoTurnIn = false,                         -- Auto-turn-in quests
             AutoTurnInAC = false,                       -- Auto-turn-in self-completion

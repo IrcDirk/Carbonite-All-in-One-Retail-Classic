@@ -2156,7 +2156,7 @@ function Nx.ModQuests:Data3()
             End = "5641|66|32|52.6|54.2",
         },
         [1442] = {
-            Quest = [=[Seeking the Kor Gem|1|22|20|0|0|0]=],
+            Quest = [=[Seeking the Kor Gem|1|22|20|0|7|0]=],
             Start = "3649|62|32|37.4|40.2",
             End = "3649|62|32|37.4|40.2",
             Objectives = {
@@ -2256,7 +2256,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [1655] = {
-            Quest = [=[Bailor's Ore Shipment|1|22|20|0|0|0]=],
+            Quest = [=[Bailor's Ore Shipment|1|22|20|0|7|0]=],
             Start = "6241|48|32|36.0|45.0",
             End = "6241|48|32|36.0|45.0",
             Objectives = {
@@ -2266,11 +2266,11 @@ function Nx.ModQuests:Data3()
             },
         },
         [1657] = {
-            Quest = [=[Stinking Up Southshore||25|25|0|0|0]=],
+            Quest = [=[Stinking Up Southshore||25|25|0|89|0]=],
             End = "15197|18|32|55.87|69.81",
         },
         [1658] = {
-            Quest = [=[Crashing the Wickerman Festival|1|25|25|0|0|0]=],
+            Quest = [=[Crashing the Wickerman Festival|1|25|25|0|89|0]=],
             End = "15199|25|32|49.30|70.79",
         },
         [1699] = {
@@ -3341,7 +3341,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [6963] = {
-            Quest = [=[Stolen Winter Veil Treats|2|30|30|6983|0|0]=],
+            Quest = [=[Stolen Winter Veil Treats|2|30|30|6983|186|0]=],
             Start = "13418|85|32|52.53|77.05",
             End = "13636|25|32|42.34|41.15",
         },
@@ -3356,7 +3356,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [6983] = {
-            Quest = [=[You're a Mean One...|2|30|80|6984|0|0]=],
+            Quest = [=[You're a Mean One...|2|30|80|6984|186|0]=],
             Start = "13418|1|32|46.48|6.1",
             End = "13418|1|32|46.48|6.1",
             Objectives = {
@@ -3382,17 +3382,17 @@ function Nx.ModQuests:Data3()
             },
         },
         [6984] = {
-            Quest = [=[A Smokywood Pastures' Thank You!|2|30|30|0|0|0]=],
+            Quest = [=[A Smokywood Pastures' Thank You!|2|30|30|0|186|0]=],
             Start = "13445|1|32|45.6|6.56",
             End = "13445|1|32|45.6|6.56",
         },
         [7042] = {
-            Quest = [=[Stolen Winter Veil Treats|1|30|30|7043|0|0]=],
+            Quest = [=[Stolen Winter Veil Treats|1|30|30|7043|186|0]=],
             Start = "13434|87|32|33.66|67.26",
             End = "13636|25|32|42.34|41.15",
         },
         [7043] = {
-            Quest = [=[You're a Mean One...|1|30|80|7045|0|0]=],
+            Quest = [=[You're a Mean One...|1|30|80|7045|186|0]=],
             Start = "13636|21|32|87.12|54.26",
             End = "13433|27|32|63.63|30.2",
             Objectives = {
@@ -3415,7 +3415,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [7045] = {
-            Quest = [=[A Smokywood Pastures' Thank You!|1|30|30|0|0|0]=],
+            Quest = [=[A Smokywood Pastures' Thank You!|1|30|30|0|186|0]=],
             Start = "13433|27|32|63.63|30.2",
             End = "13444|27|32|63.57|29.8",
         },
@@ -3438,22 +3438,22 @@ function Nx.ModQuests:Data3()
             End = "14781|10|32|40.04|20.00",
         },
         [7884] = {
-            Quest = [=[Crocolisk Boy and the Bearded Murloc||30|30|0|0|0]=],
+            Quest = [=[Crocolisk Boy and the Bearded Murloc||30|30|0|24|0]=],
             Start = "14833|407|32|55.0|70.77",
             End = "14833|407|32|55.0|70.77",
         },
         [7892] = {
-            Quest = [=[Big Black Mace||30|30|0|0|0]=],
+            Quest = [=[Big Black Mace||30|30|0|24|0]=],
             Start = "14832|407|32|47.9|67.12",
             End = "14832|407|32|47.9|67.12",
         },
         [7897] = {
-            Quest = [=[Mechanical Repair Kits||30|30|0|0|0]=],
+            Quest = [=[Mechanical Repair Kits||30|30|0|24|0]=],
             Start = "14841|407|32|49.17|60.71",
             End = "14841|407|32|49.17|60.71",
         },
         [7902] = {
-            Quest = [=[Vibrant Plumes||30|30|0|0|0]=],
+            Quest = [=[Vibrant Plumes||30|30|0|24|0]=],
             Start = "14829|407|32|51.1|82.05",
             End = "14829|407|32|51.1|82.05",
             Objectives = {
@@ -3506,17 +3506,17 @@ function Nx.ModQuests:Data3()
             End = "14781|10|32|40.04|20.00",
         },
         [7932] = {
-            Quest = [=[12 Tickets - Lesser Darkmoon Prize||30|30|0|0|0]=],
+            Quest = [=[12 Tickets - Lesser Darkmoon Prize||30|30|0|24|0]=],
             Start = "14828|407|32|47.77|64.78",
             End = "14828|407|32|47.77|64.78",
         },
         [7935] = {
-            Quest = [=[10 Tickets - Last Month's Mutton||25|25|0|0|0]=],
+            Quest = [=[10 Tickets - Last Month's Mutton||25|25|0|24|0]=],
             Start = "14828|407|32|47.77|64.78",
             End = "14828|407|32|47.77|64.78",
         },
         [8149] = {
-            Quest = [=[Honoring a Hero|1|30|30|0|0|0]=],
+            Quest = [=[Honoring a Hero|1|30|30|0|185|0]=],
             Start = "15011|27|32|59.74|34.26",
             End = "15011|27|32|59.74|34.26",
             Objectives = {
@@ -3526,7 +3526,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [8150] = {
-            Quest = [=[Honoring a Hero|2|30|30|0|0|0]=],
+            Quest = [=[Honoring a Hero|2|30|30|0|185|0]=],
             Start = "15012|1|32|46.25|15.1",
             End = "15012|1|32|46.25|15.1",
             Objectives = {
@@ -3623,7 +3623,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [8322] = {
-            Quest = [=[Rotten Eggs|2|30|30|8409|0|0]=],
+            Quest = [=[Rotten Eggs|2|30|30|8409|89|0]=],
             End = "180570|274|32|-1.00|-1.00",
         },
         [8370] = {
@@ -3632,7 +3632,7 @@ function Nx.ModQuests:Data3()
             End = "15350|123|32|50.02|15.16",
         },
         [8373] = {
-            Quest = [=[The Power of Pine||25|25|0|0|0]=],
+            Quest = [=[The Power of Pine||25|25|0|89|0]=],
             End = "15199|25|32|49.30|70.79",
         },
         [8374] = {
@@ -3661,7 +3661,7 @@ function Nx.ModQuests:Data3()
             End = "15351|89|32|58.02|34.52",
         },
         [8409] = {
-            Quest = [=[Ruined Kegs|2|30|30|0|0|0]=],
+            Quest = [=[Ruined Kegs|2|30|30|0|89|0]=],
             End = "15197|18|32|55.87|69.81",
         },
         [8426] = {
@@ -3675,17 +3675,17 @@ function Nx.ModQuests:Data3()
             End = "15350|123|32|50.02|15.16",
         },
         [8847] = {
-            Quest = [=[Ten Signets for War Supplies|1|29|20|0|0|0]=],
+            Quest = [=[Ten Signets for War Supplies|1|29|20|0|28|0]=],
             Start = "15701|87|32|61.3|74.2",
             End = "15701|87|32|61.3|74.2",
         },
         [8852] = {
-            Quest = [=[Ten Signets for War Supplies|2|29|20|0|0|0]=],
+            Quest = [=[Ten Signets for War Supplies|2|29|20|0|28|0]=],
             Start = "15700|85|32|30.3|67.6",
             End = "15700|85|32|30.3|67.6",
         },
         [8876] = {
-            Quest = [=[Small Rockets||25|25|0|0|0]=],
+            Quest = [=[Small Rockets||25|25|0|29|0]=],
             Start = "15909|80|32|53.79|35.32",
             End = "15909|80|32|53.79|35.32",
         },
@@ -3861,7 +3861,7 @@ function Nx.ModQuests:Data3()
             End = "16802|110|32|54.0|20.4",
         },
         [9388] = {
-            Quest = [=[Flickering Flames in Kalimdor||25|1|0|0|0]=],
+            Quest = [=[Flickering Flames in Kalimdor||25|1|0|32|0]=],
             Start = "16818|111|32|62.16|32.04",
             End = "16788|41|32|56.4|92.0",
             Objectives = {
@@ -3880,7 +3880,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [9389] = {
-            Quest = [=[Flickering Flames in the Eastern Kingdoms||25|1|0|0|0]=],
+            Quest = [=[Flickering Flames in the Eastern Kingdoms||25|1|0|32|0]=],
             Start = "16818|111|32|62.16|32.04",
             End = "16788|41|32|56.4|92.0",
             Objectives = {
@@ -4133,7 +4133,7 @@ function Nx.ModQuests:Data3()
             Quest = [=[Rogues of the Shattered Hand|2|24|20|2460|0|0]=],
         },
         [11917] = {
-            Quest = [=[Striking Back||22|16|0|0|0]=],
+            Quest = [=[Striking Back||22|16|0|32|0]=],
             Start = "26221|90|32|66.9|13.53",
             End = "26221|90|32|66.9|13.53",
             Objectives = {
@@ -4144,7 +4144,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [12798] = {
-            Quest = [=[Swords Deck||25|20|0|0|0]=],
+            Quest = [=[Swords Deck||25|20|0|34|0]=],
             End = "30481|407|32|-1.0|-1.0",
         },
         [13594] = {
@@ -5586,7 +5586,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [24647] = {
-            Quest = [=[Crushing the Crown|2|23|23|0|0|0]=],
+            Quest = [=[Crushing the Crown|2|23|23|0|41|0]=],
             Start = "37172|85|32|50.7|65.8",
             End = "37172|85|32|50.7|65.8",
             Objectives = {
@@ -5602,7 +5602,7 @@ function Nx.ModQuests:Data3()
             },
         },
         [24660] = {
-            Quest = [=[Crushing the Crown|1|23|23|0|0|0]=],
+            Quest = [=[Crushing the Crown|1|23|23|0|41|0]=],
             Start = "38066|37|32|25.39|40.1",
             End = "38066|37|32|25.39|40.1",
             Objectives = {

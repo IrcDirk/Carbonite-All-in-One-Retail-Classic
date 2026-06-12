@@ -21,10 +21,10 @@ function Nx.ModQuests:Data0()
             Quest = [=[FLAG - OFF THE RAILS||0|0|0|0|0]=],
         },
         [10960] = {
-            Quest = [=[When I Grow Up...|2|0|0|0|0|0]=],
+            Quest = [=[When I Grow Up...|2|0|0|0|3|0]=],
         },
         [10968] = {
-            Quest = [=[Call on the Farseer|1|0|0|0|0|0]=],
+            Quest = [=[Call on the Farseer|1|0|0|0|3|0]=],
             Objectives = {
                 [1] = {
                     "nil|1947|32|30.32|29.16|9.62|9.62",
@@ -32,25 +32,25 @@ function Nx.ModQuests:Data0()
             },
         },
         [11131] = {
-            Quest = [=[Stop the Fires!||0|1|0|0|80]=],
+            Quest = [=[Stop the Fires!||0|1|0|89|80]=],
             Start = "24519|1426|32|46.19|53.14",
             End = "24519|1426|32|46.19|53.14",
         },
         [11219] = {
-            Quest = [=[Stop the Fires!||0|1|0|0|80]=],
+            Quest = [=[Stop the Fires!||0|1|0|89|80]=],
             Start = "23973|1420|32|60.87|53.05",
             End = "23973|1420|32|60.87|53.05",
         },
         [11242] = {
-            Quest = [=[Free at Last!|1|0|0|0|0|0]=],
+            Quest = [=[Free at Last!|1|0|0|0|89|0]=],
         },
         [11318] = {
-            Quest = [=[Now This is Ram Racing... Almost.|1|0|1|0|0|0]=],
+            Quest = [=[Now This is Ram Racing... Almost.|1|0|1|0|33|0]=],
             Start = "23558|1426|32|46.57|40.30",
             End = "23558|1426|32|46.57|40.30",
         },
         [11360] = {
-            Quest = [=[Fire Brigade Practice||0|1|0|0|0]=],
+            Quest = [=[Fire Brigade Practice||0|1|0|89|0]=],
             Start = "24519|1426|32|46.19|53.14",
             End = "24519|1426|32|46.19|53.14",
             Objectives = {
@@ -61,10 +61,10 @@ function Nx.ModQuests:Data0()
             },
         },
         [11403] = {
-            Quest = [=[Free at Last!|2|0|0|0|0|0]=],
+            Quest = [=[Free at Last!|2|0|0|0|89|0]=],
         },
         [11439] = {
-            Quest = [=[Fire Brigade Practice||0|1|0|0|0]=],
+            Quest = [=[Fire Brigade Practice||0|1|0|89|0]=],
             Start = "24519|1426|32|46.19|53.14",
             End = "24519|1426|32|46.19|53.14",
             Objectives = {
@@ -75,7 +75,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11440] = {
-            Quest = [=[Fire Brigade Practice||0|1|0|0|0]=],
+            Quest = [=[Fire Brigade Practice||0|1|0|89|0]=],
             Start = "24519|1426|32|46.19|53.14",
             End = "24519|1426|32|46.19|53.14",
             Objectives = {
@@ -86,7 +86,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11449] = {
-            Quest = [=[Fire Training||0|1|0|0|0]=],
+            Quest = [=[Fire Training||0|1|0|89|0]=],
             Start = "23973|1420|32|60.87|53.05",
             End = "23973|1420|32|60.87|53.05",
             Objectives = {
@@ -97,7 +97,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11450] = {
-            Quest = [=[Fire Training||0|1|0|0|0]=],
+            Quest = [=[Fire Training||0|1|0|89|0]=],
             Start = "23973|1420|32|60.87|53.05",
             End = "23973|1420|32|60.87|53.05",
             Objectives = {
@@ -111,23 +111,23 @@ function Nx.ModQuests:Data0()
             Quest = [=[Sunwell Daily Portal Flag||0|0|0|0|0]=],
         },
         [11580] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187559|1421|32|49.64|38.56",
         },
         [11581] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187564|1436|32|56.06|53.88",
         },
         [11583] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25910|1436|32|55.92|53.48",
         },
         [11584] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25939|1421|32|49.69|38.32",
         },
         [11657] = {
-            Quest = [=[Torch Catching||0|0|0|0|0]=],
+            Quest = [=[Torch Catching||0|0|0|32|0]=],
             Objectives = {
                 [1] = {
                     "nil|1453|32|37.17|59.26|9.62|9.62",
@@ -135,7 +135,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11731] = {
-            Quest = [=[Torch Tossing|1|0|1|11657|0|80]=],
+            Quest = [=[Torch Tossing|1|0|1|11657|32|80]=],
             Start = "25975|1438|32|56.56|92.09",
             Objectives = {
                 [1] = {
@@ -144,497 +144,497 @@ function Nx.ModQuests:Data0()
             },
         },
         [11732] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187559|1421|32|49.64|38.56",
         },
         [11734] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187916|1440|32|37.83|55.00",
         },
         [11735] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187917|1943|32|44.67|52.68",
         },
         [11736] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187919|1949|32|41.76|66.04",
         },
         [11737] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187920|1419|32|59.00|17.23",
         },
         [11738] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187921|1950|32|55.88|68.45",
         },
         [11739] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187922|1428|32|80.47|62.21",
         },
         [11740] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187923|1439|32|37.08|45.93",
         },
         [11741] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187924|1443|32|65.88|16.93",
         },
         [11742] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187925|1426|32|46.59|46.53",
         },
         [11743] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187926|1431|32|73.32|54.90",
         },
         [11744] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187927|1445|32|62.03|40.41",
         },
         [11745] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187564|1436|32|56.06|53.88",
         },
         [11746] = {
-            Quest = [=[Desecrate this Fire!|2|0|1|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|1|0|32|80]=],
             End = "187929|1444|32|28.16|43.91",
         },
         [11747] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187930|1944|32|61.97|58.36",
         },
         [11748] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187931|1424|32|50.39|47.07",
         },
         [11749] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187564|1436|32|56.06|53.88",
         },
         [11750] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187933|1951|32|49.67|69.72",
         },
         [11751] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187934|1433|32|24.85|59.35",
         },
         [11752] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187935|1948|32|39.56|54.43",
         },
         [11753] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187936|1438|32|54.90|60.48",
         },
         [11754] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187937|1952|32|54.22|55.55",
         },
         [11755] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187559|1421|32|49.64|38.56",
         },
         [11756] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187939|1422|32|43.49|82.92",
         },
         [11757] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187940|1437|32|13.26|47.18",
         },
         [11758] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187941|1946|32|68.82|52.00",
         },
         [11759] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187942|1953|32|31.10|62.86",
         },
         [11760] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187943|1451|32|57.72|34.93",
         },
         [11761] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187944|1434|32|33.83|73.32",
         },
         [11762] = {
-            Quest = [=[Desecrate this Fire!|2|0|1|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|1|0|32|80]=],
             End = "187945|1446|32|52.76|29.17",
         },
         [11763] = {
-            Quest = [=[Desecrate this Fire!|2|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|2|0|0|0|32|80]=],
             End = "187946|1452|32|62.68|35.35",
         },
         [11764] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187947|1417|32|74.03|41.73",
         },
         [11765] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187948|1440|32|70.02|69.16",
         },
         [11766] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187559|1421|32|49.64|38.56",
         },
         [11767] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187955|1949|32|50.01|59.00",
         },
         [11768] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187956|1428|32|62.13|28.95",
         },
         [11769] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187957|1443|32|26.19|77.20",
         },
         [11770] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187958|1411|32|52.03|47.17",
         },
         [11771] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187959|1445|32|33.28|30.78",
         },
         [11772] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187960|1941|32|46.39|50.40",
         },
         [11773] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187961|1444|32|72.44|47.62",
         },
         [11774] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187962|1942|32|47.07|26.05",
         },
         [11775] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187963|1944|32|57.16|41.82",
         },
         [11776] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187964|1424|32|58.42|25.06",
         },
         [11777] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187965|1412|32|52.02|60.04",
         },
         [11778] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187966|1951|32|51.07|34.01",
         },
         [11779] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187967|1948|32|33.49|30.33",
         },
         [11780] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187968|1442|32|50.56|60.30",
         },
         [11781] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187969|1435|32|46.86|46.47",
         },
         [11782] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187970|1952|32|51.94|43.17",
         },
         [11783] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187971|1413|32|52.16|27.91",
         },
         [11784] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187972|1425|32|76.69|74.60",
         },
         [11785] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187973|1441|32|42.42|52.75",
         },
         [11786] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187559|1421|32|49.64|38.56",
         },
         [11787] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187975|1946|32|35.57|51.74",
         },
         [11799] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187949|1953|32|32.29|68.26",
         },
         [11800] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187950|1451|32|46.47|44.88",
         },
         [11801] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187951|1434|32|32.99|75.41",
         },
         [11802] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187952|1446|32|49.83|27.12",
         },
         [11803] = {
-            Quest = [=[Desecrate this Fire!|1|0|0|0|0|80]=],
+            Quest = [=[Desecrate this Fire!|1|0|0|0|32|80]=],
             End = "187953|1452|32|59.83|35.44",
         },
         [11804] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25887|1417|32|50.02|44.83",
         },
         [11805] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25883|1440|32|37.79|54.74",
         },
         [11806] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25888|1943|32|44.47|52.51",
         },
         [11807] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25889|1949|32|41.57|65.90",
         },
         [11808] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25890|1419|32|59.28|17.01",
         },
         [11809] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25891|1950|32|55.81|67.88",
         },
         [11810] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25892|1428|32|80.53|62.65",
         },
         [11811] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25893|1439|32|36.96|46.17",
         },
         [11812] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25894|1443|32|66.12|17.09",
         },
         [11813] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25895|1426|32|46.70|46.94",
         },
         [11814] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25896|1431|32|73.69|54.61",
         },
         [11815] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25897|1445|32|61.82|40.45",
         },
         [11816] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25898|1429|32|43.47|62.63",
         },
         [11817] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25899|1444|32|28.31|43.89",
         },
         [11818] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25900|1944|32|62.17|58.29",
         },
         [11819] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25901|1424|32|50.43|47.59",
         },
         [11820] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25902|1432|32|32.56|40.95",
         },
         [11821] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25903|1951|32|49.61|69.47",
         },
         [11822] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25904|1433|32|25.23|58.97",
         },
         [11823] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25905|1948|32|39.62|54.64",
         },
         [11824] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25906|1438|32|55.06|60.42",
         },
         [11825] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25907|1952|32|54.06|55.52",
         },
         [11826] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25908|1425|32|14.34|50.07",
         },
         [11827] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25909|1422|32|43.48|82.26",
         },
         [11828] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25911|1437|32|13.46|47.06",
         },
         [11829] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25912|1946|32|69.05|51.89",
         },
         [11830] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25913|1953|32|31.21|62.66",
         },
         [11831] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25914|1451|32|57.48|35.24",
         },
         [11832] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25915|1434|32|33.90|73.52",
         },
         [11833] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25916|1446|32|52.76|29.37",
         },
         [11834] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25917|1452|32|62.55|35.42",
         },
         [11835] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25918|1953|32|32.11|68.31",
         },
         [11836] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25919|1451|32|46.45|44.45",
         },
         [11837] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25920|1434|32|32.93|75.22",
         },
         [11838] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25921|1446|32|49.83|26.93",
         },
         [11839] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25922|1452|32|59.87|35.65",
         },
         [11840] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25923|1417|32|74.22|41.47",
         },
         [11841] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25884|1440|32|70.15|69.30",
         },
         [11842] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25925|1418|32|4.70|48.61",
         },
         [11843] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25926|1949|32|49.92|58.66",
         },
         [11844] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25927|1428|32|61.76|29.06",
         },
         [11845] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25928|1443|32|26.14|76.91",
         },
         [11846] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25929|1411|32|52.18|47.32",
         },
         [11847] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25930|1445|32|33.43|30.91",
         },
         [11848] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25931|1941|32|46.40|50.60",
         },
         [11849] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25932|1444|32|72.37|47.79",
         },
         [11850] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25933|1942|32|46.90|26.34",
         },
         [11851] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25934|1944|32|57.11|42.04",
         },
         [11852] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25936|1412|32|51.82|59.82",
         },
         [11853] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25935|1424|32|58.58|25.43",
         },
         [11854] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25937|1951|32|50.91|34.14",
         },
         [11855] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25938|1948|32|33.40|30.53",
         },
         [11856] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25940|1442|32|50.49|60.47",
         },
         [11857] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25941|1435|32|46.70|46.98",
         },
         [11858] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25942|1952|32|52.03|42.94",
         },
         [11859] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25943|1413|32|52.22|28.05",
         },
         [11860] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25944|1425|32|76.64|74.96",
         },
         [11861] = {
-            Quest = [=[Honor the Flame||0|1|0|0|40]=],
+            Quest = [=[Honor the Flame||0|1|0|32|40]=],
             End = "25945|1441|32|42.29|52.94",
         },
         [11862] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25946|1420|32|57.22|51.75",
         },
         [11863] = {
-            Quest = [=[Honor the Flame||0|0|0|0|40]=],
+            Quest = [=[Honor the Flame||0|0|0|32|40]=],
             End = "25947|1946|32|35.45|51.61",
         },
         [11874] = {
             Quest = [=[Upper Deck Promo - Rocket Mount||0|0|0|0|0]=],
         },
         [11883] = {
-            Quest = [=[Fire Dancing?||0|0|0|0|10]=],
+            Quest = [=[Fire Dancing?||0|0|0|32|10]=],
         },
         [11886] = {
-            Quest = [=[Unusual Activity||0|16|11891|0|1150]=],
+            Quest = [=[Unusual Activity||0|16|11891|32|1150]=],
             Start = "26221|1438|32|56.10|92.16",
         },
         [11891] = {
-            Quest = [=[An Innocent Disguise||0|0|12012|0|0]=],
+            Quest = [=[An Innocent Disguise||0|0|12012|32|0]=],
             Objectives = {
                 [1] = {
                     "nil|1440|32|8.67|11.69|9.62|9.62",
@@ -642,7 +642,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11921] = {
-            Quest = [=[More Torch Tossing||0|0|0|0|0]=],
+            Quest = [=[More Torch Tossing||0|0|0|32|0]=],
             Objectives = {
                 [1] = {
                     "nil|1453|32|38.72|61.00|9.62|9.62",
@@ -650,7 +650,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11922] = {
-            Quest = [=[Torch Tossing|2|0|0|11923|0|80]=],
+            Quest = [=[Torch Tossing|2|0|0|11923|32|80]=],
             Objectives = {
                 [1] = {
                     "nil|1458|32|68.10|7.16|9.62|9.62",
@@ -658,7 +658,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11923] = {
-            Quest = [=[Torch Catching||0|0|0|0|0]=],
+            Quest = [=[Torch Catching||0|0|0|32|0]=],
             Objectives = {
                 [1] = {
                     "nil|1453|32|37.17|59.26|9.62|9.62",
@@ -666,7 +666,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11924] = {
-            Quest = [=[More Torch Catching||0|0|0|0|0]=],
+            Quest = [=[More Torch Catching||0|0|0|32|0]=],
             Objectives = {
                 [1] = {
                     "nil|1947|32|41.15|21.83|9.62|9.62",
@@ -674,7 +674,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11925] = {
-            Quest = [=[More Torch Catching||0|0|0|0|0]=],
+            Quest = [=[More Torch Catching||0|0|0|32|0]=],
             Objectives = {
                 [1] = {
                     "nil|1947|32|41.15|21.83|9.62|9.62",
@@ -682,7 +682,7 @@ function Nx.ModQuests:Data0()
             },
         },
         [11926] = {
-            Quest = [=[More Torch Tossing||0|0|0|0|0]=],
+            Quest = [=[More Torch Tossing||0|0|0|32|0]=],
             Objectives = {
                 [1] = {
                     "nil|1453|32|38.72|61.00|9.62|9.62",
@@ -693,7 +693,7 @@ function Nx.ModQuests:Data0()
             Quest = [=[FLAG - all torch return quests are complete||0|0|0|0|0]=],
         },
         [11972] = {
-            Quest = [=[Shards of Ahune||0|65|0|0|11000]=],
+            Quest = [=[Shards of Ahune||0|65|0|32|11000]=],
         },
         [11976] = {
             Quest = [=[Ice Shards||0|0|0|0|11000]=],

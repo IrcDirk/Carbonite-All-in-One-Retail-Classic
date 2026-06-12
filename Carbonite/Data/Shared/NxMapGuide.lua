@@ -1637,7 +1637,8 @@ function Nx.Map.Guide:UpdateMapIcons()
                                     and bit.band(req, playerClassBit) ~= 0)
                             if classOK and lvl >= minLvl and lvl <= maxLvl then
                                 local col = "|r"
-                                local daily = Quest.DailyIds[qId] or Quest.DailyDungeonIds[qId]
+                                local include = true
+                                local daily = Nx.QuestFreq and Nx.QuestFreq[qId]
                                 anyDaily = anyDaily or daily
                                 local status, qTime = Nx.Quest:GetQuest (qId)
                                 if daily then
@@ -1645,38 +1646,47 @@ function Nx.Map.Guide:UpdateMapIcons()
                                     show = true
                                 elseif status == "C" then
                                     col = "|cff808080"
-                                else
-                                    if qIds[qId] then
-                                        col = "|cff80f080"
-                                    end
+                                elseif qIds[qId] then
+                                    col = "|cff80f080"            -- active (in log)
                                     show = true
-                                end
-                                local qcati = Quest:UnpackCategory (quest["Quest"])
-                                if qcati > 0 then
-                                    qname = qname .. " <" .. Nx.QuestCategory[qcati] .. ">"
-                                end
-                                s = format ("%s\n|cffbfbfbf%d%s %s", s, lvl, col, qname)
-                                if quest.CNum then
-                                    s = s .. format (" (Part %d)", quest.CNum)
-                                end
-                                if daily then
-                                    s = s .. (Quest.DailyDungeonIds[qId] and " (Dungeon Daily" or " (Daily")
-                                    local typ, money, rep, req = Nx.Split ("^", daily)
-                                    if rep and #rep > 0 then
-                                        s = s .. ", "
-                                        for n = 0, 1 do
-                                            local i = n * 4 + 1
-                                            local repChar = strsub (rep or "", i, i)
-                                            if repChar == "" then
-                                                break
-                                            end
-                                            s = s .. " " ..  Quest.Reputations[repChar]
-                                        end
+                                elseif not Nx.Quest.PrereqMet or Nx.Quest:PrereqMet (qId) then
+                                    show = true                   -- offerable now (or PrereqMet unavailable -> don't filter)
+                                else
+                                    -- Locked behind an earlier chain part the
+                                    -- player hasn't completed yet. Hide it (or
+                                    -- dim it as "come back later") so a giver
+                                    -- with only locked quests stops showing.
+                                    if Nx.qdb.profile.Quest.HideLockedQuests then
+                                        include = false
+                                    else
+                                        col = "|cff585858"
+                                        qname = qname .. " (locked)"
+                                        show = true
                                     end
-                                    s = s .. ")"
                                 end
-                                if debugMap then
-                                    s = s .. format (" [%d]", qId)
+                                if include then
+                                    local qcati = Quest:UnpackCategory (quest["Quest"])
+                                    if qcati > 0 then
+                                        qname = qname .. " <" .. Nx.QuestCategory[qcati] .. ">"
+                                    end
+                                    s = format ("%s\n|cffbfbfbf%d%s %s", s, lvl, col, qname)
+                                    if quest.CNum then
+                                        s = s .. format (" (Part %d)", quest.CNum)
+                                    end
+                                    if daily then
+                                        s = s .. " (" .. (Quest.QuestFreqLabels[daily] or "Daily")
+                                        local rew = Nx.QuestReward and Nx.QuestReward[qId]
+                                        if rew and rew.r and #rew.r > 0 then
+                                            s = s .. ","
+                                            for _, rp in ipairs (rew.r) do
+                                                s = s .. " " .. rp[1]
+                                            end
+                                        end
+                                        s = s .. ")"
+                                    end
+                                    if debugMap then
+                                        s = s .. format (" [%d]", qId)
+                                    end
                                 end
                             end
                         end
@@ -1740,6 +1750,16 @@ function Nx.Map.Guide:UpdateMapIcons()
                 self:UpdateMapGeneralIcons (cont, showType, hideFac, tx, folder.Name, "!G")
             end
         end
+    end
+
+    -- A guide refresh (e.g. toggling "Show Quest Givers") re-stamps the guide
+    -- layers and triggers the KillShow pass that hides any pin NOT re-stamped
+    -- this render. The Notes integrations (RXP/Questie/HandyNotes/RareScanner)
+    -- skip re-stamping when their source data is unchanged (dirty-check), so
+    -- their pins get killed and stay gone until something changes. Bust their
+    -- caches here so they re-stamp on the next render and survive.
+    if Nx.Notes and Nx.Notes.BustIntegrationCache then
+        Nx.Notes:BustIntegrationCache ()
     end
 end
 

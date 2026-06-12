@@ -860,12 +860,12 @@ function Nx.ModQuests:Data1()
             },
         },
         [171] = {
-            Quest = [=[A Warden of the Alliance|1|10|10|0|0|0]=],
+            Quest = [=[A Warden of the Alliance|1|10|10|0|3|0]=],
             Start = "2142|1431|32|81.92|19.69",
             End = "14450|1453|32|56.32|53.99",
         },
         [172] = {
-            Quest = [=[Children's Week|2|10|10|0|0|0]=],
+            Quest = [=[Children's Week|2|10|10|0|3|0]=],
             Start = "14451|1454|32|70.72|25.19",
             End = "14444|1456|32|59.32|51.65",
         },
@@ -3225,7 +3225,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [558] = {
-            Quest = [=[Jaina's Autograph||10|10|0|0|0]=],
+            Quest = [=[Jaina's Autograph||10|10|0|3|0]=],
             Start = "14305|1457|32|41.21|43.05",
             End = "14305|1457|32|41.21|43.05",
             Objectives = {
@@ -5586,7 +5586,7 @@ function Nx.ModQuests:Data1()
             End = "3448|1413|32|52.26|31.93",
         },
         [910] = {
-            Quest = [=[Down at the Docks|2|10|10|0|0|0]=],
+            Quest = [=[Down at the Docks|2|10|10|0|3|0]=],
             Start = "14444|1456|32|59.32|51.65",
             End = "14444|1456|32|59.32|51.65",
             Objectives = {
@@ -5597,7 +5597,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [911] = {
-            Quest = [=[Gateway to the Frontier|2|10|10|0|0|0]=],
+            Quest = [=[Gateway to the Frontier|2|10|10|0|3|0]=],
             Start = "14444|1456|32|59.32|51.65",
             End = "14444|1456|32|59.32|51.65",
             Objectives = {
@@ -5607,7 +5607,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [915] = {
-            Quest = [=[You Scream, I Scream...|2|10|10|0|0|0]=],
+            Quest = [=[You Scream, I Scream...|2|10|10|0|3|0]=],
             Start = "14444|1456|32|59.32|51.65",
             End = "14444|1456|32|59.32|51.65",
             Objectives = {
@@ -5735,7 +5735,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [925] = {
-            Quest = [=[Cairne's Hoofprint|2|10|10|0|0|0]=],
+            Quest = [=[Cairne's Hoofprint|2|10|10|0|3|0]=],
             Start = "14444|1456|32|59.32|51.65",
             End = "14444|1456|32|59.32|51.65",
             Objectives = {
@@ -5897,7 +5897,7 @@ function Nx.ModQuests:Data1()
             End = "5900|1411|32|38.55|58.96",
         },
         [1468] = {
-            Quest = [=[Children's Week|1|10|10|0|0|0]=],
+            Quest = [=[Children's Week|1|10|10|0|3|0]=],
             Start = "14450|1453|32|56.32|53.99",
             End = "14305|1457|32|41.21|43.05",
         },
@@ -5943,7 +5943,7 @@ function Nx.ModQuests:Data1()
             End = "5675|1458|32|85.06|25.99",
         },
         [1479] = {
-            Quest = [=[The Bough of the Eternals|1|10|10|0|0|0]=],
+            Quest = [=[The Bough of the Eternals|1|10|10|0|3|0]=],
             Start = "14305|1457|32|41.21|43.05",
             End = "14305|1457|32|41.21|43.05",
             Objectives = {
@@ -6149,7 +6149,7 @@ function Nx.ModQuests:Data1()
             End = "5907|1413|32|56.03|19.89",
         },
         [1558] = {
-            Quest = [=[The Stonewrought Dam|1|10|10|0|0|0]=],
+            Quest = [=[The Stonewrought Dam|1|10|10|0|3|0]=],
             Start = "14305|1457|32|41.21|43.05",
             End = "14305|1457|32|41.21|43.05",
             Objectives = {
@@ -6159,7 +6159,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [1581] = {
-            Quest = [=[Elixirs for the Bladeleafs|1|8|4|0|0|0]=],
+            Quest = [=[Elixirs for the Bladeleafs|1|8|4|0|13|0]=],
             Start = "2083|1438|32|56.08|57.72",
             End = "2083|1438|32|56.08|57.72",
             Objectives = {
@@ -6296,7 +6296,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [1687] = {
-            Quest = [=[Spooky Lighthouse|1|10|10|0|0|0]=],
+            Quest = [=[Spooky Lighthouse|1|10|10|0|3|0]=],
             Start = "14305|1457|32|41.21|43.05",
             End = "14305|1457|32|41.21|43.05",
             Objectives = {
@@ -6341,7 +6341,7 @@ function Nx.ModQuests:Data1()
             End = "6122|1453|32|39.22|85.22",
         },
         [1800] = {
-            Quest = [=[Lordaeron Throne Room|2|10|10|0|0|0]=],
+            Quest = [=[Lordaeron Throne Room|2|10|10|0|3|0]=],
             Start = "14444|1456|32|59.32|51.65",
             End = "14444|1456|32|59.32|51.65",
             Objectives = {
@@ -6469,7 +6469,7 @@ function Nx.ModQuests:Data1()
             End = "332|1453|32|78.31|70.74",
         },
         [2206] = {
-            Quest = [=[Snatch and Grab|1|10|10|0|0|0]=],
+            Quest = [=[Snatch and Grab|1|10|10|0|16|0]=],
             Start = "332|1453|32|78.31|70.74",
             End = "332|1453|32|78.31|70.74",
             Objectives = {
@@ -7011,7 +7011,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [3861] = {
-            Quest = [=[CLUCK!||1|1|0|0|0]=],
+            Quest = [=[CLUCK!||1|1|0|4|0]=],
             Start = "620|1426|32|67.10|3.78",
             End = "620|1426|32|67.10|3.78",
             Objectives = {
@@ -7184,7 +7184,7 @@ function Nx.ModQuests:Data1()
             End = "3143|1411|32|42.06|68.33",
         },
         [4822] = {
-            Quest = [=[You Scream, I Scream...|1|10|10|0|0|0]=],
+            Quest = [=[You Scream, I Scream...|1|10|10|0|3|0]=],
             Start = "14305|1457|32|41.21|43.05",
             End = "14305|1457|32|41.21|43.05",
         },
@@ -7304,7 +7304,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [5502] = {
-            Quest = [=[A Warden of the Horde|2|10|10|0|0|0]=],
+            Quest = [=[A Warden of the Horde|2|10|10|0|3|0]=],
             Start = "14444|1456|32|59.32|51.65",
             End = "14451|1454|32|70.72|25.19",
         },
@@ -8718,12 +8718,12 @@ function Nx.ModQuests:Data1()
             Quest = [=[Launch the Attack!|2|1|1|0|0|0]=],
         },
         [6961] = {
-            Quest = [=[Great-father Winter is Here!|2|10|10|0|0|0]=],
+            Quest = [=[Great-father Winter is Here!|2|10|10|0|186|0]=],
             Start = "13418|1454|32|53.33|66.49",
             End = "13445|1454|32|52.49|69.18",
         },
         [6962] = {
-            Quest = [=[Treats for Great-father Winter|2|10|10|0|0|0]=],
+            Quest = [=[Treats for Great-father Winter|2|10|10|0|186|0]=],
             Start = "13445|1454|32|52.49|69.18",
             End = "13445|1454|32|52.49|69.18",
             Objectives = {
@@ -8754,32 +8754,32 @@ function Nx.ModQuests:Data1()
             },
         },
         [6964] = {
-            Quest = [=[The Reason for the Season|2|10|10|7061|0|0]=],
+            Quest = [=[The Reason for the Season|2|10|10|7061|186|0]=],
             Start = "9550|1454|32|50.85|65.26",
             End = "13417|1454|32|38.66|35.92",
         },
         [7021] = {
-            Quest = [=[Great-father Winter is Here!|2|10|10|0|0|0]=],
+            Quest = [=[Great-father Winter is Here!|2|10|10|0|186|0]=],
             Start = "13431|1456|32|43.80|58.80",
             End = "13445|1454|32|52.49|69.18",
         },
         [7022] = {
-            Quest = [=[Greatfather Winter is Here!|1|10|10|0|0|0]=],
+            Quest = [=[Greatfather Winter is Here!|1|10|10|0|186|0]=],
             Start = "13433|1455|32|33.70|67.23",
             End = "13444|1455|32|33.20|65.41",
         },
         [7023] = {
-            Quest = [=[Greatfather Winter is Here!|1|10|10|0|0|0]=],
+            Quest = [=[Greatfather Winter is Here!|1|10|10|0|186|0]=],
             Start = "13435|1453|32|62.24|70.29",
             End = "13444|1455|32|33.20|65.41",
         },
         [7024] = {
-            Quest = [=[Great-father Winter is Here!|2|10|10|0|0|0]=],
+            Quest = [=[Great-father Winter is Here!|2|10|10|0|186|0]=],
             Start = "13429|1458|32|68.24|38.86",
             End = "13445|1454|32|52.49|69.18",
         },
         [7025] = {
-            Quest = [=[Treats for Greatfather Winter|1|10|10|0|0|0]=],
+            Quest = [=[Treats for Greatfather Winter|1|10|10|0|186|0]=],
             Start = "13444|1455|32|33.20|65.41",
             End = "13444|1455|32|33.20|65.41",
             Objectives = {
@@ -8824,17 +8824,17 @@ function Nx.ModQuests:Data1()
             },
         },
         [7061] = {
-            Quest = [=[The Feast of Winter Veil|2|10|10|0|0|0]=],
+            Quest = [=[The Feast of Winter Veil|2|10|10|0|186|0]=],
             Start = "13417|1454|32|38.66|35.92",
             End = "3057|1456|32|60.30|51.68",
         },
         [7062] = {
-            Quest = [=[The Reason for the Season|1|10|10|7063|0|0]=],
+            Quest = [=[The Reason for the Season|1|10|10|7063|186|0]=],
             Start = "1365|1455|32|30.53|69.32",
             End = "2916|1455|32|77.54|11.82",
         },
         [7063] = {
-            Quest = [=[The Feast of Winter Veil|1|10|10|0|0|0]=],
+            Quest = [=[The Feast of Winter Veil|1|10|10|0|186|0]=],
             Start = "2916|1455|32|77.54|11.82",
             End = "2784|1455|32|39.09|56.20",
         },
@@ -8918,27 +8918,27 @@ function Nx.ModQuests:Data1()
             Quest = [=[Dimensional Ripper - Everlook||1|60|0|0|0]=],
         },
         [7881] = {
-            Quest = [=[Carnival Boots||1|1|0|0|0]=],
+            Quest = [=[Carnival Boots||1|1|0|24|0]=],
             Start = "14833|1952|32|33.82|35.96",
             End = "14833|1952|32|33.82|35.96",
         },
         [7882] = {
-            Quest = [=[Carnival Jerkins||10|10|0|0|0]=],
+            Quest = [=[Carnival Jerkins||10|10|0|24|0]=],
             Start = "14833|1952|32|33.82|35.96",
             End = "14833|1952|32|33.82|35.96",
         },
         [7889] = {
-            Quest = [=[Coarse Weightstone||1|1|0|0|0]=],
+            Quest = [=[Coarse Weightstone||1|1|0|24|0]=],
             Start = "14832|1952|32|34.84|35.15",
             End = "14832|1952|32|34.84|35.15",
         },
         [7890] = {
-            Quest = [=[Heavy Grinding Stone||10|10|0|0|0]=],
+            Quest = [=[Heavy Grinding Stone||10|10|0|24|0]=],
             Start = "14832|1952|32|34.84|35.15",
             End = "14832|1952|32|34.84|35.15",
         },
         [7894] = {
-            Quest = [=[Copper Modulator||1|1|0|0|0]=],
+            Quest = [=[Copper Modulator||1|1|0|24|0]=],
             Start = "14841|1952|32|34.04|34.82",
             End = "14841|1952|32|34.04|34.82",
             Objectives = {
@@ -8948,7 +8948,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [7895] = {
-            Quest = [=[Whirring Bronze Gizmo||10|10|0|0|0]=],
+            Quest = [=[Whirring Bronze Gizmo||10|10|0|24|0]=],
             Start = "14841|1952|32|34.04|34.82",
             End = "14841|1952|32|34.04|34.82",
             Objectives = {
@@ -8965,7 +8965,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [7899] = {
-            Quest = [=[Small Furry Paws||1|1|0|0|0]=],
+            Quest = [=[Small Furry Paws||1|1|0|24|0]=],
             Start = "14829|1952|32|34.33|35.73",
             End = "14829|1952|32|34.33|35.73",
             Objectives = {
@@ -9022,7 +9022,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [7900] = {
-            Quest = [=[Torn Bear Pelts||10|10|0|0|0]=],
+            Quest = [=[Torn Bear Pelts||10|10|0|24|0]=],
             Start = "14829|1952|32|34.33|35.73",
             End = "14829|1952|32|34.33|35.73",
             Objectives = {
@@ -9143,56 +9143,56 @@ function Nx.ModQuests:Data1()
             },
         },
         [7905] = {
-            Quest = [=[The Darkmoon Faire|1|6|6|0|0|0]=],
+            Quest = [=[The Darkmoon Faire|1|6|6|0|24|0]=],
             Start = "14842|1455|32|29.65|75.25",
             End = "14828|1952|32|34.68|34.36",
         },
         [7907] = {
-            Quest = [=[Darkmoon Beast Deck||1|1|0|0|0]=],
+            Quest = [=[Darkmoon Beast Deck||1|1|0|24|0]=],
             End = "14847|1952|32|34.27|34.41",
         },
         [7926] = {
-            Quest = [=[The Darkmoon Faire|2|6|6|0|0|0]=],
+            Quest = [=[The Darkmoon Faire|2|6|6|0|24|0]=],
             End = "14828|1952|32|34.68|34.36",
         },
         [7927] = {
-            Quest = [=[Darkmoon Portals Deck||1|1|0|0|0]=],
+            Quest = [=[Darkmoon Portals Deck||1|1|0|24|0]=],
             End = "14847|1952|32|34.27|34.41",
         },
         [7928] = {
-            Quest = [=[Darkmoon Warlords Deck||1|1|0|0|0]=],
+            Quest = [=[Darkmoon Warlords Deck||1|1|0|24|0]=],
             End = "14847|1952|32|34.27|34.41",
         },
         [7929] = {
-            Quest = [=[Darkmoon Elementals Deck||1|1|0|0|0]=],
+            Quest = [=[Darkmoon Elementals Deck||1|1|0|24|0]=],
             End = "14847|1952|32|34.27|34.41",
         },
         [7930] = {
-            Quest = [=[5 Tickets - Darkmoon Flower||6|6|0|0|0]=],
+            Quest = [=[5 Tickets - Darkmoon Flower||6|6|0|24|0]=],
             Start = "14828|1952|32|34.68|34.36",
             End = "14828|1952|32|34.68|34.36",
         },
         [7934] = {
-            Quest = [=[50 Tickets - Darkmoon Storage Box||6|6|0|0|0]=],
+            Quest = [=[50 Tickets - Darkmoon Storage Box||6|6|0|24|0]=],
             Start = "14828|1952|32|34.68|34.36",
             End = "14828|1952|32|34.68|34.36",
         },
         [7937] = {
-            Quest = [=[Your Fortune Awaits You...||10|10|0|0|0]=],
+            Quest = [=[Your Fortune Awaits You...||10|10|0|24|0]=],
             Start = "3461|1413|32|55.66|43.27",
             End = "180025|1429|32|84.85|64.41",
         },
         [7938] = {
-            Quest = [=[Your Fortune Awaits You...||10|10|0|0|0]=],
+            Quest = [=[Your Fortune Awaits You...||10|10|0|24|0]=],
             Start = "735|1429|32|57.19|69.45",
             End = "180024|291|32|-1.00|-1.00",
         },
         [7944] = {
-            Quest = [=[Your Fortune Awaits You...||10|10|0|0|0]=],
+            Quest = [=[Your Fortune Awaits You...||10|10|0|24|0]=],
             End = "180055|279|32|-1.00|-1.00",
         },
         [7945] = {
-            Quest = [=[Your Fortune Awaits You...||10|10|0|0|0]=],
+            Quest = [=[Your Fortune Awaits You...||10|10|0|24|0]=],
             End = "180056|1412|32|35.00|61.56",
         },
         [7961] = {
@@ -9208,7 +9208,7 @@ function Nx.ModQuests:Data1()
             Quest = [=[Redeem iCoke Prize Voucher||1|1|0|0|0]=],
         },
         [8193] = {
-            Quest = [=[Master Angler||1|1|0|0|0]=],
+            Quest = [=[Master Angler||1|1|0|12|0]=],
             Start = "15077|1434|32|27.35|76.88",
             End = "15077|1434|32|27.35|76.88",
             Objectives = {
@@ -9228,7 +9228,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8194] = {
-            Quest = [=[Apprentice Angler||1|1|0|0|0]=],
+            Quest = [=[Apprentice Angler||1|1|0|12|0]=],
             Start = "15078|1434|32|26.74|76.35",
             End = "15078|1434|32|26.74|76.35",
             Objectives = {
@@ -9248,7 +9248,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8221] = {
-            Quest = [=[Rare Fish - Keefer's Angelfish||1|1|0|0|0]=],
+            Quest = [=[Rare Fish - Keefer's Angelfish||1|1|0|12|0]=],
             Start = "15079|1434|32|26.79|76.52",
             End = "15079|1434|32|26.79|76.52",
             Objectives = {
@@ -9268,7 +9268,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8224] = {
-            Quest = [=[Rare Fish - Dezian Queenfish||1|1|0|0|0]=],
+            Quest = [=[Rare Fish - Dezian Queenfish||1|1|0|12|0]=],
             Start = "15079|1434|32|26.79|76.52",
             End = "15079|1434|32|26.79|76.52",
             Objectives = {
@@ -9288,7 +9288,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8225] = {
-            Quest = [=[Rare Fish - Brownell's Blue Striped Racer||1|1|0|0|0]=],
+            Quest = [=[Rare Fish - Brownell's Blue Striped Racer||1|1|0|12|0]=],
             Start = "15079|1434|32|26.79|76.52",
             End = "15079|1434|32|26.79|76.52",
             Objectives = {
@@ -9308,12 +9308,12 @@ function Nx.ModQuests:Data1()
             },
         },
         [8311] = {
-            Quest = [=[Hallow's End Treats for Jesper!|1|10|10|0|0|0]=],
+            Quest = [=[Hallow's End Treats for Jesper!|1|10|10|0|89|0]=],
             Start = "15310|1453|32|56.59|51.81",
             End = "15310|1453|32|56.59|51.81",
         },
         [8312] = {
-            Quest = [=[Hallow's End Treats for Spoops!|2|10|10|0|0|0]=],
+            Quest = [=[Hallow's End Treats for Spoops!|2|10|10|0|89|0]=],
             Start = "15309|1454|32|71.44|22.81",
             End = "15309|1454|32|71.44|22.81",
         },
@@ -9561,7 +9561,7 @@ function Nx.ModQuests:Data1()
             End = "15433|1941|32|48.16|47.66",
         },
         [8353] = {
-            Quest = [=[Chicken Clucking for a Mint|1|10|10|0|0|0]=],
+            Quest = [=[Chicken Clucking for a Mint|1|10|10|0|89|0]=],
             Start = "5111|1455|32|18.15|51.45",
             End = "5111|1455|32|18.15|51.45",
             Objectives = {
@@ -9571,7 +9571,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8354] = {
-            Quest = [=[Chicken Clucking for a Mint|2|10|10|0|0|0]=],
+            Quest = [=[Chicken Clucking for a Mint|2|10|10|0|89|0]=],
             Start = "6741|1458|32|67.74|37.89",
             End = "6741|1458|32|67.74|37.89",
             Objectives = {
@@ -9581,7 +9581,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8355] = {
-            Quest = [=[Incoming Gumdrop|1|10|10|0|0|0]=],
+            Quest = [=[Incoming Gumdrop|1|10|10|0|89|0]=],
             Start = "6826|1455|32|36.38|3.61",
             End = "6826|1455|32|36.38|3.61",
             Objectives = {
@@ -9591,7 +9591,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8356] = {
-            Quest = [=[Flexing for Nougat|1|10|10|0|0|0]=],
+            Quest = [=[Flexing for Nougat|1|10|10|0|89|0]=],
             Start = "6740|1453|32|60.39|75.28",
             End = "6740|1453|32|60.39|75.28",
             Objectives = {
@@ -9601,7 +9601,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8357] = {
-            Quest = [=[Dancing for Marzipan|1|10|10|0|0|0]=],
+            Quest = [=[Dancing for Marzipan|1|10|10|0|89|0]=],
             Start = "6735|1457|32|67.42|15.65",
             End = "6735|1457|32|67.42|15.65",
             Objectives = {
@@ -9611,7 +9611,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8358] = {
-            Quest = [=[Incoming Gumdrop|2|10|10|0|0|0]=],
+            Quest = [=[Incoming Gumdrop|2|10|10|0|89|0]=],
             Start = "11814|1411|32|56.13|74.24",
             End = "11814|1411|32|56.13|74.24",
             Objectives = {
@@ -9621,7 +9621,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8359] = {
-            Quest = [=[Flexing for Nougat|2|10|10|0|0|0]=],
+            Quest = [=[Flexing for Nougat|2|10|10|0|89|0]=],
             Start = "6929|1454|32|54.10|68.41",
             End = "6929|1454|32|54.10|68.41",
             Objectives = {
@@ -9631,7 +9631,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [8360] = {
-            Quest = [=[Dancing for Marzipan|2|10|10|0|0|0]=],
+            Quest = [=[Dancing for Marzipan|2|10|10|0|89|0]=],
             Start = "6746|1456|32|45.81|64.71",
             End = "6746|1456|32|45.81|64.71",
             Objectives = {
@@ -10041,305 +10041,305 @@ function Nx.ModQuests:Data1()
             Quest = [=[Past Efforts in Warsong Gulch||1|1|0|0|0]=],
         },
         [8619] = {
-            Quest = [=[Morndeep the Elder||1|1|0|0|0]=],
+            Quest = [=[Morndeep the Elder||1|1|0|29|0]=],
         },
         [8635] = {
-            Quest = [=[Splitrock the Elder||1|1|0|0|0]=],
+            Quest = [=[Splitrock the Elder||1|1|0|29|0]=],
             Start = "15556|280|32|-1.00|-1.00",
             End = "15556|280|32|-1.00|-1.00",
         },
         [8636] = {
-            Quest = [=[Rumblerock the Elder||1|1|0|0|0]=],
+            Quest = [=[Rumblerock the Elder||1|1|0|29|0]=],
             Start = "15557|1428|32|82.21|46.48",
             End = "15557|1428|32|82.21|46.48",
         },
         [8642] = {
-            Quest = [=[Silvervein the Elder||1|1|0|0|0]=],
+            Quest = [=[Silvervein the Elder||1|1|0|29|0]=],
             Start = "15558|1432|32|33.33|46.54",
             End = "15558|1432|32|33.33|46.54",
         },
         [8643] = {
-            Quest = [=[Highpeak the Elder||1|1|0|0|0]=],
+            Quest = [=[Highpeak the Elder||1|1|0|29|0]=],
             Start = "15559|1425|32|50.00|48.05",
             End = "15559|1425|32|50.00|48.05",
         },
         [8644] = {
-            Quest = [=[Stonefort the Elder||1|1|0|0|0]=],
+            Quest = [=[Stonefort the Elder||1|1|0|29|0]=],
             Start = "15560|250|32|-1.00|-1.00",
             End = "15560|250|32|-1.00|-1.00",
         },
         [8645] = {
-            Quest = [=[Obsidian the Elder||1|1|0|0|0]=],
+            Quest = [=[Obsidian the Elder||1|1|0|29|0]=],
             Start = "15561|1421|32|44.98|41.14",
             End = "15561|1421|32|44.98|41.14",
         },
         [8646] = {
-            Quest = [=[Hammershout the Elder||1|1|0|0|0]=],
+            Quest = [=[Hammershout the Elder||1|1|0|29|0]=],
             Start = "15562|1453|32|36.27|66.14",
             End = "15562|1453|32|36.27|66.14",
         },
         [8647] = {
-            Quest = [=[Bellowrage the Elder||1|1|0|0|0]=],
+            Quest = [=[Bellowrage the Elder||1|1|0|29|0]=],
             Start = "15563|1419|32|58.75|51.70",
             End = "15563|1419|32|58.75|51.70",
         },
         [8648] = {
-            Quest = [=[Darkcore the Elder||1|1|0|0|0]=],
+            Quest = [=[Darkcore the Elder||1|1|0|29|0]=],
             Start = "15564|1458|32|66.63|38.22",
             End = "15564|1458|32|66.63|38.22",
         },
         [8649] = {
-            Quest = [=[Stormbrow the Elder||1|1|0|0|0]=],
+            Quest = [=[Stormbrow the Elder||1|1|0|29|0]=],
             Start = "15565|1429|32|39.79|63.67",
             End = "15565|1429|32|39.79|63.67",
         },
         [8650] = {
-            Quest = [=[Snowcrown the Elder||1|1|0|0|0]=],
+            Quest = [=[Snowcrown the Elder||1|1|0|29|0]=],
             Start = "15566|1423|32|75.73|54.56",
             End = "15566|1423|32|75.73|54.56",
         },
         [8651] = {
-            Quest = [=[Ironband the Elder||1|1|0|0|0]=],
+            Quest = [=[Ironband the Elder||1|1|0|29|0]=],
             Start = "15567|1427|32|21.46|78.97",
             End = "15567|1427|32|21.46|78.97",
         },
         [8652] = {
-            Quest = [=[Graveborn the Elder||1|1|0|0|0]=],
+            Quest = [=[Graveborn the Elder||1|1|0|29|0]=],
             Start = "15568|1420|32|61.85|53.84",
             End = "15568|1420|32|61.85|53.84",
         },
         [8653] = {
-            Quest = [=[Goldwell the Elder||1|1|0|0|0]=],
+            Quest = [=[Goldwell the Elder||1|1|0|29|0]=],
             Start = "15569|1426|32|46.70|51.58",
             End = "15569|1426|32|46.70|51.58",
         },
         [8654] = {
-            Quest = [=[Primestone the Elder||1|1|0|0|0]=],
+            Quest = [=[Primestone the Elder||1|1|0|29|0]=],
             Start = "15570|1451|32|23.08|11.84",
             End = "15570|1451|32|23.08|11.84",
         },
         [8670] = {
-            Quest = [=[Runetotem the Elder||1|1|0|0|0]=],
+            Quest = [=[Runetotem the Elder||1|1|0|29|0]=],
             Start = "15572|1411|32|53.20|43.68",
             End = "15572|1411|32|53.20|43.68",
         },
         [8671] = {
-            Quest = [=[Ragetotem the Elder||1|1|0|0|0]=],
+            Quest = [=[Ragetotem the Elder||1|1|0|29|0]=],
             Start = "15573|1446|32|36.30|80.54",
             End = "15573|1446|32|36.30|80.54",
         },
         [8672] = {
-            Quest = [=[Stonespire the Elder||1|1|0|0|0]=],
+            Quest = [=[Stonespire the Elder||1|1|0|29|0]=],
             Start = "15574|1452|32|61.45|37.81",
             End = "15574|1452|32|61.45|37.81",
         },
         [8673] = {
-            Quest = [=[Bloodhoof the Elder||1|1|0|0|0]=],
+            Quest = [=[Bloodhoof the Elder||1|1|0|29|0]=],
             Start = "15575|1412|32|48.55|53.48",
             End = "15575|1412|32|48.55|53.48",
         },
         [8674] = {
-            Quest = [=[Winterhoof the Elder||1|1|0|0|0]=],
+            Quest = [=[Winterhoof the Elder||1|1|0|29|0]=],
             Start = "15576|1434|32|27.62|74.26",
             End = "15576|1434|32|27.62|74.26",
         },
         [8675] = {
-            Quest = [=[Skychaser the Elder||1|1|0|0|0]=],
+            Quest = [=[Skychaser the Elder||1|1|0|29|0]=],
             Start = "15577|1436|32|56.65|47.11",
             End = "15577|1436|32|56.65|47.11",
         },
         [8676] = {
-            Quest = [=[Wildmane the Elder||1|1|0|0|0]=],
+            Quest = [=[Wildmane the Elder||1|1|0|29|0]=],
             Start = "15578|219|32|-1.00|-1.00",
             End = "15578|219|32|-1.00|-1.00",
         },
         [8677] = {
-            Quest = [=[Darkhorn the Elder||1|1|0|0|0]=],
+            Quest = [=[Darkhorn the Elder||1|1|0|29|0]=],
             Start = "15579|1454|32|41.13|33.84",
             End = "15579|1454|32|41.13|33.84",
         },
         [8678] = {
-            Quest = [=[Wheathoof the Elder||1|1|0|0|0]=],
+            Quest = [=[Wheathoof the Elder||1|1|0|29|0]=],
             Start = "15580|1456|32|72.98|23.37",
             End = "15580|1456|32|72.98|23.37",
         },
         [8679] = {
-            Quest = [=[Grimtotem the Elder||1|1|0|0|0]=],
+            Quest = [=[Grimtotem the Elder||1|1|0|29|0]=],
             Start = "15581|1444|32|76.72|37.90",
             End = "15581|1444|32|76.72|37.90",
         },
         [8680] = {
-            Quest = [=[Windtotem the Elder||1|1|0|0|0]=],
+            Quest = [=[Windtotem the Elder||1|1|0|29|0]=],
             Start = "15582|1413|32|62.70|36.73",
             End = "15582|1413|32|62.70|36.73",
         },
         [8681] = {
-            Quest = [=[Thunderhorn the Elder||1|1|0|0|0]=],
+            Quest = [=[Thunderhorn the Elder||1|1|0|29|0]=],
             Start = "15583|1449|32|50.35|76.07",
             End = "15583|1449|32|50.35|76.07",
         },
         [8682] = {
-            Quest = [=[Skyseer the Elder||1|1|0|0|0]=],
+            Quest = [=[Skyseer the Elder||1|1|0|29|0]=],
             Start = "15584|1441|32|45.29|50.00",
             End = "15584|1441|32|45.29|50.00",
         },
         [8683] = {
-            Quest = [=[Dawnstrider the Elder||1|1|0|0|0]=],
+            Quest = [=[Dawnstrider the Elder||1|1|0|29|0]=],
             Start = "15585|1428|32|64.46|23.95",
             End = "15585|1428|32|64.46|23.95",
         },
         [8684] = {
-            Quest = [=[Dreamseer the Elder||1|1|0|0|0]=],
+            Quest = [=[Dreamseer the Elder||1|1|0|29|0]=],
             Start = "15586|1446|32|51.47|27.85",
             End = "15586|1446|32|51.47|27.85",
         },
         [8685] = {
-            Quest = [=[Mistwalker the Elder||1|1|0|0|0]=],
+            Quest = [=[Mistwalker the Elder||1|1|0|29|0]=],
             Start = "15587|1444|32|62.58|30.96",
             End = "15587|1444|32|62.58|30.96",
         },
         [8686] = {
-            Quest = [=[High Mountain the Elder||1|1|0|0|0]=],
+            Quest = [=[High Mountain the Elder||1|1|0|29|0]=],
             Start = "15588|1413|32|45.09|57.92",
             End = "15588|1413|32|45.09|57.92",
         },
         [8688] = {
-            Quest = [=[Windrun the Elder||1|1|0|0|0]=],
+            Quest = [=[Windrun the Elder||1|1|0|29|0]=],
             Start = "15592|1423|32|35.57|68.84",
             End = "15592|1423|32|35.57|68.84",
         },
         [8713] = {
-            Quest = [=[Starsong the Elder||1|1|0|0|0]=],
+            Quest = [=[Starsong the Elder||1|1|0|29|0]=],
             Start = "15593|220|32|-1.00|-1.00",
             End = "15593|220|32|-1.00|-1.00",
         },
         [8714] = {
-            Quest = [=[Moonstrike the Elder||1|1|0|0|0]=],
+            Quest = [=[Moonstrike the Elder||1|1|0|29|0]=],
             Start = "15594|1422|32|69.18|73.45",
             End = "15594|1422|32|69.18|73.45",
         },
         [8715] = {
-            Quest = [=[Bladeleaf the Elder||1|1|0|0|0]=],
+            Quest = [=[Bladeleaf the Elder||1|1|0|29|0]=],
             Start = "15595|1438|32|57.30|60.77",
             End = "15595|1438|32|57.30|60.77",
         },
         [8716] = {
-            Quest = [=[Starglade the Elder||1|1|0|0|0]=],
+            Quest = [=[Starglade the Elder||1|1|0|29|0]=],
             Start = "15596|1434|32|53.08|18.45",
             End = "15596|1434|32|53.08|18.45",
         },
         [8717] = {
-            Quest = [=[Moonwarden the Elder||1|1|0|0|0]=],
+            Quest = [=[Moonwarden the Elder||1|1|0|29|0]=],
             Start = "15597|1413|32|51.42|30.71",
             End = "15597|1413|32|51.42|30.71",
         },
         [8718] = {
-            Quest = [=[Bladeswift the Elder||1|1|0|0|0]=],
+            Quest = [=[Bladeswift the Elder||1|1|0|29|0]=],
             Start = "15598|1457|32|33.57|14.47",
             End = "15598|1457|32|33.57|14.47",
         },
         [8719] = {
-            Quest = [=[Bladesing the Elder||1|1|0|0|0]=],
+            Quest = [=[Bladesing the Elder||1|1|0|29|0]=],
             Start = "15599|1451|32|48.96|37.66",
             End = "15599|1451|32|48.96|37.66",
         },
         [8720] = {
-            Quest = [=[Skygleam the Elder||1|1|0|0|0]=],
+            Quest = [=[Skygleam the Elder||1|1|0|29|0]=],
             Start = "15600|1447|32|72.55|85.24",
             End = "15600|1447|32|72.55|85.24",
         },
         [8721] = {
-            Quest = [=[Starweave the Elder||1|1|0|0|0]=],
+            Quest = [=[Starweave the Elder||1|1|0|29|0]=],
             Start = "15601|1439|32|36.81|46.77",
             End = "15601|1439|32|36.81|46.77",
         },
         [8722] = {
-            Quest = [=[Meadowrun the Elder||1|1|0|0|0]=],
+            Quest = [=[Meadowrun the Elder||1|1|0|29|0]=],
             Start = "15602|1422|32|65.97|47.82",
             End = "15602|1422|32|65.97|47.82",
         },
         [8723] = {
-            Quest = [=[Nightwind the Elder||1|1|0|0|0]=],
+            Quest = [=[Nightwind the Elder||1|1|0|29|0]=],
             Start = "15603|1448|32|37.64|53.00",
             End = "15603|1448|32|37.64|53.00",
         },
         [8724] = {
-            Quest = [=[Morningdew the Elder||1|1|0|0|0]=],
+            Quest = [=[Morningdew the Elder||1|1|0|29|0]=],
             Start = "15604|1441|32|79.20|77.05",
             End = "15604|1441|32|79.20|77.05",
         },
         [8725] = {
-            Quest = [=[Riversong the Elder||1|1|0|0|0]=],
+            Quest = [=[Riversong the Elder||1|1|0|29|0]=],
             Start = "15605|1440|32|35.60|48.80",
             End = "15605|1440|32|35.60|48.80",
         },
         [8726] = {
-            Quest = [=[Brightspear the Elder||1|1|0|0|0]=],
+            Quest = [=[Brightspear the Elder||1|1|0|29|0]=],
             Start = "15606|1452|32|55.61|43.65",
             End = "15606|1452|32|55.61|43.65",
         },
         [8727] = {
-            Quest = [=[Farwhisper the Elder||1|1|0|0|0]=],
+            Quest = [=[Farwhisper the Elder||1|1|0|29|0]=],
             Start = "15607|317|32|-1.00|-1.00",
             End = "15607|317|32|-1.00|-1.00",
         },
         [8744] = {
-            Quest = [=[A Carefully Wrapped Present||1|1|0|0|0]=],
+            Quest = [=[A Carefully Wrapped Present||1|1|0|186|0]=],
             Start = "180743|1455|32|33.46|65.60",
             End = "180743|1455|32|33.46|65.60",
         },
         [8767] = {
-            Quest = [=[A Gently Shaken Gift||1|1|0|0|0]=],
+            Quest = [=[A Gently Shaken Gift||1|1|0|186|0]=],
             Start = "180746|1455|32|34.45|65.79",
             End = "180746|1455|32|34.45|65.79",
         },
         [8803] = {
-            Quest = [=[A Festive Gift||10|10|0|0|0]=],
+            Quest = [=[A Festive Gift||10|10|0|186|0]=],
             Start = "180793|1455|32|34.37|66.10",
             End = "180793|1455|32|34.37|66.10",
         },
         [8827] = {
-            Quest = [=[Winter's Presents|1|1|1|0|0|0]=],
+            Quest = [=[Winter's Presents|1|1|1|0|186|0]=],
             Start = "15732|1426|32|53.16|35.62",
             End = "13444|1455|32|33.20|65.41",
         },
         [8828] = {
-            Quest = [=[Winter's Presents|2|1|1|0|0|0]=],
+            Quest = [=[Winter's Presents|2|1|1|0|186|0]=],
             Start = "15732|1426|32|53.16|35.62",
             End = "13445|1454|32|52.49|69.18",
         },
         [8860] = {
-            Quest = [=[New Year Celebrations!|1|1|1|0|0|0]=],
+            Quest = [=[New Year Celebrations!|1|1|1|0|186|0]=],
             Start = "15732|1426|32|53.16|35.62",
             End = "6740|1453|32|60.39|75.28",
         },
         [8861] = {
-            Quest = [=[New Year Celebrations!|2|1|1|0|0|0]=],
+            Quest = [=[New Year Celebrations!|2|1|1|0|186|0]=],
             Start = "15732|1426|32|53.16|35.62",
             End = "6746|1456|32|45.81|64.71",
         },
         [8862] = {
-            Quest = [=[Elune's Candle||10|10|0|0|0]=],
+            Quest = [=[Elune's Candle||10|10|0|29|0]=],
             Start = "15864|1450|32|53.65|35.26",
             End = "15864|1450|32|53.65|35.26",
         },
         [8863] = {
-            Quest = [=[Festival Dumplings||1|1|0|0|0]=],
+            Quest = [=[Festival Dumplings||1|1|0|29|0]=],
             Start = "15864|1450|32|53.65|35.26",
             End = "15864|1450|32|53.65|35.26",
         },
         [8864] = {
-            Quest = [=[Festive Lunar Dresses||1|1|0|0|0]=],
+            Quest = [=[Festive Lunar Dresses||1|1|0|29|0]=],
             Start = "15864|1450|32|53.65|35.26",
             End = "15864|1450|32|53.65|35.26",
         },
         [8865] = {
-            Quest = [=[Festive Lunar Pant Suits||1|1|0|0|0]=],
+            Quest = [=[Festive Lunar Pant Suits||1|1|0|29|0]=],
             Start = "15864|1450|32|53.65|35.26",
             End = "15864|1450|32|53.65|35.26",
         },
         [8866] = {
-            Quest = [=[Bronzebeard the Elder||1|1|0|0|0]=],
+            Quest = [=[Bronzebeard the Elder||1|1|0|29|0]=],
             Start = "15871|1455|32|29.20|17.05",
             End = "15871|1455|32|29.20|17.05",
         },
@@ -10510,31 +10510,31 @@ function Nx.ModQuests:Data1()
             Quest = [=[The Dwarven Spy||7|7|0|0|0]=],
         },
         [8897] = {
-            Quest = [=[Dearest Colara,|1|1|1|0|0|0]=],
+            Quest = [=[Dearest Colara,|1|1|1|0|41|0]=],
         },
         [8898] = {
-            Quest = [=[Dearest Colara,|1|1|1|0|0|0]=],
+            Quest = [=[Dearest Colara,|1|1|1|0|41|0]=],
         },
         [8899] = {
-            Quest = [=[Dearest Colara,|1|1|1|0|0|0]=],
+            Quest = [=[Dearest Colara,|1|1|1|0|41|0]=],
         },
         [8900] = {
-            Quest = [=[Dearest Elenia,|2|1|1|0|0|0]=],
+            Quest = [=[Dearest Elenia,|2|1|1|0|41|0]=],
         },
         [8901] = {
-            Quest = [=[Dearest Elenia,|2|1|1|0|0|0]=],
+            Quest = [=[Dearest Elenia,|2|1|1|0|41|0]=],
         },
         [8902] = {
-            Quest = [=[Dearest Elenia,|2|1|1|0|0|0]=],
+            Quest = [=[Dearest Elenia,|2|1|1|0|41|0]=],
         },
         [8903] = {
-            Quest = [=[Dangerous Love|1|1|1|9024|0|0]=],
+            Quest = [=[Dangerous Love|1|1|1|9024|41|0]=],
         },
         [8904] = {
-            Quest = [=[Dangerous Love||1|1|8979|0|0]=],
+            Quest = [=[Dangerous Love||1|1|8979|41|0]=],
         },
         [8979] = {
-            Quest = [=[Fenstad's Hunch|2|1|1|8980|0|0]=],
+            Quest = [=[Fenstad's Hunch|2|1|1|8980|41|0]=],
             End = "5204|1458|32|50.14|67.97",
             Objectives = {
                 [1] = {
@@ -10550,30 +10550,30 @@ function Nx.ModQuests:Data1()
             },
         },
         [8980] = {
-            Quest = [=[Zinge's Assessment||1|1|8982|0|0]=],
+            Quest = [=[Zinge's Assessment||1|1|8982|41|0]=],
         },
         [8981] = {
-            Quest = [=[Gift Giving|1|1|1|0|0|0]=],
+            Quest = [=[Gift Giving|1|1|1|0|41|0]=],
             Start = "16075|1457|32|37.81|79.00",
             End = "16075|1457|32|37.81|79.00",
         },
         [8982] = {
-            Quest = [=[Tracing the Source|2|1|1|8983|0|0]=],
+            Quest = [=[Tracing the Source|2|1|1|8983|41|0]=],
             End = "6741|1458|32|67.74|37.89",
         },
         [8983] = {
-            Quest = [=[Tracing the Source|2|1|1|8984|0|0]=],
+            Quest = [=[Tracing the Source|2|1|1|8984|41|0]=],
         },
         [8984] = {
-            Quest = [=[The Source Revealed|2|1|1|0|0|0]=],
+            Quest = [=[The Source Revealed|2|1|1|0|41|0]=],
         },
         [8993] = {
-            Quest = [=[Gift Giving|1|1|1|0|0|0]=],
+            Quest = [=[Gift Giving|1|1|1|0|41|0]=],
             Start = "16075|1457|32|37.81|79.00",
             End = "16075|1457|32|37.81|79.00",
         },
         [9024] = {
-            Quest = [=[Aristan's Hunch|1|1|1|9025|0|0]=],
+            Quest = [=[Aristan's Hunch|1|1|1|9025|41|0]=],
             End = "279|1453|32|63.16|74.40",
             Objectives = {
                 [1] = {
@@ -10589,20 +10589,20 @@ function Nx.ModQuests:Data1()
             },
         },
         [9025] = {
-            Quest = [=[Morgan's Discovery|1|1|1|9026|0|0]=],
+            Quest = [=[Morgan's Discovery|1|1|1|9026|41|0]=],
         },
         [9026] = {
-            Quest = [=[Tracing the Source||1|1|9027|0|0]=],
+            Quest = [=[Tracing the Source||1|1|9027|41|0]=],
             End = "6740|1453|32|60.39|75.28",
         },
         [9027] = {
-            Quest = [=[Tracing the Source|1|1|1|9028|0|0]=],
+            Quest = [=[Tracing the Source|1|1|1|9028|41|0]=],
         },
         [9028] = {
-            Quest = [=[The Source Revealed|1|1|1|0|0|0]=],
+            Quest = [=[The Source Revealed|1|1|1|0|41|0]=],
         },
         [9029] = {
-            Quest = [=[A Bubbling Cauldron||1|1|0|0|0]=],
+            Quest = [=[A Bubbling Cauldron||1|1|0|41|0]=],
             Start = "181073|1416|32|89.58|75.66",
             End = "181073|1416|32|89.58|75.66",
         },
@@ -11014,7 +11014,7 @@ function Nx.ModQuests:Data1()
             End = "16197|1942|32|46.55|28.38",
         },
         [9247] = {
-            Quest = [=[The Keeper's Call||1|1|0|0|0]=],
+            Quest = [=[The Keeper's Call||1|1|0|31|0]=],
             End = "16281|1423|32|75.16|54.39",
         },
         [9252] = {
@@ -11103,7 +11103,7 @@ function Nx.ModQuests:Data1()
             End = "15398|1941|32|34.06|80.02",
         },
         [9260] = {
-            Quest = [=[Investigate the Scourge of Stormwind|1|6|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Stormwind|1|6|1|0|31|0]=],
             Start = "16478|1453|32|63.80|75.60",
             End = "16478|1453|32|63.80|75.60",
             Objectives = {
@@ -11132,7 +11132,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9261] = {
-            Quest = [=[Investigate the Scourge of Ironforge|2|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Ironforge|2|10|1|0|31|0]=],
             Start = "16484|1455|32|53.00|35.00",
             End = "16484|1455|32|53.00|35.00",
             Objectives = {
@@ -11150,7 +11150,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9262] = {
-            Quest = [=[Investigate the Scourge of Darnassus|1|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Darnassus|1|10|1|0|31|0]=],
             Start = "16495|1457|32|78.20|41.40",
             End = "16495|1457|32|78.20|41.40",
             Objectives = {
@@ -11169,7 +11169,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9263] = {
-            Quest = [=[Investigate the Scourge of Orgrimmar|1|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Orgrimmar|1|10|1|0|31|0]=],
             Start = "16493|1454|32|51.60|82.00",
             End = "16493|1454|32|51.60|82.00",
             Objectives = {
@@ -11183,7 +11183,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9264] = {
-            Quest = [=[Investigate the Scourge of Thunder Bluff|1|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Thunder Bluff|1|10|1|0|31|0]=],
             Start = "16490|1456|32|31.40|70.40",
             End = "16490|1456|32|31.40|70.40",
             Objectives = {
@@ -11196,7 +11196,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9265] = {
-            Quest = [=[Investigate the Scourge of the Undercity|2|8|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of the Undercity|2|8|1|0|31|0]=],
             Start = "16494|1458|32|66.80|21.40",
             End = "16494|1458|32|66.80|21.40",
             Objectives = {
@@ -11320,7 +11320,7 @@ function Nx.ModQuests:Data1()
             Start = "16502|1943|32|80.13|48.89",
         },
         [9292] = {
-            Quest = [=[Cracked Necrotic Crystal|1|1|1|0|0|0]=],
+            Quest = [=[Cracked Necrotic Crystal|1|1|1|0|31|0]=],
         },
         [9293] = {
             Quest = [=[What Must Be Done...|1|2|1|9294|0|0]=],
@@ -11405,7 +11405,7 @@ function Nx.ModQuests:Data1()
             End = "16546|1943|32|72.00|60.85",
         },
         [9310] = {
-            Quest = [=[Faint Necrotic Crystal|2|1|1|0|0|0]=],
+            Quest = [=[Faint Necrotic Crystal|2|1|1|0|31|0]=],
         },
         [9311] = {
             Quest = [=[Blood Elf Spy|1|5|2|0|0|0]=],
@@ -11433,21 +11433,21 @@ function Nx.ModQuests:Data1()
             End = "16553|1943|32|48.37|49.20",
         },
         [9322] = {
-            Quest = [=[Wild Fires in Kalimdor||1|1|0|0|0]=],
+            Quest = [=[Wild Fires in Kalimdor||1|1|0|32|0]=],
         },
         [9323] = {
-            Quest = [=[Wild Fires in the Eastern Kingdoms||1|1|0|0|0]=],
+            Quest = [=[Wild Fires in the Eastern Kingdoms||1|1|0|32|0]=],
         },
         [9324] = {
-            Quest = [=[Stealing Orgrimmar's Flame|1|1|1|0|0|0]=],
+            Quest = [=[Stealing Orgrimmar's Flame|1|1|1|0|32|0]=],
             End = "16817|1438|32|56.50|92.30",
         },
         [9325] = {
-            Quest = [=[Stealing Thunder Bluff's Flame|1|1|1|0|0|0]=],
+            Quest = [=[Stealing Thunder Bluff's Flame|1|1|1|0|32|0]=],
             End = "16817|1438|32|56.50|92.30",
         },
         [9326] = {
-            Quest = [=[Stealing the Undercity's Flame|1|1|1|0|0|0]=],
+            Quest = [=[Stealing the Undercity's Flame|1|1|1|0|32|0]=],
             End = "16817|1438|32|56.50|92.30",
         },
         [9327] = {
@@ -11461,19 +11461,19 @@ function Nx.ModQuests:Data1()
             End = "16252|1942|32|44.77|32.45",
         },
         [9330] = {
-            Quest = [=[Stealing Stormwind's Flame|2|1|1|0|0|0]=],
+            Quest = [=[Stealing Stormwind's Flame|2|1|1|0|32|0]=],
             End = "16818|1955|32|62.16|32.04",
         },
         [9331] = {
-            Quest = [=[Stealing Ironforge's Flame|2|1|1|0|0|0]=],
+            Quest = [=[Stealing Ironforge's Flame|2|1|1|0|32|0]=],
             End = "16818|1955|32|62.16|32.04",
         },
         [9332] = {
-            Quest = [=[Stealing Darnassus's Flame|2|1|1|0|0|0]=],
+            Quest = [=[Stealing Darnassus's Flame|2|1|1|0|32|0]=],
             End = "16818|1955|32|62.16|32.04",
         },
         [9339] = {
-            Quest = [=[A Thief's Reward|1|1|1|0|0|0]=],
+            Quest = [=[A Thief's Reward|1|1|1|0|32|0]=],
             Start = "16818|1955|32|62.16|32.04",
             End = "16818|1955|32|62.16|32.04",
         },
@@ -11508,12 +11508,12 @@ function Nx.ModQuests:Data1()
             End = "15399|1941|32|60.32|62.77",
         },
         [9365] = {
-            Quest = [=[A Thief's Reward|2|1|1|0|0|0]=],
+            Quest = [=[A Thief's Reward|2|1|1|0|32|0]=],
             Start = "16817|1438|32|56.50|92.30",
             End = "16817|1438|32|56.50|92.30",
         },
         [9367] = {
-            Quest = [=[The Festival of Fire|1|1|1|0|0|0]=],
+            Quest = [=[The Festival of Fire|1|1|1|0|32|0]=],
             Objectives = {
                 [1] = {
                     "nil|1453|32|49.32|71.90|9.62|9.62",
@@ -11527,7 +11527,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9368] = {
-            Quest = [=[The Festival of Fire|2|1|1|0|0|0]=],
+            Quest = [=[The Festival of Fire|2|1|1|0|32|0]=],
             Objectives = {
                 [1] = {
                     "nil|1454|32|46.41|38.00|9.62|9.62",
@@ -11608,7 +11608,7 @@ function Nx.ModQuests:Data1()
             End = "16144|1941|32|38.14|73.56",
         },
         [9402] = {
-            Quest = [=[Fetch!|2|10|10|9403|0|0]=],
+            Quest = [=[Fetch!|2|10|10|9403|17|0]=],
             Start = "15970|1941|32|55.70|54.51",
             End = "15970|1941|32|55.70|54.51",
             Objectives = {
@@ -11618,7 +11618,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9403] = {
-            Quest = [=[The Purest Water|2|10|10|9404|0|0]=],
+            Quest = [=[The Purest Water|2|10|10|9404|17|0]=],
             Start = "15970|1941|32|55.70|54.51",
             End = "15970|1941|32|55.70|54.51",
             Objectives = {
@@ -11628,7 +11628,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [9404] = {
-            Quest = [=[Recently Living|2|10|10|0|0|0]=],
+            Quest = [=[Recently Living|2|10|10|0|17|0]=],
             Start = "15970|1941|32|55.70|54.51",
             End = "15970|1941|32|55.70|54.51",
             Objectives = {
@@ -12877,7 +12877,7 @@ function Nx.ModQuests:Data1()
             End = "17442|1943|32|44.76|23.91",
         },
         [9582] = {
-            Quest = [=[Strength of One|1|10|10|10350|0|0]=],
+            Quest = [=[Strength of One|1|10|10|10350|9|0]=],
             Start = "17480|1943|32|50.02|50.52",
             End = "17480|1943|32|50.02|50.52",
             Objectives = {
@@ -13444,7 +13444,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [10350] = {
-            Quest = [=[Behomat|1|10|10|0|0|0]=],
+            Quest = [=[Behomat|1|10|10|0|9|0]=],
             Start = "17480|1943|32|50.02|50.52",
             End = "17120|1947|32|55.59|82.27",
         },
@@ -13504,7 +13504,7 @@ function Nx.ModQuests:Data1()
             End = "5875|1454|32|48.25|45.28",
         },
         [11117] = {
-            Quest = [=[Catch the Wild Wolpertinger!|1|1|1|0|0|0]=],
+            Quest = [=[Catch the Wild Wolpertinger!|1|1|1|0|33|0]=],
             Objectives = {
                 [1] = {
                     "nil|1411|35|45.12|12.96|28.86|9.62",
@@ -13518,7 +13518,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11118] = {
-            Quest = [=[Pink Elekks On Parade|1|1|1|0|0|0]=],
+            Quest = [=[Pink Elekks On Parade|1|1|1|0|33|0]=],
             Objectives = {
                 [1] = {
                     "nil|126|35|44|77.5|25.05|3.34",
@@ -13533,7 +13533,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11120] = {
-            Quest = [=[Pink Elekks On Parade|2|1|1|0|0|0]=],
+            Quest = [=[Pink Elekks On Parade|2|1|1|0|33|0]=],
             Start = "24657|1411|32|45.01|17.41",
             End = "24657|1411|32|45.01|17.41",
             Objectives = {
@@ -13549,7 +13549,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11122] = {
-            Quest = [=[There and Back Again|1|1|1|0|0|0]=],
+            Quest = [=[There and Back Again|1|1|1|0|33|0]=],
             Start = "23558|1426|32|46.57|40.30",
             End = "23558|1426|32|46.57|40.30",
             Objectives = {
@@ -13572,7 +13572,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11131] = {
-            Quest = [=[Stop the Fires!|1|1|1|0|0|0]=],
+            Quest = [=[Stop the Fires!|1|1|1|0|89|0]=],
             Start = "24519|1426|32|46.19|53.14",
             End = "24519|1426|32|46.19|53.14",
             Objectives = {
@@ -13582,12 +13582,12 @@ function Nx.ModQuests:Data1()
             },
         },
         [11219] = {
-            Quest = [=[Stop the Fires!|2|1|1|0|0|0]=],
+            Quest = [=[Stop the Fires!|2|1|1|0|89|0]=],
             Start = "23973|1420|32|60.87|53.05",
             End = "23973|1420|32|60.87|53.05",
         },
         [11293] = {
-            Quest = [=[Bark for the Barleybrews!|1|1|1|0|0|0]=],
+            Quest = [=[Bark for the Barleybrews!|1|1|1|0|33|0]=],
             Start = "23627|1426|32|49.01|39.81",
             End = "23627|1426|32|49.01|39.81",
             Objectives = {
@@ -13615,7 +13615,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11294] = {
-            Quest = [=[Bark for the Thunderbrews!|1|1|1|0|0|0]=],
+            Quest = [=[Bark for the Thunderbrews!|1|1|1|0|33|0]=],
             Start = "23628|1426|32|49.45|38.66",
             End = "23628|1426|32|49.45|38.66",
             Objectives = {
@@ -13642,7 +13642,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11318] = {
-            Quest = [=[Now This is Ram Racing... Almost.|1|1|1|0|0|0]=],
+            Quest = [=[Now This is Ram Racing... Almost.|1|1|1|0|33|0]=],
             Start = "23558|1426|32|46.57|40.30",
             End = "23558|1426|32|46.57|40.30",
             Objectives = {
@@ -13671,20 +13671,20 @@ function Nx.ModQuests:Data1()
             },
         },
         [11321] = {
-            Quest = [=[Did Someone Say "Souvenir?"|1|1|1|0|0|0]=],
+            Quest = [=[Did Someone Say "Souvenir?"|1|1|1|0|33|0]=],
         },
         [11356] = {
-            Quest = [=[Costumed Orphan Matron|1|1|1|0|0|0]=],
+            Quest = [=[Costumed Orphan Matron|1|1|1|0|89|0]=],
             Start = "19173|1457|32|41.46|44.88",
             End = "24519|1426|32|46.19|53.14",
         },
         [11357] = {
-            Quest = [=[Masked Orphan Matron|2|1|1|0|0|0]=],
+            Quest = [=[Masked Orphan Matron|2|1|1|0|89|0]=],
             Start = "19178|1458|32|63.13|47.40",
             End = "23973|1420|32|60.87|53.05",
         },
         [11360] = {
-            Quest = [=[Fire Brigade Practice|1|1|1|0|0|0]=],
+            Quest = [=[Fire Brigade Practice|1|1|1|0|89|0]=],
             Start = "24519|1426|32|46.19|53.14",
             End = "24519|1426|32|46.19|53.14",
             Objectives = {
@@ -13699,7 +13699,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11361] = {
-            Quest = [=[Fire Training|2|1|1|0|0|0]=],
+            Quest = [=[Fire Training|2|1|1|0|89|0]=],
             Start = "23973|1420|32|60.87|53.05",
             End = "23973|1420|32|60.87|53.05",
             Objectives = {
@@ -13714,7 +13714,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11407] = {
-            Quest = [=[Bark for Drohn's Distillery!|2|1|1|0|0|0]=],
+            Quest = [=[Bark for Drohn's Distillery!|2|1|1|0|33|0]=],
             Start = "24498|1411|32|44.38|17.91",
             End = "24498|1411|32|44.38|17.91",
             Objectives = {
@@ -13733,7 +13733,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11408] = {
-            Quest = [=[Bark for T'chali's Voodoo Brewery!|2|1|1|0|0|0]=],
+            Quest = [=[Bark for T'chali's Voodoo Brewery!|2|1|1|0|33|0]=],
             Start = "24499|1411|32|43.59|17.57",
             End = "24499|1411|32|43.59|17.57",
             Objectives = {
@@ -13752,7 +13752,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11409] = {
-            Quest = [=[Now This is Ram Racing... Almost.|2|1|1|0|0|0]=],
+            Quest = [=[Now This is Ram Racing... Almost.|2|1|1|0|33|0]=],
             Start = "24497|1411|32|46.31|15.00",
             End = "24497|1411|32|46.31|15.00",
             Objectives = {
@@ -13768,12 +13768,12 @@ function Nx.ModQuests:Data1()
             },
         },
         [11412] = {
-            Quest = [=[There and Back Again|2|1|1|0|0|0]=],
+            Quest = [=[There and Back Again|2|1|1|0|33|0]=],
             Start = "24497|1411|32|46.31|15.00",
             End = "24497|1411|32|46.31|15.00",
         },
         [11413] = {
-            Quest = [=[Did Someone Say "Souvenir?"|2|1|1|0|0|0]=],
+            Quest = [=[Did Someone Say "Souvenir?"|2|1|1|0|33|0]=],
         },
         [11425] = {
             Quest = [=[Test Quest - Craig||1|1|0|0|0]=],
@@ -13789,7 +13789,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11431] = {
-            Quest = [=[Catch the Wild Wolpertinger!|2|1|1|0|0|0]=],
+            Quest = [=[Catch the Wild Wolpertinger!|2|1|1|0|33|0]=],
             Start = "24657|1411|32|45.01|17.41",
             End = "24657|1411|32|45.01|17.41",
             Objectives = {
@@ -13805,7 +13805,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11439] = {
-            Quest = [=[Fire Brigade Practice|1|1|1|0|0|0]=],
+            Quest = [=[Fire Brigade Practice|1|1|1|0|89|0]=],
             Start = "24519|1426|32|46.19|53.14",
             End = "24519|1426|32|46.19|53.14",
             Objectives = {
@@ -13820,7 +13820,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11440] = {
-            Quest = [=[Fire Brigade Practice|1|1|1|0|0|0]=],
+            Quest = [=[Fire Brigade Practice|1|1|1|0|89|0]=],
             Start = "24519|1426|32|46.19|53.14",
             End = "24519|1426|32|46.19|53.14",
             Objectives = {
@@ -13835,23 +13835,23 @@ function Nx.ModQuests:Data1()
             },
         },
         [11441] = {
-            Quest = [=[Brewfest!|1|1|1|0|0|0]=],
+            Quest = [=[Brewfest!|1|1|1|0|33|0]=],
             Start = "19173|1457|32|41.46|44.88",
             End = "24710|1426|32|48.01|39.83",
         },
         [11442] = {
-            Quest = [=[Welcome to Brewfest!|1|1|1|0|0|0]=],
+            Quest = [=[Welcome to Brewfest!|1|1|1|0|33|0]=],
         },
         [11446] = {
-            Quest = [=[Brewfest!|2|1|1|0|0|0]=],
+            Quest = [=[Brewfest!|2|1|1|0|33|0]=],
             Start = "20102|1413|32|62.55|37.55",
             End = "24711|1411|32|45.59|17.23",
         },
         [11447] = {
-            Quest = [=[Welcome to Brewfest!|2|1|1|0|0|0]=],
+            Quest = [=[Welcome to Brewfest!|2|1|1|0|33|0]=],
         },
         [11449] = {
-            Quest = [=[Fire Training|2|1|1|0|0|0]=],
+            Quest = [=[Fire Training|2|1|1|0|89|0]=],
             Start = "23973|1420|32|60.87|53.05",
             End = "23973|1420|32|60.87|53.05",
             Objectives = {
@@ -13866,7 +13866,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11450] = {
-            Quest = [=[Fire Training|2|1|1|0|0|0]=],
+            Quest = [=[Fire Training|2|1|1|0|89|0]=],
             Start = "23973|1420|32|60.87|53.05",
             End = "23973|1420|32|60.87|53.05",
             Objectives = {
@@ -13876,20 +13876,20 @@ function Nx.ModQuests:Data1()
             },
         },
         [11486] = {
-            Quest = [=[The Best of Brews|1|1|1|0|0|0]=],
+            Quest = [=[The Best of Brews|1|1|1|0|33|0]=],
             End = "24710|1426|32|48.01|39.83",
         },
         [11487] = {
-            Quest = [=[The Best of Brews|2|1|1|0|0|0]=],
+            Quest = [=[The Best of Brews|2|1|1|0|33|0]=],
             End = "24711|1411|32|45.59|17.23",
         },
         [11528] = {
-            Quest = [=[A Winter Veil Gift||10|10|0|0|0]=],
+            Quest = [=[A Winter Veil Gift||10|10|0|186|0]=],
             Start = "187236|1455|32|33.71|65.85",
             End = "187236|1455|32|33.71|65.85",
         },
         [11558] = {
-            Quest = [=[Dangerous Love||1|1|8979|0|0]=],
+            Quest = [=[Dangerous Love||1|1|8979|41|0]=],
         },
         [11577] = {
             Quest = [=[WoW Collector's Edition: - DEM - E - FLAG||1|0|0|0|0]=],
@@ -13921,27 +13921,27 @@ function Nx.ModQuests:Data1()
             },
         },
         [11580] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187559|1421|32|49.64|38.56",
             End = "187559|1421|32|49.64|38.56",
         },
         [11581] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187564|1436|32|56.06|53.88",
             End = "187564|1436|32|56.06|53.88",
         },
         [11583] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25910|1436|32|55.92|53.48",
             End = "25910|1436|32|55.92|53.48",
         },
         [11584] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25939|1421|32|49.69|38.32",
             End = "25939|1421|32|49.69|38.32",
         },
         [11657] = {
-            Quest = [=[Torch Catching|1|1|1|0|0|0]=],
+            Quest = [=[Torch Catching|1|1|1|0|32|0]=],
             Start = "25975|1438|32|56.56|92.09",
             End = "25975|1438|32|56.56|92.09",
             Objectives = {
@@ -13955,7 +13955,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11731] = {
-            Quest = [=[Torch Tossing|1|1|1|11657|0|0]=],
+            Quest = [=[Torch Tossing|1|1|1|11657|32|0]=],
             Start = "25975|1438|32|56.56|92.09",
             End = "25975|1438|32|56.56|92.09",
             Objectives = {
@@ -13965,620 +13965,620 @@ function Nx.ModQuests:Data1()
             },
         },
         [11732] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187914|1417|32|50.28|44.93",
             End = "187914|1417|32|50.28|44.93",
         },
         [11734] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187916|1440|32|37.83|55.00",
             End = "187916|1440|32|37.83|55.00",
         },
         [11735] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187917|1943|32|44.70|52.70",
             End = "187917|1943|32|44.70|52.70",
         },
         [11736] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187919|1949|32|41.60|66.00",
             End = "187919|1949|32|41.60|66.00",
         },
         [11737] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187920|1419|32|59.00|17.23",
             End = "187920|1419|32|59.00|17.23",
         },
         [11738] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187921|1950|32|55.80|68.80",
             End = "187921|1950|32|55.80|68.80",
         },
         [11739] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187922|1428|32|80.50|62.20",
             End = "187922|1428|32|80.50|62.20",
         },
         [11740] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187923|1439|32|37.08|45.93",
             End = "187923|1439|32|37.08|45.93",
         },
         [11741] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187924|1443|32|65.88|16.93",
             End = "187924|1443|32|65.88|16.93",
         },
         [11742] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187925|1426|32|46.59|46.53",
             End = "187925|1426|32|46.59|46.53",
         },
         [11743] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187926|1431|32|73.32|54.90",
             End = "187926|1431|32|73.32|54.90",
         },
         [11744] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187927|1445|32|62.03|40.41",
             End = "187927|1445|32|62.03|40.41",
         },
         [11745] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187928|1429|32|43.16|62.85",
             End = "187928|1429|32|43.16|62.85",
         },
         [11746] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187929|1444|32|28.20|44.10",
             End = "187929|1444|32|28.20|44.10",
         },
         [11747] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187930|1944|32|61.97|58.36",
             End = "187930|1944|32|61.97|58.36",
         },
         [11748] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187931|1424|32|50.39|47.07",
             End = "187931|1424|32|50.39|47.07",
         },
         [11749] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187932|1432|32|32.61|40.53",
             End = "187932|1432|32|32.61|40.53",
         },
         [11750] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187933|1951|32|49.70|69.70",
             End = "187933|1951|32|49.70|69.70",
         },
         [11751] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187934|1433|32|24.85|59.35",
             End = "187934|1433|32|24.85|59.35",
         },
         [11752] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187935|1948|32|39.60|54.40",
             End = "187935|1948|32|39.60|54.40",
         },
         [11753] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187936|1438|32|54.90|60.48",
             End = "187936|1438|32|54.90|60.48",
         },
         [11754] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187937|1952|32|54.30|55.70",
             End = "187937|1952|32|54.30|55.70",
         },
         [11755] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187938|1425|32|14.48|49.81",
             End = "187938|1425|32|14.48|49.81",
         },
         [11756] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187939|1422|32|43.50|82.90",
             End = "187939|1422|32|43.50|82.90",
         },
         [11757] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187940|1437|32|13.26|47.18",
             End = "187940|1437|32|13.26|47.18",
         },
         [11758] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187941|1946|32|68.80|52.00",
             End = "187941|1946|32|68.80|52.00",
         },
         [11759] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187942|1953|32|31.00|62.80",
             End = "187942|1953|32|31.00|62.80",
         },
         [11760] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187943|1451|32|57.72|34.93",
             End = "187943|1451|32|57.72|34.93",
         },
         [11761] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187944|1434|32|33.83|73.32",
             End = "187944|1434|32|33.83|73.32",
         },
         [11762] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187945|1446|32|52.76|29.17",
             End = "187945|1446|32|52.76|29.17",
         },
         [11763] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
             Start = "187946|1452|32|62.68|35.35",
             End = "187946|1452|32|62.68|35.35",
         },
         [11764] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187947|1417|32|74.03|41.73",
             End = "187947|1417|32|74.03|41.73",
         },
         [11765] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187948|1440|32|70.02|69.16",
             End = "187948|1440|32|70.02|69.16",
         },
         [11766] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187954|1418|32|4.89|49.14",
             End = "187954|1418|32|4.89|49.14",
         },
         [11767] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187955|1949|32|50.00|59.00",
             End = "187955|1949|32|50.00|59.00",
         },
         [11768] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187956|1428|32|62.13|28.95",
             End = "187956|1428|32|62.13|28.95",
         },
         [11769] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187957|1443|32|26.19|77.20",
             End = "187957|1443|32|26.19|77.20",
         },
         [11770] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187958|1411|32|52.00|47.20",
             End = "187958|1411|32|52.00|47.20",
         },
         [11771] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187959|1445|32|33.28|30.78",
             End = "187959|1445|32|33.28|30.78",
         },
         [11772] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187960|1941|32|46.40|50.40",
             End = "187960|1941|32|46.40|50.40",
         },
         [11773] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187961|1444|32|72.44|47.62",
             End = "187961|1444|32|72.44|47.62",
         },
         [11774] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187962|1942|32|47.10|26.10",
             End = "187962|1942|32|47.10|26.10",
         },
         [11775] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187963|1944|32|57.16|41.82",
             End = "187963|1944|32|57.16|41.82",
         },
         [11776] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187964|1424|32|58.42|25.06",
             End = "187964|1424|32|58.42|25.06",
         },
         [11777] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187965|1412|32|52.00|60.00",
             End = "187965|1412|32|52.00|60.00",
         },
         [11778] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187966|1951|32|51.07|34.01",
             End = "187966|1951|32|51.07|34.01",
         },
         [11779] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187967|1948|32|33.50|30.30",
             End = "187967|1948|32|33.50|30.30",
         },
         [11780] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187968|1442|32|50.56|60.30",
             End = "187968|1442|32|50.56|60.30",
         },
         [11781] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187969|1435|32|46.86|46.47",
             End = "187969|1435|32|46.86|46.47",
         },
         [11782] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187970|1952|32|51.94|43.17",
             End = "187970|1952|32|51.94|43.17",
         },
         [11783] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187971|1413|32|52.16|27.91",
             End = "187971|1413|32|52.16|27.91",
         },
         [11784] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187972|1425|32|76.69|74.60",
             End = "187972|1425|32|76.69|74.60",
         },
         [11785] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187973|1441|32|42.42|52.75",
             End = "187973|1441|32|42.42|52.75",
         },
         [11786] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187974|1420|32|57.00|51.70",
             End = "187559|1421|32|49.64|38.56",
         },
         [11787] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187975|1946|32|35.57|51.74",
             End = "187975|1946|32|35.57|51.74",
         },
         [11799] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187949|1953|32|32.30|68.30",
             End = "187949|1953|32|32.30|68.30",
         },
         [11800] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187950|1451|32|46.47|44.88",
             End = "187950|1451|32|46.47|44.88",
         },
         [11801] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187951|1434|32|32.99|75.41",
             End = "187951|1434|32|32.99|75.41",
         },
         [11802] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187952|1446|32|49.83|27.12",
             End = "187952|1446|32|49.83|27.12",
         },
         [11803] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
             Start = "187953|1452|32|59.83|35.44",
             End = "187953|1452|32|59.83|35.44",
         },
         [11804] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25887|1417|32|50.02|44.83",
             End = "25887|1417|32|50.02|44.83",
         },
         [11805] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25883|1440|32|37.79|54.74",
             End = "25883|1440|32|37.79|54.74",
         },
         [11806] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25888|1943|32|44.50|52.50",
             End = "25888|1943|32|44.50|52.50",
         },
         [11807] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25889|1949|32|41.40|65.90",
             End = "25889|1949|32|41.40|65.90",
         },
         [11808] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25890|1419|32|59.28|17.01",
             End = "25890|1419|32|59.28|17.01",
         },
         [11809] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25891|1950|32|55.80|67.90",
             End = "25891|1950|32|55.80|67.90",
         },
         [11810] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25892|1428|32|80.30|62.90",
             End = "25892|1428|32|80.30|62.90",
         },
         [11811] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25893|1439|32|36.96|46.17",
             End = "25893|1439|32|36.96|46.17",
         },
         [11812] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25894|1443|32|66.12|17.09",
             End = "25894|1443|32|66.12|17.09",
         },
         [11813] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25895|1426|32|46.70|46.94",
             End = "25895|1426|32|46.70|46.94",
         },
         [11814] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25896|1431|32|73.69|54.61",
             End = "25896|1431|32|73.69|54.61",
         },
         [11815] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25897|1445|32|61.82|40.45",
             End = "25897|1445|32|61.82|40.45",
         },
         [11816] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25898|1429|32|43.47|62.63",
             End = "25898|1429|32|43.47|62.63",
         },
         [11817] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25899|1444|32|28.30|43.90",
             End = "25899|1444|32|28.30|43.90",
         },
         [11818] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25900|1944|32|62.17|58.29",
             End = "25900|1944|32|62.17|58.29",
         },
         [11819] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25901|1424|32|50.43|47.59",
             End = "25901|1424|32|50.43|47.59",
         },
         [11820] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25902|1432|32|32.56|40.95",
             End = "25902|1432|32|32.56|40.95",
         },
         [11821] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25903|1951|32|49.70|69.40",
             End = "25903|1951|32|49.70|69.40",
         },
         [11822] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25904|1433|32|25.23|58.97",
             End = "25904|1433|32|25.23|58.97",
         },
         [11823] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25905|1948|32|39.70|54.70",
             End = "25905|1948|32|39.70|54.70",
         },
         [11824] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25906|1438|32|55.06|60.42",
             End = "25906|1438|32|55.06|60.42",
         },
         [11825] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25907|1952|32|54.10|55.60",
             End = "25907|1952|32|54.10|55.60",
         },
         [11826] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25908|1425|32|14.34|50.07",
             End = "25908|1425|32|14.34|50.07",
         },
         [11827] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25909|1422|32|43.50|82.30",
             End = "25909|1422|32|43.50|82.30",
         },
         [11828] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25911|1437|32|13.46|47.06",
             End = "25911|1437|32|13.46|47.06",
         },
         [11829] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25912|1946|32|69.10|51.90",
             End = "25912|1946|32|69.10|51.90",
         },
         [11830] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25913|1953|32|31.20|62.70",
             End = "25913|1953|32|31.20|62.70",
         },
         [11831] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25914|1451|32|57.48|35.24",
             End = "25914|1451|32|57.48|35.24",
         },
         [11832] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25915|1434|32|33.90|73.52",
             End = "25915|1434|32|33.90|73.52",
         },
         [11833] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25916|1446|32|52.76|29.37",
             End = "25916|1446|32|52.76|29.37",
         },
         [11834] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
             Start = "25917|1452|32|62.55|35.42",
             End = "25917|1452|32|62.55|35.42",
         },
         [11835] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25918|1953|32|32.00|68.00",
             End = "25918|1953|32|32.00|68.00",
         },
         [11836] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25919|1451|32|46.45|44.45",
             End = "25919|1451|32|46.45|44.45",
         },
         [11837] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25920|1434|32|32.93|75.22",
             End = "25920|1434|32|32.93|75.22",
         },
         [11838] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25921|1446|32|49.83|26.93",
             End = "25921|1446|32|49.83|26.93",
         },
         [11839] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25922|1452|32|59.87|35.65",
             End = "25922|1452|32|59.87|35.65",
         },
         [11840] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25923|1417|32|74.22|41.47",
             End = "25923|1417|32|74.22|41.47",
         },
         [11841] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25884|1440|32|70.15|69.30",
             End = "25884|1440|32|70.15|69.30",
         },
         [11842] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25925|1418|32|4.70|48.61",
             End = "25925|1418|32|4.70|48.61",
         },
         [11843] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25926|1949|32|50.00|58.30",
             End = "25926|1949|32|50.00|58.30",
         },
         [11844] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25927|1428|32|61.76|29.06",
             End = "25927|1428|32|61.76|29.06",
         },
         [11845] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25928|1443|32|26.14|76.91",
             End = "25928|1443|32|26.14|76.91",
         },
         [11846] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25929|1411|32|52.20|47.30",
             End = "25929|1411|32|52.20|47.30",
         },
         [11847] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25930|1445|32|33.43|30.91",
             End = "25930|1445|32|33.43|30.91",
         },
         [11848] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25931|1941|32|46.40|50.60",
             End = "25931|1941|32|46.40|50.60",
         },
         [11849] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25932|1444|32|72.37|47.79",
             End = "25932|1444|32|72.37|47.79",
         },
         [11850] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25933|1942|32|46.90|26.30",
             End = "25933|1942|32|46.90|26.30",
         },
         [11851] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25934|1944|32|57.11|42.04",
             End = "25934|1944|32|57.11|42.04",
         },
         [11852] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25936|1412|32|51.80|59.80",
             End = "25936|1412|32|51.80|59.80",
         },
         [11853] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25935|1424|32|58.58|25.43",
             End = "25935|1424|32|58.58|25.43",
         },
         [11854] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25937|1951|32|50.91|34.14",
             End = "25937|1951|32|50.91|34.14",
         },
         [11855] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25938|1948|32|33.50|30.60",
             End = "25938|1948|32|33.50|30.60",
         },
         [11856] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25940|1442|32|50.49|60.47",
             End = "25940|1442|32|50.49|60.47",
         },
         [11857] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25941|1435|32|46.70|46.98",
             End = "25941|1435|32|46.70|46.98",
         },
         [11858] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25942|1952|32|52.03|42.94",
             End = "25942|1952|32|52.03|42.94",
         },
         [11859] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25943|1413|32|52.22|28.05",
             End = "25943|1413|32|52.22|28.05",
         },
         [11860] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25944|1425|32|76.64|74.96",
             End = "25944|1425|32|76.64|74.96",
         },
         [11861] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25945|1441|32|42.29|52.94",
             End = "25945|1441|32|42.29|52.94",
         },
         [11862] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25946|1420|32|57.20|51.80",
             End = "25946|1420|32|57.20|51.80",
         },
         [11863] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
             Start = "25947|1946|32|35.45|51.61",
             End = "25947|1946|32|35.45|51.61",
         },
         [11882] = {
-            Quest = [=[Playing with Fire|1|1|1|0|0|0]=],
+            Quest = [=[Playing with Fire|1|1|1|0|32|0]=],
             Start = "25962|1426|32|46.65|47.29",
             End = "25975|1438|32|56.56|92.09",
         },
         [11883] = {
-            Quest = [=[Fire Dancing?||1|1|0|0|0]=],
+            Quest = [=[Fire Dancing?||1|1|0|32|0]=],
         },
         [11915] = {
-            Quest = [=[Playing with Fire|2|1|1|0|0|0]=],
+            Quest = [=[Playing with Fire|2|1|1|0|32|0]=],
             Start = "25994|1418|32|4.61|47.74",
             End = "26113|1458|32|68.87|8.47",
         },
         [11921] = {
-            Quest = [=[More Torch Tossing|1|1|1|0|0|0]=],
+            Quest = [=[More Torch Tossing|1|1|1|0|32|0]=],
             Start = "25975|1438|32|56.56|92.09",
             End = "25975|1438|32|56.56|92.09",
             Objectives = {
@@ -14588,7 +14588,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11922] = {
-            Quest = [=[Torch Tossing|2|1|1|11923|0|0]=],
+            Quest = [=[Torch Tossing|2|1|1|11923|32|0]=],
             Start = "26113|1458|32|68.87|8.47",
             End = "26113|1458|32|68.87|8.47",
             Objectives = {
@@ -14598,7 +14598,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11923] = {
-            Quest = [=[Torch Catching|2|1|1|0|0|0]=],
+            Quest = [=[Torch Catching|2|1|1|0|32|0]=],
             Start = "26113|1458|32|68.87|8.47",
             End = "26113|1458|32|68.87|8.47",
             Objectives = {
@@ -14609,7 +14609,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11924] = {
-            Quest = [=[More Torch Catching|1|1|1|0|0|0]=],
+            Quest = [=[More Torch Catching|1|1|1|0|32|0]=],
             Start = "25975|1438|32|56.56|92.09",
             End = "25975|1438|32|56.56|92.09",
             Objectives = {
@@ -14623,7 +14623,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11925] = {
-            Quest = [=[More Torch Catching|2|1|1|0|0|0]=],
+            Quest = [=[More Torch Catching|2|1|1|0|32|0]=],
             Start = "26113|1458|32|68.87|8.47",
             End = "26113|1458|32|68.87|8.47",
             Objectives = {
@@ -14635,7 +14635,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [11926] = {
-            Quest = [=[More Torch Tossing|2|1|1|0|0|0]=],
+            Quest = [=[More Torch Tossing|2|1|1|0|32|0]=],
             Start = "26113|1458|32|68.87|8.47",
             End = "26113|1458|32|68.87|8.47",
             Objectives = {
@@ -14645,42 +14645,42 @@ function Nx.ModQuests:Data1()
             },
         },
         [11933] = {
-            Quest = [=[Stealing the Exodar's Flame|2|1|1|0|0|0]=],
+            Quest = [=[Stealing the Exodar's Flame|2|1|1|0|32|0]=],
             Start = "188128|1947|32|41.70|25.00",
             End = "16818|1955|32|62.16|32.04",
         },
         [11935] = {
-            Quest = [=[Stealing Silvermoon's Flame|1|1|1|0|0|0]=],
+            Quest = [=[Stealing Silvermoon's Flame|1|1|1|0|32|0]=],
             Start = "188129|1954|32|69.10|43.50",
             End = "16817|1438|32|56.50|92.30",
         },
         [11964] = {
-            Quest = [=[Incense for the Summer Scorchlings|1|1|1|0|0|0]=],
+            Quest = [=[Incense for the Summer Scorchlings|1|1|1|0|32|0]=],
             Start = "16817|1438|32|56.50|92.30",
             End = "26401|1426|32|46.69|46.85",
         },
         [11966] = {
-            Quest = [=[Incense for the Festival Scorchlings|2|1|1|0|0|0]=],
+            Quest = [=[Incense for the Festival Scorchlings|2|1|1|0|32|0]=],
             Start = "16818|1955|32|62.16|32.04",
             End = "26520|1948|32|33.79|30.88",
         },
         [11970] = {
-            Quest = [=[The Master of Summer Lore|1|1|1|0|0|0]=],
+            Quest = [=[The Master of Summer Lore|1|1|1|0|32|0]=],
             Start = "20102|1413|32|62.55|37.55",
             End = "16817|1438|32|56.50|92.30",
         },
         [11971] = {
-            Quest = [=[The Spinner of Summer Tales|2|1|1|0|0|0]=],
+            Quest = [=[The Spinner of Summer Tales|2|1|1|0|32|0]=],
             Start = "20102|1413|32|62.55|37.55",
             End = "16818|1955|32|62.16|32.04",
         },
         [12020] = {
-            Quest = [=[This One Time, When I Was Drunk...|1|1|1|0|0|0]=],
+            Quest = [=[This One Time, When I Was Drunk...|1|1|1|0|33|0]=],
             Start = "189989|1411|32|44.10|17.20",
             End = "27215|1426|32|47.56|39.85",
         },
         [12022] = {
-            Quest = [=[Chug and Chuck!|1|1|1|0|0|0]=],
+            Quest = [=[Chug and Chuck!|1|1|1|0|33|0]=],
             Start = "27215|1426|32|47.56|39.85",
             End = "27215|1426|32|47.56|39.85",
             Objectives = {
@@ -14690,12 +14690,12 @@ function Nx.ModQuests:Data1()
             },
         },
         [12133] = {
-            Quest = [=[Smash the Pumpkin|1|1|1|0|0|0]=],
+            Quest = [=[Smash the Pumpkin|1|1|1|0|89|0]=],
             Start = "186887|1426|32|46.40|52.20",
             End = "24519|1426|32|46.19|53.14",
         },
         [12135] = {
-            Quest = [=[Let the Fires Come!|1|1|1|0|0|0]=],
+            Quest = [=[Let the Fires Come!|1|1|1|0|89|0]=],
             Start = "24519|1426|32|46.19|53.14",
             End = "24519|1426|32|46.19|53.14",
             Objectives = {
@@ -14705,7 +14705,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [12139] = {
-            Quest = [=[Let the Fires Come!|2|1|1|0|0|0]=],
+            Quest = [=[Let the Fires Come!|2|1|1|0|89|0]=],
             Start = "23973|1420|32|60.87|53.05",
             End = "23973|1420|32|60.87|53.05",
             Objectives = {
@@ -14715,12 +14715,12 @@ function Nx.ModQuests:Data1()
             },
         },
         [12155] = {
-            Quest = [=[Smash the Pumpkin|2|1|1|0|0|0]=],
+            Quest = [=[Smash the Pumpkin|2|1|1|0|89|0]=],
             Start = "186887|1426|32|46.40|52.20",
             End = "24519|1426|32|46.19|53.14",
         },
         [12191] = {
-            Quest = [=[Chug and Chuck!|2|1|1|0|0|0]=],
+            Quest = [=[Chug and Chuck!|2|1|1|0|33|0]=],
             Start = "27216|1411|32|45.25|17.33",
             End = "27216|1411|32|45.25|17.33",
             Objectives = {
@@ -14730,437 +14730,437 @@ function Nx.ModQuests:Data1()
             },
         },
         [12192] = {
-            Quest = [=[This One Time, When I Was Drunk...|2|1|1|0|0|0]=],
+            Quest = [=[This One Time, When I Was Drunk...|2|1|1|0|33|0]=],
             Start = "189989|1411|32|44.10|17.20",
             End = "27216|1411|32|45.25|17.33",
         },
         [12193] = {
-            Quest = [=[Say, There Wouldn't Happen to be a Souvenir This Year, Would There?|1|1|1|0|0|0]=],
+            Quest = [=[Say, There Wouldn't Happen to be a Souvenir This Year, Would There?|1|1|1|0|33|0]=],
             Start = "24468|1426|32|46.43|40.32",
             End = "23710|1426|32|49.27|39.59",
         },
         [12194] = {
-            Quest = [=[Say, There Wouldn't Happen to be a Souvenir This Year, Would There?|2|1|1|0|0|0]=],
+            Quest = [=[Say, There Wouldn't Happen to be a Souvenir This Year, Would There?|2|1|1|0|33|0]=],
             Start = "24510|1411|32|46.29|14.84",
         },
         [12278] = {
-            Quest = [=[Brew of the Month Club|1|1|1|0|0|0]=],
+            Quest = [=[Brew of the Month Club|1|1|1|0|33|0]=],
             End = "27478|1455|32|18.80|53.10",
         },
         [12286] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "189303|1429|32|43.74|65.89",
             End = "189303|1429|32|43.74|65.89",
         },
         [12306] = {
-            Quest = [=[Brew of the Month Club|2|1|1|0|0|0]=],
+            Quest = [=[Brew of the Month Club|2|1|1|0|33|0]=],
             End = "27489|1454|32|37.68|85.66",
         },
         [12331] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190034|1438|32|55.61|59.85",
             End = "190034|1438|32|55.61|59.85",
         },
         [12332] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190036|1426|32|47.38|52.45",
             End = "190036|1426|32|47.38|52.45",
         },
         [12333] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190037|1943|32|48.49|49.04",
             End = "190037|1943|32|48.49|49.04",
         },
         [12334] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190038|1457|32|67.46|16.06",
             End = "190038|1457|32|67.46|16.06",
         },
         [12335] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190039|1455|32|18.33|50.94",
             End = "190039|1455|32|18.33|50.94",
         },
         [12336] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190040|1453|32|52.77|65.79",
             End = "190040|1453|32|52.77|65.79",
         },
         [12337] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190041|1947|32|59.25|18.46",
             End = "190041|1947|32|59.25|18.46",
         },
         [12338] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190042|1439|32|37.04|44.04",
             End = "190042|1439|32|37.04|44.04",
         },
         [12339] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190043|1432|32|35.54|48.50",
             End = "190043|1432|32|35.54|48.50",
         },
         [12340] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190047|1436|32|52.91|53.74",
             End = "190047|1436|32|52.91|53.74",
         },
         [12341] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190045|1950|32|55.69|59.97",
             End = "190045|1950|32|55.69|59.97",
         },
         [12342] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190046|1433|32|27.09|44.91",
             End = "190046|1433|32|27.09|44.91",
         },
         [12343] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190044|1437|32|10.83|60.99",
             End = "190044|1437|32|10.83|60.99",
         },
         [12344] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190048|1431|32|73.79|44.25",
             End = "190048|1431|32|73.79|44.25",
         },
         [12345] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190035|1440|32|37.01|49.26",
             End = "190035|1440|32|37.01|49.26",
         },
         [12346] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190049|1424|32|51.14|59.04",
             End = "190049|1424|32|51.14|59.04",
         },
         [12347] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190050|1442|32|35.52|6.40",
             End = "190050|1442|32|35.52|6.40",
         },
         [12348] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190051|1443|32|66.33|6.58",
             End = "190051|1443|32|66.33|6.58",
         },
         [12349] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190052|1445|32|66.60|45.28",
             End = "190052|1445|32|66.60|45.28",
         },
         [12350] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190053|1444|32|30.93|43.45",
             End = "190053|1444|32|30.93|43.45",
         },
         [12351] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190054|1425|32|14.11|41.52",
             End = "190054|1425|32|14.11|41.52",
         },
         [12352] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190055|1944|32|54.25|63.68",
             End = "190055|1944|32|54.25|63.68",
         },
         [12353] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190056|1944|32|23.42|36.37",
             End = "190056|1944|32|23.42|36.37",
         },
         [12354] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190057|1946|32|67.17|48.94",
             End = "190057|1946|32|67.17|48.94",
         },
         [12355] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190058|1946|32|41.90|26.17",
             End = "190058|1946|32|41.90|26.17",
         },
         [12356] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190059|1952|32|56.60|53.22",
             End = "190059|1952|32|56.60|53.22",
         },
         [12357] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190060|1951|32|54.19|75.88",
             End = "190060|1951|32|54.19|75.88",
         },
         [12358] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190061|1949|32|35.83|63.73",
             End = "190061|1949|32|35.83|63.73",
         },
         [12359] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190062|1949|32|61.06|68.08",
             End = "190062|1949|32|61.06|68.08",
         },
         [12360] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "190063|1948|32|37.01|58.29",
             End = "190063|1948|32|37.01|58.29",
         },
         [12361] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190064|1411|32|51.60|41.60",
             End = "190064|1411|32|51.60|41.60",
         },
         [12362] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190065|1412|32|46.60|61.00",
             End = "190065|1412|32|46.60|61.00",
         },
         [12363] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190066|1420|32|61.80|52.20",
             End = "190066|1420|32|61.80|52.20",
         },
         [12364] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190067|1941|32|48.10|47.80",
             End = "190067|1941|32|48.10|47.80",
         },
         [12365] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190068|1941|32|43.70|71.10",
             End = "190068|1941|32|43.70|71.10",
         },
         [12366] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190069|1454|32|54.45|68.64",
             End = "190069|1454|32|54.45|68.64",
         },
         [12367] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190070|1456|32|45.60|64.40",
             End = "190070|1456|32|45.60|64.40",
         },
         [12368] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190071|1458|32|67.76|37.40",
             End = "190071|1458|32|67.76|37.40",
         },
         [12369] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190072|1954|32|79.42|57.65",
             End = "190072|1954|32|79.42|57.65",
         },
         [12370] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190073|1954|32|67.58|72.88",
             End = "190073|1954|32|67.58|72.88",
         },
         [12371] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190074|1421|32|43.20|41.40",
             End = "190074|1421|32|43.20|41.40",
         },
         [12373] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190075|1942|32|48.70|32.00",
             End = "190075|1942|32|48.70|32.00",
         },
         [12374] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190076|1413|32|52.00|29.90",
             End = "190076|1413|32|52.00|29.90",
         },
         [12375] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190077|1413|32|45.60|59.00",
             End = "190077|1413|32|45.60|59.00",
         },
         [12376] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190078|1424|32|62.80|19.00",
             End = "190078|1424|32|62.80|19.00",
         },
         [12377] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190079|1440|32|73.90|60.70",
             End = "190079|1440|32|73.90|60.70",
         },
         [12378] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190080|1442|32|47.50|62.10",
             End = "190080|1442|32|47.50|62.10",
         },
         [12379] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190081|1441|32|46.10|51.40",
             End = "190081|1441|32|46.10|51.40",
         },
         [12380] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190082|1417|32|73.90|32.60",
             End = "190082|1417|32|73.90|32.60",
         },
         [12381] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190083|1443|32|24.10|68.30",
             End = "190083|1443|32|24.10|68.30",
         },
         [12382] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190084|1434|32|31.50|29.70",
             End = "190084|1434|32|31.50|29.70",
         },
         [12383] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190085|1445|32|36.80|32.40",
             End = "190085|1445|32|36.80|32.40",
         },
         [12384] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190086|1435|32|45.10|56.60",
             End = "190086|1435|32|45.10|56.60",
         },
         [12385] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190087|1418|32|2.90|46.00",
             End = "190087|1418|32|2.90|46.00",
         },
         [12386] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190088|1444|32|74.80|45.10",
             End = "190088|1444|32|74.80|45.10",
         },
         [12387] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190089|1425|32|78.20|81.40",
             End = "190089|1425|32|78.20|81.40",
         },
         [12388] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190090|1944|32|56.80|37.50",
             End = "190090|1944|32|56.80|37.50",
         },
         [12389] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190091|1944|32|26.90|59.60",
             End = "190091|1944|32|26.90|59.60",
         },
         [12390] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190096|1946|32|30.70|50.90",
             End = "190096|1946|32|30.70|50.90",
         },
         [12391] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190097|1952|32|48.80|45.20",
             End = "190097|1952|32|48.80|45.20",
         },
         [12392] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190098|1951|32|56.70|34.60",
             End = "190098|1951|32|56.70|34.60",
         },
         [12393] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190099|1949|32|53.40|55.50",
             End = "190099|1949|32|53.40|55.50",
         },
         [12394] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190100|1949|32|76.20|60.40",
             End = "190100|1949|32|76.20|60.40",
         },
         [12395] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
             Start = "190101|1948|32|30.30|27.80",
             End = "190101|1948|32|30.30|27.80",
         },
         [12396] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190102|1413|32|62.07|39.41",
             End = "190102|1413|32|62.07|39.41",
         },
         [12397] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190103|1434|32|27.06|77.28",
             End = "190103|1434|32|27.06|77.28",
         },
         [12398] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190104|1445|32|41.86|74.09",
             End = "190104|1445|32|41.86|74.09",
         },
         [12399] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190105|1446|32|52.45|27.87",
             End = "190105|1446|32|52.45|27.87",
         },
         [12400] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190106|1452|32|61.33|38.86",
             End = "190106|1452|32|61.33|38.86",
         },
         [12401] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190107|1451|32|51.83|39.18",
             End = "190107|1451|32|51.83|39.18",
         },
         [12402] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190108|1423|32|81.70|58.10",
             End = "190108|1423|32|81.70|58.10",
         },
         [12403] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190109|1946|32|78.45|62.89",
             End = "190109|1946|32|78.45|62.89",
         },
         [12404] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190111|1955|32|56.31|81.96",
             End = "190111|1955|32|56.31|81.96",
         },
         [12405] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [12406] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190112|1949|32|62.91|38.33",
             End = "190112|1949|32|62.91|38.33",
         },
         [12407] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190113|1953|32|32.02|64.45",
             End = "190113|1953|32|32.02|64.45",
         },
         [12408] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190114|1953|32|43.31|36.10",
             End = "190114|1953|32|43.31|36.10",
         },
         [12409] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "190116|1948|32|56.37|59.82",
             End = "190116|1948|32|56.37|59.82",
         },
         [12410] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [12420] = {
-            Quest = [=[Brew of the Month Club|1|1|1|0|0|0]=],
+            Quest = [=[Brew of the Month Club|1|1|1|0|33|0]=],
             End = "27478|1455|32|18.80|53.10",
         },
         [12421] = {
-            Quest = [=[Brew of the Month Club|2|1|1|0|0|0]=],
+            Quest = [=[Brew of the Month Club|2|1|1|0|33|0]=],
             End = "27489|1454|32|37.68|85.66",
         },
         [12781] = {
-            Quest = [=[Welcome!||1|1|0|0|0]=],
+            Quest = [=[Welcome!||1|1|0|35|0]=],
             End = "27928|1423|32|83.37|49.29",
         },
         [12816] = {
-            Quest = [=[Investigate the Scourge of Silvermoon|2|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Silvermoon|2|10|1|0|31|0]=],
             Objectives = {
                 [1] = {
                     "Investigate a circle|1941|35|58|51.5|5.01|6.68",
@@ -15173,7 +15173,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [12817] = {
-            Quest = [=[Investigate the Scourge of Exodar|1|10|1|0|0|0]=],
+            Quest = [=[Investigate the Scourge of Exodar|1|10|1|0|31|0]=],
             Objectives = {
                 [1] = {
                     "Investigate a circle|1943|35|38|48|10.02|6.68",
@@ -15189,244 +15189,244 @@ function Nx.ModQuests:Data1()
             },
         },
         [12940] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [12941] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [12944] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [12945] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [12946] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [12947] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [12950] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [13012] = {
-            Quest = [=[Sardis the Elder||1|1|0|0|0]=],
+            Quest = [=[Sardis the Elder||1|1|0|29|0]=],
         },
         [13013] = {
-            Quest = [=[Beldak the Elder||1|1|0|0|0]=],
+            Quest = [=[Beldak the Elder||1|1|0|29|0]=],
         },
         [13014] = {
-            Quest = [=[Morthie the Elder||1|1|0|0|0]=],
+            Quest = [=[Morthie the Elder||1|1|0|29|0]=],
         },
         [13015] = {
-            Quest = [=[Fargal the Elder||1|1|0|0|0]=],
+            Quest = [=[Fargal the Elder||1|1|0|29|0]=],
         },
         [13016] = {
-            Quest = [=[Northal the Elder||1|1|0|0|0]=],
+            Quest = [=[Northal the Elder||1|1|0|29|0]=],
         },
         [13017] = {
-            Quest = [=[Jarten the Elder||1|1|0|0|0]=],
+            Quest = [=[Jarten the Elder||1|1|0|29|0]=],
         },
         [13018] = {
-            Quest = [=[Sandrene the Elder||1|1|0|0|0]=],
+            Quest = [=[Sandrene the Elder||1|1|0|29|0]=],
         },
         [13019] = {
-            Quest = [=[Thoim the Elder||1|1|0|0|0]=],
+            Quest = [=[Thoim the Elder||1|1|0|29|0]=],
         },
         [13020] = {
-            Quest = [=[Stonebeard the Elder||1|1|0|0|0]=],
+            Quest = [=[Stonebeard the Elder||1|1|0|29|0]=],
         },
         [13021] = {
-            Quest = [=[Igasho the Elder||1|1|0|0|0]=],
+            Quest = [=[Igasho the Elder||1|1|0|29|0]=],
         },
         [13022] = {
-            Quest = [=[Nurgen the Elder||1|1|0|0|0]=],
+            Quest = [=[Nurgen the Elder||1|1|0|29|0]=],
         },
         [13023] = {
-            Quest = [=[Kilias the Elder||1|1|0|0|0]=],
+            Quest = [=[Kilias the Elder||1|1|0|29|0]=],
         },
         [13024] = {
-            Quest = [=[Wanikaya the Elder||1|1|0|0|0]=],
+            Quest = [=[Wanikaya the Elder||1|1|0|29|0]=],
         },
         [13025] = {
-            Quest = [=[Lunaro the Elder||1|1|0|0|0]=],
+            Quest = [=[Lunaro the Elder||1|1|0|29|0]=],
         },
         [13026] = {
-            Quest = [=[Bluewolf the Elder||1|1|0|0|0]=],
+            Quest = [=[Bluewolf the Elder||1|1|0|29|0]=],
         },
         [13027] = {
-            Quest = [=[Tauros the Elder||1|1|0|0|0]=],
+            Quest = [=[Tauros the Elder||1|1|0|29|0]=],
         },
         [13028] = {
-            Quest = [=[Graymane the Elder||1|1|0|0|0]=],
+            Quest = [=[Graymane the Elder||1|1|0|29|0]=],
         },
         [13029] = {
-            Quest = [=[Pamuya the Elder||1|1|0|0|0]=],
+            Quest = [=[Pamuya the Elder||1|1|0|29|0]=],
         },
         [13030] = {
-            Quest = [=[Whurain the Elder||1|1|0|0|0]=],
+            Quest = [=[Whurain the Elder||1|1|0|29|0]=],
         },
         [13031] = {
-            Quest = [=[Skywarden the Elder||1|1|0|0|0]=],
+            Quest = [=[Skywarden the Elder||1|1|0|29|0]=],
         },
         [13032] = {
-            Quest = [=[Muraco the Elder||1|1|0|0|0]=],
+            Quest = [=[Muraco the Elder||1|1|0|29|0]=],
         },
         [13033] = {
-            Quest = [=[Arp the Elder||1|1|0|0|0]=],
+            Quest = [=[Arp the Elder||1|1|0|29|0]=],
         },
         [13065] = {
-            Quest = [=[Ohanzee the Elder||1|1|0|0|0]=],
+            Quest = [=[Ohanzee the Elder||1|1|0|29|0]=],
         },
         [13066] = {
-            Quest = [=[Yurauk the Elder||1|1|0|0|0]=],
+            Quest = [=[Yurauk the Elder||1|1|0|29|0]=],
         },
         [13067] = {
-            Quest = [=[Chogan'gada the Elder||1|1|0|0|0]=],
+            Quest = [=[Chogan'gada the Elder||1|1|0|29|0]=],
         },
         [13123] = {
             Quest = [=[WotLK Collector's Edition: - DEM - E - FLAG||1|0|0|0|0]=],
         },
         [13203] = {
-            Quest = [=[A Winter Veil Gift||10|10|0|0|0]=],
+            Quest = [=[A Winter Veil Gift||10|10|0|186|0]=],
         },
         [13210] = {
             Quest = [=[Blizzard Account: - DEM - E - FLAG||1|0|0|0|0]=],
         },
         [13433] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [13434] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [13435] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [13436] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [13437] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [13438] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [13439] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [13440] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
         },
         [13441] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
         },
         [13442] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
         },
         [13443] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
         },
         [13444] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
         },
         [13445] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
         },
         [13446] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
         },
         [13447] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
         },
         [13448] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
         },
         [13449] = {
-            Quest = [=[Desecrate this Fire!|2|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|2|1|1|0|32|0]=],
         },
         [13450] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
         },
         [13451] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
         },
         [13452] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [13453] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
         },
         [13454] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
         },
         [13455] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
         },
         [13456] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [13457] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
         },
         [13458] = {
-            Quest = [=[Desecrate this Fire!|1|1|1|0|0|0]=],
+            Quest = [=[Desecrate this Fire!|1|1|1|0|32|0]=],
         },
         [13459] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [13460] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [13461] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [13462] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
         },
         [13463] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "194071|125|32|48.15|41.31",
             End = "194071|125|32|48.15|41.31",
         },
         [13464] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13465] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13466] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13467] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13468] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13469] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13470] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13471] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13472] = {
-            Quest = [=[Candy Bucket||1|1|0|0|0]=],
+            Quest = [=[Candy Bucket||1|1|0|89|0]=],
             Start = "194072|125|32|42.40|56.94",
             End = "194072|125|32|42.40|56.94",
         },
         [13473] = {
-            Quest = [=[Candy Bucket|1|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|1|1|1|0|89|0]=],
             Start = "194064|125|32|42.36|63.12",
             End = "194064|125|32|42.36|63.12",
         },
         [13474] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13479] = {
-            Quest = [=[The Great Egg Hunt|2|1|1|0|0|0]=],
+            Quest = [=[The Great Egg Hunt|2|1|1|0|37|0]=],
             Start = "32798|1411|32|51.82|42.07",
             End = "32798|1411|32|51.82|42.07",
             Objectives = {
@@ -15439,7 +15439,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [13480] = {
-            Quest = [=[The Great Egg Hunt|1|1|1|0|0|0]=],
+            Quest = [=[The Great Egg Hunt|1|1|1|0|37|0]=],
             Start = "32799|1426|32|46.88|52.38",
             End = "32799|1426|32|46.88|52.38",
             Objectives = {
@@ -15457,68 +15457,68 @@ function Nx.ModQuests:Data1()
             },
         },
         [13483] = {
-            Quest = [=[Spring Gatherers|2|1|1|13479|0|0]=],
+            Quest = [=[Spring Gatherers|2|1|1|13479|37|0]=],
             Start = "19169|1954|32|59.12|60.76",
             End = "32798|1411|32|51.82|42.07",
         },
         [13484] = {
-            Quest = [=[Spring Collectors|1|1|1|13480|0|0]=],
+            Quest = [=[Spring Collectors|1|1|1|13480|37|0]=],
             Start = "18927|1453|32|61.64|74.23",
             End = "32799|1426|32|46.88|52.38",
         },
         [13485] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
         },
         [13486] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
         },
         [13487] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
         },
         [13488] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
         },
         [13489] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
         },
         [13490] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
         },
         [13491] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
         },
         [13492] = {
-            Quest = [=[Honor the Flame|1|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|1|1|1|0|32|0]=],
         },
         [13493] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
         },
         [13494] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
         },
         [13495] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
         },
         [13496] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
         },
         [13497] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
         },
         [13498] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
         },
         [13499] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
         },
         [13500] = {
-            Quest = [=[Honor the Flame|2|1|1|0|0|0]=],
+            Quest = [=[Honor the Flame|2|1|1|0|32|0]=],
         },
         [13501] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13502] = {
-            Quest = [=[A Tisket, a Tasket, a Noblegarden Basket|1|1|1|0|0|0]=],
+            Quest = [=[A Tisket, a Tasket, a Noblegarden Basket|1|1|1|0|37|0]=],
             Start = "32836|1426|32|47.00|52.49",
             End = "32836|1426|32|47.00|52.49",
             Objectives = {
@@ -15536,7 +15536,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [13503] = {
-            Quest = [=[A Tisket, a Tasket, a Noblegarden Basket|2|1|1|0|0|0]=],
+            Quest = [=[A Tisket, a Tasket, a Noblegarden Basket|2|1|1|0|37|0]=],
             Start = "32837|1411|32|51.90|41.87",
             End = "32837|1411|32|51.90|41.87",
             Objectives = {
@@ -15552,7 +15552,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [13548] = {
-            Quest = [=[Candy Bucket|2|1|1|0|0|0]=],
+            Quest = [=[Candy Bucket|2|1|1|0|89|0]=],
         },
         [13649] = {
             Quest = [=[Justin's Fun Test|1|1|1|0|0|0]=],
@@ -15563,35 +15563,35 @@ function Nx.ModQuests:Data1()
             },
         },
         [13931] = {
-            Quest = [=[Another Year, Another Souvenir.|2|1|1|0|0|0]=],
+            Quest = [=[Another Year, Another Souvenir.|2|1|1|0|33|0]=],
             Start = "24510|1411|32|46.29|14.84",
         },
         [13932] = {
-            Quest = [=[Another Year, Another Souvenir.|1|1|1|0|0|0]=],
+            Quest = [=[Another Year, Another Souvenir.|1|1|1|0|33|0]=],
             Start = "24468|1426|32|46.43|40.32",
             End = "23710|1426|32|49.27|39.59",
         },
         [13952] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [13966] = {
-            Quest = [=[A Winter Veil Gift||10|10|0|0|0]=],
+            Quest = [=[A Winter Veil Gift||10|10|0|186|0]=],
         },
         [14022] = {
-            Quest = [=[Pilgrim's Bounty|1|1|1|0|0|0]=],
+            Quest = [=[Pilgrim's Bounty|1|1|1|0|40|0]=],
             Start = "18927|1453|32|61.64|74.23",
         },
         [14023] = {
-            Quest = [=[Spice Bread Stuffing|1|1|1|14024|0|0]=],
+            Quest = [=[Spice Bread Stuffing|1|1|1|14024|40|0]=],
         },
         [14024] = {
-            Quest = [=[Pumpkin Pie|1|1|1|14028|0|0]=],
+            Quest = [=[Pumpkin Pie|1|1|1|14028|40|0]=],
         },
         [14028] = {
-            Quest = [=[Cranberry Chutney|1|1|1|14030|0|0]=],
+            Quest = [=[Cranberry Chutney|1|1|1|14030|40|0]=],
         },
         [14030] = {
-            Quest = [=[They're Ravenous In Darnassus|1|1|1|14033|0|0]=],
+            Quest = [=[They're Ravenous In Darnassus|1|1|1|14033|40|0]=],
         },
         [14032] = {
             Quest = [=[Kobold Camp Cleanup||2|1|0|0|0]=],
@@ -15646,102 +15646,102 @@ function Nx.ModQuests:Data1()
             },
         },
         [14033] = {
-            Quest = [=[Candied Sweet Potatoes|1|1|1|14035|0|0]=],
+            Quest = [=[Candied Sweet Potatoes|1|1|1|14035|40|0]=],
         },
         [14035] = {
-            Quest = [=[Slow-roasted Turkey|1|1|1|0|0|0]=],
+            Quest = [=[Slow-roasted Turkey|1|1|1|0|40|0]=],
         },
         [14036] = {
-            Quest = [=[Pilgrim's Bounty|2|1|1|0|0|0]=],
+            Quest = [=[Pilgrim's Bounty|2|1|1|0|40|0]=],
             Start = "19169|1954|32|59.12|60.76",
         },
         [14037] = {
-            Quest = [=[Spice Bread Stuffing|2|1|1|14040|0|0]=],
+            Quest = [=[Spice Bread Stuffing|2|1|1|14040|40|0]=],
         },
         [14040] = {
-            Quest = [=[Pumpkin Pie|2|1|1|14041|0|0]=],
+            Quest = [=[Pumpkin Pie|2|1|1|14041|40|0]=],
         },
         [14041] = {
-            Quest = [=[Cranberry Chutney|2|1|1|14043|0|0]=],
+            Quest = [=[Cranberry Chutney|2|1|1|14043|40|0]=],
         },
         [14043] = {
-            Quest = [=[Candied Sweet Potatoes|2|1|1|14044|0|0]=],
+            Quest = [=[Candied Sweet Potatoes|2|1|1|14044|40|0]=],
         },
         [14044] = {
-            Quest = [=[Undersupplied in the Undercity|2|1|1|14047|0|0]=],
+            Quest = [=[Undersupplied in the Undercity|2|1|1|14047|40|0]=],
         },
         [14047] = {
-            Quest = [=[Slow-roasted Turkey|2|1|1|0|0|0]=],
+            Quest = [=[Slow-roasted Turkey|2|1|1|0|40|0]=],
         },
         [14048] = {
-            Quest = [=[Can't Get Enough Turkey|1|1|1|0|0|0]=],
+            Quest = [=[Can't Get Enough Turkey|1|1|1|0|40|0]=],
         },
         [14051] = {
-            Quest = [=[Don't Forget The Stuffing!|1|1|1|0|0|0]=],
+            Quest = [=[Don't Forget The Stuffing!|1|1|1|0|40|0]=],
         },
         [14053] = {
-            Quest = [=[We're Out of Cranberry Chutney Again?|1|1|1|0|0|0]=],
+            Quest = [=[We're Out of Cranberry Chutney Again?|1|1|1|0|40|0]=],
         },
         [14054] = {
-            Quest = [=[Easy As Pie|1|1|1|0|0|0]=],
+            Quest = [=[Easy As Pie|1|1|1|0|40|0]=],
         },
         [14055] = {
-            Quest = [=[She Says Potato|1|1|1|0|0|0]=],
+            Quest = [=[She Says Potato|1|1|1|0|40|0]=],
         },
         [14058] = {
-            Quest = [=[She Says Potato|2|1|1|0|0|0]=],
+            Quest = [=[She Says Potato|2|1|1|0|40|0]=],
         },
         [14059] = {
-            Quest = [=[We're Out of Cranberry Chutney Again?|2|1|1|0|0|0]=],
+            Quest = [=[We're Out of Cranberry Chutney Again?|2|1|1|0|40|0]=],
         },
         [14060] = {
-            Quest = [=[Easy As Pie|2|1|1|0|0|0]=],
+            Quest = [=[Easy As Pie|2|1|1|0|40|0]=],
         },
         [14061] = {
-            Quest = [=[Can't Get Enough Turkey|2|1|1|0|0|0]=],
+            Quest = [=[Can't Get Enough Turkey|2|1|1|0|40|0]=],
         },
         [14062] = {
-            Quest = [=[Don't Forget The Stuffing!|2|1|1|0|0|0]=],
+            Quest = [=[Don't Forget The Stuffing!|2|1|1|0|40|0]=],
         },
         [14160] = {
-            Quest = [=[Writ of Merit||1|1|0|0|0]=],
+            Quest = [=[Writ of Merit||1|1|0|36|0]=],
             End = "28701|125|32|40.68|35.35",
         },
         [14166] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14167] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14168] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14169] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14170] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14171] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14172] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14173] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14174] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14175] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14176] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14177] = {
-            Quest = [=[The Grateful Dead||1|1|0|0|0]=],
+            Quest = [=[The Grateful Dead||1|1|0|39|0]=],
         },
         [14436] = {
             Quest = [=[Dwarven Digging||8|6|0|0|0]=],
@@ -15769,16 +15769,16 @@ function Nx.ModQuests:Data1()
             Quest = [=[Garrosh's Autograph||10|10|0|0|0]=],
         },
         [24536] = {
-            Quest = [=[Something Stinks|2|1|1|24541|0|0]=],
+            Quest = [=[Something Stinks|2|1|1|24541|41|0]=],
         },
         [24541] = {
-            Quest = [=[Pilfering Perfume|2|1|1|24850|0|0]=],
+            Quest = [=[Pilfering Perfume|2|1|1|24850|41|0]=],
         },
         [24576] = {
-            Quest = [=[A Friendly Chat...|2|1|1|0|0|0]=],
+            Quest = [=[A Friendly Chat...|2|1|1|0|41|0]=],
         },
         [24638] = {
-            Quest = [=[Crushing the Crown|2|5|5|0|0|0]=],
+            Quest = [=[Crushing the Crown|2|5|5|0|41|0]=],
             Objectives = {
                 [1] = {
                     "nil|127|35|48.00|46.08|28.86|9.62",
@@ -15790,7 +15790,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [24655] = {
-            Quest = [=[Something Stinks|1|1|1|24656|0|0]=],
+            Quest = [=[Something Stinks|1|1|1|24656|41|0]=],
             Start = "38066|1453|32|61.60|75.29",
             End = "38066|1453|32|61.60|75.29",
             Objectives = {
@@ -15800,7 +15800,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [24656] = {
-            Quest = [=[Pilfering Perfume|1|1|1|24848|0|0]=],
+            Quest = [=[Pilfering Perfume|1|1|1|24848|41|0]=],
             Start = "38066|1453|32|61.60|75.29",
             End = "38066|1453|32|61.60|75.29",
             Objectives = {
@@ -15810,7 +15810,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [24657] = {
-            Quest = [=[A Friendly Chat...|1|1|1|0|0|0]=],
+            Quest = [=[A Friendly Chat...|1|1|1|0|41|0]=],
             Start = "38325|1453|32|60.61|76.37",
             End = "38066|1453|32|61.60|75.29",
             Objectives = {
@@ -15820,7 +15820,7 @@ function Nx.ModQuests:Data1()
             },
         },
         [24658] = {
-            Quest = [=[Crushing the Crown|1|5|5|0|0|0]=],
+            Quest = [=[Crushing the Crown|1|5|5|0|41|0]=],
             Objectives = {
                 [1] = {
                     "nil|127|35|48.00|46.08|28.86|9.62",
@@ -15832,30 +15832,30 @@ function Nx.ModQuests:Data1()
             },
         },
         [24803] = {
-            Quest = [=[Kalu'ak Fishing Derby|2|1|1|0|0|0]=],
+            Quest = [=[Kalu'ak Fishing Derby|2|1|1|0|12|0]=],
             Start = "38294|125|32|52.50|66.50",
             End = "38294|125|32|52.50|66.50",
         },
         [24804] = {
-            Quest = [=[Uncommon Scents|1|1|1|24655|0|0]=],
+            Quest = [=[Uncommon Scents|1|1|1|24655|41|0]=],
             Start = "38293|1457|32|42.00|50.05",
             End = "38066|1453|32|61.60|75.29",
         },
         [24805] = {
-            Quest = [=[Uncommon Scents|2|1|1|24536|0|0]=],
+            Quest = [=[Uncommon Scents|2|1|1|24536|41|0]=],
         },
         [24806] = {
-            Quest = [=[Better Luck Next Time||1|1|0|0|0]=],
+            Quest = [=[Better Luck Next Time||1|1|0|12|0]=],
             Start = "38294|125|32|52.50|66.50",
             End = "38294|125|32|52.50|66.50",
         },
         [24848] = {
-            Quest = [=[Fireworks At The Gilded Rose|1|1|1|24849|0|0]=],
+            Quest = [=[Fireworks At The Gilded Rose|1|1|1|24849|41|0]=],
             Start = "38066|1453|32|61.60|75.29",
             End = "38325|1453|32|60.61|76.37",
         },
         [24849] = {
-            Quest = [=[Hot On The Trail|1|1|1|24657|0|0]=],
+            Quest = [=[Hot On The Trail|1|1|1|24657|41|0]=],
             Start = "38325|1453|32|60.61|76.37",
             End = "38325|1453|32|60.61|76.37",
             Objectives = {
@@ -15871,10 +15871,10 @@ function Nx.ModQuests:Data1()
             },
         },
         [24850] = {
-            Quest = [=[Snivel's Sweetheart|2|1|1|24851|0|0]=],
+            Quest = [=[Snivel's Sweetheart|2|1|1|24851|41|0]=],
         },
         [24851] = {
-            Quest = [=[Hot On The Trail|2|1|1|24576|0|0]=],
+            Quest = [=[Hot On The Trail|2|1|1|24576|41|0]=],
             Objectives = {
                 [1] = {
                     "nil|1454|35|49|82|5.01|3.34",

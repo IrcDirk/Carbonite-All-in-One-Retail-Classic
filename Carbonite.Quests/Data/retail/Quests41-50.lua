@@ -18,35 +18,6 @@ function Nx.ModQuests:Data5()
             Start = "14754|10|32|40.20|20.00",
             End = "14754|10|32|40.20|20.00",
         },
-        [7872] = {
-            Quest = [=[Vanquish the Invaders!||45|40|0|0|0]=],
-            End = "14733|63|32|61.85|83.90",
-        },
-        [7888] = {
-            Quest = [=[Talismans of Merit|2|45|40|0|0|0]=],
-            Start = "14832|407|32|48.20|67.60",
-            End = "14733|63|32|61.85|83.90",
-        },
-        [7923] = {
-            Quest = [=[Mark of Honor|1|45|40|0|0|0]=],
-            End = "14781|10|32|40.04|20.00",
-        },
-        [8154] = {
-            Quest = [=[Arathi Basin Resources!||45|40|0|0|0]=],
-            End = "14984|14|32|40.01|46.51",
-        },
-        [8157] = {
-            Quest = [=[More Resource Crates|2|45|40|0|0|0]=],
-            End = "14984|14|32|40.01|46.51",
-        },
-        [8160] = {
-            Quest = [=[Cut Arathor Supply Lines|1|45|40|0|0|0]=],
-            End = "15022|14|32|68.57|30.44",
-        },
-        [8163] = {
-            Quest = [=[More Resource Crates|1|45|40|0|0|0]=],
-            End = "15022|14|32|68.57|30.44",
-        },
         [8261] = {
             Quest = [=[Arathor Standard Care Package|2|44|35|0|0|0]=],
             Start = "15127|14|32|40.20|46.40",
@@ -57,49 +28,8 @@ function Nx.ModQuests:Data5()
             Start = "15126|14|32|68.50|30.40",
             End = "15126|14|32|68.50|30.40",
         },
-        [8392] = {
-            Quest = [=[Claiming Arathi Basin|2|49|40|0|0|0]=],
-            Start = "15351|87|32|69.80|90.60",
-            End = "15351|14|32|45.60|45.80",
-        },
-        [8394] = {
-            Quest = [=[Claiming Arathi Basin|2|49|40|0|0|0]=],
-            Start = "15351|87|32|69.80|90.60",
-            End = "15351|14|32|45.60|45.80",
-        },
-        [8396] = {
-            Quest = [=[Claiming Arathi Basin|2|50|0|0|0|0]=],
-            Start = "15351|87|32|69.80|90.60",
-            End = "15351|14|32|45.60|45.80",
-        },
-        [8401] = {
-            Quest = [=[Fight for Warsong Gulch|2|50|0|0|0|0]=],
-            Start = "15351|84|32|79.40|18.20",
-            End = "15351|84|32|79.40|18.20",
-        },
-        [8406] = {
-            Quest = [=[Fight for Warsong Gulch|2|50|0|0|0|0]=],
-            Start = "15351|84|32|79.40|18.20",
-            End = "15351|84|32|79.40|18.20",
-        },
-        [8428] = {
-            Quest = [=[Battle of Warsong Gulch|1|49|40|0|0|0]=],
-        },
-        [8433] = {
-            Quest = [=[Battle of Warsong Gulch|1|49|40|0|0|0]=],
-        },
-        [8437] = {
-            Quest = [=[Conquering Arathi Basin|1|49|40|0|0|0]=],
-            Start = "15350|85|32|80.60|30.60",
-            End = "15350|10|32|46.60|8.60",
-        },
-        [8441] = {
-            Quest = [=[Conquering Arathi Basin|1|49|40|0|0|0]=],
-            Start = "15350|85|32|80.60|30.60",
-            End = "15350|10|32|46.60|8.60",
-        },
         [11948] = {
-            Quest = [=[Striking Back||43|39|0|0|0]=],
+            Quest = [=[Striking Back||43|39|0|32|0]=],
             Start = "26169|114|32|63.70|46.10",
             End = "26221|84|32|47.80|72.10",
             Objectives = {
@@ -112,39 +42,13 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [24649] = {
-            Quest = [=[Crushing the Crown|1|41|41|0|0|0]=],
-            Start = "37172|85|32|50.00|65.00",
-            End = "37172|85|32|50.00|65.00",
-            Objectives = {
-                [1] = {
-                    "nil|26|35|23.04|50.40|19.24|9.62",
-                    "nil|26|35|22.08|51.84|38.48|19.24",
-                    "nil|26|35|21.12|54.72|57.72|9.62",
-                    "nil|26|35|22.08|56.16|38.48|9.62",
-                },
-            },
-        },
-        [24663] = {
-            Quest = [=[Crushing the Crown|2|41|41|0|0|0]=],
-            Start = "38066|84|32|61.50|75.20",
-            End = "38066|84|32|61.50|75.20",
-            Objectives = {
-                [1] = {
-                    "nil|26|35|23.04|50.40|19.24|9.62",
-                    "nil|26|35|22.08|51.84|38.48|19.24",
-                    "nil|26|35|21.12|54.72|57.72|9.62",
-                    "nil|26|35|22.08|56.16|38.48|9.62",
-                },
-            },
-        },
         [32442] = {
-            Quest = [=[Impending Danger||45|45|41087|0|0]=],
+            Quest = [=[Impending Danger||45|45|41087|117|0]=],
             Start = "100438|709|32|51.40|48.40",
             End = "100438|709|32|51.40|48.40",
         },
         [37448] = {
-            Quest = [=[A Simple Plan||45|45|37494|0|0]=],
+            Quest = [=[A Simple Plan||45|45|37494|144|0]=],
             Start = "110953|626|32|40.50|77.90",
             End = "98100|0|32|0.00|0.00",
             Objectives = {
@@ -159,7 +63,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [37494] = {
-            Quest = [=[Under Cover of Darkness||45|45|0|0|0]=],
+            Quest = [=[Under Cover of Darkness||45|45|0|144|0]=],
             Start = "98100|626|32|40.60|77.00",
             End = "111049|0|32|0.00|0.00",
             Objectives = {
@@ -169,7 +73,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [37666] = {
-            Quest = [=[Picking a Fight||45|45|37448|0|0]=],
+            Quest = [=[Picking a Fight||45|45|37448|144|0]=],
             Start = "110793|680|32|27.00|89.10",
             End = "110953|0|32|0.00|0.00",
             Objectives = {
@@ -179,7 +83,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [37689] = {
-            Quest = [=[The Imposter||45|45|0|0|0]=],
+            Quest = [=[The Imposter||45|45|0|144|0]=],
             Start = "111049|84|32|35.60|60.00",
             End = "98100|0|32|0.00|0.00",
             Objectives = {
@@ -192,12 +96,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [38524] = {
-            Quest = [=[Felsmith Nal'ryssa||45|45|38525|0|0]=],
+            Quest = [=[Felsmith Nal'ryssa||45|45|38525|11|0]=],
             Start = "92183|627|32|45.00|29.60",
             End = "92264|0|32|0.00|0.00",
         },
         [38525] = {
-            Quest = [=[Part of the Team||45|45|38526|0|0]=],
+            Quest = [=[Part of the Team||45|45|38526|11|0]=],
             Start = "92264|680|32|30.00|53.40",
             End = "92264|680|32|30.00|53.40",
             Objectives = {
@@ -251,7 +155,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38526] = {
-            Quest = [=[Smith Under Fire||45|45|38527|0|0]=],
+            Quest = [=[Smith Under Fire||45|45|38527|11|0]=],
             Start = "92264|680|32|30.00|53.40",
             End = "92264|680|32|30.00|53.40",
             Objectives = {
@@ -261,7 +165,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38527] = {
-            Quest = [=[Nal'ryssa's Technique||45|45|38528|0|0]=],
+            Quest = [=[Nal'ryssa's Technique||45|45|38528|11|0]=],
             Start = "92264|680|32|30.00|53.40",
             End = "92264|680|32|30.00|53.40",
             Objectives = {
@@ -500,7 +404,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38528] = {
-            Quest = [=[Leystone's Potential||45|45|38530|0|0]=],
+            Quest = [=[Leystone's Potential||45|45|38530|11|0]=],
             Start = "92264|680|32|30.00|53.40",
             End = "92264|680|32|30.00|53.40",
             Objectives = {
@@ -516,12 +420,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [38530] = {
-            Quest = [=[The Firmament Stone||45|45|38531|0|0]=],
+            Quest = [=[The Firmament Stone||45|45|38531|11|0]=],
             Start = "92264|680|32|30.00|53.40",
             End = "92242|0|32|0.00|0.00",
         },
         [38531] = {
-            Quest = [=[Leystone Mastery||45|45|38559|0|0]=],
+            Quest = [=[Leystone Mastery||45|45|38559|11|0]=],
             Start = "92242|650|32|55.20|84.20",
             End = "92242|650|32|55.20|84.20",
             Objectives = {
@@ -531,7 +435,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38532] = {
-            Quest = [=[Maw of Souls: Hammered By The Storm||45|45|38559|0|0]=],
+            Quest = [=[Maw of Souls: Hammered By The Storm||45|45|38559|11|0]=],
             Start = "92242|650|32|55.20|84.20",
             End = "92242|650|32|55.20|84.20",
             Objectives = {
@@ -541,52 +445,52 @@ function Nx.ModQuests:Data5()
             },
         },
         [38533] = {
-            Quest = [=[Tribal Knowledge||45|45|0|0|0]=],
+            Quest = [=[Tribal Knowledge||45|45|0|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92264|0|32|0.00|0.00",
         },
         [38534] = {
-            Quest = [=[Demonsteel Armguards||45|45|0|0|0]=],
+            Quest = [=[Demonsteel Armguards||45|45|0|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92243|650|32|54.60|84.00",
         },
         [38536] = {
-            Quest = [=[Demonsteel Waistguard||45|45|0|0|0]=],
+            Quest = [=[Demonsteel Waistguard||45|45|0|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92243|650|32|54.60|84.00",
         },
         [38537] = {
-            Quest = [=[Demonsteel Pauldrons||45|45|0|0|0]=],
+            Quest = [=[Demonsteel Pauldrons||45|45|0|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92243|650|32|54.60|84.00",
         },
         [38538] = {
-            Quest = [=[Demonsteel Boots||45|45|0|0|0]=],
+            Quest = [=[Demonsteel Boots||45|45|0|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92243|650|32|54.60|84.00",
         },
         [38539] = {
-            Quest = [=[Demonsteel Gauntlets||45|45|0|0|0]=],
+            Quest = [=[Demonsteel Gauntlets||45|45|0|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92243|650|32|54.60|84.00",
         },
         [38540] = {
-            Quest = [=[Demonsteel Helm||45|45|0|0|0]=],
+            Quest = [=[Demonsteel Helm||45|45|0|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92243|650|32|54.60|84.00",
         },
         [38541] = {
-            Quest = [=[Demonsteel Greaves||45|45|0|0|0]=],
+            Quest = [=[Demonsteel Greaves||45|45|0|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92243|650|32|54.60|84.00",
         },
         [38542] = {
-            Quest = [=[Demonsteel Breastplate||45|45|0|0|0]=],
+            Quest = [=[Demonsteel Breastplate||45|45|0|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92243|650|32|54.60|84.00",
         },
         [38559] = {
-            Quest = [=[Worthy of the Stone||45|45|38833|0|0]=],
+            Quest = [=[Worthy of the Stone||45|45|38833|11|0]=],
             Start = "92242|650|32|55.20|84.20",
             End = "92243|0|32|0.00|0.00",
         },
@@ -679,7 +583,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38806] = {
-            Quest = [=[Infernal Brimstone Sample||45|45|0|0|0]=],
+            Quest = [=[Infernal Brimstone Sample||45|45|0|115|0]=],
             End = "93189|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -688,7 +592,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38807] = {
-            Quest = [=[Infernal Brimstone Analysis||45|45|39790|0|0]=],
+            Quest = [=[Infernal Brimstone Analysis||45|45|39790|115|0]=],
             Start = "93189|627|32|46.20|26.40",
             End = "93189|627|32|46.20|26.40",
             Objectives = {
@@ -704,7 +608,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38833] = {
-            Quest = [=[The Art of Demonsteel||45|45|38533|0|0]=],
+            Quest = [=[The Art of Demonsteel||45|45|38533|11|0]=],
             Start = "92243|650|32|54.60|84.00",
             End = "92243|650|32|54.60|84.00",
             Objectives = {
@@ -720,12 +624,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [38962] = {
-            Quest = [=[The Path to Suramar City||45|45|38967|0|0]=],
+            Quest = [=[The Path to Suramar City||45|45|38967|21|0]=],
             Start = "93542|627|32|35.20|34.20",
             End = "93542|627|32|35.20|34.20",
         },
         [38964] = {
-            Quest = [=[Where's Lyndras Now?||45|45|39602|0|0]=],
+            Quest = [=[Where's Lyndras Now?||45|45|39602|21|0]=],
             Start = "93542|627|32|35.20|34.20",
             End = "93542|627|32|35.20|34.20",
             Objectives = {
@@ -735,7 +639,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38965] = {
-            Quest = [=[Assault on Violet Hold: Into the Hold||45|45|38966|0|0]=],
+            Quest = [=[Assault on Violet Hold: Into the Hold||45|45|38966|21|0]=],
             Start = "96444|627|32|65.20|67.40",
             End = "93542|0|32|0.00|0.00",
             Objectives = {
@@ -780,7 +684,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38966] = {
-            Quest = [=[Secret Silkweaving Methods||45|45|38962|0|0]=],
+            Quest = [=[Secret Silkweaving Methods||45|45|38962|21|0]=],
             Start = "93542|627|32|35.20|34.20",
             End = "93542|627|32|35.20|34.20",
             Objectives = {
@@ -790,12 +694,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [38967] = {
-            Quest = [=[The Nightborne Connection||45|45|38968|0|0]=],
+            Quest = [=[The Nightborne Connection||45|45|38968|21|0]=],
             Start = "93542|627|32|35.20|34.20",
             End = "93969|0|32|0.00|0.00",
         },
         [38968] = {
-            Quest = [=[Proof of Loyalty||45|45|38970|0|0]=],
+            Quest = [=[Proof of Loyalty||45|45|38970|21|0]=],
             Start = "93969|680|32|40.40|69.40",
             End = "93969|680|32|40.40|69.40",
             Objectives = {
@@ -838,7 +742,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38969] = {
-            Quest = [=[Master of Silkweave||45|45|0|0|0]=],
+            Quest = [=[Master of Silkweave||45|45|0|21|0]=],
             Start = "93971|680|32|40.40|69.40",
             End = "93971|680|32|40.40|69.40",
             Objectives = {
@@ -848,7 +752,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38970] = {
-            Quest = [=[The Queen's Grace Loom||45|45|0|0|0]=],
+            Quest = [=[The Queen's Grace Loom||45|45|0|21|0]=],
             Start = "93969|680|32|40.40|69.40",
             End = "93969|680|32|40.40|69.40",
             Objectives = {
@@ -858,7 +762,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38971] = {
-            Quest = [=[Exotic Textiles||45|45|0|0|0]=],
+            Quest = [=[Exotic Textiles||45|45|0|21|0]=],
             Start = "93978|680|32|26.60|71.40",
             End = "93978|680|32|26.60|71.40",
             Objectives = {
@@ -870,7 +774,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38974] = {
-            Quest = [=[Halls of Valor: The Right Question||45|45|0|0|0]=],
+            Quest = [=[Halls of Valor: The Right Question||45|45|0|21|0]=],
             Start = "93977|634|32|65.60|56.20",
             End = "93977|634|32|65.60|56.20",
             Objectives = {
@@ -884,7 +788,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [38975] = {
-            Quest = [=[Inspire Me!||45|45|0|0|0]=],
+            Quest = [=[Inspire Me!||45|45|0|21|0]=],
             Start = "93976|680|32|40.20|69.60",
             End = "93976|680|32|40.20|69.60",
             Objectives = {
@@ -930,7 +834,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39339] = {
-            Quest = [=[A Fragile Crucible||45|45|39340|0|0]=],
+            Quest = [=[A Fragile Crucible||45|45|39340|13|0]=],
             Start = "92458|627|32|41.60|32.80",
             End = "92458|627|32|41.60|32.80",
             Objectives = {
@@ -940,7 +844,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39340] = {
-            Quest = [=[Lining the Crucible||45|45|39341|0|0]=],
+            Quest = [=[Lining the Crucible||45|45|39341|13|0]=],
             Start = "92458|627|32|41.60|32.80",
             End = "92458|627|32|41.60|32.80",
             Objectives = {
@@ -977,7 +881,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39341] = {
-            Quest = [=[Vault of the Wardens: Demon's Bile||45|45|0|0|0]=],
+            Quest = [=[Vault of the Wardens: Demon's Bile||45|45|0|13|0]=],
             Start = "92458|627|32|41.60|32.80",
             End = "92458|627|32|41.60|32.80",
             Objectives = {
@@ -1001,7 +905,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39342] = {
-            Quest = [=[The Price of the Black Market||45|45|39333|0|0]=],
+            Quest = [=[The Price of the Black Market||45|45|39333|13|0]=],
             Start = "101492|628|32|70.80|19.80",
             End = "101492|628|32|70.80|19.80",
             Objectives = {
@@ -1020,12 +924,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [39343] = {
-            Quest = [=[Vault of the Wardens: Bendy Glass Tubes||45|45|0|0|0]=],
+            Quest = [=[Vault of the Wardens: Bendy Glass Tubes||45|45|0|13|0]=],
             Start = "127877|678|32|40.00|50.00",
             End = "92458|0|32|0.00|0.00",
         },
         [39344] = {
-            Quest = [=[Going Underground||45|45|0|0|0]=],
+            Quest = [=[Going Underground||45|45|0|13|0]=],
             Start = "92458|627|32|41.60|32.80",
             End = "101492|0|32|0.00|0.00",
             Objectives = {
@@ -1035,7 +939,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39345] = {
-            Quest = [=[Calibration Experts|2|45|45|39346|0|0]=],
+            Quest = [=[Calibration Experts|2|45|45|39346|13|0]=],
             Start = "92458|627|32|41.60|32.80",
             End = "92458|627|32|41.60|32.80",
             Objectives = {
@@ -1055,7 +959,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39346] = {
-            Quest = [=[Testing the Calibration||45|45|0|0|0]=],
+            Quest = [=[Testing the Calibration||45|45|0|13|0]=],
             Start = "92458|627|32|41.60|32.80",
             End = "92458|627|32|41.60|32.80",
             Objectives = {
@@ -1074,12 +978,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [39347] = {
-            Quest = [=[Channeling Our Efforts||45|45|0|0|0]=],
+            Quest = [=[Channeling Our Efforts||45|45|0|13|0]=],
             Start = "92458|627|32|41.60|32.80",
             End = "92183|0|32|0.00|0.00",
         },
         [39348] = {
-            Quest = [=[Halls of Valor: The Prime Ingredient||45|45|39351|0|0]=],
+            Quest = [=[Halls of Valor: The Prime Ingredient||45|45|39351|13|0]=],
             Start = "92183|627|32|45.00|29.60",
             End = "92183|627|32|45.00|29.60",
             Objectives = {
@@ -1092,7 +996,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39349] = {
-            Quest = [=[Black Rook Hold: Heavy, But Helpful||45|45|39351|0|0]=],
+            Quest = [=[Black Rook Hold: Heavy, But Helpful||45|45|39351|13|0]=],
             Start = "92183|627|32|45.00|29.60",
             End = "92183|627|32|45.00|29.60",
             Objectives = {
@@ -1105,7 +1009,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39350] = {
-            Quest = [=[Maw of Souls: A Hope in Helheim||45|45|39351|0|0]=],
+            Quest = [=[Maw of Souls: A Hope in Helheim||45|45|39351|13|0]=],
             Start = "92183|627|32|45.00|29.60",
             End = "92183|627|32|45.00|29.60",
             Objectives = {
@@ -1118,7 +1022,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39351] = {
-            Quest = [=[The Emerald Nightmare: Rage Fire||45|45|0|0|0]=],
+            Quest = [=[The Emerald Nightmare: Rage Fire||45|45|0|13|0]=],
             Start = "92183|627|32|45.00|29.60",
             End = "92183|627|32|45.00|29.60",
             Objectives = {
@@ -1160,7 +1064,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39602] = {
-            Quest = [=[Where's Lyndras: Sewer Sleuthing||45|45|39605|0|0]=],
+            Quest = [=[Where's Lyndras: Sewer Sleuthing||45|45|39605|21|0]=],
             Start = "93542|627|32|35.20|34.20",
             End = "93542|627|32|35.20|34.20",
             Objectives = {
@@ -1170,12 +1074,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [39605] = {
-            Quest = [=[Where's Lyndras: Downward Spiral||45|45|39667|0|0]=],
+            Quest = [=[Where's Lyndras: Downward Spiral||45|45|39667|21|0]=],
             Start = "-243899|627|32|56.20|68.40",
             End = "-243899|0|32|0.00|0.00",
         },
         [39645] = {
-            Quest = [=[Calibration Experts|1|45|45|39346|0|0]=],
+            Quest = [=[Calibration Experts|1|45|45|39346|13|0]=],
             Start = "92458|627|32|41.60|32.80",
             End = "92458|627|32|41.60|32.80",
             Objectives = {
@@ -1193,7 +1097,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39667] = {
-            Quest = [=[Where's Lyndras: Leyflame Larceny||45|45|38965|0|0]=],
+            Quest = [=[Where's Lyndras: Leyflame Larceny||45|45|38965|21|0]=],
             Start = "-243899|627|32|56.20|68.40",
             End = "96444|0|32|0.00|0.00",
             Objectives = {
@@ -1206,7 +1110,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39763] = {
-            Quest = [=[For Whom the Fel Tolls||45|45|39817|0|0]=],
+            Quest = [=[For Whom the Fel Tolls||45|45|39817|115|0]=],
             Start = "97360|628|32|47.20|56.00",
             End = "97360|628|32|47.20|56.00",
             Objectives = {
@@ -1216,7 +1120,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39790] = {
-            Quest = [=[Infernal Brimstone Theory||45|45|39763|0|0]=],
+            Quest = [=[Infernal Brimstone Theory||45|45|39763|115|0]=],
             Start = "93189|627|32|46.20|26.40",
             End = "97360|0|32|0.00|0.00",
         },
@@ -1277,7 +1181,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39817] = {
-            Quest = [=[The Brimstone's Secret||45|45|39830|0|0]=],
+            Quest = [=[The Brimstone's Secret||45|45|39830|115|0]=],
             Start = "97360|628|32|47.20|56.00",
             End = "93189|0|32|0.00|0.00",
         },
@@ -1346,7 +1250,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39830] = {
-            Quest = [=[Hellfire Citadel: Hellfire and Brimstone||45|45|0|0|0]=],
+            Quest = [=[Hellfire Citadel: Hellfire and Brimstone||45|45|0|115|0]=],
             Start = "93189|627|32|46.20|26.40",
             End = "93189|627|32|46.20|26.40",
             Objectives = {
@@ -1356,12 +1260,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [39920] = {
-            Quest = [=[On Azure Wings||45|45|39921|0|0]=],
+            Quest = [=[On Azure Wings||45|45|39921|82|0]=],
             Start = "93531|627|32|38.60|40.80",
             End = "99420|0|32|0.00|0.00",
         },
         [39921] = {
-            Quest = [=[Neltharion's Lair: Rod of Azure||45|45|0|0|0]=],
+            Quest = [=[Neltharion's Lair: Rod of Azure||45|45|0|82|0]=],
             Start = "99420|630|32|47.20|26.40",
             End = "99420|630|32|47.20|26.40",
             Objectives = {
@@ -1374,7 +1278,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39923] = {
-            Quest = [=[Down to the Core||45|45|0|0|0]=],
+            Quest = [=[Down to the Core||45|45|0|82|0]=],
             Start = "99420|630|32|47.20|26.40",
             End = "99420|630|32|47.20|26.40",
             Objectives = {
@@ -1406,7 +1310,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [39957] = {
-            Quest = [=[Demon Ink||45|45|0|0|0]=],
+            Quest = [=[Demon Ink||45|45|0|34|0]=],
             Start = "92195|627|32|41.60|37.20",
             End = "92195|627|32|41.60|37.20",
             Objectives = {
@@ -1648,16 +1552,16 @@ function Nx.ModQuests:Data5()
             End = "97140|680|32|36.50|46.70",
         },
         [40156] = {
-            Quest = [=[Felhide Sample||45|45|0|0|0]=],
+            Quest = [=[Felhide Sample||45|45|0|150|0]=],
             End = "93541|0|32|0.00|0.00",
         },
         [40157] = {
-            Quest = [=[An Unseemly Task||45|45|40158|0|0]=],
+            Quest = [=[An Unseemly Task||45|45|40158|150|0]=],
             Start = "5049|625|32|35.80|28.60",
             End = "98720|0|32|0.00|0.00",
         },
         [40158] = {
-            Quest = [=[Darkheart Thicket: Demons Be Different||45|45|0|0|0]=],
+            Quest = [=[Darkheart Thicket: Demons Be Different||45|45|0|150|0]=],
             Start = "5052|680|32|30.60|33.40",
             End = "98720|0|32|0.00|0.00",
             Objectives = {
@@ -1667,7 +1571,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40159] = {
-            Quest = [=[The Emerald Nightmare: The Pestilential Hide of Nythendra||45|45|0|0|0]=],
+            Quest = [=[The Emerald Nightmare: The Pestilential Hide of Nythendra||45|45|0|150|0]=],
             Start = "5049|625|32|35.80|28.60",
             End = "93541|0|32|0.00|0.00",
             Objectives = {
@@ -1717,12 +1621,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [40211] = {
-            Quest = [=[Demon Flesh||45|45|0|0|0]=],
+            Quest = [=[Demon Flesh||45|45|0|14|0]=],
             Start = "93523|627|32|35.40|29.60",
             End = "98969|0|32|0.00|0.00",
         },
         [40212] = {
-            Quest = [=[Wrong End of the Knife||45|45|40214|0|0]=],
+            Quest = [=[Wrong End of the Knife||45|45|40214|14|0]=],
             Start = "98969|680|32|26.60|71.60",
             End = "98969|680|32|26.60|71.60",
             Objectives = {
@@ -1743,7 +1647,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40213] = {
-            Quest = [=[Hounds Abound||45|45|40214|0|0]=],
+            Quest = [=[Hounds Abound||45|45|40214|14|0]=],
             Start = "98969|680|32|26.60|71.60",
             End = "98969|680|32|26.60|71.60",
             Objectives = {
@@ -1759,7 +1663,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40214] = {
-            Quest = [=[Fel Tanning||45|45|0|0|0]=],
+            Quest = [=[Fel Tanning||45|45|0|14|0]=],
             Start = "98969|680|32|26.60|71.60",
             End = "98969|680|32|26.60|71.60",
             Objectives = {
@@ -1769,7 +1673,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40215] = {
-            Quest = [=[Mounting Made Easy||45|45|0|0|0]=],
+            Quest = [=[Mounting Made Easy||45|45|0|14|0]=],
             Start = "93523|627|32|35.40|29.60",
             End = "93523|627|32|35.40|29.60",
             Objectives = {
@@ -2444,12 +2348,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [40537] = {
-            Quest = [=[Drawing Blood|2|50|50|49694|0|0]=],
+            Quest = [=[Drawing Blood|2|50|50|49694|34|0]=],
             Start = "130399|1161|32|73.40|6.30",
             End = "130399|1161|32|73.40|6.30",
         },
         [40558] = {
-            Quest = [=[Socket to Me||45|45|0|0|0]=],
+            Quest = [=[Socket to Me||45|45|0|36|0]=],
             Start = "-246154|627|32|40.00|35.30",
             End = "93526|0|32|0.00|0.00",
             Objectives = {
@@ -2481,7 +2385,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40559] = {
-            Quest = [=[Black Rook Hold: The Raven's Wisdom||45|45|0|0|0]=],
+            Quest = [=[Black Rook Hold: The Raven's Wisdom||45|45|0|36|0]=],
             Start = "93527|627|32|39.80|35.00",
             End = "93527|627|32|39.80|35.00",
             Objectives = {
@@ -2494,7 +2398,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40560] = {
-            Quest = [=[Maw of Souls: Spiriting Away||45|45|0|0|0]=],
+            Quest = [=[Maw of Souls: Spiriting Away||45|45|0|36|0]=],
             Start = "93527|627|32|39.80|35.00",
             End = "93527|627|32|39.80|35.00",
             Objectives = {
@@ -2504,7 +2408,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40561] = {
-            Quest = [=[Halls of Valor: Jewel of the Heavens||45|45|0|0|0]=],
+            Quest = [=[Halls of Valor: Jewel of the Heavens||45|45|0|36|0]=],
             Start = "93527|627|32|39.80|35.00",
             End = "93527|627|32|39.80|35.00",
             Objectives = {
@@ -2514,7 +2418,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40562] = {
-            Quest = [=[A Personal Touch||45|45|0|0|0]=],
+            Quest = [=[A Personal Touch||45|45|0|36|0]=],
             Start = "93543|627|32|39.80|35.00",
             End = "93543|627|32|39.80|35.00",
             Objectives = {
@@ -2568,13 +2472,16 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
+        [40602] = {
+            Quest = [=[The Strength to Triumph||45|45|0|54|775]=],
+        },
         [40603] = {
-            Quest = [=[Seeking the Valkyra||45|45|0|0|0]=],
+            Quest = [=[Seeking the Valkyra||45|45|0|54|0]=],
             Start = "111826|680|32|37.80|47.40",
             End = "100738|0|32|0.00|0.00",
         },
         [40608] = {
-            Quest = [=[The Mark||45|45|0|0|0]=],
+            Quest = [=[The Mark||45|45|0|54|0]=],
             Start = "100738|634|32|62.70|68.10",
             End = "100738|634|32|62.70|68.10",
             Objectives = {
@@ -2587,7 +2494,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40613] = {
-            Quest = [=[Maw of Souls: Retrieving the Svalnguard||45|45|0|0|0]=],
+            Quest = [=[Maw of Souls: Retrieving the Svalnguard||45|45|0|54|0]=],
             Start = "100738|634|32|62.70|68.10",
             End = "100738|634|32|62.70|68.10",
             Objectives = {
@@ -2597,7 +2504,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40614] = {
-            Quest = [=[A Feast Fit for Odyn||45|45|0|0|0]=],
+            Quest = [=[A Feast Fit for Odyn||45|45|0|54|0]=],
             Start = "100738|634|32|62.70|68.10",
             End = "100738|634|32|62.70|68.10",
             Objectives = {
@@ -2623,7 +2530,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40615] = {
-            Quest = [=[Halls of Valor: Odyn's Blessing||45|45|0|0|0]=],
+            Quest = [=[Halls of Valor: Odyn's Blessing||45|45|0|54|0]=],
             Start = "100738|634|32|62.70|68.10",
             End = "100738|634|32|62.70|68.10",
             Objectives = {
@@ -2663,7 +2570,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40631] = {
-            Quest = [=[Basking in Glory||45|45|0|0|0]=],
+            Quest = [=[Basking in Glory||45|45|0|54|0]=],
         },
         [40632] = {
             Quest = [=[Take Me To Your Leader|2|45|45|0|0|0]=],
@@ -2762,8 +2669,14 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
+        [40660] = {
+            Quest = [=[Away From Prying Eyes|1|45|45|0|54|775]=],
+        },
+        [40665] = {
+            Quest = [=[Away From Prying Eyes|2|45|45|0|54|775]=],
+        },
         [40668] = {
-            Quest = [=[Eye of Azshara: The Heart of Zin-Azshari||45|45|0|0|0]=],
+            Quest = [=[Eye of Azshara: The Heart of Zin-Azshari||45|45|0|54|0]=],
             Start = "100482|630|32|48.00|25.70",
             End = "100482|630|32|48.00|25.70",
             Objectives = {
@@ -2776,7 +2689,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[Shattering the Sashj'tar||45|0|0|0|0]=],
         },
         [40672] = {
-            Quest = [=[Neltharion's Lair: Presentation is Key||45|45|0|0|0]=],
+            Quest = [=[Neltharion's Lair: Presentation is Key||45|45|0|54|0]=],
             Start = "100738|634|32|62.70|68.10",
             End = "100738|634|32|62.70|68.10",
             Objectives = {
@@ -2786,7 +2699,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40673] = {
-            Quest = [=[Lost Knowledge||45|45|0|0|0]=],
+            Quest = [=[Lost Knowledge||45|45|0|54|0]=],
             Start = "101083|680|32|37.80|47.30",
             End = "101083|680|32|37.80|47.30",
             Objectives = {
@@ -2805,7 +2718,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40675] = {
-            Quest = [=[The Arcway: Rite of the Captain||45|45|0|0|0]=],
+            Quest = [=[The Arcway: Rite of the Captain||45|45|0|54|0]=],
             Start = "101080|680|32|37.90|47.30",
             End = "101080|680|32|37.90|47.30",
             Objectives = {
@@ -2815,10 +2728,13 @@ function Nx.ModQuests:Data5()
             },
         },
         [40676] = {
-            Quest = [=[You Must Make Haste||45|45|40677|0|0]=],
+            Quest = [=[You Must Make Haste||45|45|40677|54|0]=],
+        },
+        [40677] = {
+            Quest = [=[Power Overwhelming||45|45|0|54|6150]=],
         },
         [40678] = {
-            Quest = [=[Twisted Power||45|45|0|0|0]=],
+            Quest = [=[Twisted Power||45|45|0|54|0]=],
             Start = "101080|680|32|37.90|47.30",
             End = "101080|680|32|37.90|47.30",
             Objectives = {
@@ -2828,6 +2744,12 @@ function Nx.ModQuests:Data5()
                     "nil|630|35|27.84|51.84|9.62|9.62",
                 },
             },
+        },
+        [40679] = {
+            Quest = [=[Shock and Awe||45|45|0|54|775]=],
+        },
+        [40682] = {
+            Quest = [=[Rampant Rabbits||45|45|0|0|6150]=],
         },
         [40683] = {
             Quest = [=[Discovery Requires Experimentation||45|45|0|0|0]=],
@@ -3000,7 +2922,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [40753] = {
-            Quest = [=[Blingtron 6000||45|45|0|0|0]=],
+            Quest = [=[Blingtron 6000||45|45|0|10|0]=],
             End = "101527|0|32|0.00|0.00",
         },
         [40761] = {
@@ -3077,17 +2999,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [40857] = {
-            Quest = [=[Bits and Pieces|1|45|45|41157|0|0]=],
+            Quest = [=[Bits and Pieces|1|45|45|41157|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103484|0|32|0.00|0.00",
         },
         [40879] = {
-            Quest = [=[It's On With Automatons||45|45|0|0|0]=],
+            Quest = [=[It's On With Automatons||45|45|0|10|0]=],
             Start = "93520|627|32|38.60|25.00",
             End = "93520|627|32|38.60|25.00",
         },
         [40880] = {
-            Quest = [=[Short Circuit||45|45|40881|0|0]=],
+            Quest = [=[Short Circuit||45|45|40881|10|0]=],
             Start = "93520|627|32|38.60|25.00",
             End = "-246438|0|32|0.00|0.00",
             Objectives = {
@@ -3112,12 +3034,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [40881] = {
-            Quest = [=[Oil Rags to Riches||45|45|0|0|0]=],
+            Quest = [=[Oil Rags to Riches||45|45|0|10|0]=],
             Start = "-246438|71|32|69.50|68.40",
             End = "93520|0|32|0.00|0.00",
         },
         [40882] = {
-            Quest = [=[Court of Stars: Revamping the Recoil||45|45|0|0|0]=],
+            Quest = [=[Court of Stars: Revamping the Recoil||45|45|0|10|0]=],
             Start = "93539|627|32|38.60|25.00",
             End = "93539|627|32|38.60|25.00",
             Objectives = {
@@ -3577,7 +3499,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41038] = {
-            Quest = [=[The Mead Master||45|45|41039|0|0]=],
+            Quest = [=[The Mead Master||45|45|41039|117|0]=],
             Start = "100438|709|32|51.40|48.40",
             End = "102843|0|32|0.00|0.00",
             Objectives = {
@@ -3590,7 +3512,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41039] = {
-            Quest = [=[Stolen Knowledge||45|45|0|0|0]=],
+            Quest = [=[Stolen Knowledge||45|45|0|117|0]=],
             Start = "102843|634|32|62.10|20.20",
             Objectives = {
                 [1] = {
@@ -3599,7 +3521,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [41040] = {
-            Quest = [=[Halls of Valor: The Brewmaster||45|45|41059|0|0]=],
+            Quest = [=[Halls of Valor: The Brewmaster||45|45|41059|117|0]=],
+            Start = "102996|709|32|55.20|57.00",
             End = "103049|0|32|0.00|0.00",
         },
         [41043] = {
@@ -3609,7 +3532,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[Attack and Assail!||45|0|0|0|0]=],
         },
         [41059] = {
-            Quest = [=[Halls of Valor: Odyn's Cauldron||45|45|41087|0|0]=],
+            Quest = [=[Halls of Valor: Odyn's Cauldron||45|45|41087|117|0]=],
             Start = "5622|703|32|48.80|10.40",
             End = "100438|0|32|0.00|0.00",
             Objectives = {
@@ -3623,12 +3546,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41086] = {
-            Quest = [=[A Peaceful World||45|45|0|0|0]=],
+            Quest = [=[A Peaceful World||45|45|0|117|0]=],
             Start = "102820|709|32|55.20|57.00",
             End = "100438|0|32|0.00|0.00",
         },
         [41087] = {
-            Quest = [=[Storm Brew||45|45|0|0|0]=],
+            Quest = [=[Storm Brew||45|45|0|117|0]=],
             Start = "100438|709|32|51.40|48.40",
             End = "109823|0|32|0.00|0.00",
             Objectives = {
@@ -3685,6 +3608,7 @@ function Nx.ModQuests:Data5()
         },
         [41108] = {
             Quest = [=[Rain Death Upon Them||45|45|0|0|0]=],
+            Start = "111605|680|32|31.40|23.10",
             End = "5110|680|32|30.00|10.40",
             Objectives = {
                 [1] = {
@@ -3705,6 +3629,7 @@ function Nx.ModQuests:Data5()
         },
         [41109] = {
             Quest = [=[Waiting for Revenge||45|45|41108|0|0]=],
+            Start = "111605|680|32|24.80|88.60",
             Objectives = {
                 [1] = {
                     "nil|680|35|31.68|21.60|9.62|9.62",
@@ -3874,7 +3799,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41157] = {
-            Quest = [=[Corrupted Studies|1|45|45|41170|0|0]=],
+            Quest = [=[Corrupted Studies|1|45|45|41170|43|0]=],
             Start = "103484|634|32|52.20|52.60",
             End = "103484|634|32|52.20|52.60",
             Objectives = {
@@ -3967,22 +3892,22 @@ function Nx.ModQuests:Data5()
             },
         },
         [41158] = {
-            Quest = [=[Fragments of the Fjords|2|45|45|41159|0|0]=],
+            Quest = [=[Fragments of the Fjords|2|45|45|41159|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103484|0|32|0.00|0.00",
         },
         [41159] = {
-            Quest = [=[Process of Elimination||45|45|41802|0|0]=],
+            Quest = [=[Process of Elimination||45|45|41802|43|0]=],
             Start = "103484|634|32|52.20|52.60",
             End = "103484|634|32|52.20|52.60",
         },
         [41161] = {
-            Quest = [=[Out of the Frying Pan||45|45|41162|0|0]=],
+            Quest = [=[Out of the Frying Pan||45|45|41162|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103484|0|32|0.00|0.00",
         },
         [41162] = {
-            Quest = [=[And Into the Fel Fire||45|45|41163|0|0]=],
+            Quest = [=[And Into the Fel Fire||45|45|41163|43|0]=],
             Start = "103484|630|32|39.00|38.60",
             End = "103484|630|32|39.00|38.60",
             Objectives = {
@@ -4075,7 +4000,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41163] = {
-            Quest = [=[The Apocalypse Bringer||45|45|41170|0|0]=],
+            Quest = [=[The Apocalypse Bringer||45|45|41170|43|0]=],
             Start = "103484|630|32|39.00|38.60",
             End = "103484|630|32|39.00|38.60",
             Objectives = {
@@ -4088,12 +4013,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41164] = {
-            Quest = [=[One Step Closer||45|45|41165|0|0]=],
+            Quest = [=[One Step Closer||45|45|41165|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103484|0|32|0.00|0.00",
         },
         [41165] = {
-            Quest = [=[Deciphering Demonology|1|45|45|41166|0|0]=],
+            Quest = [=[Deciphering Demonology|1|45|45|41166|43|0]=],
             Start = "103484|680|32|27.00|70.00",
             End = "103484|680|32|27.00|70.00",
             Objectives = {
@@ -4186,7 +4111,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41166] = {
-            Quest = [=[Dark Secrets||45|45|41170|0|0]=],
+            Quest = [=[Dark Secrets||45|45|41170|43|0]=],
             Start = "103484|680|32|27.00|70.00",
             End = "103484|680|32|27.00|70.00",
             Objectives = {
@@ -4201,12 +4126,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41167] = {
-            Quest = [=[Fel Fragments||45|45|41168|0|0]=],
+            Quest = [=[Fel Fragments||45|45|41168|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103484|0|32|0.00|0.00",
         },
         [41168] = {
-            Quest = [=[The Purple Hills of Mac'Aree||45|45|41169|0|0]=],
+            Quest = [=[The Purple Hills of Mac'Aree||45|45|41169|43|0]=],
             Start = "103484|641|32|61.80|87.90",
             End = "103484|641|32|61.80|87.90",
             Objectives = {
@@ -4299,7 +4224,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41169] = {
-            Quest = [=[Darkheart Thicket: Through the Fog||45|45|41170|0|0]=],
+            Quest = [=[Darkheart Thicket: Through the Fog||45|45|41170|43|0]=],
             Start = "103484|641|32|61.80|87.90",
             End = "103484|641|32|61.80|87.90",
             Objectives = {
@@ -4312,7 +4237,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41170] = {
-            Quest = [=[The Relic Renewed||45|45|0|0|0]=],
+            Quest = [=[The Relic Renewed||45|45|0|43|0]=],
             Start = "1689|680|32|27.00|70.00",
             End = "103484|0|32|0.00|0.00",
             Objectives = {
@@ -4322,12 +4247,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41171] = {
-            Quest = [=[The Reliquary Calls||45|45|41172|0|0]=],
+            Quest = [=[The Reliquary Calls||45|45|41172|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103482|0|32|0.00|0.00",
         },
         [41172] = {
-            Quest = [=[Echoes of My Ancestors||45|45|41173|0|0]=],
+            Quest = [=[Echoes of My Ancestors||45|45|41173|43|0]=],
             Start = "103482|630|32|47.40|42.60",
             End = "103482|630|32|47.40|42.60",
             Objectives = {
@@ -4337,7 +4262,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41173] = {
-            Quest = [=[A Beacon of Hope||45|45|0|0|0]=],
+            Quest = [=[A Beacon of Hope||45|45|0|43|0]=],
             Start = "103482|630|32|47.40|42.60",
             End = "103482|630|32|47.40|42.60",
             Objectives = {
@@ -4347,17 +4272,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [41174] = {
-            Quest = [=[Worth Its Weight|2|45|45|41175|0|0]=],
+            Quest = [=[Worth Its Weight|2|45|45|41175|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103482|0|32|0.00|0.00",
         },
         [41175] = {
-            Quest = [=[Fit for an Elven Queen||45|45|41176|0|0]=],
+            Quest = [=[Fit for an Elven Queen||45|45|41176|43|0]=],
             Start = "103482|680|32|38.20|90.00",
             End = "103482|680|32|38.20|90.00",
         },
         [41176] = {
-            Quest = [=[Sifting Through the Rubble||45|45|0|0|0]=],
+            Quest = [=[Sifting Through the Rubble||45|45|0|43|0]=],
             Start = "103482|680|32|38.20|90.00",
             End = "103482|680|32|38.20|90.00",
             Objectives = {
@@ -4431,12 +4356,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41177] = {
-            Quest = [=[Goblin Archaeology|2|45|45|41178|0|0]=],
+            Quest = [=[Goblin Archaeology|2|45|45|41178|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103482|0|32|0.00|0.00",
         },
         [41178] = {
-            Quest = [=[Explosive Results||45|45|41179|0|0]=],
+            Quest = [=[Explosive Results||45|45|41179|43|0]=],
             Start = "103482|641|32|38.80|81.60",
             End = "103482|641|32|38.80|81.60",
             Objectives = {
@@ -4450,7 +4375,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41179] = {
-            Quest = [=[What Once Was Lost||45|45|0|0|0]=],
+            Quest = [=[What Once Was Lost||45|45|0|43|0]=],
             Start = "103482|641|32|38.80|81.60",
             End = "-247704|0|32|0.00|0.00",
             Objectives = {
@@ -4463,12 +4388,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41180] = {
-            Quest = [=[Unspeakable Power||45|45|41181|0|0]=],
+            Quest = [=[Unspeakable Power||45|45|41181|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103482|0|32|0.00|0.00",
         },
         [41181] = {
-            Quest = [=[Narrowing Down||45|45|41182|0|0]=],
+            Quest = [=[Narrowing Down||45|45|41182|43|0]=],
             Start = "103482|680|32|38.20|90.00",
             End = "103482|680|32|38.20|90.00",
             Objectives = {
@@ -4542,7 +4467,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41182] = {
-            Quest = [=[Uncovering the Orb of Sciallax||45|45|0|0|0]=],
+            Quest = [=[Uncovering the Orb of Sciallax||45|45|0|43|0]=],
             Start = "103482|680|32|38.20|90.00",
             End = "103482|680|32|38.20|90.00",
             Objectives = {
@@ -4555,12 +4480,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41183] = {
-            Quest = [=[Academic Exploration||45|45|41184|0|0]=],
+            Quest = [=[Academic Exploration||45|45|41184|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103482|0|32|0.00|0.00",
         },
         [41184] = {
-            Quest = [=[Tried and True||45|45|41185|0|0]=],
+            Quest = [=[Tried and True||45|45|41185|43|0]=],
             Start = "103482|630|32|38.20|90.00",
             End = "103482|630|32|38.20|90.00",
             Objectives = {
@@ -4634,7 +4559,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41185] = {
-            Quest = [=[The Keys to Success||45|45|0|0|0]=],
+            Quest = [=[The Keys to Success||45|45|0|43|0]=],
             Start = "103482|630|32|38.20|90.00",
             End = "103482|630|32|38.20|90.00",
             Objectives = {
@@ -4653,12 +4578,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41186] = {
-            Quest = [=[History of Highmountain|2|45|45|41187|0|0]=],
+            Quest = [=[History of Highmountain|2|45|45|41187|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103485|0|32|0.00|0.00",
         },
         [41187] = {
-            Quest = [=[Surveying Student|2|45|45|41188|0|0]=],
+            Quest = [=[Surveying Student|2|45|45|41188|43|0]=],
             Start = "103485|650|32|45.80|44.60",
             End = "103485|650|32|45.80|44.60",
             Objectives = {
@@ -4668,7 +4593,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41188] = {
-            Quest = [=[Neltharion's Lair: Misdirected||45|45|0|0|0]=],
+            Quest = [=[Neltharion's Lair: Misdirected||45|45|0|43|0]=],
             Start = "103485|650|32|45.80|44.60",
             End = "103485|650|32|45.80|44.60",
             Objectives = {
@@ -4684,12 +4609,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41189] = {
-            Quest = [=[A New Lead||45|45|41190|0|0]=],
+            Quest = [=[A New Lead||45|45|41190|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103485|0|32|0.00|0.00",
         },
         [41190] = {
-            Quest = [=[Crystal Eyes||45|45|41191|0|0]=],
+            Quest = [=[Crystal Eyes||45|45|41191|43|0]=],
             Start = "103485|650|32|45.80|44.60",
             End = "103485|650|32|45.80|44.60",
             Objectives = {
@@ -4711,7 +4636,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41191] = {
-            Quest = [=[Drogbar Deception||45|45|0|0|0]=],
+            Quest = [=[Drogbar Deception||45|45|0|43|0]=],
             Start = "103485|650|32|45.80|44.60",
             End = "103485|650|32|45.80|44.60",
             Objectives = {
@@ -4721,12 +4646,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41192] = {
-            Quest = [=[The Right Path||45|45|41193|0|0]=],
+            Quest = [=[The Right Path||45|45|41193|43|0]=],
             Start = "93538|627|32|40.40|24.00",
             End = "103485|0|32|0.00|0.00",
         },
         [41193] = {
-            Quest = [=[Laying to Rest||45|45|0|0|0]=],
+            Quest = [=[Laying to Rest||45|45|0|43|0]=],
             Start = "103485|750|32|45.80|44.60",
             End = "103485|650|32|45.80|44.60",
             Objectives = {
@@ -5260,86 +5185,6 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [41638] = {
-            Quest = [=[Work Order: Leystone Gauntlets||45|45|0|0|0]=],
-            Start = "5133|625|32|33.40|47.80",
-            End = "32725|0|32|0.00|0.00",
-            Objectives = {
-                [1] = {
-                    "nil|627|32|52.67|66.56|0|0",
-                },
-            },
-        },
-        [41644] = {
-            Quest = [=[Work Order: Warhide Gloves||45|45|0|0|0]=],
-            Start = "5133|625|32|33.40|47.80",
-            End = "32725|0|32|0.00|0.00",
-            Objectives = {
-                [1] = {
-                    "nil|627|32|52.67|66.56|0|0",
-                },
-            },
-        },
-        [41650] = {
-            Quest = [=[Work Order: Silkweave Hood||45|45|0|0|0]=],
-            Start = "5133|625|32|33.40|47.80",
-            End = "32725|0|32|0.00|0.00",
-            Objectives = {
-                [1] = {
-                    "nil|627|32|52.67|66.56|0|0",
-                },
-            },
-        },
-        [41656] = {
-            Quest = [=[Work Order: Azsunite Loop||45|45|0|0|0]=],
-            Start = "5133|625|32|33.40|47.80",
-            End = "32725|0|32|0.00|0.00",
-            Objectives = {
-                [1] = {
-                    "nil|627|32|52.67|66.56|0|0",
-                },
-            },
-        },
-        [41662] = {
-            Quest = [=[Work Order: Ancient Rejuvenation Potions||45|45|0|0|0]=],
-            Start = "5133|625|32|33.40|47.80",
-            End = "32725|0|32|0.00|0.00",
-            Objectives = {
-                [1] = {
-                    "nil|627|32|52.67|66.56|0|0",
-                },
-            },
-        },
-        [41668] = {
-            Quest = [=[Vantus Rune Work Order: Il'gynoth, The Heart of Corruption||45|45|0|0|0]=],
-            Start = "5133|625|32|33.40|47.80",
-            End = "32725|0|32|0.00|0.00",
-            Objectives = {
-                [1] = {
-                    "nil|627|32|52.67|66.56|0|0",
-                },
-            },
-        },
-        [41674] = {
-            Quest = [=[Work Order: Word of Intellect||45|45|0|0|0]=],
-            Start = "5133|625|32|33.40|47.80",
-            End = "32725|0|32|0.00|0.00",
-            Objectives = {
-                [1] = {
-                    "nil|627|32|52.67|66.56|0|0",
-                },
-            },
-        },
-        [41680] = {
-            Quest = [=[Work Order: Failure Detection Pylon||45|45|0|0|0]=],
-            Start = "5133|625|32|33.40|47.80",
-            End = "32725|0|32|0.00|0.00",
-            Objectives = {
-                [1] = {
-                    "nil|627|32|52.67|66.56|0|0",
-                },
-            },
-        },
         [41684] = {
             Quest = [=[The Necrodark||45|0|0|0|0]=],
         },
@@ -5384,41 +5229,20 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [41710] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
         [41711] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
-        },
-        [41712] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
         },
         [41713] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
         },
-        [41714] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
         [41715] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
-        },
-        [41716] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
         },
         [41717] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
         },
-        [41718] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
         [41719] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
-        },
-        [41720] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
-        [41721] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
         },
         [41722] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
@@ -5427,62 +5251,62 @@ function Nx.ModQuests:Data5()
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
         },
         [41736] = {
-            Quest = [=[Champion: Angus Ironfist||45|45|0|0|0]=],
+            Quest = [=[Champion: Angus Ironfist||45|45|0|117|0]=],
             Start = "105046|709|32|51.80|49.60",
             End = "105046|709|32|51.80|49.60",
         },
         [41737] = {
-            Quest = [=[Champion: Hiro||45|45|0|0|0]=],
+            Quest = [=[Champion: Hiro||45|45|0|117|0]=],
             Start = "105058|709|32|51.80|49.60",
             End = "105058|709|32|51.80|49.60",
         },
         [41738] = {
-            Quest = [=[Champion: Sylara Steelsong||45|45|0|0|0]=],
+            Quest = [=[Champion: Sylara Steelsong||45|45|0|117|0]=],
             Start = "105056|709|32|51.80|49.60",
             End = "105056|709|32|51.80|49.60",
         },
         [41739] = {
-            Quest = [=[Champion: Aegira||45|45|0|0|0]=],
+            Quest = [=[Champion: Aegira||45|45|0|117|0]=],
             Start = "102855|709|32|31.10|40.50",
             End = "105226|709|32|31.10|40.50",
         },
         [41744] = {
-            Quest = [=[Champion: Rehgar Earthfury||45|45|0|0|0]=],
+            Quest = [=[Champion: Rehgar Earthfury||45|45|0|147|0]=],
             Start = "106517|726|32|31.40|57.80",
             End = "104652|0|32|0.00|0.00",
         },
         [41745] = {
-            Quest = [=[Champion: Scaldius||45|45|0|0|0]=],
+            Quest = [=[Champion: Scaldius||45|45|0|147|0]=],
             Start = "106649|726|32|29.80|57.60",
             End = "106649|726|32|29.80|57.60",
         },
         [41746] = {
-            Quest = [=[Champion: Muln Earthfury||45|45|0|0|0]=],
+            Quest = [=[Champion: Muln Earthfury||45|45|0|147|0]=],
             Start = "106518|726|32|32.00|43.80",
             End = "106518|726|32|32.00|43.80",
         },
         [41747] = {
-            Quest = [=[Champion: Avalanchion||45|45|0|0|0]=],
+            Quest = [=[Champion: Avalanchion||45|45|0|147|0]=],
             Start = "106524|726|32|34.60|34.00",
             End = "106524|726|32|34.60|34.00",
         },
         [41751] = {
-            Quest = [=[Champion: Kira Iresoul||45|45|0|0|0]=],
+            Quest = [=[Champion: Kira Iresoul||45|45|0|179|0]=],
             Start = "104732|717|32|54.10|34.90",
             End = "104732|717|32|54.10|34.90",
         },
         [41754] = {
-            Quest = [=[Champion: Shinfel Blightsworn||45|45|0|0|0]=],
+            Quest = [=[Champion: Shinfel Blightsworn||45|45|0|179|0]=],
             Start = "105140|717|32|54.00|35.50",
             End = "105140|717|32|54.00|35.50",
         },
         [41755] = {
-            Quest = [=[Champion: Lulubelle Fizzlebang||45|45|0|0|0]=],
+            Quest = [=[Champion: Lulubelle Fizzlebang||45|45|0|179|0]=],
             Start = "105928|717|32|54.40|39.30",
             End = "105928|717|32|54.40|39.30",
         },
         [41756] = {
-            Quest = [=[Champion: Eredar Twins||45|45|0|0|0]=],
+            Quest = [=[Champion: Eredar Twins||45|45|0|179|0]=],
             Start = "106228|717|32|58.30|40.80",
             End = "106228|717|32|58.30|40.80",
         },
@@ -5510,7 +5334,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41768] = {
-            Quest = [=[Soul Beacon||45|45|41769|0|0]=],
+            Quest = [=[Soul Beacon||45|45|41769|179|0]=],
             Start = "105018|717|32|55.30|37.10",
             End = "105102|0|32|0.00|0.00",
             Objectives = {
@@ -5528,7 +5352,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41769] = {
-            Quest = [=[Mad Ernie the Alchemist||45|45|41781|0|0]=],
+            Quest = [=[Mad Ernie the Alchemist||45|45|41781|179|0]=],
             Start = "105102|717|32|54.00|36.20",
             End = "104824|0|32|0.00|0.00",
             Objectives = {
@@ -5538,7 +5362,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41772] = {
-            Quest = [=[Ascendant of Flames||45|45|0|0|0]=],
+            Quest = [=[Ascendant of Flames||45|45|0|147|0]=],
             Start = "96746|726|32|33.00|60.00",
             End = "105207|0|32|0.00|0.00",
             Objectives = {
@@ -5548,7 +5372,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41773] = {
-            Quest = [=[The Firelord's Command||45|45|41934|0|0]=],
+            Quest = [=[The Firelord's Command||45|45|41934|147|0]=],
             Start = "105055|738|32|27.00|82.20",
             End = "105120|0|32|0.00|0.00",
             Objectives = {
@@ -5579,7 +5403,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41775] = {
-            Quest = [=[The Great Stonemother||45|45|42068|0|0]=],
+            Quest = [=[The Great Stonemother||45|45|42068|147|0]=],
             Start = "96746|726|32|33.00|60.30",
             End = "42465|0|32|0.00|0.00",
             Objectives = {
@@ -5589,7 +5413,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41777] = {
-            Quest = [=[Destroying the Cult||45|45|41898|0|0]=],
+            Quest = [=[Destroying the Cult||45|45|41898|147|0]=],
             Start = "106001|207|32|64.00|70.50",
             End = "105995|0|32|0.00|0.00",
             Objectives = {
@@ -5610,18 +5434,8 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [41778] = {
-            Quest = [=[Firing Up the Forge||45|45|0|0|0]=],
-            Start = "90463|627|32|42.70|28.40",
-            End = "90463|627|32|42.70|28.40",
-            Objectives = {
-                [1] = {
-                    "nil|627|35|71.62|57.32|0|0",
-                },
-            },
-        },
         [41780] = {
-            Quest = [=[Doom and Gloom||45|45|41784|0|0]=],
+            Quest = [=[Doom and Gloom||45|45|41784|179|0]=],
             Start = "104824|641|32|39.10|62.60",
             End = "104824|641|32|39.10|62.60",
             Objectives = {
@@ -5654,7 +5468,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41781] = {
-            Quest = [=[Herding Goats||45|45|41780|0|0]=],
+            Quest = [=[Herding Goats||45|45|41780|179|0]=],
             Start = "104824|641|32|39.10|62.60",
             End = "104824|641|32|39.10|62.60",
             Objectives = {
@@ -5664,7 +5478,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41784] = {
-            Quest = [=[Borrowed Time||45|45|0|0|0]=],
+            Quest = [=[Borrowed Time||45|45|0|179|0]=],
             Start = "104824|641|32|39.10|62.60",
             End = "105102|0|32|0.00|0.00",
             Objectives = {
@@ -5674,12 +5488,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41785] = {
-            Quest = [=[Finding Fizzlebang||45|45|41788|0|0]=],
+            Quest = [=[Finding Fizzlebang||45|45|41788|179|0]=],
             Start = "105102|717|32|53.90|36.20",
             End = "104855|0|32|0.00|0.00",
         },
         [41787] = {
-            Quest = [=[Someone Else's Mess||45|45|41793|0|0]=],
+            Quest = [=[Someone Else's Mess||45|45|41793|179|0]=],
             Start = "104855|634|32|39.30|42.20",
             End = "104855|634|32|39.30|42.20",
             Objectives = {
@@ -5689,7 +5503,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41788] = {
-            Quest = [=[Coercing a Confession||45|45|41793|0|0]=],
+            Quest = [=[Coercing a Confession||45|45|41793|179|0]=],
             Start = "104855|634|32|39.30|42.20",
             End = "104855|634|32|39.30|42.20",
             Objectives = {
@@ -5701,12 +5515,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [41793] = {
-            Quest = [=[Lulubelle on Loan||45|45|41795|0|0]=],
+            Quest = [=[Lulubelle on Loan||45|45|41795|179|0]=],
             Start = "104855|634|32|39.30|42.20",
             End = "105815|0|32|0.00|0.00",
         },
         [41795] = {
-            Quest = [=[Summoning the Sisters||45|45|41796|0|0]=],
+            Quest = [=[Summoning the Sisters||45|45|41796|179|0]=],
             Start = "105815|717|32|55.00|37.40",
             End = "105951|0|32|0.00|0.00",
             Objectives = {
@@ -5722,7 +5536,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41796] = {
-            Quest = [=[Selecting a Sixth||45|45|0|0|0]=],
+            Quest = [=[Selecting a Sixth||45|45|0|179|0]=],
             Start = "105951|717|32|55.00|37.40",
             End = "105951|717|32|55.00|37.40",
             Objectives = {
@@ -5732,7 +5546,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41802] = {
-            Quest = [=[The Gates of Valor||45|45|41170|0|0]=],
+            Quest = [=[The Gates of Valor||45|45|41170|43|0]=],
             Start = "103484|634|32|52.20|52.60",
             End = "103484|634|32|52.20|52.60",
             Objectives = {
@@ -5783,12 +5597,12 @@ function Nx.ModQuests:Data5()
             Quest = [=[Power in a Vessel||45|0|0|0|0]=],
         },
         [41849] = {
-            Quest = [=[The Iron Fist||45|45|41850|0|0]=],
+            Quest = [=[The Iron Fist||45|45|41850|117|0]=],
             Start = "100438|709|32|51.40|48.40",
             End = "105045|0|32|0.00|0.00",
         },
         [41850] = {
-            Quest = [=[The Master of Swords||45|45|41852|0|0]=],
+            Quest = [=[The Master of Swords||45|45|41852|117|0]=],
             Start = "105045|634|32|62.90|59.50",
             End = "105072|0|32|0.00|0.00",
             Objectives = {
@@ -5798,7 +5612,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41851] = {
-            Quest = [=[Quelling the Tide||45|45|0|0|0]=],
+            Quest = [=[Quelling the Tide||45|45|0|117|0]=],
             Start = "105088|634|32|64.20|57.00",
             End = "105088|634|32|64.20|57.00",
             Objectives = {
@@ -5818,7 +5632,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41852] = {
-            Quest = [=[No Monk Left Behind||45|45|0|0|0]=],
+            Quest = [=[No Monk Left Behind||45|45|0|117|0]=],
             Start = "105072|634|32|64.20|57.00",
             End = "105072|634|32|64.20|57.00",
             Objectives = {
@@ -5835,7 +5649,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41853] = {
-            Quest = [=[Zero to Hiro||45|45|0|0|0]=],
+            Quest = [=[Zero to Hiro||45|45|0|117|0]=],
             Start = "105072|634|32|64.20|57.00",
             End = "105089|0|32|0.00|0.00",
             Objectives = {
@@ -5851,7 +5665,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41854] = {
-            Quest = [=[Brick By Brick||45|45|0|0|0]=],
+            Quest = [=[Brick By Brick||45|45|0|117|0]=],
             End = "100438|0|32|0.00|0.00",
         },
         [41877] = {
@@ -5906,7 +5720,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[Whispers from the Shadows||45|0|0|0|0]=],
         },
         [41888] = {
-            Quest = [=[Allegiance of Flame||45|45|0|0|0]=],
+            Quest = [=[Allegiance of Flame||45|45|0|147|0]=],
             Start = "105120|738|32|49.20|29.70",
             End = "96746|0|32|0.00|0.00",
             Objectives = {
@@ -5919,7 +5733,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41897] = {
-            Quest = [=[The Master's Plan||45|45|41898|0|0]=],
+            Quest = [=[The Master's Plan||45|45|41898|147|0]=],
             Start = "106001|207|32|64.00|70.50",
             End = "105995|0|32|0.00|0.00",
             Objectives = {
@@ -5937,7 +5751,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41898] = {
-            Quest = [=[Unleashing the Elements||45|45|42065|0|0]=],
+            Quest = [=[Unleashing the Elements||45|45|42065|147|0]=],
             End = "105995|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -5952,7 +5766,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [41899] = {
-            Quest = [=[Held Captive!||45|45|42065|0|0]=],
+            Quest = [=[Held Captive!||45|45|42065|147|0]=],
+            Start = "106518|726|32|32.00|43.80",
             End = "105995|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -5961,16 +5776,18 @@ function Nx.ModQuests:Data5()
             },
         },
         [41900] = {
-            Quest = [=[A Promise of Earth||45|45|41772|0|0]=],
+            Quest = [=[A Promise of Earth||45|45|41772|147|0]=],
             Start = "42465|207|32|56.30|12.20",
             End = "96746|0|32|0.00|0.00",
         },
         [41910] = {
-            Quest = [=[Freya's Spring||45|45|0|0|0]=],
+            Quest = [=[Freya's Spring||45|45|0|117|0]=],
+            Start = "102996|709|32|55.20|57.00",
             End = "100438|0|32|0.00|0.00",
         },
         [41911] = {
-            Quest = [=[Amaranthine Hops||45|45|0|0|0]=],
+            Quest = [=[Amaranthine Hops||45|45|0|117|0]=],
+            Start = "102996|709|32|55.20|57.00",
             End = "100438|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -6004,7 +5821,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [41934] = {
-            Quest = [=[The Brand of Damnation||45|45|41888|0|0]=],
+            Quest = [=[The Brand of Damnation||45|45|41888|147|0]=],
             Start = "105120|738|32|49.20|29.70",
             End = "105120|738|32|49.20|29.70",
             Objectives = {
@@ -6041,12 +5858,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42040] = {
-            Quest = [=[The Way to Nordrassil||45|45|0|0|0]=],
+            Quest = [=[The Way to Nordrassil||45|45|0|76|0]=],
             Start = "103832|747|32|44.60|50.00",
             End = "106204|0|32|0.00|0.00",
         },
         [42041] = {
-            Quest = [=[Enduring the Nightmare||45|45|0|0|0]=],
+            Quest = [=[Enduring the Nightmare||45|45|0|76|0]=],
             Start = "106204|715|32|43.40|30.60",
             End = "106204|715|32|43.40|30.60",
             Objectives = {
@@ -6098,7 +5915,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42042] = {
-            Quest = [=[Teensy Weensies!||45|45|0|0|0]=],
+            Quest = [=[Teensy Weensies!||45|45|0|76|0]=],
             Start = "106136|715|32|45.00|32.30",
             End = "106136|715|32|45.00|32.30",
             Objectives = {
@@ -6108,7 +5925,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42043] = {
-            Quest = [=[Cleaning Up||45|45|0|0|0]=],
+            Quest = [=[Cleaning Up||45|45|0|76|0]=],
             Start = "106135|715|32|43.40|30.60",
             End = "106135|715|32|43.40|30.60",
             Objectives = {
@@ -6118,7 +5935,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42044] = {
-            Quest = [=[A Dying Dream||45|45|0|0|0]=],
+            Quest = [=[A Dying Dream||45|45|0|76|0]=],
             Start = "106204|715|32|43.40|30.60",
             End = "106204|715|32|43.40|30.60",
             Objectives = {
@@ -6134,7 +5951,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42045] = {
-            Quest = [=[Communing With Malorne||45|45|0|0|0]=],
+            Quest = [=[Communing With Malorne||45|45|0|76|0]=],
             Start = "106204|715|32|43.40|30.60",
             End = "106250|0|32|0.00|0.00",
             Objectives = {
@@ -6144,22 +5961,22 @@ function Nx.ModQuests:Data5()
             },
         },
         [42046] = {
-            Quest = [=[A New Beginning||45|45|0|0|0]=],
+            Quest = [=[A New Beginning||45|45|0|76|0]=],
             Start = "106250|198|32|60.50|23.60",
             End = "101195|0|32|0.00|0.00",
         },
         [42047] = {
-            Quest = [=[Champion: Hamuul Runetotem||45|45|0|0|0]=],
+            Quest = [=[Champion: Hamuul Runetotem||45|45|0|76|0]=],
             Start = "107025|747|32|47.90|55.40",
             End = "107025|747|32|47.90|55.40",
         },
         [42048] = {
-            Quest = [=[Champion: Mylune||45|45|0|0|0]=],
+            Quest = [=[Champion: Mylune||45|45|0|76|0]=],
             Start = "107026|747|32|53.70|51.00",
             End = "107026|747|32|53.70|51.00",
         },
         [42049] = {
-            Quest = [=[Powering the Portal||45|45|0|0|0]=],
+            Quest = [=[Powering the Portal||45|45|0|76|0]=],
             Start = "103832|747|32|44.90|50.00",
             End = "103832|747|32|44.90|50.00",
             Objectives = {
@@ -6169,7 +5986,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42050] = {
-            Quest = [=[Defenders of the Dream||45|45|0|0|0]=],
+            Quest = [=[Defenders of the Dream||45|45|0|76|0]=],
             Start = "107163|760|32|61.20|65.20",
             End = "107163|760|32|61.20|65.20",
             Objectives = {
@@ -6179,7 +5996,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42051] = {
-            Quest = [=[Enter Nightmare||45|45|0|0|0]=],
+            Quest = [=[Enter Nightmare||45|45|0|76|0]=],
             Start = "101195|747|32|44.70|52.00",
             End = "107132|0|32|0.00|0.00",
             Objectives = {
@@ -6189,7 +6006,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42053] = {
-            Quest = [=[The War of the Ancients||45|45|0|0|0]=],
+            Quest = [=[The War of the Ancients||45|45|0|76|0]=],
             Start = "107132|760|32|61.40|65.60",
             End = "351|760|32|61.60|65.40",
             Objectives = {
@@ -6308,7 +6125,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42054] = {
-            Quest = [=[Archimonde, The Defiler||45|45|0|0|0]=],
+            Quest = [=[Archimonde, The Defiler||45|45|0|76|0]=],
             Start = "107132|760|32|61.60|65.60",
             End = "106905|0|32|0.00|0.00",
             Objectives = {
@@ -6324,7 +6141,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42055] = {
-            Quest = [=[The Demi-God's Return||45|45|0|0|0]=],
+            Quest = [=[The Demi-God's Return||45|45|0|76|0]=],
             Start = "106905|760|32|66.10|66.80",
             End = "103832|0|32|0.00|0.00",
             Objectives = {
@@ -6334,12 +6151,13 @@ function Nx.ModQuests:Data5()
             },
         },
         [42056] = {
-            Quest = [=[Champion: Remulos||45|45|0|0|0]=],
+            Quest = [=[Champion: Remulos||45|45|0|76|0]=],
             Start = "103832|747|32|44.60|50.20",
             End = "103832|0|32|0.00|0.00",
         },
         [42065] = {
-            Quest = [=[The Twilight Master||45|45|0|0|0]=],
+            Quest = [=[The Twilight Master||45|45|0|147|0]=],
+            Start = "106518|726|32|32.00|43.80",
             End = "42465|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -6350,7 +6168,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42068] = {
-            Quest = [=[The Return of Twilight||45|45|0|0|0]=],
+            Quest = [=[The Return of Twilight||45|45|0|147|0]=],
             Start = "42465|207|32|56.30|12.20",
             End = "105995|0|32|0.00|0.00",
         },
@@ -6365,12 +6183,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42081] = {
-            Quest = [=[In With the New||45|45|0|0|0]=],
+            Quest = [=[In With the New||45|45|0|13|0]=],
             Start = "92183|627|32|45.00|29.60",
             End = "92458|0|32|0.00|0.00",
         },
         [42098] = {
-            Quest = [=[Black Rook Hold: An Unclaimed Soul||45|45|0|0|0]=],
+            Quest = [=[Black Rook Hold: An Unclaimed Soul||45|45|0|179|0]=],
             Start = "105018|717|32|55.20|37.00",
             End = "105018|717|32|55.20|37.00",
             Objectives = {
@@ -6380,7 +6198,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42102] = {
-            Quest = [=[One Who's Worthy||45|45|41785|0|0]=],
+            Quest = [=[One Who's Worthy||45|45|41785|179|0]=],
             Start = "105102|717|32|54.00|36.20",
             End = "105102|717|32|54.00|36.20",
             Objectives = {
@@ -6390,7 +6208,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42103] = {
-            Quest = [=[Let it Feed||45|45|0|0|0]=],
+            Quest = [=[Let it Feed||45|45|0|179|0]=],
             Start = "104732|717|32|54.10|34.90",
             End = "104732|717|32|54.10|34.90",
             Objectives = {
@@ -6400,7 +6218,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42129] = {
-            Quest = [=[The Pendant of Starlight||45|45|0|0|0]=],
+            Quest = [=[The Pendant of Starlight||45|45|0|76|0]=],
             Start = "98008|715|32|39.60|45.50",
             End = "98008|715|32|39.60|45.50",
             Objectives = {
@@ -6412,12 +6230,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42132] = {
-            Quest = [=[Last, But Not Least||45|45|43186|0|0]=],
+            Quest = [=[Last, But Not Least||45|45|43186|72|0]=],
             Start = "108571|720|32|58.50|59.30",
             End = "108571|720|32|58.50|59.30",
         },
         [42133] = {
-            Quest = [=[Same Day Delivery||45|45|42659|0|0]=],
+            Quest = [=[Same Day Delivery||45|45|42659|96|0]=],
             Start = "108492|641|32|60.10|72.20",
             End = "107973|0|32|0.00|0.00",
         },
@@ -6432,7 +6250,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42208] = {
-            Quest = [=[Return to the Firelands||45|45|41772|0|0]=],
+            Quest = [=[Return to the Firelands||45|45|41772|147|0]=],
             Start = "96746|726|32|33.00|60.30",
             End = "96746|726|32|33.00|60.30",
         },
@@ -6562,7 +6380,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42365] = {
-            Quest = [=[Focusing the Energies||45|45|0|0|0]=],
+            Quest = [=[Focusing the Energies||45|45|0|76|0]=],
             Start = "103832|747|32|44.90|50.00",
             End = "101195|0|32|0.00|0.00",
             Objectives = {
@@ -6607,12 +6425,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42397] = {
-            Quest = [=[Baron and the Huntsman||45|45|42398|0|0]=],
+            Quest = [=[Baron and the Huntsman||45|45|42398|96|0]=],
             Start = "107973|739|32|41.60|74.80",
             End = "107981|0|32|0.00|0.00",
         },
         [42398] = {
-            Quest = [=[Awakening the Senses||45|45|0|0|0]=],
+            Quest = [=[Awakening the Senses||45|45|0|96|0]=],
             Start = "107981|634|32|80.10|66.20",
             End = "107981|634|32|80.10|66.20",
             Objectives = {
@@ -6627,17 +6445,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [42399] = {
-            Quest = [=[Ready to Work||45|45|42400|0|0]=],
+            Quest = [=[Ready to Work||45|45|42400|96|0]=],
             Start = "107981|634|32|80.10|66.20",
             End = "107973|0|32|0.00|0.00",
         },
         [42400] = {
-            Quest = [=[Missing Mages||45|45|42401|0|0]=],
+            Quest = [=[Missing Mages||45|45|42401|96|0]=],
             Start = "107973|739|32|43.40|26.40",
             End = "107966|0|32|0.00|0.00",
         },
         [42401] = {
-            Quest = [=[The Scent of Magic||45|45|42404|0|0]=],
+            Quest = [=[The Scent of Magic||45|45|42404|96|0]=],
             Start = "107966|680|32|38.10|47.10",
             End = "108089|0|32|0.00|0.00",
             Objectives = {
@@ -6652,22 +6470,22 @@ function Nx.ModQuests:Data5()
             },
         },
         [42402] = {
-            Quest = [=[Requesting Reinforcements||45|45|42405|0|0]=],
+            Quest = [=[Requesting Reinforcements||45|45|42405|96|0]=],
             Start = "107973|739|32|43.40|26.40",
             End = "107973|739|32|43.40|26.40",
         },
         [42403] = {
-            Quest = [=[Highmountain Hunters||45|45|42413|0|0]=],
+            Quest = [=[Highmountain Hunters||45|45|42413|96|0]=],
             Start = "103023|739|32|42.90|46.90",
             End = "94409|0|32|0.00|0.00",
         },
         [42404] = {
-            Quest = [=[Assisting the Archmage||45|45|42689|0|0]=],
+            Quest = [=[Assisting the Archmage||45|45|42689|96|0]=],
             Start = "108089|680|32|33.10|57.00",
             End = "107973|0|32|0.00|0.00",
         },
         [42405] = {
-            Quest = [=[Informing Our Allies||45|45|0|0|0]=],
+            Quest = [=[Informing Our Allies||45|45|0|96|0]=],
             Start = "107973|739|32|43.40|26.40",
             End = "107973|739|32|43.40|26.40",
             Objectives = {
@@ -6693,7 +6511,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42406] = {
-            Quest = [=[To Tame the Beast||45|45|0|0|0]=],
+            Quest = [=[To Tame the Beast||45|45|0|96|0]=],
             Start = "105816|630|32|60.80|30.70",
             End = "105816|630|32|60.80|30.70",
             Objectives = {
@@ -6706,12 +6524,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42407] = {
-            Quest = [=[The Nature of the Beast||45|45|42402|0|0]=],
+            Quest = [=[The Nature of the Beast||45|45|42402|96|0]=],
             Start = "108375|630|32|60.80|30.70",
             End = "107973|0|32|0.00|0.00",
         },
         [42408] = {
-            Quest = [=[Required Reagents||45|45|0|0|0]=],
+            Quest = [=[Required Reagents||45|45|0|96|0]=],
             Start = "108455|739|32|46.40|34.80",
             End = "108455|739|32|46.40|34.80",
             Objectives = {
@@ -6721,27 +6539,27 @@ function Nx.ModQuests:Data5()
             },
         },
         [42412] = {
-            Quest = [=[Champion: Huntsman Blake||45|45|0|0|0]=],
+            Quest = [=[Champion: Huntsman Blake||45|45|0|96|0]=],
             Start = "107981|634|32|80.10|66.20",
             End = "107981|634|32|80.10|66.20",
         },
         [42413] = {
-            Quest = [=[Champion: Hemet Nesingwary||45|45|0|0|0]=],
+            Quest = [=[Champion: Hemet Nesingwary||45|45|0|96|0]=],
             Start = "94409|650|32|40.00|52.20",
             End = "94409|650|32|40.00|52.20",
         },
         [42414] = {
-            Quest = [=[Champion: Addie Fizzlebog||45|45|0|0|0]=],
+            Quest = [=[Champion: Addie Fizzlebog||45|45|0|96|0]=],
             Start = "99095|650|32|39.90|52.20",
             End = "99095|650|32|39.90|52.20",
         },
         [42415] = {
-            Quest = [=[Champion: Halduron Brightwing||45|45|0|0|0]=],
+            Quest = [=[Champion: Halduron Brightwing||45|45|0|96|0]=],
             Start = "108456|723|32|49.90|65.70",
             End = "108456|723|32|49.90|65.70",
         },
         [42432] = {
-            Quest = [=[The Emerald Nightmare: The Emerald Nightmare||45|45|0|0|0]=],
+            Quest = [=[The Emerald Nightmare: The Emerald Nightmare||45|45|0|76|0]=],
             Start = "101195|747|32|32.60|53.90",
             End = "101195|0|32|0.00|0.00",
             Objectives = {
@@ -6751,15 +6569,9 @@ function Nx.ModQuests:Data5()
             },
         },
         [42451] = {
-            Quest = [=[Kalec's Plan||45|45|42508|0|0]=],
+            Quest = [=[Kalec's Plan||45|45|42508|110|0]=],
             Start = "108515|734|32|80.85|63.07",
             End = "107465|0|32|0.00|0.00",
-        },
-        [42457] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
-        [42458] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
         },
         [42459] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
@@ -6767,32 +6579,11 @@ function Nx.ModQuests:Data5()
         [42460] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
         },
-        [42462] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
         [42463] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
         },
-        [42464] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
         [42465] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
-        },
-        [42466] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
-        [42467] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
-        [42468] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
-        [42469] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
-        [42470] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
         },
         [42471] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
@@ -6876,7 +6667,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42493] = {
-            Quest = [=[Impending Dooooooom!||45|45|42520|0|0]=],
+            Quest = [=[Impending Dooooooom!||45|45|42520|110|0]=],
             Start = "108085|683|32|64.20|29.50",
             End = "108085|0|32|0.00|0.00",
             Objectives = {
@@ -6888,7 +6679,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42494] = {
-            Quest = [=[More Than Just A Food Vendor||45|45|0|0|0]=],
+            Quest = [=[More Than Just A Food Vendor||45|45|0|110|0]=],
             Start = "111553|680|32|34.10|83.40",
             End = "105917|0|32|0.00|0.00",
             Objectives = {
@@ -6920,7 +6711,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42508] = {
-            Quest = [=[Not A Toothless Dragon||45|45|42521|0|0]=],
+            Quest = [=[Not A Toothless Dragon||45|45|42521|110|0]=],
             Start = "42508|680|32|29.20|87.60",
             End = "111553|0|32|0.00|0.00",
             Objectives = {
@@ -6933,12 +6724,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42520] = {
-            Quest = [=[A Terrible Loss||45|45|42707|0|0]=],
+            Quest = [=[A Terrible Loss||45|45|42707|110|0]=],
             Start = "108085|683|32|42.00|60.80",
             End = "107351|0|32|0.00|0.00",
         },
         [42521] = {
-            Quest = [=[The Enemy of My Enemy...||45|45|0|0|0]=],
+            Quest = [=[The Enemy of My Enemy...||45|45|0|110|0]=],
             Start = "111553|680|32|34.10|83.40",
             End = "105917|0|32|0.00|0.00",
             Objectives = {
@@ -6950,7 +6741,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42654] = {
-            Quest = [=[Darkheart Thicket: Nightmare Oak||45|45|0|0|0]=],
+            Quest = [=[Darkheart Thicket: Nightmare Oak||45|45|0|96|0]=],
             Start = "108456|739|32|43.10|6.10",
             End = "108456|739|32|43.10|6.10",
             Objectives = {
@@ -6963,7 +6754,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42655] = {
-            Quest = [=[Ore Under the Sea||45|45|0|0|0]=],
+            Quest = [=[Ore Under the Sea||45|45|0|96|0]=],
             Start = "108456|739|32|43.10|6.10",
             End = "108456|739|32|43.10|6.10",
             Objectives = {
@@ -6973,7 +6764,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42656] = {
-            Quest = [=[Azure Weaponry||45|45|0|0|0]=],
+            Quest = [=[Azure Weaponry||45|45|0|96|0]=],
             Start = "108456|739|32|43.10|6.10",
             End = "108455|0|32|0.00|0.00",
             Objectives = {
@@ -6985,12 +6776,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42657] = {
-            Quest = [=[Meeting in Moonclaw Vale||45|45|42658|0|0]=],
+            Quest = [=[Meeting in Moonclaw Vale||45|45|42658|96|0]=],
             Start = "108455|739|32|46.40|34.80",
             End = "108492|0|32|0.00|0.00",
         },
         [42658] = {
-            Quest = [=[Delicate Enchantments||45|45|42133|0|0]=],
+            Quest = [=[Delicate Enchantments||45|45|42133|96|0]=],
             Start = "108492|641|32|60.10|72.20",
             End = "108492|641|32|60.10|72.20",
             Objectives = {
@@ -7000,7 +6791,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42659] = {
-            Quest = [=[In Defense of Dalaran||45|45|0|0|0]=],
+            Quest = [=[In Defense of Dalaran||45|45|0|96|0]=],
             Start = "107973|739|32|43.40|26.40",
             End = "107973|739|32|43.40|26.40",
             Objectives = {
@@ -7018,7 +6809,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42660] = {
-            Quest = [=[Vault of the Wardens: Matters of the Heart||45|45|0|0|0]=],
+            Quest = [=[Vault of the Wardens: Matters of the Heart||45|45|0|179|0]=],
             Start = "104732|717|32|54.10|34.90",
             End = "104732|717|32|54.10|34.90",
             Objectives = {
@@ -7035,12 +6826,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42669] = {
-            Quest = [=[Preparations for Invasion||45|45|0|0|0]=],
+            Quest = [=[Preparations for Invasion||45|45|0|72|0]=],
             Start = "98648|721|32|62.30|58.80",
             End = "98648|0|32|0.00|0.00",
         },
         [42678] = {
-            Quest = [=[Black Rook Hold: Into Black Rook Hold||45|45|42680|0|0]=],
+            Quest = [=[Black Rook Hold: Into Black Rook Hold||45|45|42680|144|0]=],
             Start = "110164|641|32|40.40|52.90",
             End = "98102|0|32|0.00|0.00",
             Objectives = {
@@ -7072,7 +6863,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42680] = {
-            Quest = [=[Deciphering the Letter||45|45|0|0|0]=],
+            Quest = [=[Deciphering the Letter||45|45|0|144|0]=],
             Start = "98102|626|32|40.90|75.50",
             End = "98100|0|32|0.00|0.00",
             Objectives = {
@@ -7092,12 +6883,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42689] = {
-            Quest = [=[Knowing Our Enemy||45|45|42691|0|0]=],
+            Quest = [=[Knowing Our Enemy||45|45|42691|96|0]=],
             Start = "107973|739|32|43.40|26.30",
             End = "105816|0|32|0.00|0.00",
         },
         [42691] = {
-            Quest = [=[Leyworm Lure||45|45|42406|0|0]=],
+            Quest = [=[Leyworm Lure||45|45|42406|96|0]=],
             Start = "105816|630|32|60.80|30.70",
             End = "105816|630|32|60.80|30.70",
             Objectives = {
@@ -7112,22 +6903,22 @@ function Nx.ModQuests:Data5()
             },
         },
         [42701] = {
-            Quest = [=[Champion: Matron Mother Malevolence||45|45|0|0|0]=],
+            Quest = [=[Champion: Matron Mother Malevolence||45|45|0|72|0]=],
             Start = "98632|720|32|59.00|49.30",
             End = "98632|0|32|0.00|0.00",
         },
         [42702] = {
-            Quest = [=[Champion: Millhouse Manastorm||45|45|0|0|0]=],
+            Quest = [=[Champion: Millhouse Manastorm||45|45|0|110|0]=],
             Start = "108342|735|32|56.00|58.90",
             End = "108342|735|32|56.00|58.90",
         },
         [42704] = {
-            Quest = [=[Champion: Arcane Destroyer||45|45|0|0|0]=],
+            Quest = [=[Champion: Arcane Destroyer||45|45|0|110|0]=],
             Start = "108368|734|32|38.20|46.10",
             End = "108368|734|32|38.20|46.10",
         },
         [42707] = {
-            Quest = [=[Eye of Azshara: A Magical Affliction||45|45|42734|0|0]=],
+            Quest = [=[Eye of Azshara: A Magical Affliction||45|45|42734|110|0]=],
             Start = "107351|735|32|71.70|54.90",
             End = "107351|735|32|71.70|54.90",
             Objectives = {
@@ -7137,7 +6928,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42719] = {
-            Quest = [=[Eye of Azshara: Cleansing the Dreamway||45|45|0|0|0]=],
+            Quest = [=[Eye of Azshara: Cleansing the Dreamway||45|45|0|76|0]=],
             Start = "98008|715|32|39.60|45.50",
             End = "98008|715|32|39.60|45.50",
             Objectives = {
@@ -7171,18 +6962,8 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [42732] = {
-            Quest = [=[Deadlier Warglaives||45|45|42754|0|0]=],
-            Start = "98648|721|32|55.60|50.10",
-            End = "98646|0|32|0.00|0.00",
-            Objectives = {
-                [1] = {
-                    "nil|627|35|71.80|57.20|0|0",
-                },
-            },
-        },
         [42733] = {
-            Quest = [=[A Very Special Kind of Fuel||45|45|42754|0|0]=],
+            Quest = [=[A Very Special Kind of Fuel||45|45|42754|72|0]=],
             Start = "98648|721|32|55.60|50.10",
             End = "98646|0|32|0.00|0.00",
             Objectives = {
@@ -7192,12 +6973,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42734] = {
-            Quest = [=[Into the Oculus||45|45|0|0|0]=],
+            Quest = [=[Into the Oculus||45|45|0|110|0]=],
             Start = "107351|735|32|71.70|54.80",
             End = "107351|735|32|71.70|54.80",
         },
         [42735] = {
-            Quest = [=[Malace in Vrykul Land||45|45|42749|0|0]=],
+            Quest = [=[Malace in Vrykul Land||45|45|42749|72|0]=],
             Start = "108782|720|32|57.60|53.30",
             End = "108576|0|32|0.00|0.00",
             Objectives = {
@@ -7210,7 +6991,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42736] = {
-            Quest = [=[Rune Ruination||45|45|42749|0|0]=],
+            Quest = [=[Rune Ruination||45|45|42749|72|0]=],
             Start = "108576|634|32|64.90|59.00",
             End = "108576|0|32|0.00|0.00",
             Objectives = {
@@ -7220,7 +7001,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42737] = {
-            Quest = [=[Rune Ruination: Runeskeld Rollo||45|45|0|0|0]=],
+            Quest = [=[Rune Ruination: Runeskeld Rollo||45|45|0|72|0]=],
             Start = "-251218|634|32|64.90|58.90",
             End = "-251218|0|32|0.00|0.00",
             Objectives = {
@@ -7230,7 +7011,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42738] = {
-            Quest = [=[Rune Ruination: Runelord Ragnar||45|45|0|0|0]=],
+            Quest = [=[Rune Ruination: Runelord Ragnar||45|45|0|72|0]=],
             Start = "-251220|634|32|64.90|58.90",
             End = "-251220|0|32|0.00|0.00",
             Objectives = {
@@ -7242,7 +7023,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42739] = {
-            Quest = [=[Rune Ruination: Runesage Floki||45|45|0|0|0]=],
+            Quest = [=[Rune Ruination: Runesage Floki||45|45|0|72|0]=],
             Start = "-251221|634|32|64.90|58.90",
             End = "-251221|0|32|0.00|0.00",
             Objectives = {
@@ -7252,7 +7033,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42749] = {
-            Quest = [=[Strange Bedfellows||45|45|42752|0|0]=],
+            Quest = [=[Strange Bedfellows||45|45|42752|72|0]=],
             Start = "108576|634|32|64.90|58.90",
             End = "108576|634|32|64.90|58.90",
             Objectives = {
@@ -7267,7 +7048,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42752] = {
-            Quest = [=[Vault of the Wardens: Vault Break-In||45|45|42775|0|0]=],
+            Quest = [=[Vault of the Wardens: Vault Break-In||45|45|42775|72|0]=],
             End = "108782|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -7283,7 +7064,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [42753] = {
-            Quest = [=[Vault of the Wardens: Vault Break-In||45|45|42775|0|0]=],
+            Quest = [=[Vault of the Wardens: Vault Break-In||45|45|42775|72|0]=],
+            Start = "1124|720|32|59.60|58.80",
             End = "108782|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -7299,7 +7081,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42754] = {
-            Quest = [=[Jump-Capable||45|45|42810|0|0]=],
+            Quest = [=[Jump-Capable||45|45|42810|72|0]=],
             Start = "98646|721|32|59.00|74.00",
             End = "98646|721|32|59.00|74.00",
             Objectives = {
@@ -7324,7 +7106,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42775] = {
-            Quest = [=[The Crux of the Plan||45|45|42776|0|0]=],
+            Quest = [=[The Crux of the Plan||45|45|42776|72|0]=],
             Start = "108782|720|32|57.50|53.30",
             Objectives = {
                 [1] = {
@@ -7333,17 +7115,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [42776] = {
-            Quest = [=[Two Worthies||45|45|42669|0|0]=],
+            Quest = [=[Two Worthies||45|45|42669|72|0]=],
             Start = "108571|720|32|58.60|58.80",
             End = "98648|0|32|0.00|0.00",
         },
         [42777] = {
-            Quest = [=[Champion: Belath Dawnblade||45|45|0|0|0]=],
+            Quest = [=[Champion: Belath Dawnblade||45|45|0|72|0]=],
             Start = "108782|720|32|57.20|51.40",
             End = "108782|0|32|0.00|0.00",
         },
         [42787] = {
-            Quest = [=[Deal With It Personally||45|45|42735|0|0]=],
+            Quest = [=[Deal With It Personally||45|45|42735|72|0]=],
             Start = "108782|720|32|57.50|53.20",
             End = "108782|0|32|0.00|0.00",
             Objectives = {
@@ -7392,12 +7174,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42800] = {
-            Quest = [=[Champion: Valeera Sanguinar||45|45|0|0|0]=],
+            Quest = [=[Champion: Valeera Sanguinar||45|45|0|144|0]=],
             Start = "98102|626|32|40.90|75.50",
             End = "98102|626|32|40.90|75.50",
         },
         [42809] = {
-            Quest = [=[The Invasion of Niskara||45|45|42132|0|0]=],
+            Quest = [=[The Invasion of Niskara||45|45|42132|72|0]=],
             Start = "98646|721|32|59.00|74.00",
             End = "108571|0|32|0.00|0.00",
             Objectives = {
@@ -7416,7 +7198,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42810] = {
-            Quest = [=[A Final Offer||45|45|0|0|0]=],
+            Quest = [=[A Final Offer||45|45|0|72|0]=],
             Start = "98646|721|32|59.00|74.00",
             End = "98646|721|32|59.00|74.00",
             Objectives = {
@@ -7429,7 +7211,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42818] = {
-            Quest = [=[The Scarlet Assault||45|45|0|0|0]=],
+            Quest = [=[The Scarlet Assault||45|45|0|67|0]=],
             Start = "93437|648|32|51.10|50.50",
             End = "108998|0|32|0.00|0.00",
             Objectives = {
@@ -7439,7 +7221,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [42821] = {
-            Quest = [=[Raising an Army||45|45|0|0|0]=],
+            Quest = [=[Raising an Army||45|45|0|67|0]=],
+            Start = "113481|648|32|44.80|72.90",
             End = "109221|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -7448,7 +7231,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [42823] = {
-            Quest = [=[The Scarlet Commander||45|45|0|0|0]=],
+            Quest = [=[The Scarlet Commander||45|45|0|67|0]=],
+            Start = "113481|648|32|44.80|72.90",
             End = "109221|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -7457,7 +7241,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [42824] = {
-            Quest = [=[The Zealot Rises||45|45|0|0|0]=],
+            Quest = [=[The Zealot Rises||45|45|0|67|0]=],
+            Start = "113481|648|32|44.80|72.90",
             End = "93437|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -7632,7 +7417,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [42882] = {
-            Quest = [=[The Scarlet Massacre||45|45|0|0|0]=],
+            Quest = [=[The Scarlet Massacre||45|45|0|67|0]=],
+            Start = "113481|648|32|44.80|72.90",
             End = "109221|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -7665,17 +7451,17 @@ function Nx.ModQuests:Data5()
             Quest = [=[LFGDungeons - Legion - Raid Finder - Nth||45|45|0|0|0]=],
         },
         [42914] = {
-            Quest = [=[Champion: Meryl Felstorm||45|45|0|0|0]=],
+            Quest = [=[Champion: Meryl Felstorm||45|45|0|110|0]=],
             Start = "109222|735|32|72.80|61.70",
             End = "109222|0|32|0.00|0.00",
         },
         [42917] = {
-            Quest = [=[Champion: Archmage Vargoth||45|45|0|0|0]=],
+            Quest = [=[Champion: Archmage Vargoth||45|45|0|110|0]=],
             Start = "109226|735|32|67.50|54.30",
             End = "109226|735|32|67.50|54.30",
         },
         [42918] = {
-            Quest = [=[Demonic Runes||45|45|0|0|0]=],
+            Quest = [=[Demonic Runes||45|45|0|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
             Objectives = {
@@ -7690,7 +7476,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42920] = {
-            Quest = [=[The Invasion of Niskara||45|45|42132|0|0]=],
+            Quest = [=[The Invasion of Niskara||45|45|42132|72|0]=],
             Start = "98646|721|32|59.00|74.00",
             End = "108572|0|32|0.00|0.00",
             Objectives = {
@@ -7709,17 +7495,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [42940] = {
-            Quest = [=[When There's a Will, There's a Way||45|45|42734|0|0]=],
+            Quest = [=[When There's a Will, There's a Way||45|45|42734|110|0]=],
             Start = "107351|735|32|71.70|54.90",
             End = "107351|735|32|71.70|54.90",
         },
         [42954] = {
-            Quest = [=[A Small Favor||45|45|42955|0|0]=],
+            Quest = [=[A Small Favor||45|45|42955|110|0]=],
             Start = "107351|735|32|71.72|54.79",
             End = "109307|734|32|37.10|48.37",
         },
         [42955] = {
-            Quest = [=[The Proper Way of Things||45|45|42956|0|0]=],
+            Quest = [=[The Proper Way of Things||45|45|42956|110|0]=],
             Start = "109307|734|32|37.10|48.37",
             End = "109307|734|32|37.00|48.30",
             Objectives = {
@@ -7729,12 +7515,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [42956] = {
-            Quest = [=[Ari's Package||45|45|42959|0|0]=],
+            Quest = [=[Ari's Package||45|45|42959|110|0]=],
             Start = "109307|734|32|37.00|48.30",
             End = "107351|0|32|0.00|0.00",
         },
         [42959] = {
-            Quest = [=[Three Is a Lucky Number||45|45|0|0|0]=],
+            Quest = [=[Three Is a Lucky Number||45|45|0|110|0]=],
             Start = "107351|735|32|71.70|54.80",
             End = "109307|0|32|0.00|0.00",
             Objectives = {
@@ -7750,7 +7536,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42974] = {
-            Quest = [=[The Fate of Hodir||45|45|0|0|0]=],
+            Quest = [=[The Fate of Hodir||45|45|0|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
             Objectives = {
@@ -7763,17 +7549,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [42988] = {
-            Quest = [=[Worldmender||45|45|0|0|0]=],
+            Quest = [=[Worldmender||45|45|0|147|0]=],
             Start = "96746|726|32|33.00|60.30",
             End = "96746|726|32|33.00|60.30",
         },
         [42989] = {
-            Quest = [=[Ma'haat the Indomitable||45|45|0|0|0]=],
+            Quest = [=[Ma'haat the Indomitable||45|45|0|147|0]=],
             Start = "109464|726|32|29.40|77.80",
             End = "42470|0|32|0.00|0.00",
         },
         [42990] = {
-            Quest = [=[Neltharion's Lair: The Earthen Amulet||45|45|0|0|0]=],
+            Quest = [=[Neltharion's Lair: The Earthen Amulet||45|45|0|147|0]=],
             Start = "109464|726|32|29.40|77.80",
             End = "109464|726|32|29.40|77.80",
             Objectives = {
@@ -7783,7 +7569,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [42995] = {
-            Quest = [=[A Taste For Blood||45|45|0|0|0]=],
+            Quest = [=[A Taste For Blood||45|45|0|147|0]=],
             Start = "42470|207|32|56.90|14.20",
             End = "42470|207|32|56.90|14.20",
             Objectives = {
@@ -7793,17 +7579,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [42997] = {
-            Quest = [=[The Maelstrom Pillar: Earth||45|45|0|0|0]=],
+            Quest = [=[The Maelstrom Pillar: Earth||45|45|0|147|0]=],
             Start = "96746|726|32|33.00|60.30",
             End = "109464|0|32|0.00|0.00",
         },
         [43003] = {
-            Quest = [=[Return to Janai||45|45|0|0|0]=],
+            Quest = [=[Return to Janai||45|45|0|147|0]=],
             Start = "42470|207|32|56.90|14.20",
             End = "109464|0|32|0.00|0.00",
         },
         [43090] = {
-            Quest = [=[Ulduar's Oath||45|45|0|0|0]=],
+            Quest = [=[Ulduar's Oath||45|45|0|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
             Objectives = {
@@ -7820,7 +7606,7 @@ function Nx.ModQuests:Data5()
             End = "98548|680|32|36.60|45.10",
         },
         [43151] = {
-            Quest = [=[Making A Trade||45|45|0|0|0]=],
+            Quest = [=[Making A Trade||45|45|0|117|0]=],
             Start = "5570|641|32|56.20|73.80",
             End = "109738|0|32|0.00|0.00",
             Objectives = {
@@ -7862,7 +7648,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43182] = {
-            Quest = [=[The Missing Vessel||45|45|0|0|0]=],
+            Quest = [=[The Missing Vessel||45|45|0|96|0]=],
             Start = "107966|739|32|42.90|25.40",
             End = "107966|0|32|0.00|0.00",
             Objectives = {
@@ -7872,17 +7658,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [43184] = {
-            Quest = [=[Champion: Allari the Souleater||45|45|0|0|0]=],
+            Quest = [=[Champion: Allari the Souleater||45|45|0|72|0]=],
             Start = "98648|721|32|62.00|49.20",
             End = "98648|0|32|0.00|0.00",
         },
         [43185] = {
-            Quest = [=[Champion: Jace Darkweaver||45|45|0|0|0]=],
+            Quest = [=[Champion: Jace Darkweaver||45|45|0|72|0]=],
             Start = "98646|721|32|59.00|73.50",
             End = "98646|0|32|0.00|0.00",
         },
         [43186] = {
-            Quest = [=[I Am the Slayer!||45|45|0|0|0]=],
+            Quest = [=[I Am the Slayer!||45|45|0|72|0]=],
             Start = "108571|720|32|58.50|59.30",
             End = "108571|720|32|58.50|59.30",
             Objectives = {
@@ -7892,7 +7678,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43249] = {
-            Quest = [=[The Raven's Eye||45|45|43250|0|0]=],
+            Quest = [=[The Raven's Eye||45|45|43250|144|0]=],
             Start = "98102|626|32|40.90|75.50",
             End = "98102|626|32|40.90|75.50",
             Objectives = {
@@ -7902,12 +7688,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43250] = {
-            Quest = [=[Off to Court||45|45|0|0|0]=],
+            Quest = [=[Off to Court||45|45|0|144|0]=],
             Start = "98102|626|32|40.90|75.50",
             End = "110164|0|32|0.00|0.00",
         },
         [43251] = {
-            Quest = [=[In Search of the Eye||45|45|42678|0|0]=],
+            Quest = [=[In Search of the Eye||45|45|42678|144|0]=],
             Start = "110164|641|32|40.40|52.90",
             End = "110164|641|32|40.40|52.90",
             Objectives = {
@@ -7917,7 +7703,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43252] = {
-            Quest = [=[Eternal Unrest||45|45|42678|0|0]=],
+            Quest = [=[Eternal Unrest||45|45|42678|144|0]=],
             Start = "110164|641|32|40.40|52.90",
             End = "110164|641|32|40.40|52.90",
             Objectives = {
@@ -7939,7 +7725,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43253] = {
-            Quest = [=[Maw of Souls: Ancient Vrykul Legends||45|45|43249|0|0]=],
+            Quest = [=[Maw of Souls: Ancient Vrykul Legends||45|45|43249|144|0]=],
             Start = "98102|626|32|40.90|75.50",
             End = "98102|626|32|40.90|75.50",
             Objectives = {
@@ -8100,7 +7886,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43341] = {
-            Quest = [=[Uniting the Isles||45|45|0|0|0]=],
+            Quest = [=[Uniting the Isles||45|45|0|183|0]=],
             Start = "90417|627|32|28.48|48.33",
             End = "90417|0|32|0.00|0.00",
         },
@@ -8156,7 +7942,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43365] = {
-            Quest = [=[The Cycle Continues||45|45|0|0|0]=],
+            Quest = [=[The Cycle Continues||45|45|0|76|0]=],
             Start = "98008|715|32|39.60|45.50",
             End = "98008|715|32|39.60|45.50",
             Objectives = {
@@ -8166,12 +7952,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43368] = {
-            Quest = [=[Champion: Brightwing||45|45|0|0|0]=],
+            Quest = [=[Champion: Brightwing||45|45|0|76|0]=],
             Start = "98008|715|32|39.60|45.50",
             End = "98008|715|32|39.60|45.50",
         },
         [43370] = {
-            Quest = [=[A New Invention||45|45|0|0|0]=],
+            Quest = [=[A New Invention||45|45|0|54|0]=],
             Start = "110424|739|32|44.40|45.00",
             End = "110424|739|32|44.40|45.00",
             Objectives = {
@@ -8216,27 +8002,27 @@ function Nx.ModQuests:Data5()
             },
         },
         [43381] = {
-            Quest = [=[Champion: Mariella Ward||45|45|0|0|0]=],
+            Quest = [=[Champion: Mariella Ward||45|45|0|133|0]=],
             Start = "111215|702|32|51.20|49.60",
             End = "111215|702|32|51.20|49.60",
         },
         [43382] = {
-            Quest = [=[Champion: Natalie Seline||45|45|0|0|0]=],
+            Quest = [=[Champion: Natalie Seline||45|45|0|133|0]=],
             Start = "110684|47|32|24.20|37.80",
             End = "110684|47|32|24.20|37.80",
         },
         [43385] = {
-            Quest = [=[Infiltrating Our Enemies||45|45|0|0|0]=],
+            Quest = [=[Infiltrating Our Enemies||45|45|0|133|0]=],
             Start = "110564|702|32|51.50|47.70",
             End = "110564|702|32|51.50|47.70",
         },
         [43386] = {
-            Quest = [=[Onslaught Envoy||45|45|0|0|0]=],
+            Quest = [=[Onslaught Envoy||45|45|0|133|0]=],
             Start = "110564|702|32|51.50|47.70",
             End = "110683|0|32|0.00|0.00",
         },
         [43387] = {
-            Quest = [=[Scarlet Redemption||45|45|0|0|0]=],
+            Quest = [=[Scarlet Redemption||45|45|0|133|0]=],
             Start = "110683|115|32|71.40|71.80",
             End = "111191|0|32|0.00|0.00",
             Objectives = {
@@ -8259,7 +8045,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43388] = {
-            Quest = [=[Apostate Liberation||45|45|0|0|0]=],
+            Quest = [=[Apostate Liberation||45|45|0|133|0]=],
             Start = "110683|115|32|71.40|71.80",
             End = "111191|0|32|0.00|0.00",
             Objectives = {
@@ -8271,16 +8057,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [43389] = {
-            Quest = [=[Unexpected Guests||45|45|0|0|0]=],
+            Quest = [=[Unexpected Guests||45|45|0|133|0]=],
+            Start = "111191|702|32|51.20|49.60",
             End = "110564|0|32|0.00|0.00",
         },
         [43390] = {
-            Quest = [=[Forgotten Shadows||45|45|0|0|0]=],
+            Quest = [=[Forgotten Shadows||45|45|0|133|0]=],
             Start = "110564|702|32|51.30|48.90",
             End = "111041|0|32|0.00|0.00",
         },
         [43391] = {
-            Quest = [=[Secrets of the Void||45|45|0|0|0]=],
+            Quest = [=[Secrets of the Void||45|45|0|133|0]=],
             Start = "111041|47|32|24.20|37.80",
             End = "111041|47|32|24.20|37.80",
             Objectives = {
@@ -8294,7 +8081,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43392] = {
-            Quest = [=[Into the Void||45|45|0|0|0]=],
+            Quest = [=[Into the Void||45|45|0|133|0]=],
             Start = "111041|47|32|24.40|37.80",
             End = "110684|0|32|0.00|0.00",
             Objectives = {
@@ -8314,12 +8101,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43393] = {
-            Quest = [=[Rising Shadows||45|45|0|0|0]=],
+            Quest = [=[Rising Shadows||45|45|0|133|0]=],
             Start = "110684|47|32|24.20|37.80",
             End = "110564|0|32|0.00|0.00",
         },
         [43394] = {
-            Quest = [=[Crossing Legion Lines||45|45|0|0|0]=],
+            Quest = [=[Crossing Legion Lines||45|45|0|133|0]=],
             Start = "111044|702|32|49.80|59.50",
             End = "110749|0|32|0.00|0.00",
             Objectives = {
@@ -8331,7 +8118,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43395] = {
-            Quest = [=[Allies of the Light||45|45|0|0|0]=],
+            Quest = [=[Allies of the Light||45|45|0|133|0]=],
             Start = "110969|748|32|48.90|63.60",
             End = "110564|0|32|0.00|0.00",
             Objectives = {
@@ -8380,7 +8167,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43396] = {
-            Quest = [=[The Mind of the Enemy||45|45|0|0|0]=],
+            Quest = [=[The Mind of the Enemy||45|45|0|133|0]=],
             Start = "110969|748|32|48.90|63.60",
             End = "110564|0|32|0.00|0.00",
             Objectives = {
@@ -8398,7 +8185,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43397] = {
-            Quest = [=[United As One||45|45|0|0|0]=],
+            Quest = [=[United As One||45|45|0|133|0]=],
             Start = "110564|702|32|51.10|48.50",
             End = "111616|0|32|0.00|0.00",
             Objectives = {
@@ -8414,17 +8201,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [43398] = {
-            Quest = [=[Champion: Alonsus Faol||45|45|0|0|0]=],
+            Quest = [=[Champion: Alonsus Faol||45|45|0|133|0]=],
             Start = "110564|702|32|51.00|48.40",
             End = "110564|702|32|51.00|48.40",
         },
         [43399] = {
-            Quest = [=[Fortifying the Temple||45|45|0|0|0]=],
+            Quest = [=[Fortifying the Temple||45|45|0|133|0]=],
             Start = "110564|702|32|50.90|46.80",
             End = "110564|702|32|50.90|46.80",
         },
         [43400] = {
-            Quest = [=[Lumenstone||45|45|0|0|0]=],
+            Quest = [=[Lumenstone||45|45|0|133|0]=],
             Start = "109776|702|32|51.30|47.80",
             End = "109776|702|32|51.30|47.80",
             Objectives = {
@@ -8434,7 +8221,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43401] = {
-            Quest = [=[A Light in the Darkness||45|45|0|0|0]=],
+            Quest = [=[A Light in the Darkness||45|45|0|133|0]=],
             Start = "110564|702|32|51.00|48.40",
             End = "110564|702|32|51.00|48.40",
             Objectives = {
@@ -8494,7 +8281,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43402] = {
-            Quest = [=[High Priest of Netherlight||45|45|0|0|0]=],
+            Quest = [=[High Priest of Netherlight||45|45|0|133|0]=],
             Start = "110564|702|32|51.00|48.40",
             End = "110564|702|32|51.00|48.40",
             Objectives = {
@@ -8511,17 +8298,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [43403] = {
-            Quest = [=[Defending the Isles||45|45|0|0|0]=],
+            Quest = [=[Defending the Isles||45|45|0|76|0]=],
             Start = "103832|747|32|44.80|50.60",
             End = "101195|0|32|0.00|0.00",
         },
         [43469] = {
-            Quest = [=[Where In the World is Mathias?||45|45|43485|0|0]=],
+            Quest = [=[Where In the World is Mathias?||45|45|43485|144|0]=],
             Start = "98100|626|32|40.60|76.70",
             End = "98100|626|32|40.60|76.70",
         },
         [43470] = {
-            Quest = [=[Pruning the Garden||45|45|43479|0|0]=],
+            Quest = [=[Pruning the Garden||45|45|43479|144|0]=],
             Start = "98100|626|32|40.60|76.70",
             End = "98100|626|32|40.60|76.70",
         },
@@ -8556,12 +8343,12 @@ function Nx.ModQuests:Data5()
             End = "110642|628|32|75.40|83.40",
         },
         [43479] = {
-            Quest = [=[The World is Not Enough||45|45|43485|0|0]=],
+            Quest = [=[The World is Not Enough||45|45|43485|144|0]=],
             Start = "98100|626|32|40.60|76.70",
             End = "98100|626|32|40.60|76.70",
         },
         [43485] = {
-            Quest = [=[A Burning Distraction||45|45|0|0|0]=],
+            Quest = [=[A Burning Distraction||45|45|0|144|0]=],
             Start = "98100|626|32|40.60|76.70",
             End = "110714|0|32|0.00|0.00",
             Objectives = {
@@ -8583,12 +8370,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43489] = {
-            Quest = [=[To Felblaze Ingress||45|45|0|0|0]=],
+            Quest = [=[To Felblaze Ingress||45|45|0|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "-252232|0|32|0.00|0.00",
         },
         [43490] = {
-            Quest = [=[Aponi's Trail||45|45|0|0|0]=],
+            Quest = [=[Aponi's Trail||45|45|0|126|0]=],
             Start = "-252232|630|32|66.20|26.10",
             End = "110749|0|32|0.00|0.00",
             Objectives = {
@@ -8600,7 +8387,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43491] = {
-            Quest = [=[Allies of the Light||45|45|0|0|0]=],
+            Quest = [=[Allies of the Light||45|45|0|126|0]=],
             Start = "110749|748|32|48.90|63.70",
             End = "90250|0|32|0.00|0.00",
             Objectives = {
@@ -8649,12 +8436,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43492] = {
-            Quest = [=[Champion: Aponi Brightmane||45|45|0|0|0]=],
+            Quest = [=[Champion: Aponi Brightmane||45|45|0|126|0]=],
             Start = "90251|24|32|48.30|72.40",
             End = "90251|0|32|0.00|0.00",
         },
         [43493] = {
-            Quest = [=[Black Rook Hold: Lord Ravencrest||45|45|43489|0|0]=],
+            Quest = [=[Black Rook Hold: Lord Ravencrest||45|45|43489|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90250|24|32|52.30|78.10",
             Objectives = {
@@ -8664,14 +8451,9 @@ function Nx.ModQuests:Data5()
             },
         },
         [43496] = {
-            Quest = [=[The Power Within||45|45|0|0|0]=],
+            Quest = [=[The Power Within||45|45|0|54|0]=],
+            Start = "110768|23|32|26.80|40.40",
             End = "110773|0|32|0.00|0.00",
-        },
-        [43497] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
-        [43498] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
         },
         [43499] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
@@ -8680,7 +8462,8 @@ function Nx.ModQuests:Data5()
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
         },
         [43501] = {
-            Quest = [=[The Power Within||45|45|0|0|0]=],
+            Quest = [=[The Power Within||45|45|0|54|0]=],
+            Start = "110768|23|32|26.80|40.40",
             End = "110773|0|32|0.00|0.00",
         },
         [43502] = {
@@ -8689,17 +8472,17 @@ function Nx.ModQuests:Data5()
             End = "103155|0|32|0.00|0.00",
         },
         [43503] = {
-            Quest = [=[The Power Within||45|45|0|0|0]=],
+            Quest = [=[The Power Within||45|45|0|54|0]=],
             Start = "5131|734|32|56.40|38.60",
             End = "110773|0|32|0.00|0.00",
         },
         [43505] = {
-            Quest = [=[The Power Within||45|45|0|0|0]=],
+            Quest = [=[The Power Within||45|45|0|54|0]=],
             Start = "108247|735|32|56.40|39.10",
             End = "110773|0|32|0.00|0.00",
         },
         [43506] = {
-            Quest = [=[Black Rook Hold: Greater Power||45|45|0|0|0]=],
+            Quest = [=[Black Rook Hold: Greater Power||45|45|0|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
             Objectives = {
@@ -8731,7 +8514,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43508] = {
-            Quest = [=[The Captive Spymaster||45|45|37666|0|0]=],
+            Quest = [=[The Captive Spymaster||45|45|37666|144|0]=],
             Start = "110714|680|32|29.80|79.70",
             End = "110793|0|32|0.00|0.00",
             Objectives = {
@@ -8753,7 +8536,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43514] = {
-            Quest = [=[A Vainglorious Past||45|45|0|0|0]=],
+            Quest = [=[A Vainglorious Past||45|45|0|54|0]=],
             Start = "100482|630|32|48.00|25.70",
             End = "100482|630|32|48.00|25.70",
             Objectives = {
@@ -8763,7 +8546,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43517] = {
-            Quest = [=[Darkheart Thicket: Fallen Power||45|45|0|0|0]=],
+            Quest = [=[Darkheart Thicket: Fallen Power||45|45|0|54|0]=],
             Start = "100482|630|32|48.00|25.70",
             End = "100482|630|32|48.00|25.70",
             Objectives = {
@@ -8773,7 +8556,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43518] = {
-            Quest = [=[Tempering Darkness||45|45|0|0|0]=],
+            Quest = [=[Tempering Darkness||45|45|0|54|0]=],
             Start = "110773|630|32|48.00|25.70",
             End = "110773|630|32|48.00|25.70",
             Objectives = {
@@ -8789,7 +8572,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43519] = {
-            Quest = [=[Lucid Strength||45|45|0|0|0]=],
+            Quest = [=[Lucid Strength||45|45|0|54|0]=],
             Start = "110773|630|32|48.00|25.70",
             End = "110773|630|32|48.00|25.70",
             Objectives = {
@@ -8799,7 +8582,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43520] = {
-            Quest = [=[The Emerald Nightmare: In Nightmares||45|45|0|0|0]=],
+            Quest = [=[The Emerald Nightmare: In Nightmares||45|45|0|54|0]=],
             Start = "110773|630|32|48.00|25.70",
             End = "110773|630|32|48.00|25.70",
             Objectives = {
@@ -8812,7 +8595,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43521] = {
-            Quest = [=[The Emerald Nightmare: Essence of Power||45|45|0|0|0]=],
+            Quest = [=[The Emerald Nightmare: Essence of Power||45|45|0|54|0]=],
             Start = "100482|630|32|48.00|25.70",
             End = "100482|630|32|48.00|25.70",
             Objectives = {
@@ -8822,7 +8605,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43522] = {
-            Quest = [=[Essential Consumption||45|45|0|0|0]=],
+            Quest = [=[Essential Consumption||45|45|0|54|0]=],
             Start = "100482|630|32|48.00|25.70",
             End = "100482|630|32|48.00|25.70",
             Objectives = {
@@ -8832,12 +8615,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43523] = {
-            Quest = [=[Repaid Debt||45|45|0|0|0]=],
+            Quest = [=[Repaid Debt||45|45|0|54|0]=],
             Start = "5131|630|32|48.00|25.60",
             End = "111826|0|32|0.00|0.00",
         },
         [43524] = {
-            Quest = [=[Court of Stars: Literary Perfection||45|45|0|0|0]=],
+            Quest = [=[Court of Stars: Literary Perfection||45|45|0|54|0]=],
             Start = "101082|680|32|37.90|47.40",
             End = "101082|680|32|37.90|47.40",
             Objectives = {
@@ -8847,7 +8630,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43525] = {
-            Quest = [=[Vault of the Wardens: Borrowing Without Asking||45|45|0|0|0]=],
+            Quest = [=[Vault of the Wardens: Borrowing Without Asking||45|45|0|54|0]=],
             Start = "101083|680|32|37.80|47.30",
             End = "101083|680|32|37.80|47.30",
             Objectives = {
@@ -8857,7 +8640,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43526] = {
-            Quest = [=[A True Test||45|45|0|0|0]=],
+            Quest = [=[A True Test||45|45|0|54|0]=],
             Start = "101080|680|32|37.90|47.30",
             End = "101080|680|32|37.90|47.30",
             Objectives = {
@@ -8867,17 +8650,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [43527] = {
-            Quest = [=[Saving the Guard||45|45|0|0|0]=],
+            Quest = [=[Saving the Guard||45|45|0|54|0]=],
             Start = "110773|630|32|48.10|25.60",
             End = "111826|0|32|0.00|0.00",
         },
         [43528] = {
-            Quest = [=[Planning the Assault||45|45|0|0|0]=],
+            Quest = [=[Planning the Assault||45|45|0|54|0]=],
             Start = "111814|634|32|62.50|68.20",
             End = "111826|0|32|0.00|0.00",
         },
         [43530] = {
-            Quest = [=[The Nighthold: Delusions of Grandeur||45|45|0|0|0]=],
+            Quest = [=[The Nighthold: Delusions of Grandeur||45|45|0|54|0]=],
             Start = "101083|680|32|37.80|47.30",
             End = "101083|680|32|37.80|47.30",
             Objectives = {
@@ -8930,7 +8713,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43531] = {
-            Quest = [=[The Nighthold: Into the Nighthold||45|45|0|0|0]=],
+            Quest = [=[The Nighthold: Into the Nighthold||45|45|0|54|0]=],
             Start = "111826|680|32|37.80|47.40",
             End = "111826|680|32|37.80|47.40",
             Objectives = {
@@ -8940,7 +8723,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43532] = {
-            Quest = [=[The Nighthold: Darkness Calls||45|45|0|0|0]=],
+            Quest = [=[The Nighthold: Darkness Calls||45|45|0|54|0]=],
             Start = "111826|680|32|37.80|47.40",
             End = "111826|680|32|37.80|47.40",
             Objectives = {
@@ -8950,7 +8733,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43533] = {
-            Quest = [=[Balance of Power||45|45|0|0|0]=],
+            Quest = [=[Balance of Power||45|45|0|54|0]=],
             Start = "111826|680|32|37.80|47.40",
             End = "111826|680|32|37.80|47.40",
             Objectives = {
@@ -8960,7 +8743,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43534] = {
-            Quest = [=[Blood of Sargeras||45|45|0|0|0]=],
+            Quest = [=[Blood of Sargeras||45|45|0|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90250|24|32|52.30|78.10",
             Objectives = {
@@ -8970,7 +8753,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43540] = {
-            Quest = [=[The Mind of the Enemy||45|45|0|0|0]=],
+            Quest = [=[The Mind of the Enemy||45|45|0|126|0]=],
             Start = "110969|748|32|48.90|63.70",
             End = "90250|0|32|0.00|0.00",
             Objectives = {
@@ -8991,7 +8774,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43541] = {
-            Quest = [=[United As One||45|45|0|0|0]=],
+            Quest = [=[United As One||45|45|0|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90251|0|32|0.00|0.00",
             Objectives = {
@@ -9005,6 +8788,7 @@ function Nx.ModQuests:Data5()
         },
         [43545] = {
             Quest = [=[Black Rook Hold: The Lord of Black Rook Hold||45|45|0|0|0]=],
+            Start = "115551|42|32|39.90|75.40",
             End = "5144|734|32|80.40|62.80",
             Objectives = {
                 [1] = {
@@ -9106,6 +8890,7 @@ function Nx.ModQuests:Data5()
         },
         [43555] = {
             Quest = [=[The Arcway: Into the Arcway||45|45|0|0|0]=],
+            Start = "90250|680|32|17.40|31.40",
             Objectives = {
                 [1] = {
                     "nil|747|32|48.60|47.40|0|0",
@@ -9114,6 +8899,7 @@ function Nx.ModQuests:Data5()
         },
         [43556] = {
             Quest = [=[Vault of the Wardens: Into the Vault of the Wardens||45|45|0|0|0]=],
+            Start = "90250|680|32|17.40|31.40",
             End = "5144|734|32|80.40|62.80",
             Objectives = {
                 [1] = {
@@ -9123,6 +8909,7 @@ function Nx.ModQuests:Data5()
         },
         [43557] = {
             Quest = [=[Assault on Violet Hold: Into the Violet Hold||45|45|0|0|0]=],
+            Start = "115551|42|32|39.90|75.40",
             Objectives = {
                 [1] = {
                     "nil|747|32|48.60|47.40|0|0",
@@ -9130,7 +8917,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43558] = {
-            Quest = [=[Bindings of the Windlord||45|45|43560|0|0]=],
+            Quest = [=[Bindings of the Windlord||45|45|43560|54|0]=],
             Start = "92218|634|32|40.80|80.80",
             End = "92218|634|32|40.80|80.80",
             Objectives = {
@@ -9141,7 +8928,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43560] = {
-            Quest = [=[Audience with the Windlord||45|45|0|0|0]=],
+            Quest = [=[Audience with the Windlord||45|45|0|54|0]=],
             Start = "92218|634|32|40.80|80.80",
             End = "110990|0|32|0.00|0.00",
             Objectives = {
@@ -9275,12 +9062,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43573] = {
-            Quest = [=[Advancing the War Effort||45|45|0|0|0]=],
+            Quest = [=[Advancing the War Effort||45|45|0|67|0]=],
             Start = "93568|648|32|49.70|51.30",
             End = "93568|648|32|49.70|51.30",
         },
         [43574] = {
-            Quest = [=[Maw of Souls: Maul of the Dead||45|45|0|0|0]=],
+            Quest = [=[Maw of Souls: Maul of the Dead||45|45|0|67|0]=],
             Start = "111480|647|32|36.20|56.10",
             End = "111480|647|32|36.20|56.10",
             Objectives = {
@@ -9290,12 +9077,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43577] = {
-            Quest = [=[Capturing the Gateway||45|45|0|0|0]=],
+            Quest = [=[Capturing the Gateway||45|45|0|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
         },
         [43581] = {
-            Quest = [=[The Wisdom of Patience||45|45|0|0|0]=],
+            Quest = [=[The Wisdom of Patience||45|45|0|54|0]=],
             Start = "100482|630|32|48.00|25.70",
             End = "100482|630|32|48.00|25.70",
         },
@@ -9323,7 +9110,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43586] = {
-            Quest = [=[Maw of Souls: Message to Helya||45|45|0|0|0]=],
+            Quest = [=[Maw of Souls: Message to Helya||45|45|0|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
         },
@@ -9397,7 +9184,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [43604] = {
-            Quest = [=[Maw of Souls: Ymiron's Broken Blade||45|45|0|0|0]=],
+            Quest = [=[Maw of Souls: Ymiron's Broken Blade||45|45|0|180|0]=],
+            Start = "112766|695|32|57.10|75.00",
             End = "96469|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -9412,7 +9200,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43686] = {
-            Quest = [=[The Fourth Horseman||45|45|0|0|0]=],
+            Quest = [=[The Fourth Horseman||45|45|0|67|0]=],
             Start = "93437|648|32|51.60|50.00",
             End = "113631|0|32|0.00|0.00",
             Objectives = {
@@ -9431,7 +9219,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43697] = {
-            Quest = [=[Warriors of Light||45|45|0|0|0]=],
+            Quest = [=[Warriors of Light||45|45|0|126|0]=],
             Start = "90259|24|32|72.60|25.80",
             End = "90259|24|32|72.60|25.80",
             Objectives = {
@@ -9447,7 +9235,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43698] = {
-            Quest = [=[Lumenstone||45|45|0|0|0]=],
+            Quest = [=[Lumenstone||45|45|0|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90250|24|32|52.30|78.10",
             Objectives = {
@@ -9457,12 +9245,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43699] = {
-            Quest = [=[Defenders of the World||45|45|0|0|0]=],
+            Quest = [=[Defenders of the World||45|45|0|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90250|24|32|52.30|78.10",
         },
         [43700] = {
-            Quest = [=[A Light in the Darkness||45|45|43697|0|0]=],
+            Quest = [=[A Light in the Darkness||45|45|43697|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90259|0|32|0.00|0.00",
             Objectives = {
@@ -9493,22 +9281,22 @@ function Nx.ModQuests:Data5()
             },
         },
         [43701] = {
-            Quest = [=[Champion: Lothraxion||45|45|0|0|0]=],
+            Quest = [=[Champion: Lothraxion||45|45|0|126|0]=],
             Start = "109105|24|32|49.40|74.10",
             End = "109105|24|32|49.40|74.10",
         },
         [43723] = {
-            Quest = [=[Champion: Taoshi||45|45|0|0|0]=],
+            Quest = [=[Champion: Taoshi||45|45|0|144|0]=],
             Start = "98100|626|32|40.60|77.00",
             End = "98100|626|32|40.60|77.00",
         },
         [43724] = {
-            Quest = [=[Champion: Master Mathias Shaw||45|45|0|0|0]=],
+            Quest = [=[Champion: Master Mathias Shaw||45|45|0|144|0]=],
             Start = "110953|626|32|40.50|77.90",
             End = "110953|626|32|40.50|77.90",
         },
         [43726] = {
-            Quest = [=[Tales of the Broken Isles||45|45|0|0|0]=],
+            Quest = [=[Tales of the Broken Isles||45|45|0|34|0]=],
             Start = "5550|625|32|66.20|74.80",
             End = "97362|0|32|0.00|0.00",
             Objectives = {
@@ -9522,12 +9310,12 @@ function Nx.ModQuests:Data5()
             End = "111513|0|32|0.00|0.00",
         },
         [43785] = {
-            Quest = [=[Champion: Arator the Redeemer||45|45|0|0|0]=],
+            Quest = [=[Champion: Arator the Redeemer||45|45|0|126|0]=],
             Start = "99997|24|32|71.60|23.70",
             End = "99997|24|32|71.60|23.70",
         },
         [43797] = {
-            Quest = [=[Aiding the Conclave||45|45|0|0|0]=],
+            Quest = [=[Aiding the Conclave||45|45|0|133|0]=],
             Start = "111616|24|32|50.20|74.10",
             End = "110564|0|32|0.00|0.00",
         },
@@ -9608,7 +9396,7 @@ function Nx.ModQuests:Data5()
             End = "-252816|0|32|0.00|0.00",
         },
         [43832] = {
-            Quest = [=[Elixirs of Aid||45|45|0|0|0]=],
+            Quest = [=[Elixirs of Aid||45|45|0|133|0]=],
             Start = "110564|702|32|51.30|47.80",
             End = "110564|702|32|51.30|47.80",
             Objectives = {
@@ -9686,7 +9474,7 @@ function Nx.ModQuests:Data5()
             End = "111243|627|32|57.20|67.50",
         },
         [43898] = {
-            Quest = [=[Preparing to Move||45|45|0|0|0]=],
+            Quest = [=[Preparing to Move||45|45|0|54|0]=],
             Start = "111814|634|32|62.50|68.20",
             End = "111826|0|32|0.00|0.00",
         },
@@ -9919,7 +9707,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43923] = {
-            Quest = [=[Starlight Rose||45|45|0|0|0]=],
+            Quest = [=[Starlight Rose||45|45|0|133|0]=],
             Start = "110564|702|32|50.90|46.80",
             End = "110564|702|32|50.90|46.80",
             Objectives = {
@@ -10006,7 +9794,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43924] = {
-            Quest = [=[Leyblood||45|45|0|0|0]=],
+            Quest = [=[Leyblood||45|45|0|133|0]=],
             Start = "110564|702|32|50.90|46.80",
             End = "110564|702|32|50.90|46.80",
             Objectives = {
@@ -10031,7 +9819,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [43925] = {
-            Quest = [=[Runescale Koi||45|45|0|0|0]=],
+            Quest = [=[Runescale Koi||45|45|0|133|0]=],
             Start = "110564|702|32|50.90|46.80",
             End = "110564|702|32|50.90|46.80",
             Objectives = {
@@ -10041,22 +9829,22 @@ function Nx.ModQuests:Data5()
             },
         },
         [43928] = {
-            Quest = [=[Aggregates of Anguish||45|45|0|0|0]=],
+            Quest = [=[Aggregates of Anguish||45|45|0|67|0]=],
             Start = "93568|648|32|49.70|51.30",
             End = "93568|648|32|49.70|51.30",
         },
         [43929] = {
-            Quest = [=[Vantus Mastery||45|45|0|0|0]=],
+            Quest = [=[Vantus Mastery||45|45|0|34|0]=],
             Start = "90417|627|32|28.48|48.33",
             End = "86563|0|32|0.00|0.00",
         },
         [43933] = {
-            Quest = [=[Champion: Delas Moonfang||45|45|0|0|0]=],
+            Quest = [=[Champion: Delas Moonfang||45|45|0|126|0]=],
             Start = "113299|24|32|71.90|24.40",
             End = "109102|0|32|0.00|0.00",
         },
         [43934] = {
-            Quest = [=[A New Path||45|45|0|0|0]=],
+            Quest = [=[A New Path||45|45|0|126|0]=],
             Start = "110866|24|32|48.50|71.30",
             End = "109102|0|32|0.00|0.00",
             Objectives = {
@@ -10075,11 +9863,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [43937] = {
-            Quest = [=[Seeking Refuge||45|45|0|0|0]=],
+            Quest = [=[Seeking Refuge||45|45|0|54|0]=],
+            Start = "101083|630|32|48.10|25.60",
             End = "111826|0|32|0.00|0.00",
         },
         [43938] = {
-            Quest = [=[Focusing Our Efforts||45|45|0|0|0]=],
+            Quest = [=[Focusing Our Efforts||45|45|0|54|0]=],
             Start = "110773|630|32|48.10|25.60",
             End = "111826|0|32|0.00|0.00",
         },
@@ -10184,7 +9973,7 @@ function Nx.ModQuests:Data5()
             End = "112627|0|32|0.00|0.00",
         },
         [44083] = {
-            Quest = [=[The Grimoire of the First Necrolyte||45|45|0|0|0]=],
+            Quest = [=[The Grimoire of the First Necrolyte||45|45|0|54|0]=],
             End = "-254007|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -10227,7 +10016,7 @@ function Nx.ModQuests:Data5()
             End = "112967|0|32|0.00|0.00",
         },
         [44154] = {
-            Quest = [=[The Rite of the Executioner||45|45|0|0|0]=],
+            Quest = [=[The Rite of the Executioner||45|45|0|54|0]=],
             Start = "-254007|42|32|38.70|73.90",
             Objectives = {
                 [1] = {
@@ -10244,6 +10033,7 @@ function Nx.ModQuests:Data5()
         },
         [44176] = {
             Quest = [=[The Conveniences of Home||45|45|0|0|0]=],
+            Start = "101499|680|32|49.60|48.10",
             End = "113284|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -10252,20 +10042,20 @@ function Nx.ModQuests:Data5()
             },
         },
         [44200] = {
-            Quest = [=[Mathias Visit Not Active 05||45|45|0|0|0]=],
+            Quest = [=[Mathias Visit Not Active 05||45|45|0|144|0]=],
         },
         [44202] = {
-            Quest = [=[For the Cause|2|45|45|0|0|0]=],
+            Quest = [=[For the Cause|2|45|45|0|144|0]=],
             Start = "113213|626|32|40.50|77.90",
             End = "113213|626|32|40.50|77.90",
         },
         [44203] = {
-            Quest = [=[For the Cause|1|45|45|0|0|0]=],
+            Quest = [=[For the Cause|1|45|45|0|144|0]=],
             Start = "113213|626|32|40.50|77.90",
             End = "113213|626|32|40.50|77.90",
         },
         [44204] = {
-            Quest = [=[Seal their Fates||45|45|0|0|0]=],
+            Quest = [=[Seal their Fates||45|45|0|144|0]=],
             Start = "110820|626|32|61.60|50.60",
             End = "110820|626|32|61.60|50.60",
             Objectives = {
@@ -10335,17 +10125,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [44213] = {
-            Quest = [=[You Will Be Prepared!||45|45|0|0|0]=],
+            Quest = [=[You Will Be Prepared!||45|45|0|72|0]=],
             Start = "112407|720|32|57.70|44.20",
             End = "112407|720|32|57.70|44.20",
         },
         [44217] = {
-            Quest = [=[Armor Fit For A Deathlord||45|45|0|0|0]=],
+            Quest = [=[Armor Fit For A Deathlord||45|45|0|67|0]=],
             Start = "93550|647|32|44.20|37.50",
             End = "93550|647|32|44.20|37.50",
         },
         [44218] = {
-            Quest = [=[Champion Armaments||45|45|0|0|0]=],
+            Quest = [=[Champion Armaments||45|45|0|126|0]=],
             Start = "110434|24|32|54.10|49.80",
             End = "110434|24|32|54.10|49.80",
             Objectives = {
@@ -10355,7 +10145,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44219] = {
-            Quest = [=[Fate's Blessing||45|45|0|0|0]=],
+            Quest = [=[Fate's Blessing||45|45|0|126|0]=],
             Start = "112986|24|32|48.90|76.20",
             End = "112986|24|32|48.90|76.20",
             Objectives = {
@@ -10375,7 +10165,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44223] = {
-            Quest = [=[Champion Armaments||45|45|0|0|0]=],
+            Quest = [=[Champion Armaments||45|45|0|72|0]=],
             Start = "110433|720|32|60.00|43.80",
             End = "110433|720|32|60.00|43.80",
             Objectives = {
@@ -10385,7 +10175,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44226] = {
-            Quest = [=[Fate Favors Us||45|45|0|0|0]=],
+            Quest = [=[Fate Favors Us||45|45|0|72|0]=],
             Start = "112992|721|32|54.60|59.40",
             End = "112992|721|32|54.60|59.40",
             Objectives = {
@@ -10435,12 +10225,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [44232] = {
-            Quest = [=[The Grove Provides||45|45|0|0|0]=],
+            Quest = [=[The Grove Provides||45|45|0|76|0]=],
             Start = "112323|747|32|40.00|24.80",
             End = "112323|747|32|40.00|24.80",
         },
         [44233] = {
-            Quest = [=[Walk This Way||45|45|0|0|0]=],
+            Quest = [=[Walk This Way||45|45|0|96|0]=],
             Start = "103693|739|32|44.60|49.00",
             End = "103693|739|32|44.60|49.00",
         },
@@ -10474,7 +10264,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44238] = {
-            Quest = [=[Meditations on Fate||45|45|0|0|0]=],
+            Quest = [=[Meditations on Fate||45|45|0|117|0]=],
             Start = "110817|709|32|53.40|57.80",
             End = "110817|709|32|53.40|57.80",
             Objectives = {
@@ -10484,7 +10274,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44239] = {
-            Quest = [=[Echo of a Celestial||45|45|0|0|0]=],
+            Quest = [=[Echo of a Celestial||45|45|0|117|0]=],
             Start = "106538|709|32|54.40|58.80",
             End = "106538|709|32|54.40|58.80",
             Objectives = {
@@ -10494,67 +10284,68 @@ function Nx.ModQuests:Data5()
             },
         },
         [44240] = {
-            Quest = [=[Orange is the New Purple||45|45|0|0|0]=],
+            Quest = [=[Orange is the New Purple||45|45|0|110|0]=],
             Start = "112440|735|32|44.77|57.89",
             End = "112440|735|32|44.77|57.89",
         },
         [44245] = {
-            Quest = [=[Champion: High Inquisitor Whitemane||45|45|0|0|0]=],
+            Quest = [=[Champion: High Inquisitor Whitemane||45|45|0|67|0]=],
             Start = "113481|648|32|44.80|72.90",
             End = "113481|648|32|44.80|72.90",
         },
         [44246] = {
-            Quest = [=[Champion: Rottgut||45|45|0|0|0]=],
+            Quest = [=[Champion: Rottgut||45|45|0|67|0]=],
             Start = "108975|648|32|64.10|69.50",
             End = "108975|648|32|64.10|69.50",
         },
         [44247] = {
-            Quest = [=[Champion: Amal'thazad||45|45|0|0|0]=],
+            Quest = [=[Champion: Amal'thazad||45|45|0|67|0]=],
             Start = "93555|648|32|58.10|31.10",
             End = "93555|648|32|58.10|31.10",
         },
         [44248] = {
-            Quest = [=[Champion: Darion Mograine||45|45|0|0|0]=],
+            Quest = [=[Champion: Darion Mograine||45|45|0|67|0]=],
             Start = "113695|647|32|27.00|28.90",
             End = "113695|647|32|27.00|28.90",
         },
         [44249] = {
-            Quest = [=[Inner Sanctuary||45|45|0|0|0]=],
+            Quest = [=[Inner Sanctuary||45|45|0|117|0]=],
             Start = "112338|709|32|50.30|59.00",
             End = "112338|709|32|50.30|59.00",
         },
         [44250] = {
-            Quest = [=[Champion of the Light||45|45|0|0|0]=],
+            Quest = [=[Champion of the Light||45|45|0|126|0]=],
             Start = "100196|23|32|75.64|49.10",
             End = "100196|23|32|75.64|49.10",
         },
         [44251] = {
-            Quest = [=[Power Word: Armor||45|45|0|0|0]=],
+            Quest = [=[Power Word: Armor||45|45|0|133|0]=],
             Start = "112401|702|32|38.90|24.40",
             End = "112401|702|32|38.90|24.40",
         },
         [44252] = {
-            Quest = [=[A Sheath For Every Blade||45|45|0|0|0]=],
+            Quest = [=[A Sheath For Every Blade||45|45|0|144|0]=],
             Start = "105986|626|32|26.90|36.70",
             End = "105986|626|32|26.90|36.70",
         },
         [44253] = {
-            Quest = [=[A Vision of Triumph||45|45|0|0|0]=],
+            Quest = [=[A Vision of Triumph||45|45|0|147|0]=],
             Start = "112318|726|32|30.30|60.60",
             End = "112318|726|32|30.30|60.60",
         },
         [44254] = {
-            Quest = [=[Gazing Into Oblivion||45|45|0|0|0]=],
+            Quest = [=[Gazing Into Oblivion||45|45|0|179|0]=],
             Start = "112434|717|32|58.70|32.70",
             End = "112434|717|32|58.70|32.70",
         },
         [44255] = {
-            Quest = [=[Axe and You Shall Receive||45|45|0|0|0]=],
+            Quest = [=[Axe and You Shall Receive||45|45|0|180|0]=],
             Start = "112392|695|32|56.20|27.00",
             End = "112392|695|32|56.20|27.00",
         },
         [44258] = {
             Quest = [=[Assault on Violet Hold: Into the Violet Hold||45|45|0|0|0]=],
+            Start = "115551|42|32|39.90|75.40",
             End = "5086|702|32|51.20|48.40",
             Objectives = {
                 [1] = {
@@ -10567,6 +10358,7 @@ function Nx.ModQuests:Data5()
         },
         [44259] = {
             Quest = [=[Assault on Violet Hold: Into the Violet Hold||45|45|0|0|0]=],
+            Start = "115551|42|32|39.90|75.40",
             End = "2726|702|32|51.20|46.60",
             Objectives = {
                 [1] = {
@@ -10579,6 +10371,7 @@ function Nx.ModQuests:Data5()
         },
         [44260] = {
             Quest = [=[Vault of the Wardens: Into the Vault of the Wardens||45|45|0|0|0]=],
+            Start = "90250|680|32|17.40|31.40",
             End = "2726|702|32|51.20|46.60",
             Objectives = {
                 [1] = {
@@ -10591,6 +10384,7 @@ function Nx.ModQuests:Data5()
         },
         [44261] = {
             Quest = [=[Vault of the Wardens: Into the Vault of the Wardens||45|45|0|0|0]=],
+            Start = "90250|680|32|17.40|31.40",
             End = "2726|702|32|51.20|46.60",
             Objectives = {
                 [1] = {
@@ -10603,6 +10397,7 @@ function Nx.ModQuests:Data5()
         },
         [44262] = {
             Quest = [=[The Arcway: Into the Arcway||45|45|0|0|0]=],
+            Start = "90250|680|32|17.40|31.40",
             Objectives = {
                 [1] = {
                     "nil|747|32|48.60|47.40|0|0",
@@ -10611,6 +10406,7 @@ function Nx.ModQuests:Data5()
         },
         [44263] = {
             Quest = [=[The Arcway: Into the Arcway||45|45|0|0|0]=],
+            Start = "90250|680|32|17.40|31.40",
             End = "2726|702|32|51.20|46.60",
             Objectives = {
                 [1] = {
@@ -10763,6 +10559,7 @@ function Nx.ModQuests:Data5()
         },
         [44276] = {
             Quest = [=[Black Rook Hold: The Lord of Black Rook Hold||45|45|0|0|0]=],
+            Start = "115551|42|32|39.90|75.40",
             End = "2726|702|32|51.20|46.60",
             Objectives = {
                 [1] = {
@@ -10775,6 +10572,7 @@ function Nx.ModQuests:Data5()
         },
         [44277] = {
             Quest = [=[Black Rook Hold: The Lord of Black Rook Hold||45|45|0|0|0]=],
+            Start = "115551|42|32|39.90|75.40",
             End = "2726|702|32|51.20|46.60",
             Objectives = {
                 [1] = {
@@ -10786,7 +10584,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44282] = {
-            Quest = [=[Eye of Azshara: The Frozen Soul||45|45|44247|0|0]=],
+            Quest = [=[Eye of Azshara: The Frozen Soul||45|45|44247|67|0]=],
             Start = "93555|648|32|58.10|31.10",
             End = "93555|648|32|58.10|31.10",
             Objectives = {
@@ -10823,7 +10621,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44286] = {
-            Quest = [=[Vault of the Wardens: A Masterpiece of Flesh||45|45|0|0|0]=],
+            Quest = [=[Vault of the Wardens: A Masterpiece of Flesh||45|45|0|67|0]=],
             Start = "93491|648|32|63.10|69.40",
             End = "93491|648|32|63.10|69.40",
             Objectives = {
@@ -10860,63 +10658,16 @@ function Nx.ModQuests:Data5()
             },
         },
         [44337] = {
-            Quest = [=[Goddess Watch Over You||45|45|44448|0|0]=],
+            Quest = [=[Goddess Watch Over You||45|45|44448|124|0]=],
             End = "90417|0|32|0.00|0.00",
         },
         [44338] = {
-            Quest = [=[Goddess Watch Over You||45|45|44448|0|0]=],
+            Quest = [=[Goddess Watch Over You||45|45|44448|124|0]=],
             End = "90417|0|32|0.00|0.00",
-        },
-        [44339] = {
-            Quest = [=[Book Looted 01||45|45|0|0|0]=],
-            Start = "-252294|627|32|30.00|51.40",
-        },
-        [44340] = {
-            Quest = [=[Book Looted 02||45|45|0|0|0]=],
-            Start = "-252295|702|32|58.40|24.80",
-        },
-        [44341] = {
-            Quest = [=[Book Looted 03||45|45|0|0|0]=],
-            Start = "-252296|115|32|72.20|73.40",
-        },
-        [44342] = {
-            Quest = [=[Book Looted 04 - Starter||45|45|0|0|0]=],
-            Start = "111119|702|32|62.80|36.00",
-        },
-        [44343] = {
-            Quest = [=[Book Looted 05||45|45|0|0|0]=],
-            Start = "-252297|22|32|69.00|72.90",
-        },
-        [44344] = {
-            Quest = [=[Book Looted 06||45|45|0|0|0]=],
-            Start = "-252298|702|32|37.20|25.10",
-        },
-        [44345] = {
-            Quest = [=[Book Looted 07||45|45|0|0|0]=],
-            Start = "-252299|19|32|77.00|56.00",
-        },
-        [44346] = {
-            Quest = [=[Book Looted 08||45|45|0|0|0]=],
-            Start = "106990|630|32|65.60|56.80",
-        },
-        [44347] = {
-            Quest = [=[Book Looted 09||45|45|0|0|0]=],
-            Start = "106351|680|32|33.80|15.00",
-        },
-        [44348] = {
-            Quest = [=[Book Looted 10||45|45|0|0|0]=],
-            Start = "-252300|641|32|38.40|50.80",
-        },
-        [44349] = {
-            Quest = [=[Book Looted 11||45|45|0|0|0]=],
-            Start = "-252301|42|32|46.90|74.80",
-        },
-        [44350] = {
-            Quest = [=[Book Looted 12||45|45|0|0|0]=],
-            Start = "90139|634|32|63.60|74.40",
         },
         [44411] = {
             Quest = [=[Strange Humming Crystal||45|45|0|0|0]=],
+            Start = "116714|629|32|52.70|59.20",
             End = "90417|0|32|0.00|0.00",
         },
         [44412] = {
@@ -10985,7 +10736,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44464] = {
-            Quest = [=[Awakenings||45|45|0|0|0]=],
+            Quest = [=[Awakenings||45|45|0|124|0]=],
             End = "113857|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -10994,7 +10745,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44466] = {
-            Quest = [=[An Unclear Path||45|45|44479|0|0]=],
+            Quest = [=[An Unclear Path||45|45|44479|124|0]=],
             End = "113857|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -11003,11 +10754,11 @@ function Nx.ModQuests:Data5()
             },
         },
         [44479] = {
-            Quest = [=[Ravencrest's Legacy||45|45|0|0|0]=],
+            Quest = [=[Ravencrest's Legacy||45|45|0|124|0]=],
             End = "113857|0|32|0.00|0.00",
         },
         [44480] = {
-            Quest = [=[In My Father's House||45|45|0|0|0]=],
+            Quest = [=[In My Father's House||45|45|0|124|0]=],
             End = "113857|0|32|0.00|0.00",
             Objectives = {
                 [1] = {
@@ -11016,7 +10767,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44481] = {
-            Quest = [=[Destiny Unfulfilled||45|45|0|0|0]=],
+            Quest = [=[Destiny Unfulfilled||45|45|0|124|0]=],
             End = "113857|0|32|0.00|0.00",
         },
         [44486] = {
@@ -11087,11 +10838,11 @@ function Nx.ModQuests:Data5()
             End = "103155|680|32|37.00|46.20",
         },
         [44496] = {
-            Quest = [=[Destiny Unfulfilled||45|45|0|0|0]=],
+            Quest = [=[Destiny Unfulfilled||45|45|0|124|0]=],
             End = "113857|0|32|0.00|0.00",
         },
         [44497] = {
-            Quest = [=[Destiny Unfulfilled||45|45|0|0|0]=],
+            Quest = [=[Destiny Unfulfilled||45|45|0|124|0]=],
             End = "113857|0|32|0.00|0.00",
         },
         [44555] = {
@@ -11151,7 +10902,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44667] = {
-            Quest = [=[Will of the Valarjar||45|45|0|0|0]=],
+            Quest = [=[Will of the Valarjar||45|45|0|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
         },
@@ -11166,12 +10917,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [44680] = {
-            Quest = [=[Leading by Example||45|45|0|0|0]=],
+            Quest = [=[Leading by Example||45|45|0|96|0]=],
             Start = "107973|739|32|43.40|26.40",
             End = "107973|739|32|43.40|26.40",
         },
         [44682] = {
-            Quest = [=[Unparalleled Power||45|45|0|0|0]=],
+            Quest = [=[Unparalleled Power||45|45|0|179|0]=],
             Start = "106199|717|32|67.00|46.40",
             End = "106199|0|32|0.00|0.00",
         },
@@ -11228,12 +10979,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [44689] = {
-            Quest = [=[The Might of the Tirisgarde||45|45|0|0|0]=],
+            Quest = [=[The Might of the Tirisgarde||45|45|0|110|0]=],
             Start = "107351|735|32|71.70|54.80",
             End = "107351|735|32|71.70|54.80",
         },
         [44690] = {
-            Quest = [=[A Thirst For Blood||45|45|0|0|0]=],
+            Quest = [=[A Thirst For Blood||45|45|0|67|0]=],
             Start = "93491|648|32|63.10|69.40",
             End = "93491|648|32|63.10|69.40",
             Objectives = {
@@ -11256,7 +11007,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44694] = {
-            Quest = [=[One Battle at a Time||45|45|0|0|0]=],
+            Quest = [=[One Battle at a Time||45|45|0|72|0]=],
             Start = "98646|721|32|59.00|73.80",
             End = "98648|0|32|0.00|0.00",
         },
@@ -11508,7 +11259,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44741] = {
-            Quest = [=[Return to Karazhan: The Big Bag Theory||45|45|0|0|0]=],
+            Quest = [=[Return to Karazhan: The Big Bag Theory||45|45|0|21|0]=],
             Start = "93969|680|32|40.40|69.40",
             End = "93969|680|32|40.40|69.40",
             Objectives = {
@@ -11540,6 +11291,15 @@ function Nx.ModQuests:Data5()
             Quest = [=[Tyrande's Command|1|45|45|44858|0|0]=],
             Start = "115736|680|32|36.50|46.70",
             End = "115736|680|32|36.50|46.70",
+        },
+        [44747] = {
+            Quest = [=[War Cargo||45|45|0|104|6150]=],
+        },
+        [44749] = {
+            Quest = [=[Names of the Fallen|1|45|45|0|104|6150]=],
+        },
+        [44750] = {
+            Quest = [=[Names of the Fallen|2|45|45|0|104|6150]=],
         },
         [44752] = {
             Quest = [=[Essence Triangulation||45|45|0|0|0]=],
@@ -11602,7 +11362,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44758] = {
-            Quest = [=[What's the Cache?|2|45|45|0|0|0]=],
+            Quest = [=[What's the Cache?|2|45|45|0|144|0]=],
             Start = "119821|630|32|57.70|63.50",
             End = "119821|630|32|57.70|63.50",
             Objectives = {
@@ -11617,12 +11377,12 @@ function Nx.ModQuests:Data5()
             End = "114631|42|32|46.90|75.30",
         },
         [44766] = {
-            Quest = [=[Backup Plan||45|45|46335|0|0]=],
+            Quest = [=[Backup Plan||45|45|46335|110|0]=],
             Start = "118242|735|32|72.20|62.90",
             End = "118242|735|32|72.20|62.90",
         },
         [44768] = {
-            Quest = [=[Nyell's Workshop||45|45|0|0|0]=],
+            Quest = [=[Nyell's Workshop||45|45|0|110|0]=],
             Start = "116321|691|32|47.10|23.50",
             End = "116321|691|32|47.10|23.50",
             Objectives = {
@@ -11641,7 +11401,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44770] = {
-            Quest = [=[Secrets of the Shal'dorei||45|45|46351|0|0]=],
+            Quest = [=[Secrets of the Shal'dorei||45|45|46351|110|0]=],
             Start = "116321|691|32|47.10|23.50",
             End = "116321|691|32|47.10|23.50",
             Objectives = {
@@ -11666,7 +11426,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44775] = {
-            Quest = [=[The Peak of Bones||45|45|44783|0|0]=],
+            Quest = [=[The Peak of Bones||45|45|44783|67|0]=],
             Start = "113695|647|32|27.00|28.90",
             End = "113695|647|32|27.00|28.90",
             Objectives = {
@@ -11676,7 +11436,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44782] = {
-            Quest = [=[Away From Prying Eyes||45|45|44821|0|0]=],
+            Quest = [=[Away From Prying Eyes||45|45|44821|54|0]=],
             Start = "90417|627|32|28.80|48.40",
             End = "90417|627|32|28.80|48.40",
             Objectives = {
@@ -11692,7 +11452,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44783] = {
-            Quest = [=[From Bones They Rise||45|45|0|0|0]=],
+            Quest = [=[From Bones They Rise||45|45|0|67|0]=],
             Start = "116737|634|32|51.30|84.30",
             End = "116737|634|32|51.30|84.30",
             Objectives = {
@@ -11702,7 +11462,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [44787] = {
-            Quest = [=[The Bonemother||45|45|0|0|0]=],
+            Quest = [=[The Bonemother||45|45|0|67|0]=],
+            Start = "116128|646|32|51.60|21.80",
             End = "1625|676|32|97.60|56.00",
             Objectives = {
                 [1] = {
@@ -11723,7 +11484,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44800] = {
-            Quest = [=[Against Magatha's Will||45|45|0|0|0]=],
+            Quest = [=[Against Magatha's Will||45|45|0|147|0]=],
             Start = "120244|64|32|37.20|32.10",
             End = "1001|725|32|30.40|51.80",
             Objectives = {
@@ -11765,7 +11526,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44821] = {
-            Quest = [=[In Dire Need||45|45|0|0|0]=],
+            Quest = [=[In Dire Need||45|45|0|54|0]=],
             Start = "115465|627|32|22.50|39.20",
             End = "1402|625|32|22.40|39.20",
             Objectives = {
@@ -11939,7 +11700,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44849] = {
-            Quest = [=[Recruitment Drive||45|45|45834|0|0]=],
+            Quest = [=[Recruitment Drive||45|45|45834|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
             Objectives = {
@@ -11949,7 +11710,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44850] = {
-            Quest = [=[Arming the Army||45|45|0|0|0]=],
+            Quest = [=[Arming the Army||45|45|0|180|0]=],
             Start = "116193|649|32|34.30|28.50",
             End = "116193|649|32|34.30|28.50",
             Objectives = {
@@ -12046,7 +11807,7 @@ function Nx.ModQuests:Data5()
             Start = "4976|806|32|51.60|81.60",
         },
         [44869] = {
-            Quest = [=[Talon Terror||45|45|0|0|0]=],
+            Quest = [=[Talon Terror||45|45|0|76|0]=],
             Start = "106299|747|32|44.30|51.50",
             End = "2575|198|32|41.00|42.60",
         },
@@ -12129,7 +11890,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44877] = {
-            Quest = [=[Attack on the Roost||45|45|0|0|0]=],
+            Quest = [=[Attack on the Roost||45|45|0|76|0]=],
             Start = "115802|198|32|40.90|42.60",
             End = "115802|198|32|40.90|42.60",
             Objectives = {
@@ -12145,11 +11906,14 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
+        [44883] = {
+            Quest = [=[A Speedy Delivery||45|45|0|104|6150]=],
+        },
         [44885] = {
-            Quest = [=[Shipwrecked Survivors|1|45|45|0|0|0]=],
+            Quest = [=[Shipwrecked Survivors|1|45|45|0|104|0]=],
         },
         [44888] = {
-            Quest = [=[Aviana's Grace||45|45|0|0|0]=],
+            Quest = [=[Aviana's Grace||45|45|0|76|0]=],
             Start = "115802|198|32|40.90|42.60",
             End = "115802|198|32|40.90|42.60",
             Objectives = {
@@ -12159,7 +11923,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44889] = {
-            Quest = [=[Resource Management||45|45|45634|0|0]=],
+            Quest = [=[Resource Management||45|45|45634|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
             Objectives = {
@@ -12169,12 +11933,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [44914] = {
-            Quest = [=[Arms: The Thieving Apprentice||45|45|0|0|0]=],
+            Quest = [=[Arms: The Thieving Apprentice||45|45|0|54|0]=],
             Start = "105081|627|32|23.00|40.60",
             End = "105081|627|32|23.00|40.60",
         },
         [44915] = {
-            Quest = [=[Professionally Good Looking||45|45|0|0|0]=],
+            Quest = [=[Professionally Good Looking||45|45|0|54|0]=],
             Start = "115791|76|32|25.00|38.60",
             End = "2159|76|32|25.00|38.60",
             Objectives = {
@@ -12234,7 +11998,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44920] = {
-            Quest = [=[Order of Incantations||45|45|44924|0|0]=],
+            Quest = [=[Order of Incantations||45|45|44924|54|0]=],
             Start = "115791|76|32|25.00|38.60",
             Objectives = {
                 [1] = {
@@ -12261,12 +12025,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [44921] = {
-            Quest = [=[Lone Wolf||45|45|0|0|0]=],
+            Quest = [=[Lone Wolf||45|45|0|76|0]=],
             Start = "115749|198|32|44.30|48.00",
             End = "2575|80|32|68.00|54.80",
         },
         [44924] = {
-            Quest = [=[The Archmage Accosted||45|45|0|0|0]=],
+            Quest = [=[The Archmage Accosted||45|45|0|54|0]=],
             Start = "2159|76|32|25.10|38.50",
             End = "2159|76|32|25.20|38.00",
             Objectives = {
@@ -12276,7 +12040,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44925] = {
-            Quest = [=[Closing the Eye||45|45|0|0|0]=],
+            Quest = [=[Closing the Eye||45|45|0|54|0]=],
             Start = "5456|676|32|45.60|62.20",
             End = "5488|76|32|25.20|38.00",
             Objectives = {
@@ -12296,10 +12060,10 @@ function Nx.ModQuests:Data5()
             },
         },
         [44948] = {
-            Quest = [=[Raising Your Snowfeather||45|45|0|0|0]=],
+            Quest = [=[Raising Your Snowfeather||45|45|0|58|0]=],
         },
         [44949] = {
-            Quest = [=[The Smell of Humans|1|45|45|0|0|0]=],
+            Quest = [=[The Smell of Humans|1|45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Snowfeather acclimated to Humans|84|35|24.71|39.63|0|0",
@@ -12307,13 +12071,13 @@ function Nx.ModQuests:Data5()
             },
         },
         [44950] = {
-            Quest = [=[Hunting Lesson: Northern Hawk Owls||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Northern Hawk Owls||45|45|0|58|0]=],
         },
         [44953] = {
-            Quest = [=[Allies in Highmountain||45|45|0|0|0]=],
+            Quest = [=[Allies in Highmountain||45|45|0|58|0]=],
         },
         [44954] = {
-            Quest = [=[Snowfeather Team Up||45|45|0|0|0]=],
+            Quest = [=[Snowfeather Team Up||45|45|0|58|0]=],
         },
         [44955] = {
             Quest = [=[Visitor in Shal'Aran||45|45|0|0|0]=],
@@ -12332,16 +12096,16 @@ function Nx.ModQuests:Data5()
             },
         },
         [44956] = {
-            Quest = [=[Deadly Prey|2|45|45|0|0|0]=],
+            Quest = [=[Deadly Prey|2|45|45|0|58|0]=],
         },
         [44957] = {
-            Quest = [=[Hunting Lesson: Spiketail Beaver||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Spiketail Beaver||45|45|0|58|0]=],
         },
         [44958] = {
-            Quest = [=[The Unfriendly Faction||45|45|0|0|0]=],
+            Quest = [=[The Unfriendly Faction||45|45|0|58|0]=],
         },
         [44959] = {
-            Quest = [=[Snowfeather Bonding||45|45|0|0|0]=],
+            Quest = [=[Snowfeather Bonding||45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Tiny Pack obtained|627|35|27.53|46.63|0|0",
@@ -12349,13 +12113,13 @@ function Nx.ModQuests:Data5()
             },
         },
         [44960] = {
-            Quest = [=[Hunting Lesson: Mudshell Conch||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Mudshell Conch||45|45|0|58|0]=],
         },
         [44961] = {
-            Quest = [=[Teamwork Lesson: Naraxas||45|45|0|0|0]=],
+            Quest = [=[Teamwork Lesson: Naraxas||45|45|0|58|0]=],
         },
         [44962] = {
-            Quest = [=[Hunting Lesson: Coralback Fiddler||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Coralback Fiddler||45|45|0|58|0]=],
         },
         [44964] = {
             Quest = [=[I'll Just Leave This Here||45|45|0|0|0]=],
@@ -12373,13 +12137,13 @@ function Nx.ModQuests:Data5()
             },
         },
         [44967] = {
-            Quest = [=[Teamwork Lesson: Ursoc||45|45|0|0|0]=],
+            Quest = [=[Teamwork Lesson: Ursoc||45|45|0|58|0]=],
         },
         [44968] = {
-            Quest = [=[Snowfeather Team Rumble||45|45|0|0|0]=],
+            Quest = [=[Snowfeather Team Rumble||45|45|0|58|0]=],
         },
         [44969] = {
-            Quest = [=[Snowfeather Reunion||45|45|0|0|0]=],
+            Quest = [=[Snowfeather Reunion||45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "nil|650|32|31.92|27.48|9.62|9.62",
@@ -12387,7 +12151,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44971] = {
-            Quest = [=[The Smell of Orcs|2|45|45|0|0|0]=],
+            Quest = [=[The Smell of Orcs|2|45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Snowfeather acclimated to Orcs|85|35|21.03|46.67|0|0",
@@ -12395,10 +12159,10 @@ function Nx.ModQuests:Data5()
             },
         },
         [44973] = {
-            Quest = [=[Raising Your Direbeak||45|45|0|0|0]=],
+            Quest = [=[Raising Your Direbeak||45|45|0|58|0]=],
         },
         [44974] = {
-            Quest = [=[The Smell of Dwarves|1|45|45|0|0|0]=],
+            Quest = [=[The Smell of Dwarves|1|45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Direbeak acclimated to Dwarves|87|35|48.30|81.36|0|0",
@@ -12406,7 +12170,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44975] = {
-            Quest = [=[The Smell of Tauren|1|45|45|0|0|0]=],
+            Quest = [=[The Smell of Tauren|1|45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Direbeak acclimated to Tauren|88|35|35.33|54.14|0|0",
@@ -12414,25 +12178,25 @@ function Nx.ModQuests:Data5()
             },
         },
         [44976] = {
-            Quest = [=[Hunting Lesson: Rose Taipan||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Rose Taipan||45|45|0|58|0]=],
         },
         [44977] = {
-            Quest = [=[Allies in Stormheim||45|45|0|0|0]=],
+            Quest = [=[Allies in Stormheim||45|45|0|58|0]=],
         },
         [44978] = {
-            Quest = [=[Direbeak Team Up||45|45|0|0|0]=],
+            Quest = [=[Direbeak Team Up||45|45|0|58|0]=],
         },
         [44979] = {
-            Quest = [=[Dire Prey||45|45|0|0|0]=],
+            Quest = [=[Dire Prey||45|45|0|58|0]=],
         },
         [44980] = {
-            Quest = [=[Hunting Lesson: Tiny Apparition||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Tiny Apparition||45|45|0|58|0]=],
         },
         [44981] = {
-            Quest = [=[The Unkindly Faction||45|45|0|0|0]=],
+            Quest = [=[The Unkindly Faction||45|45|0|58|0]=],
         },
         [44982] = {
-            Quest = [=[Direbeak Bonding||45|45|0|0|0]=],
+            Quest = [=[Direbeak Bonding||45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Fake Teeth obtained|627|35|53.40|55.26|0|0",
@@ -12440,22 +12204,22 @@ function Nx.ModQuests:Data5()
             },
         },
         [44983] = {
-            Quest = [=[Hunting Lesson: Golden Eaglet||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Golden Eaglet||45|45|0|58|0]=],
         },
         [44984] = {
-            Quest = [=[Teamwork Lesson: Fenryr||45|45|0|0|0]=],
+            Quest = [=[Teamwork Lesson: Fenryr||45|45|0|58|0]=],
         },
         [44985] = {
-            Quest = [=[Hunting Lesson: Stormstruck Beaver||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Stormstruck Beaver||45|45|0|58|0]=],
         },
         [44986] = {
-            Quest = [=[Teamwork Lesson: Krosus||45|45|0|0|0]=],
+            Quest = [=[Teamwork Lesson: Krosus||45|45|0|58|0]=],
         },
         [44987] = {
-            Quest = [=[Direbeak Team Rumble||45|45|0|0|0]=],
+            Quest = [=[Direbeak Team Rumble||45|45|0|58|0]=],
         },
         [44988] = {
-            Quest = [=[Direbeak Reunion||45|45|0|0|0]=],
+            Quest = [=[Direbeak Reunion||45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "nil|634|35|79.68|67.68|9.62|9.62",
@@ -12465,13 +12229,13 @@ function Nx.ModQuests:Data5()
             },
         },
         [44989] = {
-            Quest = [=[Raising Your Sharptalon||45|45|0|0|0]=],
+            Quest = [=[Raising Your Sharptalon||45|45|0|58|0]=],
         },
         [44990] = {
-            Quest = [=[Raising Your Bloodgazer||45|45|0|0|0]=],
+            Quest = [=[Raising Your Bloodgazer||45|45|0|58|0]=],
         },
         [44991] = {
-            Quest = [=[The Smell of Draenei|2|45|45|0|0|0]=],
+            Quest = [=[The Smell of Draenei|2|45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Bloodgazer acclimated to Draenei|103|35|81.22|40.51|0|0",
@@ -12479,7 +12243,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44992] = {
-            Quest = [=[The Smell of Night Elves|1|45|45|0|0|0]=],
+            Quest = [=[The Smell of Night Elves|1|45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Sharptalon acclimated to Night Elves|89|35|67.23|37.48|0|0",
@@ -12487,7 +12251,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44993] = {
-            Quest = [=[The Smell of Blood Elves|1|45|45|0|0|0]=],
+            Quest = [=[The Smell of Blood Elves|1|45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Bloodgazer acclimated to Blood Elves|110|35|41.78|20.49|0|0",
@@ -12495,7 +12259,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [44994] = {
-            Quest = [=[The Smell of Undead|1|45|45|0|0|0]=],
+            Quest = [=[The Smell of Undead|1|45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Sharptalon acclimated to Forsaken|90|35|62.05|32.23|0|0",
@@ -12503,43 +12267,43 @@ function Nx.ModQuests:Data5()
             },
         },
         [44995] = {
-            Quest = [=[Hunting Lesson: Spring Strider||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Spring Strider||45|45|0|58|0]=],
         },
         [44996] = {
-            Quest = [=[Hunting Lesson: Erudite Manafiend||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Erudite Manafiend||45|45|0|58|0]=],
         },
         [44997] = {
-            Quest = [=[Allies in Val'sharah||45|45|0|0|0]=],
+            Quest = [=[Allies in Val'sharah||45|45|0|58|0]=],
         },
         [44998] = {
-            Quest = [=[Allies in Azsuna||45|45|0|0|0]=],
+            Quest = [=[Allies in Azsuna||45|45|0|58|0]=],
         },
         [44999] = {
-            Quest = [=[Sharptalon Team Up||45|45|0|0|0]=],
+            Quest = [=[Sharptalon Team Up||45|45|0|58|0]=],
         },
         [45000] = {
-            Quest = [=[Bloodgazer Team Up||45|45|0|0|0]=],
+            Quest = [=[Bloodgazer Team Up||45|45|0|58|0]=],
         },
         [45001] = {
-            Quest = [=[Destructive Prey|2|45|45|0|0|0]=],
+            Quest = [=[Destructive Prey|2|45|45|0|58|0]=],
         },
         [45002] = {
-            Quest = [=[Dangerous Prey||45|45|0|0|0]=],
+            Quest = [=[Dangerous Prey||45|45|0|58|0]=],
         },
         [45003] = {
-            Quest = [=[Hunting Lesson: Terror Larva||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Terror Larva||45|45|0|58|0]=],
         },
         [45004] = {
-            Quest = [=[Hunting Lesson: Fledgling Kingfeather||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Fledgling Kingfeather||45|45|0|58|0]=],
         },
         [45005] = {
-            Quest = [=[The Uncongenial Faction||45|45|0|0|0]=],
+            Quest = [=[The Uncongenial Faction||45|45|0|58|0]=],
         },
         [45006] = {
-            Quest = [=[The Unfavorable Faction||45|45|0|0|0]=],
+            Quest = [=[The Unfavorable Faction||45|45|0|58|0]=],
         },
         [45007] = {
-            Quest = [=[Sharptalon Bonding||45|45|0|0|0]=],
+            Quest = [=[Sharptalon Bonding||45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Dirty Spoon obtained|627|35|62.51|51.25|0|0",
@@ -12547,7 +12311,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45008] = {
-            Quest = [=[Bloodgazer Bonding||45|45|0|0|0]=],
+            Quest = [=[Bloodgazer Bonding||45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "Purple Blossom obtained|627|35|46.48|42.87|0|0",
@@ -12555,37 +12319,37 @@ function Nx.ModQuests:Data5()
             },
         },
         [45009] = {
-            Quest = [=[Hunting Lesson: Auburn Ringtail||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Auburn Ringtail||45|45|0|58|0]=],
         },
         [45010] = {
-            Quest = [=[Hunting Lesson: Juvenile Scuttleback||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Juvenile Scuttleback||45|45|0|58|0]=],
         },
         [45011] = {
-            Quest = [=[Teamwork Lesson: Dresaron||45|45|0|0|0]=],
+            Quest = [=[Teamwork Lesson: Dresaron||45|45|0|58|0]=],
         },
         [45012] = {
-            Quest = [=[Teamwork Lesson: Serpentrix||45|45|0|0|0]=],
+            Quest = [=[Teamwork Lesson: Serpentrix||45|45|0|58|0]=],
         },
         [45013] = {
-            Quest = [=[Hunting Lesson: Vale Flitter||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Vale Flitter||45|45|0|58|0]=],
         },
         [45014] = {
-            Quest = [=[Hunting Lesson: Felspider||45|45|0|0|0]=],
+            Quest = [=[Hunting Lesson: Felspider||45|45|0|58|0]=],
         },
         [45015] = {
-            Quest = [=[Teamwork Lesson: Xavius||45|45|0|0|0]=],
+            Quest = [=[Teamwork Lesson: Xavius||45|45|0|58|0]=],
         },
         [45016] = {
-            Quest = [=[Teamwork Lesson: Skorpyron||45|45|0|0|0]=],
+            Quest = [=[Teamwork Lesson: Skorpyron||45|45|0|58|0]=],
         },
         [45017] = {
-            Quest = [=[Sharptalon Team Rumble||45|45|0|0|0]=],
+            Quest = [=[Sharptalon Team Rumble||45|45|0|58|0]=],
         },
         [45018] = {
-            Quest = [=[Bloodgazer Team Rumble||45|45|0|0|0]=],
+            Quest = [=[Bloodgazer Team Rumble||45|45|0|58|0]=],
         },
         [45019] = {
-            Quest = [=[Sharptalon Reunion||45|45|0|0|0]=],
+            Quest = [=[Sharptalon Reunion||45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "nil|641|35|47.04|8.64|9.62|9.62",
@@ -12595,7 +12359,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45020] = {
-            Quest = [=[Bloodgazer Reunion||45|45|0|0|0]=],
+            Quest = [=[Bloodgazer Reunion||45|45|0|58|0]=],
             Objectives = {
                 [1] = {
                     "nil|630|32|35.32|6.88|9.62|9.62",
@@ -12603,12 +12367,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45021] = {
-            Quest = [=[Answers Unknown||45|45|45024|0|0]=],
+            Quest = [=[Answers Unknown||45|45|45024|179|0]=],
             Start = "105926|717|32|57.40|38.00",
             End = "105926|717|32|57.40|38.00",
         },
         [45024] = {
-            Quest = [=[Cult Culling||45|45|0|0|0]=],
+            Quest = [=[Cult Culling||45|45|0|179|0]=],
             Start = "115863|630|32|30.40|44.60",
             End = "115863|630|32|30.40|44.60",
             Objectives = {
@@ -12638,7 +12402,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45025] = {
-            Quest = [=[Stealing the Source of Power||45|45|0|0|0]=],
+            Quest = [=[Stealing the Source of Power||45|45|0|179|0]=],
             Start = "115863|630|32|30.40|44.60",
             End = "115863|630|32|30.40|44.60",
             Objectives = {
@@ -12654,7 +12418,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45026] = {
-            Quest = [=[Expending Fel Energy||45|45|45794|0|0]=],
+            Quest = [=[Expending Fel Energy||45|45|45794|179|0]=],
             Start = "115863|630|32|30.40|44.60",
             End = "115863|630|32|30.40|44.60",
             Objectives = {
@@ -12667,7 +12431,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45027] = {
-            Quest = [=[To the Broken Shore||45|45|0|0|0]=],
+            Quest = [=[To the Broken Shore||45|45|0|179|0]=],
             Start = "105926|717|32|57.40|38.00",
             End = "105926|717|32|57.40|38.00",
             Objectives = {
@@ -12683,7 +12447,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45028] = {
-            Quest = [=[The Fate of Kanrethad||45|45|0|0|0]=],
+            Quest = [=[The Fate of Kanrethad||45|45|0|179|0]=],
             Start = "115863|646|32|81.10|49.60",
             End = "4091|676|32|81.20|49.60",
             Objectives = {
@@ -12701,13 +12465,13 @@ function Nx.ModQuests:Data5()
             },
         },
         [45034] = {
-            Quest = [=[Fire the Cannons!|2|45|0|0|0|0]=],
+            Quest = [=[Fire the Cannons!|2|45|0|0|104|0]=],
         },
         [45036] = {
-            Quest = [=[Asgrim the Dreadkiller||45|45|0|0|0]=],
+            Quest = [=[Asgrim the Dreadkiller||45|45|0|104|0]=],
         },
         [45043] = {
-            Quest = [=[The Glowing Bloodthistle Petal||45|45|44781|0|0]=],
+            Quest = [=[The Glowing Bloodthistle Petal||45|45|44781|54|0]=],
             Objectives = {
                 [1] = {
                     "Find someone in Dalaran interested in the Bloodthistle|646|35|68.88|86.87|0|0",
@@ -12715,7 +12479,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45045] = {
-            Quest = [=[The Vial of Ancient Mana||45|45|44781|0|0]=],
+            Quest = [=[The Vial of Ancient Mana||45|45|44781|54|0]=],
             Objectives = {
                 [1] = {
                     "Find someone in Dalaran interested in the Vial|646|35|68.88|87.00|0|0",
@@ -12723,7 +12487,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45050] = {
-            Quest = [=[Infiltration Plans||45|45|44782|0|0]=],
+            Quest = [=[Infiltration Plans||45|45|44782|54|0]=],
             Objectives = {
                 [1] = {
                     "Go to Dalaran|627|32|52.85|50.40|0|0",
@@ -12731,7 +12495,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45052] = {
-            Quest = [=[Depleted Nether Crystal||45|45|44782|0|0]=],
+            Quest = [=[Depleted Nether Crystal||45|45|44782|54|0]=],
             Objectives = {
                 [1] = {
                     "Go to Dalaran|627|32|52.85|50.40|0|0",
@@ -12739,7 +12503,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45053] = {
-            Quest = [=[Thief's Instructions||45|45|44782|0|0]=],
+            Quest = [=[Thief's Instructions||45|45|44782|54|0]=],
             Objectives = {
                 [1] = {
                     "Go to Dalaran|627|32|52.85|50.40|0|0",
@@ -12747,7 +12511,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45054] = {
-            Quest = [=["Ancient" Elven War Orders||45|45|44782|0|0]=],
+            Quest = [=["Ancient" Elven War Orders||45|45|44782|54|0]=],
             Objectives = {
                 [1] = {
                     "Go to Dalaran|627|35|51.76|71.66|0|0",
@@ -12765,7 +12529,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45059] = {
-            Quest = [=[Fel Infused Totem Fragment||45|45|44782|0|0]=],
+            Quest = [=[Fel Infused Totem Fragment||45|45|44782|54|0]=],
             Objectives = {
                 [1] = {
                     "Go to Dalaran|627|35|51.76|71.54|0|0",
@@ -12773,7 +12537,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45060] = {
-            Quest = [=[Damaged Kirin Tor Insignia||45|45|44782|0|0]=],
+            Quest = [=[Damaged Kirin Tor Insignia||45|45|44782|54|0]=],
             Objectives = {
                 [1] = {
                     "Go to Dalaran|627|32|52.85|50.40|0|0",
@@ -12781,7 +12545,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45061] = {
-            Quest = [=[Scrolls of the Faldrottin||45|45|44782|0|0]=],
+            Quest = [=[Scrolls of the Faldrottin||45|45|44782|54|0]=],
             Objectives = {
                 [1] = {
                     "Go to Dalaran|627|32|52.85|50.40|0|0",
@@ -12887,7 +12651,7 @@ function Nx.ModQuests:Data5()
             End = "115736|680|32|36.40|45.80",
         },
         [45073] = {
-            Quest = [=[Loot and Plunder!||45|45|0|0|0]=],
+            Quest = [=[Loot and Plunder!||45|45|0|144|0]=],
             Start = "118125|630|32|57.70|63.60",
             End = "5099|630|32|57.60|63.40",
             Objectives = {
@@ -12912,8 +12676,14 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
+        [45098] = {
+            Quest = [=[Orders of Magnitude||45|45|0|54|775]=],
+        },
+        [45101] = {
+            Quest = [=[Imminent Launch||45|45|0|54|9200]=],
+        },
         [45102] = {
-            Quest = [=[Begin the Assault||45|45|0|0|0]=],
+            Quest = [=[Begin the Assault||45|45|0|104|0]=],
             Objectives = {
                 [1] = {
                     "nil|858|35|41.28|63.36|9.62|9.62",
@@ -12924,7 +12694,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45103] = {
-            Quest = [=[We Ride!||45|45|0|0|0]=],
+            Quest = [=[We Ride!||45|45|0|67|0]=],
             Start = "116128|646|32|51.60|21.80",
             End = "1625|676|32|97.60|56.00",
             Objectives = {
@@ -12941,7 +12711,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45105] = {
-            Quest = [=[Lord Raz'gor||45|45|0|0|0]=],
+            Quest = [=[Lord Raz'gor||45|45|0|104|0]=],
             Objectives = {
                 [1] = {
                     "nil|676|35|64.32|28.80|9.62|9.62",
@@ -12952,11 +12722,11 @@ function Nx.ModQuests:Data5()
             },
         },
         [45111] = {
-            Quest = [=[Everyone Loves a Good Fight||45|45|0|0|0]=],
+            Quest = [=[Everyone Loves a Good Fight||45|45|0|60|0]=],
             End = "4093|499|32|70.00|45.20",
         },
         [45112] = {
-            Quest = [=[Signs of Madness||45|45|45100|0|0]=],
+            Quest = [=[Signs of Madness||45|45|45100|54|0]=],
             Objectives = {
                 [1] = {
                     "Clue found|71|35|73.98|52.28|0|0",
@@ -12991,7 +12761,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45118] = {
-            Quest = [=[Helya's Horn||45|45|44889|0|0]=],
+            Quest = [=[Helya's Horn||45|45|44889|180|0]=],
             Start = "116193|649|32|34.30|28.50",
             End = "116193|649|32|34.30|28.50",
             Objectives = {
@@ -13338,7 +13108,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45123] = {
-            Quest = [=[Elemental: The Folly of Levia Laurence||45|45|0|0|0]=],
+            Quest = [=[Elemental: The Folly of Levia Laurence||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -13357,7 +13127,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45125] = {
-            Quest = [=[Dabbling in the Demonic||45|45|45126|0|0]=],
+            Quest = [=[Dabbling in the Demonic||45|45|45126|54|0]=],
             Start = "116714|629|32|57.90|72.60",
             End = "5087|625|32|57.40|73.00",
             Objectives = {
@@ -13367,7 +13137,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45126] = {
-            Quest = [=[Unlikely Seduction||45|45|0|0|0]=],
+            Quest = [=[Unlikely Seduction||45|45|0|54|0]=],
             Start = "116189|630|32|25.70|57.70",
             End = "5475|630|32|25.60|57.60",
             Objectives = {
@@ -13379,12 +13149,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45127] = {
-            Quest = [=[Fel-Crossed Lovers||45|45|45861|0|0]=],
+            Quest = [=[Fel-Crossed Lovers||45|45|45861|54|0]=],
             Start = "116189|630|32|25.60|57.60",
             End = "1402|625|32|28.80|48.80",
         },
         [45128] = {
-            Quest = [=[A Glorious Reunion||45|45|44889|0|0]=],
+            Quest = [=[A Glorious Reunion||45|45|44889|180|0]=],
             Start = "116193|649|32|34.30|28.50",
             End = "116193|649|32|34.30|28.50",
             Objectives = {
@@ -13396,8 +13166,11 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
+        [45132] = {
+            Quest = [=[Before It's Too Late||45|45|0|54|775]=],
+        },
         [45143] = {
-            Quest = [=[Judgment Awaits||45|45|0|0|0]=],
+            Quest = [=[Judgment Awaits||45|45|0|126|0]=],
             Start = "90249|24|32|50.30|74.10",
             End = "4176|23|32|77.60|46.00",
             Objectives = {
@@ -13407,7 +13180,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45145] = {
-            Quest = [=[Moonfang Family Relics||45|45|0|0|0]=],
+            Quest = [=[Moonfang Family Relics||45|45|0|126|0]=],
             Start = "119209|641|32|66.80|53.40",
             End = "119209|641|32|66.80|53.40",
             Objectives = {
@@ -13423,7 +13196,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45146] = {
-            Quest = [=[Runic Reading||45|45|45147|0|0]=],
+            Quest = [=[Runic Reading||45|45|45147|126|0]=],
             Start = "109102|24|32|59.10|32.60",
             End = "109102|24|32|59.10|32.60",
             Objectives = {
@@ -13456,7 +13229,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45147] = {
-            Quest = [=[Felstone Destruction||45|45|45148|0|0]=],
+            Quest = [=[Felstone Destruction||45|45|45148|126|0]=],
             Start = "109102|24|32|59.10|32.60",
             End = "109102|24|32|59.10|32.60",
             Objectives = {
@@ -13466,7 +13239,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45148] = {
-            Quest = [=[Oath Breaker||45|45|0|0|0]=],
+            Quest = [=[Oath Breaker||45|45|0|126|0]=],
             Start = "119545|24|32|58.90|31.90",
             End = "119545|24|32|58.90|31.90",
             Objectives = {
@@ -13476,7 +13249,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45149] = {
-            Quest = [=[Ending the Crescent Curse||45|45|0|0|0]=],
+            Quest = [=[Ending the Crescent Curse||45|45|0|126|0]=],
             Start = "119545|24|32|58.90|31.90",
             End = "119545|24|32|58.90|31.90",
             Objectives = {
@@ -13487,6 +13260,7 @@ function Nx.ModQuests:Data5()
         },
         [45159] = {
             Quest = [=[Cubic Conundrum||45|45|45160|0|0]=],
+            Start = "93538|627|32|41.00|26.20",
             End = "5231|625|32|40.80|26.40",
         },
         [45160] = {
@@ -13495,32 +13269,33 @@ function Nx.ModQuests:Data5()
             End = "5231|625|32|40.80|26.40",
         },
         [45162] = {
-            Quest = [=[We Brought the Hammer||45|45|0|0|0]=],
+            Quest = [=[We Brought the Hammer||45|45|0|60|0]=],
             End = "4093|499|32|70.00|45.20",
         },
         [45163] = {
-            Quest = [=[Cleaning Up||45|45|0|0|0]=],
+            Quest = [=[Cleaning Up||45|45|0|60|0]=],
             End = "4093|499|32|70.00|45.20",
         },
         [45172] = {
-            Quest = [=[To Battle!||45|45|0|0|0]=],
+            Quest = [=[To Battle!||45|45|0|26|0]=],
             End = "5086|702|32|51.20|48.40",
         },
         [45173] = {
-            Quest = [=[Desperate Times||45|45|0|0|0]=],
+            Quest = [=[Desperate Times||45|45|0|26|0]=],
             End = "5086|702|32|51.20|48.40",
         },
         [45174] = {
-            Quest = [=[The Hunt for Illidan Stormrage||45|45|45175|0|0]=],
+            Quest = [=[The Hunt for Illidan Stormrage||45|45|45175|158|0]=],
+            Start = "89398|630|32|43.30|43.20",
             End = "4858|630|32|43.20|43.20",
         },
         [45175] = {
-            Quest = [=[Soul Prism of the Illidari||45|45|45176|0|0]=],
+            Quest = [=[Soul Prism of the Illidari||45|45|45176|158|0]=],
             Start = "89398|630|32|43.30|43.20",
             End = "4858|630|32|43.20|43.20",
         },
         [45176] = {
-            Quest = [=[Trial of Valor: The Once and Future Lord of Shadows||45|45|0|0|0]=],
+            Quest = [=[Trial of Valor: The Once and Future Lord of Shadows||45|45|0|158|0]=],
             Start = "89398|630|32|43.30|43.20",
             Objectives = {
                 [1] = {
@@ -13529,20 +13304,20 @@ function Nx.ModQuests:Data5()
             },
         },
         [45177] = {
-            Quest = [=[The Nighthold||45|45|0|0|0]=],
+            Quest = [=[The Nighthold||45|45|0|158|0]=],
             End = "665|625|32|28.80|48.40",
         },
         [45179] = {
-            Quest = [=[Win the Crowd||45|45|0|0|0]=],
+            Quest = [=[Win the Crowd||45|45|0|26|0]=],
             End = "5086|702|32|51.20|48.40",
         },
         [45182] = {
-            Quest = [=[Frost: The Twisted Twin||45|45|0|0|0]=],
+            Quest = [=[Frost: The Twisted Twin||45|45|0|54|0]=],
             Start = "90463|635|32|22.90|38.10",
             End = "5415|676|32|56.40|27.20",
         },
         [45185] = {
-            Quest = [=[Message from the Shadows||45|45|0|0|0]=],
+            Quest = [=[Message from the Shadows||45|45|0|54|0]=],
             Start = "116175|627|32|49.60|39.40",
             End = "116175|627|32|49.60|39.40",
             Objectives = {
@@ -13554,7 +13329,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45187] = {
-            Quest = [=[Secrets in the Underbelly||45|45|0|0|0]=],
+            Quest = [=[Secrets in the Underbelly||45|45|0|54|0]=],
             Start = "116175|627|32|49.60|39.40",
             End = "116175|627|32|49.60|39.40",
             Objectives = {
@@ -13611,17 +13386,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [45188] = {
-            Quest = [=[The Wisdom of the Council||45|45|0|0|0]=],
+            Quest = [=[The Wisdom of the Council||45|45|0|54|0]=],
             Start = "116308|627|32|49.60|39.40",
             End = "116308|627|32|49.60|39.40",
         },
         [45190] = {
-            Quest = [=[Where it's Thinnest||45|45|0|0|0]=],
+            Quest = [=[Where it's Thinnest||45|45|0|54|0]=],
             Start = "90463|627|32|28.80|48.60",
             End = "90463|627|32|28.80|48.60",
         },
         [45192] = {
-            Quest = [=[Runes of Rending||45|45|0|0|0]=],
+            Quest = [=[Runes of Rending||45|45|0|54|0]=],
             Start = "116175|646|32|56.40|27.20",
             Objectives = {
                 [1] = {
@@ -13632,12 +13407,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45193] = {
-            Quest = [=[One Step Behind||45|45|0|0|0]=],
+            Quest = [=[One Step Behind||45|45|0|54|0]=],
             Start = "116175|627|32|49.60|39.40",
             End = "116175|627|32|49.60|39.40",
         },
         [45207] = {
-            Quest = [=[The Nightborne Apprentice||45|45|46705|0|0]=],
+            Quest = [=[The Nightborne Apprentice||45|45|46705|110|0]=],
             Start = "118242|735|32|72.20|62.90",
             End = "118242|735|32|72.20|62.90",
             Objectives = {
@@ -13645,9 +13420,6 @@ function Nx.ModQuests:Data5()
                     "Portal Visible|735|35|42.11|27.19|0|0",
                 },
             },
-        },
-        [45208] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
         },
         [45209] = {
             Quest = [=[Those Scrying Eyes||45|45|44832|0|0]=],
@@ -13658,51 +13430,6 @@ function Nx.ModQuests:Data5()
                     "Duskwatch Scrying Orbs inspected|680|32|35.82|48.03|0|0",
                 },
             },
-        },
-        [45223] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45224] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45225] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45226] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45227] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45228] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45229] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45230] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45231] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45232] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45233] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45234] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45235] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45236] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [45237] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
         },
         [45238] = {
             Quest = [=[Return to Karazhan: Cubic Cynosure||45|45|45239|0|0]=],
@@ -13727,12 +13454,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45240] = {
-            Quest = [=[Making Preparations||45|45|45398|0|0]=],
+            Quest = [=[Making Preparations||45|45|45398|67|0]=],
             Start = "113695|647|32|27.00|28.90",
             End = "113695|647|32|27.00|28.90",
         },
         [45243] = {
-            Quest = [=[On Daumyr's Wings||45|45|0|0|0]=],
+            Quest = [=[On Daumyr's Wings||45|45|0|67|0]=],
             Start = "113695|647|32|27.00|28.90",
             End = "113695|647|32|27.00|28.90",
             Objectives = {
@@ -13742,7 +13469,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45251] = {
-            Quest = [=[Redundancy||45|45|45614|0|0]=],
+            Quest = [=[Redundancy||45|45|45614|110|0]=],
             Start = "118242|735|32|72.30|62.90",
             End = "1401|676|32|49.20|18.60",
             Objectives = {
@@ -13874,10 +13601,12 @@ function Nx.ModQuests:Data5()
         },
         [45272] = {
             Quest = [=[Insurrection: Missing Persons||45|45|45261|0|0]=],
+            Start = "103437|680|32|58.20|53.00",
             End = "5040|680|32|36.40|45.80",
         },
         [45277] = {
             Quest = [=[Insurrection: Waxing Crescent||45|45|45262|0|0]=],
+            Start = "103437|680|32|58.20|53.00",
             End = "5040|680|32|36.40|45.80",
         },
         [45278] = {
@@ -13970,10 +13699,11 @@ function Nx.ModQuests:Data5()
         },
         [45296] = {
             Quest = [=[No Bones About It||45|45|0|0|0]=],
+            Start = "90417|627|32|28.80|48.60",
             End = "5495|42|32|47.00|75.40",
         },
         [45301] = {
-            Quest = [=[Taking Charge||45|45|45330|0|0]=],
+            Quest = [=[Taking Charge||45|45|45330|72|0]=],
             Start = "108311|720|32|59.50|58.70",
             Objectives = {
                 [1] = {
@@ -13982,11 +13712,11 @@ function Nx.ModQuests:Data5()
             },
         },
         [45304] = {
-            Quest = [=[Attacking the Darkness||45|45|0|0|0]=],
+            Quest = [=[Attacking the Darkness||45|45|0|60|0]=],
             End = "4093|499|32|70.00|45.20",
         },
         [45312] = {
-            Quest = [=[You Beat the Ball of Meat||45|45|0|0|0]=],
+            Quest = [=[You Beat the Ball of Meat||45|45|0|60|0]=],
             End = "4093|499|32|70.00|45.20",
         },
         [45316] = {
@@ -14000,7 +13730,7 @@ function Nx.ModQuests:Data5()
             End = "665|680|32|54.80|72.80",
         },
         [45329] = {
-            Quest = [=[Operation: Portals||45|45|0|0|0]=],
+            Quest = [=[Operation: Portals||45|45|0|72|0]=],
             Start = "116448|719|32|74.20|41.70",
             End = "116448|719|32|74.20|41.70",
             Objectives = {
@@ -14010,7 +13740,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45330] = {
-            Quest = [=[Scouting Party||45|45|0|0|0]=],
+            Quest = [=[Scouting Party||45|45|0|72|0]=],
             Start = "116448|719|32|74.20|41.70",
             End = "116448|719|32|74.20|41.70",
             Objectives = {
@@ -14023,17 +13753,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [45331] = {
-            Quest = [=[Return to Acherus||45|45|0|0|0]=],
+            Quest = [=[Return to Acherus||45|45|0|67|0]=],
             Start = "119539|823|32|47.80|19.20",
             End = "119539|823|32|47.80|19.20",
         },
         [45339] = {
-            Quest = [=[Defense of the Fel Hammer||45|45|0|0|0]=],
+            Quest = [=[Defense of the Fel Hammer||45|45|0|72|0]=],
             Start = "116448|719|32|74.20|41.70",
             End = "116448|719|32|74.20|41.70",
         },
         [45342] = {
-            Quest = [=[Administering Aid||45|45|0|0|0]=],
+            Quest = [=[Administering Aid||45|45|0|133|0]=],
             Start = "118528|646|32|33.60|49.70",
             End = "118528|646|32|33.60|49.70",
             Objectives = {
@@ -14052,12 +13782,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45343] = {
-            Quest = [=[A Curious Contagion||45|45|45344|0|0]=],
+            Quest = [=[A Curious Contagion||45|45|45344|133|0]=],
             Start = "110564|702|32|51.00|48.40",
             End = "110564|702|32|51.00|48.40",
         },
         [45344] = {
-            Quest = [=[Sampling the Source||45|45|0|0|0]=],
+            Quest = [=[Sampling the Source||45|45|0|133|0]=],
             Start = "118528|650|32|30.00|55.90",
             End = "118528|650|32|30.00|55.90",
             Objectives = {
@@ -14075,7 +13805,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45345] = {
-            Quest = [=[Mischievous Sprites||45|45|0|0|0]=],
+            Quest = [=[Mischievous Sprites||45|45|0|133|0]=],
             Start = "118528|650|32|30.00|55.90",
             End = "118528|650|32|30.00|55.90",
             Objectives = {
@@ -14097,7 +13827,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45346] = {
-            Quest = [=[Shambling Specimens||45|45|0|0|0]=],
+            Quest = [=[Shambling Specimens||45|45|0|133|0]=],
             Start = "118528|650|32|30.00|55.90",
             End = "118528|650|32|30.00|55.90",
             Objectives = {
@@ -14107,7 +13837,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45347] = {
-            Quest = [=[Crafting a Cure||45|45|0|0|0]=],
+            Quest = [=[Crafting a Cure||45|45|0|133|0]=],
             Start = "118528|650|32|30.00|55.90",
             End = "118528|650|32|30.00|55.90",
             Objectives = {
@@ -14123,7 +13853,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45348] = {
-            Quest = [=[Safekeeping||45|45|0|0|0]=],
+            Quest = [=[Safekeeping||45|45|0|133|0]=],
             Start = "118528|650|32|30.00|55.90",
             End = "118528|650|32|30.00|55.90",
             Objectives = {
@@ -14133,12 +13863,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45349] = {
-            Quest = [=[To the Broken Shore||45|45|45350|0|0]=],
+            Quest = [=[To the Broken Shore||45|45|45350|133|0]=],
             Start = "110564|702|32|51.10|48.50",
             End = "110564|702|32|51.10|48.50",
         },
         [45350] = {
-            Quest = [=[Countering the Contagion||45|45|0|0|0]=],
+            Quest = [=[Countering the Contagion||45|45|0|133|0]=],
             Start = "118528|646|32|33.60|49.70",
             End = "118528|646|32|33.60|49.70",
             Objectives = {
@@ -14150,7 +13880,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45354] = {
-            Quest = [=[Dispersion of the Discs||45|45|0|0|0]=],
+            Quest = [=[Dispersion of the Discs||45|45|0|110|0]=],
             Start = "108247|735|32|56.30|38.00",
             End = "108247|735|32|56.30|38.00",
             Objectives = {
@@ -14323,12 +14053,15 @@ function Nx.ModQuests:Data5()
             },
         },
         [45385] = {
-            Quest = [=[We Must be Prepared!||45|45|45764|0|0]=],
+            Quest = [=[We Must be Prepared!||45|45|45764|72|0]=],
             Start = "108311|720|32|59.60|58.80",
             End = "5430|676|32|52.00|21.20",
         },
+        [45386] = {
+            Quest = [=[Imminent Launch||45|45|0|54|9200]=],
+        },
         [45391] = {
-            Quest = [=[Champion: Lady S'theno||45|45|0|0|0]=],
+            Quest = [=[Champion: Lady S'theno||45|45|0|72|0]=],
             Start = "117481|720|32|61.10|55.40",
         },
         [45392] = {
@@ -14337,7 +14070,7 @@ function Nx.ModQuests:Data5()
             End = "5494|739|32|52.20|49.80",
         },
         [45398] = {
-            Quest = [=[Harnessing Power||45|45|0|0|0]=],
+            Quest = [=[Harnessing Power||45|45|0|67|0]=],
             Start = "119539|823|32|47.80|19.20",
             End = "119539|823|32|47.80|19.20",
             Objectives = {
@@ -14353,7 +14086,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45399] = {
-            Quest = [=[Severing the Sveldrek||45|45|0|0|0]=],
+            Quest = [=[Severing the Sveldrek||45|45|0|67|0]=],
             Start = "119539|823|32|47.80|19.20",
             End = "119539|823|32|47.80|19.20",
             Objectives = {
@@ -14371,7 +14104,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45404] = {
-            Quest = [=[Panic at the Brewery||45|45|45459|0|0]=],
+            Quest = [=[Panic at the Brewery||45|45|45459|117|0]=],
             Start = "116900|709|32|51.30|48.50",
             End = "5443|709|32|50.60|57.80",
             Objectives = {
@@ -14447,7 +14180,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45412] = {
-            Quest = [=[Protection: Aid of the Illidari||45|45|45413|0|0]=],
+            Quest = [=[Protection: Aid of the Illidari||45|45|45413|54|0]=],
             Start = "90431|627|32|22.80|40.20",
             End = "90431|627|32|22.80|40.20",
             Objectives = {
@@ -14457,7 +14190,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45413] = {
-            Quest = [=[Gathering Information||45|45|45414|0|0]=],
+            Quest = [=[Gathering Information||45|45|45414|54|0]=],
             Start = "116880|627|32|52.00|19.60",
             End = "4796|625|32|52.20|19.60",
             Objectives = {
@@ -14482,7 +14215,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45414] = {
-            Quest = [=[Confirming Suspicions||45|45|45415|0|0]=],
+            Quest = [=[Confirming Suspicions||45|45|45415|54|0]=],
             Start = "116880|627|32|52.00|19.60",
             End = "619|625|32|74.40|45.40",
             Objectives = {
@@ -14504,7 +14237,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45415] = {
-            Quest = [=[Between Worlds||45|45|0|0|0]=],
+            Quest = [=[Between Worlds||45|45|0|54|0]=],
             Start = "117042|627|32|74.80|45.60",
             End = "4796|100|32|85.20|50.20",
             Objectives = {
@@ -14514,7 +14247,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45416] = {
-            Quest = [=[The Highlord's Return||45|45|45905|0|0]=],
+            Quest = [=[The Highlord's Return||45|45|45905|54|0]=],
             Start = "5456|676|32|45.60|62.20",
             End = "5244|625|32|28.80|49.20",
             Objectives = {
@@ -14537,7 +14270,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45423] = {
-            Quest = [=[Wailing Critters||45|45|0|0|0]=],
+            Quest = [=[Wailing Critters||45|45|0|58|0]=],
             Start = "116781|10|32|38.80|68.20",
             End = "116781|10|32|38.80|68.20",
             Objectives = {
@@ -14553,20 +14286,21 @@ function Nx.ModQuests:Data5()
             },
         },
         [45425] = {
-            Quest = [=[Grovebound||45|45|0|0|0]=],
+            Quest = [=[Grovebound||45|45|0|76|0]=],
+            Start = "118105|747|32|44.40|51.50",
             End = "5084|747|32|44.80|51.40",
         },
         [45426] = {
-            Quest = [=[Nature's Advance||45|45|46674|0|0]=],
+            Quest = [=[Nature's Advance||45|45|46674|76|0]=],
             Start = "115750|80|32|68.10|55.30",
             End = "5084|747|32|44.80|51.40",
         },
         [45437] = {
-            Quest = [=[An Urgent Situation||45|45|44766|0|0]=],
+            Quest = [=[An Urgent Situation||45|45|44766|110|0]=],
             End = "1401|734|32|72.00|62.00",
         },
         [45440] = {
-            Quest = [=[A Brewing Situation||45|45|0|0|0]=],
+            Quest = [=[A Brewing Situation||45|45|0|117|0]=],
             Start = "116929|709|32|51.40|48.60",
             End = "4104|709|32|51.40|48.60",
             Objectives = {
@@ -14582,10 +14316,10 @@ function Nx.ModQuests:Data5()
             },
         },
         [45441] = {
-            Quest = [=[Adacic Grubs - REWORK||45|45|0|0|0]=],
+            Quest = [=[Adacic Grubs - REWORK||45|45|0|117|0]=],
         },
         [45442] = {
-            Quest = [=[Not Felling Well||45|45|0|0|0]=],
+            Quest = [=[Not Felling Well||45|45|0|117|0]=],
             Start = "119765|709|32|50.50|57.80",
             End = "119765|709|32|50.50|57.80",
             Objectives = {
@@ -14601,7 +14335,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45449] = {
-            Quest = [=[Alchemist Korlya||45|45|0|0|0]=],
+            Quest = [=[Alchemist Korlya||45|45|0|117|0]=],
             Start = "117305|646|32|53.60|53.30",
             End = "117305|646|32|53.60|53.30",
             Objectives = {
@@ -14614,7 +14348,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45459] = {
-            Quest = [=[Storming the Legion||45|45|45574|0|0]=],
+            Quest = [=[Storming the Legion||45|45|45574|117|0]=],
             Start = "119765|709|32|51.50|48.50",
             End = "5442|676|32|53.60|53.40",
             Objectives = {
@@ -14624,7 +14358,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45482] = {
-            Quest = [=[Arcane: Fate of the Tideskorn||45|45|0|0|0]=],
+            Quest = [=[Arcane: Fate of the Tideskorn||45|45|0|54|0]=],
             Start = "90417|627|32|22.60|39.20",
             End = "90417|627|32|22.60|39.20",
             Objectives = {
@@ -14640,7 +14374,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45486] = {
-            Quest = [=[The Reluctant Queen||45|45|0|0|0]=],
+            Quest = [=[The Reluctant Queen||45|45|0|54|0]=],
             Start = "116568|680|32|76.30|50.10",
             End = "5440|634|32|65.00|68.00",
             Objectives = {
@@ -14659,7 +14393,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45498] = {
-            Quest = [=[Let Sleeping Dogs Lie||45|45|46924|0|0]=],
+            Quest = [=[Let Sleeping Dogs Lie||45|45|46924|76|0]=],
             Start = "120032|80|32|68.00|54.80",
             End = "120032|80|32|68.00|54.80",
             Objectives = {
@@ -14674,7 +14408,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45522] = {
-            Quest = [=[To Silence the Bonespeakers||45|45|0|0|0]=],
+            Quest = [=[To Silence the Bonespeakers||45|45|0|54|0]=],
             Start = "93628|634|32|65.00|68.00",
             End = "5493|634|32|73.00|40.20",
             Objectives = {
@@ -14686,7 +14420,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45523] = {
-            Quest = [=[To Tame the Drekirjar||45|45|0|0|0]=],
+            Quest = [=[To Tame the Drekirjar||45|45|0|54|0]=],
             Start = "116568|634|32|72.90|40.40",
             End = "5492|634|32|41.20|71.80",
             Objectives = {
@@ -14696,7 +14430,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45524] = {
-            Quest = [=[The Forgotten Heir||45|45|0|0|0]=],
+            Quest = [=[The Forgotten Heir||45|45|0|54|0]=],
             Start = "116568|634|32|41.40|71.70",
             End = "5414|680|32|76.20|50.00",
             Objectives = {
@@ -14706,7 +14440,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45525] = {
-            Quest = [=[Unanswered Questions||45|45|0|0|0]=],
+            Quest = [=[Unanswered Questions||45|45|0|54|0]=],
             Start = "116568|634|32|74.20|85.00",
             End = "5440|634|32|65.00|68.00",
             Objectives = {
@@ -14716,7 +14450,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45526] = {
-            Quest = [=[The God-Queen's Fury||45|45|0|0|0]=],
+            Quest = [=[The God-Queen's Fury||45|45|0|54|0]=],
             Start = "5456|676|32|45.60|62.20",
             Objectives = {
                 [1] = {
@@ -14725,7 +14459,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45528] = {
-            Quest = [=[The Befouled Barrows||45|45|45426|0|0]=],
+            Quest = [=[The Befouled Barrows||45|45|45426|76|0]=],
             Start = "120032|80|32|68.00|54.80",
             End = "120032|80|32|68.00|54.80",
             Objectives = {
@@ -14739,7 +14473,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45532] = {
-            Quest = [=[Mother's Orders||45|45|0|0|0]=],
+            Quest = [=[Mother's Orders||45|45|0|76|0]=],
             Start = "115802|198|32|40.90|42.60",
             End = "115802|198|32|40.90|42.60",
             Objectives = {
@@ -14754,7 +14488,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[Legion Dungeon Reward Quest||45|45|0|0|0]=],
         },
         [45539] = {
-            Quest = [=[Pet Battle Challenge: Wailing Caverns||45|45|0|0|0]=],
+            Quest = [=[Pet Battle Challenge: Wailing Caverns||45|45|0|58|0]=],
             Start = "116781|10|32|38.80|68.20",
             End = "116781|10|32|38.80|68.20",
             Objectives = {
@@ -14767,12 +14501,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45540] = {
-            Quest = [=[A Call from the Caverns||45|45|45423|0|0]=],
+            Quest = [=[A Call from the Caverns||45|45|45423|58|0]=],
             Start = "98725|627|32|58.40|38.00",
             End = "5491|10|32|38.80|68.20",
         },
         [45545] = {
-            Quest = [=[Barrel Toss||45|45|0|0|0]=],
+            Quest = [=[Barrel Toss||45|45|0|117|0]=],
             Start = "117305|646|32|53.60|53.30",
             End = "117305|646|32|53.60|53.30",
             Objectives = {
@@ -14790,12 +14524,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45551] = {
-            Quest = [=[Devastating Effects||45|45|0|0|0]=],
+            Quest = [=[Devastating Effects||45|45|0|96|0]=],
             Start = "108455|739|32|46.40|34.80",
             End = "108455|739|32|46.40|34.80",
         },
         [45552] = {
-            Quest = [=[Soothing Wounds||45|45|0|0|0]=],
+            Quest = [=[Soothing Wounds||45|45|0|96|0]=],
             Start = "117308|680|32|52.20|48.90",
             End = "117308|680|32|52.20|48.90",
             Objectives = {
@@ -14805,7 +14539,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45553] = {
-            Quest = [=[The Nighthuntress Beckons||45|45|0|0|0]=],
+            Quest = [=[The Nighthuntress Beckons||45|45|0|96|0]=],
             Start = "117308|680|32|52.20|48.90",
             End = "117308|680|32|52.20|48.90",
             Objectives = {
@@ -14820,7 +14554,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45554] = {
-            Quest = [=[Taking Control||45|45|0|0|0]=],
+            Quest = [=[Taking Control||45|45|0|96|0]=],
             Start = "117246|680|32|57.50|44.80",
             End = "117246|680|32|57.50|44.80",
             Objectives = {
@@ -14830,7 +14564,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45555] = {
-            Quest = [=[Felbound Beasts||45|45|0|0|0]=],
+            Quest = [=[Felbound Beasts||45|45|0|96|0]=],
             Start = "117246|680|32|57.50|44.80",
             End = "117246|680|32|57.50|44.80",
             Objectives = {
@@ -14855,12 +14589,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45556] = {
-            Quest = [=[Ready to Strike||45|45|45557|0|0]=],
+            Quest = [=[Ready to Strike||45|45|45557|96|0]=],
             Start = "117246|680|32|55.80|42.20",
             End = "5454|676|32|50.80|30.60",
         },
         [45557] = {
-            Quest = [=[Unnatural Consequences||45|45|0|0|0]=],
+            Quest = [=[Unnatural Consequences||45|45|0|96|0]=],
             Start = "119097|646|32|50.90|30.70",
             End = "119097|646|32|50.90|30.70",
             Objectives = {
@@ -14870,7 +14604,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45560] = {
-            Quest = [=[Destruction: Rumblings Near Feltotem||45|45|45564|0|0]=],
+            Quest = [=[Destruction: Rumblings Near Feltotem||45|45|45564|54|0]=],
             Start = "90418|627|32|22.80|39.40",
             End = "4990|650|32|35.60|23.80",
         },
@@ -14897,7 +14631,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45564] = {
-            Quest = [=[The Burning Birds||45|45|45726|0|0]=],
+            Quest = [=[The Burning Birds||45|45|45726|54|0]=],
             Start = "117225|650|32|35.60|24.00",
             End = "4990|650|32|31.20|25.00",
             Objectives = {
@@ -14973,12 +14707,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45570] = {
-            Quest = [=[In Safer Hands||45|45|0|0|0]=],
+            Quest = [=[In Safer Hands||45|45|0|54|0]=],
             Start = "117252|76|32|25.20|38.00",
             End = "5131|625|32|29.00|49.60",
         },
         [45571] = {
-            Quest = [=[A Bit of Espionage||45|45|0|0|0]=],
+            Quest = [=[A Bit of Espionage||45|45|0|144|0]=],
             Start = "101513|626|32|41.40|78.00",
             End = "101513|626|32|41.40|78.00",
             Objectives = {
@@ -14993,7 +14727,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45573] = {
-            Quest = [=[Rise Up|2|45|45|0|0|0]=],
+            Quest = [=[Rise Up|2|45|45|0|144|0]=],
             Start = "117259|646|32|70.10|47.00",
             End = "117259|646|32|70.10|47.00",
             Objectives = {
@@ -15009,7 +14743,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45574] = {
-            Quest = [=[Fel Ingredients||45|45|0|0|0]=],
+            Quest = [=[Fel Ingredients||45|45|0|117|0]=],
             Start = "117305|646|32|53.60|53.30",
             End = "117305|646|32|53.60|53.30",
             Objectives = {
@@ -15058,7 +14792,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45575] = {
-            Quest = [=[Village of the Corruptors||45|45|45587|0|0]=],
+            Quest = [=[Village of the Corruptors||45|45|45587|54|0]=],
             Start = "117249|650|32|31.30|25.10",
             End = "117249|650|32|31.30|25.10",
             Objectives = {
@@ -15073,7 +14807,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45576] = {
-            Quest = [=[Rise Up|2|45|45|0|0|0]=],
+            Quest = [=[Rise Up|2|45|45|0|144|0]=],
             Start = "117259|646|32|70.10|47.00",
             End = "117259|646|32|70.10|47.00",
             Objectives = {
@@ -15089,7 +14823,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45586] = {
-            Quest = [=[Shield Amplification||45|45|46000|0|0]=],
+            Quest = [=[Shield Amplification||45|45|46000|110|0]=],
             Start = "117331|646|32|49.20|18.60",
             End = "117331|646|32|49.20|18.60",
             Objectives = {
@@ -15102,7 +14836,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [45587] = {
-            Quest = [=[The Feltotem Menace||45|45|45796|0|0]=],
+            Quest = [=[The Feltotem Menace||45|45|45796|54|0]=],
+            Start = "117292|650|32|54.70|44.90",
             End = "4990|650|32|31.40|25.20",
             Objectives = {
                 [1] = {
@@ -15114,7 +14849,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45614] = {
-            Quest = [=[Lady Remor'za||45|45|0|0|0]=],
+            Quest = [=[Lady Remor'za||45|45|0|110|0]=],
             Start = "117331|646|32|49.20|18.60",
             End = "117331|646|32|49.20|18.60",
             Objectives = {
@@ -15127,7 +14862,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45615] = {
-            Quest = [=[Finders Keepers||45|45|0|0|0]=],
+            Quest = [=[Finders Keepers||45|45|0|110|0]=],
             Start = "103092|734|32|81.50|60.30",
             End = "103092|734|32|81.50|60.30",
             Objectives = {
@@ -15137,7 +14872,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45627] = {
-            Quest = [=[Feltotem's Fall||45|45|45909|0|0]=],
+            Quest = [=[Feltotem's Fall||45|45|45909|54|0]=],
             Start = "5456|676|32|45.60|62.20",
             End = "1402|625|32|28.80|48.80",
             Objectives = {
@@ -15147,7 +14882,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45628] = {
-            Quest = [=[This Time, Leave a Trail|2|45|45|46260|0|0]=],
+            Quest = [=[This Time, Leave a Trail|2|45|45|46260|144|0]=],
             Start = "117262|646|32|71.60|41.90",
             End = "117262|646|32|71.60|41.90",
             Objectives = {
@@ -15166,7 +14901,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45629] = {
-            Quest = [=[This Time, Leave a Trail|2|45|45|46260|0|0]=],
+            Quest = [=[This Time, Leave a Trail|2|45|45|46260|144|0]=],
             Start = "117263|646|32|71.60|41.90",
             End = "117263|646|32|71.60|41.90",
             Objectives = {
@@ -15185,7 +14920,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45630] = {
-            Quest = [=[Servant to No One||45|45|0|0|0]=],
+            Quest = [=[Servant to No One||45|45|0|110|0]=],
             Start = "103092|734|32|81.50|60.30",
             End = "103092|734|32|81.50|60.30",
             Objectives = {
@@ -15194,37 +14929,8 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [45631] = {
-            Quest = [=[Avocation of Antonidas||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|125|35|24.96|36.00|19.24|9.62",
-                    "nil|125|35|23.04|37.44|48.10|19.24",
-                    "nil|125|35|22.08|40.32|48.10|9.62",
-                    "nil|125|35|23.04|41.76|28.86|9.62",
-                },
-                [2] = {
-                    "nil|42|35|51.84|87.84|9.62|9.62",
-                    "nil|42|35|50.88|89.28|28.86|9.62",
-                    "nil|42|35|51.84|90.72|9.62|9.62",
-                },
-                [3] = {
-                    "nil|25|35|45.12|21.60|9.62|9.62",
-                    "nil|25|35|44.16|23.04|28.86|19.24",
-                    "nil|25|35|43.20|25.92|38.48|9.62",
-                    "nil|25|35|43.20|27.36|38.48|9.62",
-                    "nil|25|35|42.24|28.80|38.48|19.24",
-                    "nil|25|35|43.20|31.68|9.62|9.62",
-                },
-                [4] = {
-                    "nil|625|35|53.76|46.08|9.62|9.62",
-                    "nil|625|35|52.80|47.52|28.86|9.62",
-                    "nil|625|35|53.76|48.96|9.62|9.62",
-                },
-            },
-        },
         [45632] = {
-            Quest = [=[Missing in Action: Eitrigg|2|45|45|45647|0|0]=],
+            Quest = [=[Missing in Action: Eitrigg|2|45|45|45647|180|0]=],
             Start = "116858|646|32|69.80|34.70",
             End = "116858|646|32|69.80|34.70",
             Objectives = {
@@ -15236,7 +14942,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45633] = {
-            Quest = [=[Operation Felrage|2|45|45|0|0|0]=],
+            Quest = [=[Operation Felrage|2|45|45|0|180|0]=],
             Start = "117471|646|32|73.70|31.20",
             End = "117471|646|32|73.70|31.20",
             Objectives = {
@@ -15256,7 +14962,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45634] = {
-            Quest = [=[Kvaldir on Call||45|45|0|0|0]=],
+            Quest = [=[Kvaldir on Call||45|45|0|180|0]=],
             Start = "116858|646|32|69.80|34.70",
             End = "116858|646|32|69.80|34.70",
             Objectives = {
@@ -15308,7 +15014,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45647] = {
-            Quest = [=[Mission: Search and Rescue|2|45|45|0|0|0]=],
+            Quest = [=[Mission: Search and Rescue|2|45|45|0|180|0]=],
             Start = "117471|646|32|73.70|31.20",
             End = "117471|646|32|73.70|31.20",
             Objectives = {
@@ -15327,7 +15033,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45648] = {
-            Quest = [=[Missing in Action: Lord Darius Crowley|1|45|45|45649|0|0]=],
+            Quest = [=[Missing in Action: Lord Darius Crowley|1|45|45|45649|180|0]=],
             Start = "116858|646|32|69.80|34.70",
             End = "116858|646|32|69.80|34.70",
             Objectives = {
@@ -15339,7 +15045,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45649] = {
-            Quest = [=[Mission: Search and Rescue|1|45|45|0|0|0]=],
+            Quest = [=[Mission: Search and Rescue|1|45|45|0|180|0]=],
             Start = "117475|646|32|73.70|31.20",
             End = "117475|646|32|73.70|31.20",
             Objectives = {
@@ -15358,7 +15064,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45650] = {
-            Quest = [=[Operation Felrage|1|45|45|0|0|0]=],
+            Quest = [=[Operation Felrage|1|45|45|0|180|0]=],
             Start = "117475|646|32|73.70|31.20",
             End = "117475|646|32|73.70|31.20",
             Objectives = {
@@ -15378,7 +15084,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45652] = {
-            Quest = [=[A "Humble" Request||45|45|45706|0|0]=],
+            Quest = [=[A "Humble" Request||45|45|45706|147|0]=],
             Start = "96746|726|32|33.00|60.00",
             End = "96746|726|32|33.00|60.00",
             Objectives = {
@@ -15394,7 +15100,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45706] = {
-            Quest = [=[The Power of Thousands||45|45|45724|0|0]=],
+            Quest = [=[The Power of Thousands||45|45|45724|147|0]=],
             Start = "117482|726|32|35.40|76.00",
             End = "3332|64|32|37.20|32.20",
             Objectives = {
@@ -15404,7 +15110,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45723] = {
-            Quest = [=[The Crone's Wrath||45|45|0|0|0]=],
+            Quest = [=[The Crone's Wrath||45|45|0|147|0]=],
             Start = "120244|64|32|42.20|45.20",
             End = "120244|64|32|42.20|45.20",
             Objectives = {
@@ -15422,7 +15128,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45724] = {
-            Quest = [=[Snakes and Stones||45|45|44800|0|0]=],
+            Quest = [=[Snakes and Stones||45|45|44800|147|0]=],
             Start = "120244|64|32|42.20|45.20",
             End = "120244|64|32|42.20|45.20",
             Objectives = {
@@ -15432,7 +15138,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45725] = {
-            Quest = [=[Breaking Chains||45|45|0|0|0]=],
+            Quest = [=[Breaking Chains||45|45|0|147|0]=],
             Start = "120244|64|32|42.20|45.20",
             End = "120244|64|32|42.20|45.20",
             Objectives = {
@@ -15448,7 +15154,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45726] = {
-            Quest = [=[The Tainted Marsh||45|45|45575|0|0]=],
+            Quest = [=[The Tainted Marsh||45|45|45575|54|0]=],
             Start = "117249|650|32|31.30|25.10",
             End = "117249|650|32|31.30|25.10",
             Objectives = {
@@ -15461,12 +15167,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45727] = {
-            Quest = [=[Uniting the Isles||45|45|0|0|0]=],
+            Quest = [=[Uniting the Isles||45|45|0|183|0]=],
             Start = "90417|627|32|28.50|48.30",
             End = "665|625|32|28.80|48.40",
         },
         [45763] = {
-            Quest = [=[Demonic Disruption||45|45|45971|0|0]=],
+            Quest = [=[Demonic Disruption||45|45|45971|147|0]=],
             Start = "106519|726|32|30.40|51.80",
             End = "106519|726|32|30.40|51.80",
             Objectives = {
@@ -15481,7 +15187,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45764] = {
-            Quest = [=[Restoring Equilibrium||45|45|0|0|0]=],
+            Quest = [=[Restoring Equilibrium||45|45|0|72|0]=],
             Start = "117709|646|32|52.10|21.30",
             End = "117709|646|32|52.10|21.30",
             Objectives = {
@@ -15496,7 +15202,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45765] = {
-            Quest = [=[Brothers and Sisters||45|45|0|0|0]=],
+            Quest = [=[Brothers and Sisters||45|45|0|147|0]=],
             Start = "117715|646|32|60.40|51.60",
             End = "117715|646|32|60.40|51.60",
             Objectives = {
@@ -15515,7 +15221,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45767] = {
-            Quest = [=[Elemental Cores||45|45|45971|0|0]=],
+            Quest = [=[Elemental Cores||45|45|45971|147|0]=],
             Start = "117715|646|32|60.40|51.60",
             End = "117715|646|32|60.40|51.60",
             Objectives = {
@@ -15534,7 +15240,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45769] = {
-            Quest = [=[Conflagration||45|45|46258|0|0]=],
+            Quest = [=[Conflagration||45|45|46258|147|0]=],
             Start = "115492|646|32|54.60|52.40",
             End = "1001|725|32|30.40|51.80",
             Objectives = {
@@ -15546,7 +15252,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45770] = {
-            Quest = [=[Stirring in the Shadows||45|45|0|0|0]=],
+            Quest = [=[Stirring in the Shadows||45|45|0|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90250|24|32|52.30|78.10",
             Objectives = {
@@ -15561,7 +15267,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45771] = {
-            Quest = [=[A Time for Everything||45|45|0|0|0]=],
+            Quest = [=[A Time for Everything||45|45|0|117|0]=],
             Start = "119765|709|32|50.50|57.80",
             End = "119765|709|32|50.50|57.80",
             Objectives = {
@@ -15571,12 +15277,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45788] = {
-            Quest = [=[The Speaker Awaits||45|45|45789|0|0]=],
+            Quest = [=[The Speaker Awaits||45|45|45789|133|0]=],
             Start = "118536|646|32|44.40|63.70",
             End = "5115|702|32|50.40|21.80",
         },
         [45789] = {
-            Quest = [=[The Sunken Vault||45|45|0|0|0]=],
+            Quest = [=[The Sunken Vault||45|45|0|133|0]=],
             Start = "102709|702|32|48.00|21.90",
             End = "5115|702|32|50.40|21.80",
             Objectives = {
@@ -15589,17 +15295,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [45790] = {
-            Quest = [=[Champion: Almai||45|45|0|0|0]=],
+            Quest = [=[Champion: Almai||45|45|0|117|0]=],
             Start = "117504|709|32|51.60|48.50",
             End = "5442|709|32|51.40|48.60",
         },
         [45794] = {
-            Quest = [=[Informing the Council||45|45|45027|0|0]=],
+            Quest = [=[Informing the Council||45|45|45027|179|0]=],
             Start = "115863|630|32|30.40|44.60",
             End = "115863|630|32|30.40|44.60",
         },
         [45796] = {
-            Quest = [=[Destroying the Nest||45|45|0|0|0]=],
+            Quest = [=[Destroying the Nest||45|45|0|54|0]=],
             Start = "117361|650|32|31.30|25.10",
             End = "117361|650|32|31.30|25.10",
             Objectives = {
@@ -15626,7 +15332,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45798] = {
-            Quest = [=[War'zuul the Provoker||45|45|46266|0|0]=],
+            Quest = [=[War'zuul the Provoker||45|45|46266|72|0]=],
             Start = "117709|646|32|52.10|21.30",
             End = "117709|646|32|52.10|21.30",
             Objectives = {
@@ -15634,93 +15340,6 @@ function Nx.ModQuests:Data5()
                     "nil|676|35|64.32|14.40|9.62|9.62",
                     "nil|676|35|63.36|15.84|28.86|9.62",
                     "nil|676|35|64.32|17.28|9.62|9.62",
-                },
-            },
-        },
-        [45801] = {
-            Quest = [=[Avocation of Antonidas||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|125|35|24.96|36.00|19.24|9.62",
-                    "nil|125|35|23.04|37.44|48.10|19.24",
-                    "nil|125|35|22.08|40.32|48.10|9.62",
-                    "nil|125|35|23.04|41.76|28.86|9.62",
-                },
-                [2] = {
-                    "nil|42|35|51.84|87.84|9.62|9.62",
-                    "nil|42|35|50.88|89.28|28.86|9.62",
-                    "nil|42|35|51.84|90.72|9.62|9.62",
-                },
-                [3] = {
-                    "nil|25|35|45.12|21.60|9.62|9.62",
-                    "nil|25|35|44.16|23.04|28.86|19.24",
-                    "nil|25|35|43.20|25.92|38.48|9.62",
-                    "nil|25|35|43.20|27.36|38.48|9.62",
-                    "nil|25|35|42.24|28.80|38.48|19.24",
-                    "nil|25|35|43.20|31.68|9.62|9.62",
-                },
-                [4] = {
-                    "nil|625|35|53.76|46.08|9.62|9.62",
-                    "nil|625|35|52.80|47.52|28.86|9.62",
-                    "nil|625|35|53.76|48.96|9.62|9.62",
-                },
-            },
-        },
-        [45802] = {
-            Quest = [=[Avocation of Antonidas||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|125|35|24.96|36.00|19.24|9.62",
-                    "nil|125|35|23.04|37.44|48.10|19.24",
-                    "nil|125|35|22.08|40.32|48.10|9.62",
-                    "nil|125|35|23.04|41.76|28.86|9.62",
-                },
-                [2] = {
-                    "nil|42|35|51.84|87.84|9.62|9.62",
-                    "nil|42|35|50.88|89.28|28.86|9.62",
-                    "nil|42|35|51.84|90.72|9.62|9.62",
-                },
-                [3] = {
-                    "nil|25|35|45.12|21.60|9.62|9.62",
-                    "nil|25|35|44.16|23.04|28.86|19.24",
-                    "nil|25|35|43.20|25.92|38.48|9.62",
-                    "nil|25|35|43.20|27.36|38.48|9.62",
-                    "nil|25|35|42.24|28.80|38.48|19.24",
-                    "nil|25|35|43.20|31.68|9.62|9.62",
-                },
-                [4] = {
-                    "nil|625|35|53.76|46.08|9.62|9.62",
-                    "nil|625|35|52.80|47.52|28.86|9.62",
-                    "nil|625|35|53.76|48.96|9.62|9.62",
-                },
-            },
-        },
-        [45803] = {
-            Quest = [=[Avocation of Antonidas||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|125|35|24.96|36.00|19.24|9.62",
-                    "nil|125|35|23.04|37.44|48.10|19.24",
-                    "nil|125|35|22.08|40.32|48.10|9.62",
-                    "nil|125|35|23.04|41.76|28.86|9.62",
-                },
-                [2] = {
-                    "nil|42|35|51.84|87.84|9.62|9.62",
-                    "nil|42|35|50.88|89.28|28.86|9.62",
-                    "nil|42|35|51.84|90.72|9.62|9.62",
-                },
-                [3] = {
-                    "nil|25|35|45.12|21.60|9.62|9.62",
-                    "nil|25|35|44.16|23.04|28.86|19.24",
-                    "nil|25|35|43.20|25.92|38.48|9.62",
-                    "nil|25|35|43.20|27.36|38.48|9.62",
-                    "nil|25|35|42.24|28.80|38.48|19.24",
-                    "nil|25|35|43.20|31.68|9.62|9.62",
-                },
-                [4] = {
-                    "nil|625|35|53.76|46.08|9.62|9.62",
-                    "nil|625|35|52.80|47.52|28.86|9.62",
-                    "nil|625|35|53.76|48.96|9.62|9.62",
                 },
             },
         },
@@ -15757,12 +15376,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45833] = {
-            Quest = [=[The Pirate's Bay|2|45|45|44758|0|0]=],
+            Quest = [=[The Pirate's Bay|2|45|45|44758|144|0]=],
             Start = "101513|626|32|41.30|78.00",
             End = "101513|626|32|41.30|78.00",
         },
         [45834] = {
-            Quest = [=[Stolen Souls||45|45|0|0|0]=],
+            Quest = [=[Stolen Souls||45|45|0|180|0]=],
             Start = "116193|649|32|34.30|28.50",
             End = "116193|649|32|34.30|28.50",
             Objectives = {
@@ -15772,7 +15391,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45835] = {
-            Quest = [=[False Orders|2|45|45|0|0|0]=],
+            Quest = [=[False Orders|2|45|45|0|144|0]=],
             Start = "119821|630|32|57.70|63.50",
             End = "119821|630|32|57.70|63.50",
             Objectives = {
@@ -15785,17 +15404,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [45836] = {
-            Quest = [=[Jorach's Calling|2|45|45|0|0|0]=],
+            Quest = [=[Jorach's Calling|2|45|45|0|144|0]=],
             Start = "119821|630|32|57.60|63.40",
             End = "119821|630|32|57.60|63.40",
         },
         [45841] = {
-            Quest = [=[A Triumphant Report||45|45|0|0|0]=],
+            Quest = [=[A Triumphant Report||45|45|0|54|0]=],
             Start = "117361|650|32|31.30|25.10",
             End = "117361|650|32|31.30|25.10",
         },
         [45842] = {
-            Quest = [=[A Gift From the Six||45|45|0|0|0]=],
+            Quest = [=[A Gift From the Six||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -15805,17 +15424,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [45843] = {
-            Quest = [=[Dark Omens||45|45|0|0|0]=],
+            Quest = [=[Dark Omens||45|45|0|54|0]=],
             Start = "116880|100|32|85.20|50.10",
             End = "1402|625|32|28.80|48.80",
         },
         [45844] = {
-            Quest = [=[Avocation of Antonidas||45|45|0|0|0]=],
+            Quest = [=[Avocation of Antonidas||45|45|0|110|0]=],
             Start = "117770|646|32|45.20|61.80",
             End = "5131|734|32|56.40|38.60",
         },
         [45845] = {
-            Quest = [=[Burning Within||45|45|0|0|0]=],
+            Quest = [=[Burning Within||45|45|0|110|0]=],
             Start = "108247|735|32|56.30|38.00",
             End = "108247|735|32|56.30|38.00",
             Objectives = {
@@ -15838,7 +15457,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45846] = {
-            Quest = [=[Chilled to the Core||45|45|0|0|0]=],
+            Quest = [=[Chilled to the Core||45|45|0|110|0]=],
             Start = "108247|735|32|56.30|38.00",
             End = "108247|735|32|56.30|38.00",
             Objectives = {
@@ -15856,7 +15475,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45847] = {
-            Quest = [=[Close to Home||45|45|0|0|0]=],
+            Quest = [=[Close to Home||45|45|0|110|0]=],
             Start = "108247|735|32|56.30|38.00",
             End = "108247|735|32|56.30|38.00",
             Objectives = {
@@ -15874,12 +15493,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [45848] = {
-            Quest = [=[Fit For a Pirate||45|45|0|0|0]=],
+            Quest = [=[Fit For a Pirate||45|45|0|144|0]=],
             Start = "118126|630|32|57.70|63.50",
             End = "118126|630|32|57.70|63.50",
         },
         [45861] = {
-            Quest = [=[A Gift From the Six||45|45|0|0|0]=],
+            Quest = [=[A Gift From the Six||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -15889,7 +15508,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45862] = {
-            Quest = [=[A Gift From the Six||45|45|0|0|0]=],
+            Quest = [=[A Gift From the Six||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -15899,7 +15518,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45863] = {
-            Quest = [=[A Gift From the Six||45|45|0|0|0]=],
+            Quest = [=[A Gift From the Six||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -15909,7 +15528,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45864] = {
-            Quest = [=[A Gift From the Six||45|45|0|0|0]=],
+            Quest = [=[A Gift From the Six||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -15919,7 +15538,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45865] = {
-            Quest = [=[A Gift From the Six||45|45|0|0|0]=],
+            Quest = [=[A Gift From the Six||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -15929,7 +15548,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45866] = {
-            Quest = [=[A Gift From the Six||45|45|0|0|0]=],
+            Quest = [=[A Gift From the Six||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -15939,27 +15558,27 @@ function Nx.ModQuests:Data5()
             },
         },
         [45873] = {
-            Quest = [=[Champion: Eitrigg|1|45|45|0|0|0]=],
+            Quest = [=[Champion: Eitrigg|1|45|45|0|180|0]=],
             Start = "117479|695|32|59.90|83.80",
             End = "117479|695|32|59.90|83.80",
         },
         [45876] = {
-            Quest = [=[Champion: Lord Darius Crowley|2|45|45|0|0|0]=],
+            Quest = [=[Champion: Lord Darius Crowley|2|45|45|0|180|0]=],
             Start = "117480|695|32|59.90|83.80",
             End = "117480|695|32|59.90|83.80",
         },
         [45883] = {
-            Quest = [=[The Firelord's Offense||45|45|45769|0|0]=],
+            Quest = [=[The Firelord's Offense||45|45|45769|147|0]=],
             Start = "117715|646|32|60.40|51.60",
             End = "117715|646|32|60.40|51.60",
         },
         [45890] = {
-            Quest = [=[Ancestors and Enemies||45|45|46259|0|0]=],
+            Quest = [=[Ancestors and Enemies||45|45|46259|126|0]=],
             Start = "109102|24|32|59.10|32.60",
             End = "109102|24|32|59.10|32.60",
         },
         [45902] = {
-            Quest = [=[The Imp Mother's Gift||45|45|0|0|0]=],
+            Quest = [=[The Imp Mother's Gift||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -15969,7 +15588,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45904] = {
-            Quest = [=[The God-Queen's Gift||45|45|0|0|0]=],
+            Quest = [=[The God-Queen's Gift||45|45|0|54|0]=],
             Start = "90417|627|32|28.80|48.40",
             End = "90417|627|32|28.80|48.40",
             Objectives = {
@@ -15979,7 +15598,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45905] = {
-            Quest = [=[Kruul's Gift||45|45|0|0|0]=],
+            Quest = [=[Kruul's Gift||45|45|0|54|0]=],
             Start = "90431|627|32|28.50|49.50",
             End = "90431|627|32|28.50|49.50",
             Objectives = {
@@ -15989,7 +15608,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45906] = {
-            Quest = [=[Jarod's Gift||45|45|0|0|0]=],
+            Quest = [=[Jarod's Gift||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -15999,7 +15618,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45908] = {
-            Quest = [=[Xylem's Gift||45|45|0|0|0]=],
+            Quest = [=[Xylem's Gift||45|45|0|54|0]=],
             Start = "105081|627|32|23.00|40.60",
             End = "105081|627|32|23.00|40.60",
             Objectives = {
@@ -16009,7 +15628,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45909] = {
-            Quest = [=[Navarrogg's Gift||45|45|0|0|0]=],
+            Quest = [=[Navarrogg's Gift||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -16019,7 +15638,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45910] = {
-            Quest = [=[Raest's Gift|2|45|45|0|0|0]=],
+            Quest = [=[Raest's Gift|2|45|45|0|54|0]=],
             Start = "5022|625|32|28.80|48.20",
             End = "5022|625|32|28.80|48.20",
             Objectives = {
@@ -16029,7 +15648,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45915] = {
-            Quest = [=[The Folly of Levia Laurance||45|45|0|0|0]=],
+            Quest = [=[The Folly of Levia Laurance||45|45|0|54|0]=],
             Objectives = {
                 [1] = {
                     "Ask about Levia at the Scribe's Sacellum|627|35|63.06|58.78|0|0",
@@ -16046,7 +15665,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45916] = {
-            Quest = [=[The Acolyte Imperiled||45|45|0|0|0]=],
+            Quest = [=[The Acolyte Imperiled||45|45|0|54|0]=],
             Start = "116714|629|32|52.70|59.20",
             End = "5087|625|32|57.40|73.00",
             Objectives = {
@@ -16059,7 +15678,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45917] = {
-            Quest = [=[Following the Scent||45|45|0|0|0]=],
+            Quest = [=[Following the Scent||45|45|0|54|0]=],
             Start = "116714|629|32|57.90|72.60",
             End = "5475|630|32|25.60|57.60",
             Objectives = {
@@ -16072,7 +15691,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [45971] = {
-            Quest = [=[Infernal Phenomena||45|45|0|0|0]=],
+            Quest = [=[Infernal Phenomena||45|45|0|147|0]=],
             Start = "117715|646|32|60.40|51.60",
             End = "117715|646|32|60.40|51.60",
             Objectives = {
@@ -16087,66 +15706,33 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [45974] = {
-            Quest = [=[An Urgent Warning||45|45|45975|0|0]=],
-            Start = "5474|23|32|75.80|50.00",
-            End = "3149|23|32|76.60|50.20",
-        },
         [45975] = {
             Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
             Start = "3149|23|32|76.60|50.20",
             End = "3149|23|32|76.60|50.20",
-        },
-        [45986] = {
-            Quest = [=[An Urgent Warning||45|45|45987|0|0]=],
-            Start = "118406|695|32|61.20|27.60",
-            End = "4978|695|32|59.40|13.60",
         },
         [45987] = {
             Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
             Start = "100635|695|32|59.70|13.40",
             End = "100635|695|32|59.70|13.40",
         },
-        [45989] = {
-            Quest = [=[An Urgent Warning||45|45|45990|0|0]=],
-            Start = "118423|717|32|58.60|37.60",
-            End = "5164|717|32|66.60|46.00",
-        },
         [45990] = {
             Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
             Start = "106199|717|32|66.60|46.60",
             End = "5164|717|32|66.60|46.00",
         },
-        [45991] = {
-            Quest = [=[An Urgent Warning||45|45|45992|0|0]=],
-            Start = "118424|626|32|44.80|39.80",
-            End = "5098|625|32|42.20|77.00",
-        },
         [45992] = {
-            Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
+            Quest = [=[Investigate the Broken Shore||45|45|0|144|0]=],
             Start = "101513|626|32|42.20|77.00",
             End = "101513|626|32|42.20|77.00",
         },
-        [45993] = {
-            Quest = [=[An Urgent Warning||45|45|0|0|0]=],
-        },
         [45994] = {
-            Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
-        },
-        [45995] = {
-            Quest = [=[An Urgent Warning||45|45|45996|0|0]=],
-            Start = "118427|726|32|31.00|51.20",
-            End = "5138|725|32|33.00|60.00",
+            Quest = [=[Investigate the Broken Shore||45|45|0|72|0]=],
         },
         [45996] = {
             Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
             Start = "96746|726|32|33.00|60.00",
             End = "96746|726|32|33.00|60.00",
-        },
-        [45997] = {
-            Quest = [=[An Urgent Warning||45|45|45998|0|0]=],
-            Start = "118428|734|32|80.90|63.10",
-            End = "118428|734|32|80.90|63.10",
         },
         [45998] = {
             Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
@@ -16154,7 +15740,7 @@ function Nx.ModQuests:Data5()
             End = "108515|734|32|80.90|63.10",
         },
         [46000] = {
-            Quest = [=[Arming Dalaran||45|45|46290|0|0]=],
+            Quest = [=[Arming Dalaran||45|45|46290|110|0]=],
             Start = "119001|646|32|49.20|18.60",
             End = "119001|646|32|49.20|18.60",
             Objectives = {
@@ -16173,54 +15759,29 @@ function Nx.ModQuests:Data5()
             },
         },
         [46020] = {
-            Quest = [=[Crystal Containment||45|45|0|0|0]=],
+            Quest = [=[Crystal Containment||45|45|0|179|0]=],
             Start = "115863|646|32|78.10|39.70",
             End = "4091|717|32|56.60|34.20",
         },
-        [46022] = {
-            Quest = [=[An Urgent Warning||45|45|46023|0|0]=],
-            Start = "118429|739|32|49.00|45.20",
-            End = "5108|739|32|43.00|46.80",
-        },
         [46023] = {
-            Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
+            Quest = [=[Investigate the Broken Shore||45|45|0|96|0]=],
             Start = "103023|739|32|43.00|46.80",
             End = "5108|739|32|43.00|46.80",
         },
-        [46024] = {
-            Quest = [=[An Urgent Warning||45|45|46025|0|0]=],
-            Start = "118430|709|32|51.20|58.80",
-            End = "5428|709|32|52.80|59.60",
-        },
         [46025] = {
-            Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
+            Quest = [=[Investigate the Broken Shore||45|45|0|117|0]=],
             Start = "99179|709|32|52.80|59.60",
             End = "99179|709|32|52.80|59.60",
-        },
-        [46026] = {
-            Quest = [=[An Urgent Warning||45|45|0|0|0]=],
-            Start = "5465|747|32|47.00|47.80",
-            End = "2605|747|32|52.80|51.40",
         },
         [46027] = {
             Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
             Start = "2605|747|32|52.80|51.40",
             End = "2605|747|32|52.80|51.40",
         },
-        [46028] = {
-            Quest = [=[An Urgent Warning||45|45|0|0|0]=],
-            Start = "5464|702|32|50.40|52.20",
-            End = "2726|702|32|51.20|46.60",
-        },
         [46029] = {
             Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
             Start = "2726|702|32|51.20|46.60",
             End = "2726|702|32|51.20|46.60",
-        },
-        [46030] = {
-            Quest = [=[An Urgent Warning||45|45|46031|0|0]=],
-            Start = "118433|648|32|56.00|30.70",
-            End = "118433|648|32|56.00|30.70",
         },
         [46031] = {
             Quest = [=[Investigate the Broken Shore||45|45|0|0|0]=],
@@ -16228,12 +15789,12 @@ function Nx.ModQuests:Data5()
             End = "93568|648|32|49.70|51.30",
         },
         [46034] = {
-            Quest = [=[Champion: Aelthalyste||45|45|0|0|0]=],
+            Quest = [=[Champion: Aelthalyste||45|45|0|133|0]=],
             Start = "120842|702|32|21.90|42.90",
             End = "3103|702|32|21.60|42.00",
         },
         [46035] = {
-            Quest = [=[End of the Risen Threat||45|45|45906|0|0]=],
+            Quest = [=[End of the Risen Threat||45|45|45906|54|0]=],
             Start = "5456|676|32|45.60|62.20",
             End = "1402|625|32|28.80|48.80",
             Objectives = {
@@ -16243,52 +15804,52 @@ function Nx.ModQuests:Data5()
             },
         },
         [46043] = {
-            Quest = [=[Champion: Aethas Sunreaver||45|45|0|0|0]=],
+            Quest = [=[Champion: Aethas Sunreaver||45|45|0|110|0]=],
             Start = "117497|735|32|72.20|63.00",
             End = "1401|734|32|72.40|61.40",
         },
         [46044] = {
-            Quest = [=[Champion: Thisalee Crow||45|45|0|0|0]=],
+            Quest = [=[Champion: Thisalee Crow||45|45|0|76|0]=],
             Start = "106299|747|32|44.40|51.50",
             End = "2575|747|32|44.60|51.60",
         },
         [46045] = {
-            Quest = [=[Champion: Nerus Moonfang||45|45|0|0|0]=],
+            Quest = [=[Champion: Nerus Moonfang||45|45|0|126|0]=],
             Start = "119545|24|32|59.10|32.20",
             End = "5463|23|32|77.60|46.00",
         },
         [46047] = {
-            Quest = [=[Champion: Kanrethad Ebonlocke||45|45|0|0|0]=],
+            Quest = [=[Champion: Kanrethad Ebonlocke||45|45|0|179|0]=],
             Start = "118927|717|32|55.80|34.40",
             End = "118927|717|32|55.80|34.40",
         },
         [46048] = {
-            Quest = [=[Champion: Nighthuntress Syrenne||45|45|0|0|0]=],
+            Quest = [=[Champion: Nighthuntress Syrenne||45|45|0|96|0]=],
             Start = "117246|646|32|44.80|61.10",
             End = "5454|680|32|57.40|44.80",
         },
         [46050] = {
-            Quest = [=[Champion: Minerva Ravensorrow||45|45|0|0|0]=],
+            Quest = [=[Champion: Minerva Ravensorrow||45|45|0|67|0]=],
             Start = "95900|647|32|25.60|34.20",
             End = "5461|676|32|97.40|56.40",
         },
         [46057] = {
-            Quest = [=[Champion: Magatha Grimtotem||45|45|0|0|0]=],
+            Quest = [=[Champion: Magatha Grimtotem||45|45|0|147|0]=],
             Start = "120245|726|32|34.20|30.60",
             End = "3332|725|32|34.20|30.60",
         },
         [46058] = {
-            Quest = [=[Champion: Lilian Voss|1|45|45|0|0|0]=],
+            Quest = [=[Champion: Lilian Voss|1|45|45|0|147|0]=],
             Start = "98099|626|32|42.20|77.00",
             End = "98099|626|32|42.20|77.00",
         },
         [46059] = {
-            Quest = [=[Champion: Tess Greymane|2|45|45|0|0|0]=],
+            Quest = [=[Champion: Tess Greymane|2|45|45|0|147|0]=],
             Start = "94138|626|32|42.30|75.90",
             End = "94138|626|32|42.30|75.90",
         },
         [46060] = {
-            Quest = [=[Salvation||45|45|0|0|0]=],
+            Quest = [=[Salvation||45|45|0|96|0]=],
             Start = "119097|646|32|50.90|30.70",
             End = "119097|646|32|50.90|30.70",
             Objectives = {
@@ -16298,7 +15859,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46065] = {
-            Quest = [=[An Impossible Foe||45|45|45902|0|0]=],
+            Quest = [=[An Impossible Foe||45|45|45902|54|0]=],
             Start = "5456|676|32|45.60|62.20",
             End = "1402|625|32|28.80|48.80",
             Objectives = {
@@ -16310,12 +15871,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46069] = {
-            Quest = [=[Worthy of the Title||45|45|46070|0|0]=],
+            Quest = [=[Worthy of the Title||45|45|46070|126|0]=],
             Start = "118376|646|32|43.80|63.00",
             End = "3067|23|32|76.80|50.80",
         },
         [46070] = {
-            Quest = [=[Preparations Underway||45|45|46071|0|0]=],
+            Quest = [=[Preparations Underway||45|45|46071|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90250|24|32|52.30|78.10",
             Objectives = {
@@ -16325,12 +15886,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46071] = {
-            Quest = [=[The Hammer of Dalaran||45|45|46083|0|0]=],
+            Quest = [=[The Hammer of Dalaran||45|45|46083|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90250|24|32|52.30|78.10",
         },
         [46074] = {
-            Quest = [=[Leather to Legendary||45|45|45770|0|0]=],
+            Quest = [=[Leather to Legendary||45|45|45770|126|0]=],
             Start = "92183|627|32|44.50|28.70",
             End = "3067|23|32|76.80|50.80",
             Objectives = {
@@ -16351,12 +15912,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46078] = {
-            Quest = [=[Holy: The Bradensbrook Investigation||45|45|46079|0|0]=],
+            Quest = [=[Holy: The Bradensbrook Investigation||45|45|46079|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
         },
         [46079] = {
-            Quest = [=[Aid on the Front Lines||45|45|46082|0|0]=],
+            Quest = [=[Aid on the Front Lines||45|45|46082|54|0]=],
             Start = "118752|641|32|42.30|58.90",
             End = "4933|641|32|42.20|59.00",
             Objectives = {
@@ -16366,7 +15927,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46080] = {
-            Quest = [=[Quieting the Spirits||45|45|46082|0|0]=],
+            Quest = [=[Quieting the Spirits||45|45|46082|54|0]=],
             Start = "118947|641|32|39.10|58.10",
             Objectives = {
                 [1] = {
@@ -16386,7 +15947,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46081] = {
-            Quest = [=[Leather to Legendary||45|45|45770|0|0]=],
+            Quest = [=[Leather to Legendary||45|45|45770|124|0]=],
             Objectives = {
                 [1] = {
                     "nil|625|35|44.16|27.36|9.62|9.62",
@@ -16507,12 +16068,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46082] = {
-            Quest = [=[Shadowsong's Return||45|45|0|0|0]=],
+            Quest = [=[Shadowsong's Return||45|45|0|54|0]=],
             Start = "118752|641|32|42.30|58.90",
             End = "2472|641|32|39.00|58.00",
         },
         [46083] = {
-            Quest = [=[A Few Things First||45|45|46074|0|0]=],
+            Quest = [=[A Few Things First||45|45|46074|126|0]=],
             Start = "92183|627|32|45.00|29.60",
             End = "4922|625|32|44.40|28.80",
             Objectives = {
@@ -16621,7 +16182,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46089] = {
-            Quest = [=[Hiding In Plain Sight|1|45|45|0|0|0]=],
+            Quest = [=[Hiding In Plain Sight|1|45|45|0|144|0]=],
             Start = "98099|626|32|20.00|21.40",
             End = "98099|626|32|20.00|21.40",
             Objectives = {
@@ -16722,12 +16283,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46103] = {
-            Quest = [=[Dread Infiltrators||45|45|0|0|0]=],
+            Quest = [=[Dread Infiltrators||45|45|0|144|0]=],
             Start = "119259|646|32|45.00|64.00",
             End = "4814|625|32|20.00|21.40",
         },
         [46106] = {
-            Quest = [=[Cutting off the Heads||45|45|46107|0|0]=],
+            Quest = [=[Cutting off the Heads||45|45|46107|54|0]=],
             Start = "118947|641|32|39.10|58.10",
             Objectives = {
                 [1] = {
@@ -16749,7 +16310,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [46107] = {
-            Quest = [=[Source of the Corruption||45|45|0|0|0]=],
+            Quest = [=[Source of the Corruption||45|45|0|54|0]=],
+            Start = "118954|641|32|56.70|54.40",
             Objectives = {
                 [1] = {
                     "nil|641|35|38.40|50.40|9.62|9.62",
@@ -16759,12 +16321,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46119] = {
-            Quest = [=[Boon of the Builder||45|45|0|0|0]=],
+            Quest = [=[Boon of the Builder||45|45|0|10|0]=],
             Start = "93539|627|32|38.60|25.00",
             End = "93539|627|32|38.60|25.00",
         },
         [46127] = {
-            Quest = [=[Thwarting the Twins||45|45|45910|0|0]=],
+            Quest = [=[Thwarting the Twins||45|45|45910|54|0]=],
             Start = "5456|676|32|45.60|62.20",
             End = "5022|625|32|28.80|48.20",
             Objectives = {
@@ -16774,65 +16336,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [46128] = {
-            Quest = [=[Time for a Recharge||45|45|0|0|0]=],
+            Quest = [=[Time for a Recharge||45|45|0|10|0]=],
             Start = "93539|627|32|38.60|25.00",
             End = "93539|627|32|38.60|25.00",
         },
-        [46134] = {
-            Quest = [=[Gemcutter Needed||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Cut an orange gem|627|35|65.61|60.00|0|0",
-                },
-            },
-        },
-        [46135] = {
-            Quest = [=[Gemcutter Needed||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Cut a red gem|627|35|65.61|60.00|0|0",
-                },
-            },
-        },
-        [46136] = {
-            Quest = [=[Gemcutter Needed||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Cut a yellow gem|627|35|65.61|60.00|0|0",
-                },
-            },
-        },
-        [46137] = {
-            Quest = [=[Gemcutter Needed||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Cut a green gem|627|35|65.61|60.00|0|0",
-                },
-            },
-        },
-        [46138] = {
-            Quest = [=[Gemcutter Needed||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Cut a blue gem|627|35|65.61|60.00|0|0",
-                },
-            },
-        },
-        [46139] = {
-            Quest = [=[Gemcutter Needed||45|45|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Cut a purple gem|627|35|65.61|60.00|0|0",
-                },
-            },
-        },
         [46145] = {
-            Quest = [=[Sterile Surroundings||45|45|0|0|0]=],
+            Quest = [=[Sterile Surroundings||45|45|0|133|0]=],
             Start = "118528|646|32|33.60|49.70",
             End = "118528|646|32|33.60|49.70",
         },
         [46159] = {
-            Quest = [=[An Urgent Message||45|45|0|0|0]=],
+            Quest = [=[An Urgent Message||45|45|0|72|0]=],
             Objectives = {
                 [1] = {
                     "Communication received|720|35|33.09|40.94|0|0",
@@ -16840,12 +16354,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46173] = {
-            Quest = [=[Tactical Planning||45|45|44849|0|0]=],
+            Quest = [=[Tactical Planning||45|45|44849|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
         },
         [46176] = {
-            Quest = [=[The Archmage Accosted||45|45|0|0|0]=],
+            Quest = [=[The Archmage Accosted||45|45|0|54|0]=],
             Objectives = {
                 [1] = {
                     "Credit - Xylem Runs|76|32|62.11|74.79|0|0",
@@ -16859,12 +16373,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46177] = {
-            Quest = [=[A Portal Away||45|45|0|0|0]=],
+            Quest = [=[A Portal Away||45|45|0|54|0]=],
             Start = "116048|76|32|25.20|37.90",
             End = "5131|625|32|29.00|49.60",
         },
         [46178] = {
-            Quest = [=[Hiding In Plain Sight|2|45|45|0|0|0]=],
+            Quest = [=[Hiding In Plain Sight|2|45|45|0|144|0]=],
             Start = "98099|626|32|20.00|21.40",
             End = "98099|626|32|20.00|21.40",
             Objectives = {
@@ -16951,7 +16465,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [46200] = {
-            Quest = [=[The Matter Resolved... For Now...||45|45|45864|0|0]=],
+            Quest = [=[The Matter Resolved... For Now...||45|45|45864|54|0]=],
+            Start = "118954|641|32|56.70|54.40",
             End = "1402|625|32|28.80|48.80",
         },
         [46206] = {
@@ -16985,7 +16500,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46207] = {
-            Quest = [=[The Trial of Rage||45|45|0|0|0]=],
+            Quest = [=[The Trial of Rage||45|45|0|180|0]=],
             Start = "96469|695|32|58.30|84.60",
             End = "96469|695|32|58.30|84.60",
             Objectives = {
@@ -17000,7 +16515,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46208] = {
-            Quest = [=[A Godly Invitation||45|45|46207|0|0]=],
+            Quest = [=[A Godly Invitation||45|45|46207|180|0]=],
             Start = "119527|646|32|43.60|63.10",
             End = "4976|695|32|58.40|82.80",
         },
@@ -17021,12 +16536,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46235] = {
-            Quest = [=[Secured Surroundings||45|45|0|0|0]=],
+            Quest = [=[Secured Surroundings||45|45|0|96|0]=],
             Start = "119097|646|32|50.90|30.70",
             End = "119097|646|32|50.90|30.70",
         },
         [46237] = {
-            Quest = [=[Bloodbringer's Missive||45|45|0|0|0]=],
+            Quest = [=[Bloodbringer's Missive||45|45|0|124|0]=],
             Start = "117622|646|32|43.90|63.20",
             End = "5452|717|32|35.60|38.40",
             Objectives = {
@@ -17036,7 +16551,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46238] = {
-            Quest = [=[If You Build It||45|45|0|0|0]=],
+            Quest = [=[If You Build It||45|45|0|124|0]=],
             Start = "119166|717|32|35.30|38.50",
             End = "119166|717|32|35.30|38.50",
             Objectives = {
@@ -17160,7 +16675,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46239] = {
-            Quest = [=[Fel to the Core||45|45|0|0|0]=],
+            Quest = [=[Fel to the Core||45|45|0|124|0]=],
             Start = "119166|717|32|35.30|38.50",
             End = "119166|717|32|35.30|38.50",
             Objectives = {
@@ -17170,7 +16685,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46240] = {
-            Quest = [=[Give Me Fuel, Give Me Fire||45|45|0|0|0]=],
+            Quest = [=[Give Me Fuel, Give Me Fire||45|45|0|124|0]=],
             Start = "119166|717|32|35.30|38.50",
             End = "119166|717|32|35.30|38.50",
             Objectives = {
@@ -17185,7 +16700,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46241] = {
-            Quest = [=[The Minions of Hel'nurath||45|45|46242|0|0]=],
+            Quest = [=[The Minions of Hel'nurath||45|45|46242|124|0]=],
             Start = "119166|717|32|35.30|38.50",
             End = "119166|717|32|35.30|38.50",
             Objectives = {
@@ -17195,7 +16710,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46242] = {
-            Quest = [=[The Dreadlord's Calling||45|45|0|0|0]=],
+            Quest = [=[The Dreadlord's Calling||45|45|0|124|0]=],
             End = "5452|717|32|35.60|38.40",
             Objectives = {
                 [1] = {
@@ -17206,7 +16721,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46243] = {
-            Quest = [=[The Wrathsteed of Xoroth||45|45|0|0|0]=],
+            Quest = [=[The Wrathsteed of Xoroth||45|45|0|124|0]=],
             Start = "119166|717|32|35.60|38.40",
             Objectives = {
                 [1] = {
@@ -17220,47 +16735,47 @@ function Nx.ModQuests:Data5()
             End = "116302|646|32|44.60|63.20",
         },
         [46245] = {
-            Quest = [=[Begin Construction||45|45|0|0|0]=],
+            Quest = [=[Begin Construction||45|45|0|104|0]=],
             Start = "120183|646|32|44.40|63.00",
             End = "120183|646|32|44.40|63.00",
         },
         [46246] = {
-            Quest = [=[Strike Them Down||45|45|0|0|0]=],
+            Quest = [=[Strike Them Down||45|45|0|104|0]=],
             Start = "116576|646|32|44.40|63.40",
             End = "116576|646|32|44.40|63.40",
         },
         [46247] = {
-            Quest = [=[Defending Broken Isles||45|45|0|0|0]=],
+            Quest = [=[Defending Broken Isles||45|45|0|104|0]=],
             Start = "116576|646|32|44.40|63.40",
             End = "116576|646|32|44.40|63.40",
         },
         [46248] = {
-            Quest = [=[Self-Fulfilling Prophecy||45|45|0|0|0]=],
+            Quest = [=[Self-Fulfilling Prophecy||45|45|0|104|0]=],
             Start = "120372|646|32|44.40|63.30",
             End = "619|676|32|44.60|63.20",
         },
         [46249] = {
-            Quest = [=[Championing Our Cause||45|45|0|0|0]=],
+            Quest = [=[Championing Our Cause||45|45|0|104|0]=],
             Start = "116302|646|32|44.60|63.20",
             End = "116302|646|32|44.60|63.20",
         },
         [46250] = {
-            Quest = [=[Take Out the Head...||45|45|0|0|0]=],
+            Quest = [=[Take Out the Head...||45|45|0|104|0]=],
             Start = "116576|646|32|44.40|63.50",
             End = "4938|676|32|44.40|63.40",
         },
         [46251] = {
-            Quest = [=[Shard Times||45|45|0|0|0]=],
+            Quest = [=[Shard Times||45|45|0|104|0]=],
             Start = "116302|646|32|44.60|63.20",
             End = "116302|646|32|44.60|63.20",
         },
         [46252] = {
-            Quest = [=[Intolerable Infestation||45|45|0|0|0]=],
+            Quest = [=[Intolerable Infestation||45|45|0|104|0]=],
             Start = "116576|646|32|44.40|63.40",
             End = "116576|646|32|44.40|63.40",
         },
         [46253] = {
-            Quest = [=[Pillars of Creation||45|45|0|0|0]=],
+            Quest = [=[Pillars of Creation||45|45|0|104|0]=],
             Start = "116302|646|32|44.60|63.10",
             End = "116302|646|32|44.60|63.10",
             Objectives = {
@@ -17276,7 +16791,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46258] = {
-            Quest = [=[The Calm After the Storm||45|45|0|0|0]=],
+            Quest = [=[The Calm After the Storm||45|45|0|147|0]=],
             Start = "106519|726|32|30.40|51.80",
             End = "106519|726|32|30.40|51.80",
             Objectives = {
@@ -17286,7 +16801,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46259] = {
-            Quest = [=[Darkbinder Dilemma||45|45|45145|0|0]=],
+            Quest = [=[Darkbinder Dilemma||45|45|45145|126|0]=],
             Start = "119209|641|32|66.80|53.40",
             End = "119209|641|32|66.80|53.40",
             Objectives = {
@@ -17299,22 +16814,22 @@ function Nx.ModQuests:Data5()
             },
         },
         [46260] = {
-            Quest = [=[Meld Into the Shadows|2|45|45|0|0|0]=],
+            Quest = [=[Meld Into the Shadows|2|45|45|0|144|0]=],
             Start = "117259|646|32|76.90|39.80",
             End = "117259|646|32|76.90|39.80",
         },
         [46266] = {
-            Quest = [=[Return of the Slayer||45|45|0|0|0]=],
+            Quest = [=[Return of the Slayer||45|45|0|72|0]=],
             Start = "117709|646|32|52.10|21.30",
             End = "117709|646|32|52.10|21.30",
         },
         [46267] = {
-            Quest = [=[Return of the Battlelord||45|45|0|0|0]=],
+            Quest = [=[Return of the Battlelord||45|45|0|180|0]=],
             Start = "116858|646|32|69.80|34.70",
             End = "116858|646|32|69.80|34.70",
         },
         [46268] = {
-            Quest = [=[A Found Memento|1|45|45|0|0|0]=],
+            Quest = [=[A Found Memento|1|45|45|0|159|0]=],
             Start = "-268478|646|32|53.50|80.50",
             End = "3697|84|32|85.60|31.80",
             Objectives = {
@@ -17324,17 +16839,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [46272] = {
-            Quest = [=[Summons to the Keep|1|45|45|46274|0|0]=],
+            Quest = [=[Summons to the Keep|1|45|45|46274|159|0]=],
             Start = "120281|646|32|41.60|59.60",
             End = "2811|84|32|85.80|32.00",
         },
         [46274] = {
-            Quest = [=[Consoling the King|1|45|45|46275|0|0]=],
+            Quest = [=[Consoling the King|1|45|45|46275|159|0]=],
             Start = "119338|84|32|85.70|32.10",
             End = "3697|84|32|49.80|45.00",
         },
         [46275] = {
-            Quest = [=[A Kingdom's Heart|1|45|45|46282|0|0]=],
+            Quest = [=[A Kingdom's Heart|1|45|45|46282|159|0]=],
             Start = "119357|84|32|49.80|45.20",
             End = "3697|84|32|86.20|35.00",
             Objectives = {
@@ -17353,7 +16868,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46282] = {
-            Quest = [=[The King's Path|1|45|45|0|0|0]=],
+            Quest = [=[The King's Path|1|45|45|0|159|0]=],
             Start = "121237|646|32|58.20|26.60",
             End = "3697|676|32|60.40|25.00",
             Objectives = {
@@ -17363,17 +16878,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [46286] = {
-            Quest = [=[Legionfall Supplies||45|45|0|0|0]=],
+            Quest = [=[Legionfall Supplies||45|45|0|104|0]=],
             Start = "120183|646|32|44.40|63.00",
             End = "120183|646|32|44.40|63.00",
         },
         [46290] = {
-            Quest = [=[Return of the Archmage||45|45|0|0|0]=],
+            Quest = [=[Return of the Archmage||45|45|0|110|0]=],
             Start = "118242|627|32|27.30|51.50",
             End = "5063|734|32|72.40|61.00",
         },
         [46291] = {
-            Quest = [=[The Deadmines Strike Back||45|45|0|0|0]=],
+            Quest = [=[The Deadmines Strike Back||45|45|0|58|0]=],
             Start = "119390|52|32|41.60|71.20",
             End = "119390|52|32|41.60|71.20",
             Objectives = {
@@ -17392,7 +16907,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46292] = {
-            Quest = [=[Pet Battle Challenge: Deadmines||45|45|0|0|0]=],
+            Quest = [=[Pet Battle Challenge: Deadmines||45|45|0|58|0]=],
             Start = "119390|52|32|41.60|71.20",
             End = "119390|52|32|41.60|71.20",
             Objectives = {
@@ -17406,7 +16921,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46293] = {
-            Quest = [=[Deadmines, Part Three?||45|45|46291|0|0]=],
+            Quest = [=[Deadmines, Part Three?||45|45|46291|58|0]=],
             Start = "96479|627|32|58.20|39.40",
             End = "5448|52|32|41.40|71.20",
         },
@@ -17438,7 +16953,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46305] = {
-            Quest = [=[Thorim's Flame||45|45|44787|0|0]=],
+            Quest = [=[Thorim's Flame||45|45|44787|67|0]=],
             Start = "116737|634|32|51.30|84.30",
             End = "116737|634|32|51.30|84.30",
             Objectives = {
@@ -17448,7 +16963,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46314] = {
-            Quest = [=[Vengeance: Seeking Kor'vas||45|45|45413|0|0]=],
+            Quest = [=[Vengeance: Seeking Kor'vas||45|45|45413|54|0]=],
             Start = "90431|627|32|22.50|40.60",
             End = "4796|100|32|85.20|50.20",
             Objectives = {
@@ -17458,17 +16973,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [46316] = {
-            Quest = [=[Champion: Kanrethad Ebonlocke||45|45|0|0|0]=],
+            Quest = [=[Champion: Kanrethad Ebonlocke||45|45|0|179|0]=],
             Start = "118927|717|32|55.80|34.40",
             End = "118927|717|32|55.80|34.40",
         },
         [46317] = {
-            Quest = [=[Talon's Call||45|45|46318|0|0]=],
+            Quest = [=[Talon's Call||45|45|46318|76|0]=],
             Start = "118105|646|32|43.60|63.60",
             End = "2575|747|32|44.60|51.60",
         },
         [46318] = {
-            Quest = [=[Defense of Aviana||45|45|46319|0|0]=],
+            Quest = [=[Defense of Aviana||45|45|46319|76|0]=],
             Start = "106299|747|32|44.60|51.40",
             End = "106299|747|32|44.60|51.40",
             Objectives = {
@@ -17481,7 +16996,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46319] = {
-            Quest = [=[You Can't Take the Sky from Me||45|45|0|0|0]=],
+            Quest = [=[You Can't Take the Sky from Me||45|45|0|76|0]=],
             Start = "106299|747|32|31.10|4.20",
             End = "5444|747|32|30.00|4.20",
             Objectives = {
@@ -17493,17 +17008,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [46320] = {
-            Quest = [=[Hope For a Cure||45|45|45442|0|0]=],
+            Quest = [=[Hope For a Cure||45|45|45442|117|0]=],
             Start = "117305|646|32|53.60|53.40",
             End = "5443|709|32|50.60|57.80",
         },
         [46322] = {
-            Quest = [=[The Pirate's Bay|2|45|45|44758|0|0]=],
+            Quest = [=[The Pirate's Bay|2|45|45|44758|144|0]=],
             Start = "101513|626|32|41.30|78.00",
             End = "101513|626|32|41.30|78.00",
         },
         [46323] = {
-            Quest = [=[What's the Cache?|2|45|45|0|0|0]=],
+            Quest = [=[What's the Cache?|2|45|45|0|144|0]=],
             Start = "119822|630|32|57.70|63.50",
             End = "119822|630|32|57.70|63.50",
             Objectives = {
@@ -17513,7 +17028,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46324] = {
-            Quest = [=[False Orders|2|45|45|0|0|0]=],
+            Quest = [=[False Orders|2|45|45|0|144|0]=],
             Start = "119822|630|32|57.70|63.50",
             End = "119822|630|32|57.70|63.50",
             Objectives = {
@@ -17526,21 +17041,21 @@ function Nx.ModQuests:Data5()
             },
         },
         [46326] = {
-            Quest = [=[Jorach's Calling|2|45|45|0|0|0]=],
+            Quest = [=[Jorach's Calling|2|45|45|0|144|0]=],
             Start = "119822|630|32|57.60|63.40",
             End = "119822|630|32|57.60|63.40",
         },
         [46327] = {
-            Quest = [=[Bargaining with Shadows||45|45|0|0|0]=],
+            Quest = [=[Bargaining with Shadows||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
         },
         [46333] = {
-            Quest = [=[Livin' on the Ledge||45|45|0|0|0]=],
+            Quest = [=[Livin' on the Ledge||45|45|0|72|0]=],
             Start = "118306|646|32|44.00|62.70",
         },
         [46334] = {
-            Quest = [=[To Fel and Back||45|45|0|0|0]=],
+            Quest = [=[To Fel and Back||45|45|0|72|0]=],
             Start = "108784|720|32|60.10|50.80",
             Objectives = {
                 [1] = {
@@ -17555,7 +17070,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46335] = {
-            Quest = [=[The Vault of the Tirisgarde||45|45|46338|0|0]=],
+            Quest = [=[The Vault of the Tirisgarde||45|45|46338|110|0]=],
             Start = "108247|735|32|56.20|37.90",
             End = "5131|734|32|56.40|38.60",
             Objectives = {
@@ -17577,11 +17092,11 @@ function Nx.ModQuests:Data5()
             },
         },
         [46336] = {
-            Quest = [=[A Golden Ticket||45|45|46337|0|0]=],
+            Quest = [=[A Golden Ticket||45|45|46337|96|0]=],
             Start = "117810|646|32|43.80|63.20",
         },
         [46337] = {
-            Quest = [=[Night of the Wilds||45|45|0|0|0]=],
+            Quest = [=[Night of the Wilds||45|45|0|96|0]=],
             Start = "119943|739|32|42.90|45.70",
             Objectives = {
                 [1] = {
@@ -17606,7 +17121,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46338] = {
-            Quest = [=[A Creative Solution||45|45|45207|0|0]=],
+            Quest = [=[A Creative Solution||45|45|45207|110|0]=],
             Start = "108247|735|32|56.20|37.80",
             End = "1401|625|32|27.20|51.60",
             Objectives = {
@@ -17616,7 +17131,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46339] = {
-            Quest = [=[Keymaster Orlis||45|45|46345|0|0]=],
+            Quest = [=[Keymaster Orlis||45|45|46345|110|0]=],
             Start = "121357|680|32|55.80|41.90",
             End = "121357|680|32|55.80|41.90",
             Objectives = {
@@ -17629,12 +17144,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46340] = {
-            Quest = [=[The Gates Are Closed||45|45|0|0|0]=],
+            Quest = [=[The Gates Are Closed||45|45|0|54|0]=],
             Start = "93628|634|32|65.00|68.00",
             End = "665|625|32|28.80|48.40",
         },
         [46341] = {
-            Quest = [=[The Tale of Ban-Lu||45|45|46342|0|0]=],
+            Quest = [=[The Tale of Ban-Lu||45|45|46342|117|0]=],
             Start = "120758|709|32|32.30|43.30",
             End = "120758|709|32|32.30|43.30",
             Objectives = {
@@ -17644,12 +17159,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46342] = {
-            Quest = [=[Return to the Broken Peak||45|45|46343|0|0]=],
+            Quest = [=[Return to the Broken Peak||45|45|46343|117|0]=],
             Start = "120758|709|32|32.30|43.30",
             End = "120758|709|32|32.30|43.30",
         },
         [46343] = {
-            Quest = [=[The Trail of Ban-Lu||45|45|0|0|0]=],
+            Quest = [=[The Trail of Ban-Lu||45|45|0|117|0]=],
             Start = "120722|379|32|47.30|41.70",
             End = "5436|379|32|36.60|48.20",
             Objectives = {
@@ -17668,7 +17183,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46344] = {
-            Quest = [=[Smelly's Luckydo||45|45|0|0|0]=],
+            Quest = [=[Smelly's Luckydo||45|45|0|117|0]=],
             Start = "120744|379|32|47.90|49.00",
             End = "5439|379|32|48.00|49.00",
             Objectives = {
@@ -17682,7 +17197,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46345] = {
-            Quest = [=[Into the Hornet's Nest||45|45|44768|0|0]=],
+            Quest = [=[Into the Hornet's Nest||45|45|44768|110|0]=],
             Start = "121358|680|32|54.50|39.10",
             End = "5433|680|32|49.00|37.00",
             Objectives = {
@@ -17692,12 +17207,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46346] = {
-            Quest = [=[The Shadow of Ban-Lu||45|45|46347|0|0]=],
+            Quest = [=[The Shadow of Ban-Lu||45|45|46347|117|0]=],
             Start = "120722|379|32|47.90|48.80",
             End = "5436|379|32|36.60|48.20",
         },
         [46347] = {
-            Quest = [=[Clean-up on Aisle Sha||45|45|46348|0|0]=],
+            Quest = [=[Clean-up on Aisle Sha||45|45|46348|117|0]=],
             Start = "120722|379|32|36.50|48.20",
             End = "5436|379|32|36.60|48.20",
             Objectives = {
@@ -17714,12 +17229,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46348] = {
-            Quest = [=[The River to Ban-Lu||45|45|46349|0|0]=],
+            Quest = [=[The River to Ban-Lu||45|45|46349|117|0]=],
             Start = "120722|379|32|36.50|48.30",
             End = "5437|379|32|74.20|88.80",
         },
         [46349] = {
-            Quest = [=[Lilies for Ryuli||45|45|0|0|0]=],
+            Quest = [=[Lilies for Ryuli||45|45|0|117|0]=],
             Start = "120726|379|32|74.40|88.70",
             End = "5437|379|32|74.20|88.80",
             Objectives = {
@@ -17735,7 +17250,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46350] = {
-            Quest = [=[The Trial of Ban-Lu||45|45|0|0|0]=],
+            Quest = [=[The Trial of Ban-Lu||45|45|0|117|0]=],
             Start = "120726|379|32|73.90|88.90",
             End = "5438|709|32|41.80|25.20",
             Objectives = {
@@ -17748,356 +17263,14 @@ function Nx.ModQuests:Data5()
             },
         },
         [46351] = {
-            Quest = [=[Keep it Secret, Keep it Safe||45|45|0|0|0]=],
+            Quest = [=[Keep it Secret, Keep it Safe||45|45|0|110|0]=],
             Start = "116321|691|32|47.10|23.50",
             End = "116321|691|32|47.10|23.50",
         },
-        [46352] = {
-            Quest = [=[Vindictive Combatant's MailArmor|2|45|0|0|0|0]=],
-        },
         [46353] = {
-            Quest = [=[Master Who?||45|45|46341|0|0]=],
+            Quest = [=[Master Who?||45|45|46341|117|0]=],
             Start = "118214|646|32|44.90|62.00",
             End = "5436|709|32|32.20|43.20",
-        },
-        [46354] = {
-            Quest = [=[Vindictive Combatant's Mail Armor|1|45|0|0|0|0]=],
-        },
-        [46356] = {
-            Quest = [=[Vindictive Combatant's Dragonhide Armor|2|45|0|0|0|0]=],
-        },
-        [46357] = {
-            Quest = [=[Vindictive Combatant's Dragonhide Armor|1|45|0|0|0|0]=],
-        },
-        [46358] = {
-            Quest = [=[Vindictive Combatant's Dreadplate Armor|2|45|0|0|0|0]=],
-        },
-        [46359] = {
-            Quest = [=[Vindictive Combatant's Dreadplate Armor|1|45|0|0|0|0]=],
-        },
-        [46361] = {
-            Quest = [=[Vindictive Combatant's Ironskin Armor|2|45|0|0|0|0]=],
-        },
-        [46362] = {
-            Quest = [=[Vindictive Combatant's Ironskin Armor|1|45|0|0|0|0]=],
-        },
-        [46363] = {
-            Quest = [=[Vindictive Combatant's Leather Armor|2|45|0|0|0|0]=],
-        },
-        [46364] = {
-            Quest = [=[Vindictive Combatant's Leather Armor|1|45|0|0|0|0]=],
-        },
-        [46365] = {
-            Quest = [=[Vindictive Combatant's Plate Armor|1|45|0|0|0|0]=],
-        },
-        [46366] = {
-            Quest = [=[Vindictive Combatant's Plate Armor|2|45|0|0|0|0]=],
-        },
-        [46367] = {
-            Quest = [=[Vindictive Combatant's Ringmail Armor|2|45|0|0|0|0]=],
-        },
-        [46368] = {
-            Quest = [=[Vindictive Combatant's Ringmail Armor|1|45|0|0|0|0]=],
-        },
-        [46369] = {
-            Quest = [=[Vindictive Combatant's Cloth Armor|1|45|0|0|0|0]=],
-        },
-        [46370] = {
-            Quest = [=[Vindictive Combatant's Cloth Armor|2|45|0|0|0|0]=],
-        },
-        [46371] = {
-            Quest = [=[Vindictive Combatant's Scaled Armor|1|45|0|0|0|0]=],
-        },
-        [46372] = {
-            Quest = [=[Vindictive Combatant's Scaled Armor|2|45|0|0|0|0]=],
-        },
-        [46373] = {
-            Quest = [=[Vindictive Combatant's Silk Armor|1|45|0|0|0|0]=],
-        },
-        [46374] = {
-            Quest = [=[Vindictive Combatant's Silk Armor|2|45|0|0|0|0]=],
-        },
-        [46377] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Chain Armor|1|45|0|0|0|0]=],
-        },
-        [46378] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Chain Armor|2|45|0|0|0|0]=],
-        },
-        [46379] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Dragonhide Armor|1|45|0|0|0|0]=],
-        },
-        [46380] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Dragonhide Armor|2|45|0|0|0|0]=],
-        },
-        [46381] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Dreadplate Armor|1|45|0|0|0|0]=],
-        },
-        [46382] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Dreadplate Armor|2|45|0|0|0|0]=],
-        },
-        [46383] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Felweave Armor|2|45|0|0|0|0]=],
-        },
-        [46384] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Felweave Armor|1|45|0|0|0|0]=],
-        },
-        [46385] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Ironskin Armor|1|45|0|0|0|0]=],
-        },
-        [46386] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Ironskin Armor|2|45|0|0|0|0]=],
-        },
-        [46387] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Leather Armor|2|45|0|0|0|0]=],
-        },
-        [46388] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Leather Armor|1|45|0|0|0|0]=],
-        },
-        [46389] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Plate Armor|2|45|0|0|0|0]=],
-        },
-        [46390] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Plate Armor|1|45|0|0|0|0]=],
-        },
-        [46391] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Ringmail Armor|1|45|0|0|0|0]=],
-        },
-        [46392] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Ringmail Armor|2|45|0|0|0|0]=],
-        },
-        [46393] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Satin Armor|1|45|0|0|0|0]=],
-        },
-        [46394] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Satin Armor|2|45|0|0|0|0]=],
-        },
-        [46395] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Scaled Armor|1|45|0|0|0|0]=],
-        },
-        [46396] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Scaled Armor|2|45|0|0|0|0]=],
-        },
-        [46397] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Silk Armor|1|45|0|0|0|0]=],
-        },
-        [46398] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Silk Armor|2|45|0|0|0|0]=],
-        },
-        [46399] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Felskin Armor|2|45|0|0|0|0]=],
-        },
-        [46400] = {
-            Quest = [=[Legion Season 1 and 2 - Gladiator's Felskin Armor|1|45|0|0|0|0]=],
-        },
-        [46401] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Chain Armor|1|45|0|0|0|0]=],
-        },
-        [46402] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Chain Armor|2|45|0|0|0|0]=],
-        },
-        [46403] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Dragonhide Armor|1|45|0|0|0|0]=],
-        },
-        [46404] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Dragonhide Armor|2|45|0|0|0|0]=],
-        },
-        [46405] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Dreadplate Armor|1|45|0|0|0|0]=],
-        },
-        [46406] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Dreadplate Armor|2|45|0|0|0|0]=],
-        },
-        [46407] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Felweave Armor|2|45|0|0|0|0]=],
-        },
-        [46408] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Felweave Armor|1|45|0|0|0|0]=],
-        },
-        [46409] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Ironskin Armor|1|45|0|0|0|0]=],
-        },
-        [46410] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Ironskin Armor|2|45|0|0|0|0]=],
-        },
-        [46411] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Leather Armor|2|45|0|0|0|0]=],
-        },
-        [46412] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Leather Armor|1|45|0|0|0|0]=],
-        },
-        [46413] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Plate Armor|2|45|0|0|0|0]=],
-        },
-        [46414] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Plate Armor|1|45|0|0|0|0]=],
-        },
-        [46415] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Ringmail Armor|1|45|0|0|0|0]=],
-        },
-        [46416] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Ringmail Armor|2|45|0|0|0|0]=],
-        },
-        [46417] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Satin Armor|1|45|0|0|0|0]=],
-        },
-        [46418] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Satin Armor|2|45|0|0|0|0]=],
-        },
-        [46419] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Scaled Armor|1|45|0|0|0|0]=],
-        },
-        [46420] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Scaled Armor|2|45|0|0|0|0]=],
-        },
-        [46421] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Silk Armor|1|45|0|0|0|0]=],
-        },
-        [46422] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Silk Armor|2|45|0|0|0|0]=],
-        },
-        [46423] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Felskin Armor|2|45|0|0|0|0]=],
-        },
-        [46424] = {
-            Quest = [=[Elite - Legion Season 1 and 2 - Gladiator's Felskin Armor|1|45|0|0|0|0]=],
-        },
-        [46447] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Chain Armor|1|45|0|0|0|0]=],
-        },
-        [46448] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Chain Armor|2|45|0|0|0|0]=],
-        },
-        [46449] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Dragonhide Armor|1|45|0|0|0|0]=],
-        },
-        [46450] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Dragonhide Armor|2|45|0|0|0|0]=],
-        },
-        [46451] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Dreadplate Armor|1|45|0|0|0|0]=],
-        },
-        [46452] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Dreadplate Armor|2|45|0|0|0|0]=],
-        },
-        [46453] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Felweave Armor|2|45|0|0|0|0]=],
-        },
-        [46454] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Felweave Armor|1|45|0|0|0|0]=],
-        },
-        [46455] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Ironskin Armor|1|45|0|0|0|0]=],
-        },
-        [46456] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Ironskin Armor|2|45|0|0|0|0]=],
-        },
-        [46457] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Leather Armor|2|45|0|0|0|0]=],
-        },
-        [46458] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Leather Armor|1|45|0|0|0|0]=],
-        },
-        [46459] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Plate Armor|2|45|0|0|0|0]=],
-        },
-        [46460] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Plate Armor|1|45|0|0|0|0]=],
-        },
-        [46461] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Ringmail Armor|1|45|0|0|0|0]=],
-        },
-        [46462] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Ringmail Armor|2|45|0|0|0|0]=],
-        },
-        [46463] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Satin Armor|1|45|0|0|0|0]=],
-        },
-        [46464] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Satin Armor|2|45|0|0|0|0]=],
-        },
-        [46465] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Scaled Armor|1|45|0|0|0|0]=],
-        },
-        [46466] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Scaled Armor|2|45|0|0|0|0]=],
-        },
-        [46467] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Silk Armor|1|45|0|0|0|0]=],
-        },
-        [46468] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Silk Armor|2|45|0|0|0|0]=],
-        },
-        [46471] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Chain Armor|1|45|0|0|0|0]=],
-        },
-        [46472] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Chain Armor|2|45|0|0|0|0]=],
-        },
-        [46473] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Dragonhide Armor|1|45|0|0|0|0]=],
-        },
-        [46474] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Dragonhide Armor|2|45|0|0|0|0]=],
-        },
-        [46475] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Dreadplate Armor|1|45|0|0|0|0]=],
-        },
-        [46476] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Dreadplate Armor|2|45|0|0|0|0]=],
-        },
-        [46477] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Felweave Armor|2|45|0|0|0|0]=],
-        },
-        [46478] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Felweave Armor|1|45|0|0|0|0]=],
-        },
-        [46479] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Ironskin Armor|1|45|0|0|0|0]=],
-        },
-        [46480] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Ironskin Armor|2|45|0|0|0|0]=],
-        },
-        [46481] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Leather Armor|2|45|0|0|0|0]=],
-        },
-        [46482] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Leather Armor|1|45|0|0|0|0]=],
-        },
-        [46483] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Plate Armor|2|45|0|0|0|0]=],
-        },
-        [46484] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Plate Armor|1|45|0|0|0|0]=],
-        },
-        [46485] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Ringmail Armor|1|45|0|0|0|0]=],
-        },
-        [46486] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Ringmail Armor|2|45|0|0|0|0]=],
-        },
-        [46487] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Satin Armor|1|45|0|0|0|0]=],
-        },
-        [46488] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Satin Armor|2|45|0|0|0|0]=],
-        },
-        [46489] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Scaled Armor|1|45|0|0|0|0]=],
-        },
-        [46490] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Scaled Armor|2|45|0|0|0|0]=],
-        },
-        [46491] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Silk Armor|1|45|0|0|0|0]=],
-        },
-        [46492] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Silk Armor|2|45|0|0|0|0]=],
-        },
-        [46495] = {
-            Quest = [=[Vindictive Combatant's Felweave Armor|2|45|0|0|0|0]=],
-        },
-        [46496] = {
-            Quest = [=[Vindictive Combatant's Felweave Armor|1|45|0|0|0|0]=],
         },
         [46499] = {
             Quest = [=[Spiders, Huh?||45|45|0|0|0]=],
@@ -18194,12 +17367,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46674] = {
-            Quest = [=[The Preservation of Nature||45|45|0|0|0]=],
+            Quest = [=[The Preservation of Nature||45|45|0|76|0]=],
             Start = "101195|747|32|44.60|51.80",
             End = "2575|676|32|43.60|58.40",
         },
         [46675] = {
-            Quest = [=[To Track a Demon||45|45|46677|0|0]=],
+            Quest = [=[To Track a Demon||45|45|46677|76|0]=],
             Start = "120070|646|32|43.50|58.30",
             End = "120070|646|32|43.50|58.30",
             Objectives = {
@@ -18230,7 +17403,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46676] = {
-            Quest = [=[Nature's Touch||45|45|0|0|0]=],
+            Quest = [=[Nature's Touch||45|45|0|76|0]=],
             Start = "120070|646|32|43.50|58.30",
             End = "120070|646|32|43.50|58.30",
             Objectives = {
@@ -18247,7 +17420,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [46677] = {
-            Quest = [=[Prick of a Thistle||45|45|45425|0|0]=],
+            Quest = [=[Prick of a Thistle||45|45|45425|76|0]=],
+            Start = "118105|747|32|44.40|51.50",
             Objectives = {
                 [1] = {
                     "nil|676|35|32.64|30.24|9.62|9.62",
@@ -18258,7 +17432,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46678] = {
-            Quest = [=[The Legend of the Threads||45|45|0|0|0]=],
+            Quest = [=[The Legend of the Threads||45|45|0|21|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18268,7 +17442,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46679] = {
-            Quest = [=[The Thread of Shadow||45|45|46683|0|0]=],
+            Quest = [=[The Thread of Shadow||45|45|46683|21|0]=],
             Start = "120221|646|32|41.10|59.30",
             End = "120221|646|32|41.10|59.30",
             Objectives = {
@@ -18278,7 +17452,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46680] = {
-            Quest = [=[The Thread of Starlight||45|45|46683|0|0]=],
+            Quest = [=[The Thread of Starlight||45|45|46683|21|0]=],
             Start = "120221|646|32|41.10|59.30",
             End = "120221|646|32|41.10|59.30",
             Objectives = {
@@ -18288,7 +17462,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46681] = {
-            Quest = [=[The Thread of Souls||45|45|0|0|0]=],
+            Quest = [=[The Thread of Souls||45|45|0|21|0]=],
             Start = "120221|646|32|41.10|59.30",
             End = "120221|646|32|41.10|59.30",
             Objectives = {
@@ -18298,7 +17472,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46682] = {
-            Quest = [=[Drapings of the Ancients||45|45|46683|0|0]=],
+            Quest = [=[Drapings of the Ancients||45|45|46683|21|0]=],
             Start = "120221|646|32|41.10|59.30",
             End = "120221|646|32|41.10|59.30",
             Objectives = {
@@ -18308,7 +17482,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46683] = {
-            Quest = [=[Starweave and Shadowcloth||45|45|0|0|0]=],
+            Quest = [=[Starweave and Shadowcloth||45|45|0|21|0]=],
             Start = "120221|646|32|41.10|59.30",
             End = "120221|646|32|41.10|59.30",
             Objectives = {
@@ -18318,7 +17492,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46684] = {
-            Quest = [=[The Legend of the Elderhide||45|45|0|0|0]=],
+            Quest = [=[The Legend of the Elderhide||45|45|0|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18332,7 +17506,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46685] = {
-            Quest = [=[The Wisp and the Shadow||45|45|46689|0|0]=],
+            Quest = [=[The Wisp and the Shadow||45|45|46689|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18342,7 +17516,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46686] = {
-            Quest = [=[The Wisp and the Sea||45|45|46689|0|0]=],
+            Quest = [=[The Wisp and the Sea||45|45|46689|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18352,7 +17526,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46687] = {
-            Quest = [=[The Wisp and the Nightmare||45|45|46689|0|0]=],
+            Quest = [=[The Wisp and the Nightmare||45|45|46689|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18362,7 +17536,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46688] = {
-            Quest = [=[Leather of the Ancients||45|45|46689|0|0]=],
+            Quest = [=[Leather of the Ancients||45|45|46689|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18372,7 +17546,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46689] = {
-            Quest = [=[Wisp-Touched Elderhide||45|45|0|0|0]=],
+            Quest = [=[Wisp-Touched Elderhide||45|45|0|14|0]=],
             Start = "120221|646|32|41.10|59.30",
             End = "120221|646|32|41.10|59.30",
             Objectives = {
@@ -18382,7 +17556,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46690] = {
-            Quest = [=[The Legend of the Wardenscale||45|45|0|0|0]=],
+            Quest = [=[The Legend of the Wardenscale||45|45|0|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18392,7 +17566,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46691] = {
-            Quest = [=[The Owl and the Traitor||45|45|46695|0|0]=],
+            Quest = [=[The Owl and the Traitor||45|45|46695|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18402,7 +17576,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46692] = {
-            Quest = [=[The Owl and the Dreadlord||45|45|46695|0|0]=],
+            Quest = [=[The Owl and the Dreadlord||45|45|46695|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18412,7 +17586,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46693] = {
-            Quest = [=[The Owl and the Observer||45|45|46695|0|0]=],
+            Quest = [=[The Owl and the Observer||45|45|46695|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18422,7 +17596,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46694] = {
-            Quest = [=[Mail of the Ancients||45|45|46695|0|0]=],
+            Quest = [=[Mail of the Ancients||45|45|46695|14|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18432,7 +17606,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46695] = {
-            Quest = [=[Prime Wardenscale||45|45|0|0|0]=],
+            Quest = [=[Prime Wardenscale||45|45|0|14|0]=],
             Start = "120221|646|32|41.10|59.30",
             End = "120221|646|32|41.10|59.30",
             Objectives = {
@@ -18442,7 +17616,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46696] = {
-            Quest = [=[The Legend of the Four Hammers||45|45|0|0|0]=],
+            Quest = [=[The Legend of the Four Hammers||45|45|0|11|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18455,7 +17629,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46697] = {
-            Quest = [=[The Godfighter||45|45|46701|0|0]=],
+            Quest = [=[The Godfighter||45|45|46701|11|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18465,7 +17639,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46698] = {
-            Quest = [=[The Dragonhunter||45|45|46701|0|0]=],
+            Quest = [=[The Dragonhunter||45|45|46701|11|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18475,7 +17649,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46699] = {
-            Quest = [=[The Hellslayer||45|45|46701|0|0]=],
+            Quest = [=[The Hellslayer||45|45|46701|11|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18485,7 +17659,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46700] = {
-            Quest = [=[Armor of the Ancients||45|45|46701|0|0]=],
+            Quest = [=[Armor of the Ancients||45|45|46701|11|0]=],
             Start = "120221|646|32|41.20|59.40",
             End = "120221|646|32|41.20|59.40",
             Objectives = {
@@ -18495,7 +17669,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46701] = {
-            Quest = [=[Hammer of Forgotten Heroes||45|45|0|0|0]=],
+            Quest = [=[Hammer of Forgotten Heroes||45|45|0|11|0]=],
             Start = "120221|646|32|41.10|59.30",
             End = "120221|646|32|41.10|59.30",
             Objectives = {
@@ -18505,7 +17679,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46705] = {
-            Quest = [=[Retaliation||45|45|0|0|0]=],
+            Quest = [=[Retaliation||45|45|0|110|0]=],
             Start = "121357|680|32|55.80|41.90",
             End = "121357|680|32|55.80|41.90",
             Objectives = {
@@ -18522,12 +17696,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46719] = {
-            Quest = [=[Amal'thazad's Message||45|45|46720|0|0]=],
+            Quest = [=[Amal'thazad's Message||45|45|46720|67|0]=],
             Start = "117573|646|32|43.40|62.70",
             End = "5431|676|32|57.80|31.80",
         },
         [46720] = {
-            Quest = [=[Frozen Memories||45|45|46812|0|0]=],
+            Quest = [=[Frozen Memories||45|45|46812|67|0]=],
             Start = "93555|648|32|58.10|31.10",
             End = "93555|648|32|58.10|31.10",
             Objectives = {
@@ -18582,7 +17756,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46722] = {
-            Quest = [=[Nothing Up My Sleeve||45|45|0|0|0]=],
+            Quest = [=[Nothing Up My Sleeve||45|45|0|110|0]=],
             Start = "103092|734|32|81.50|60.30",
             End = "103092|734|32|81.50|60.30",
             Objectives = {
@@ -18592,7 +17766,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46723] = {
-            Quest = [=[Down the Rabbit Hole||45|45|0|0|0]=],
+            Quest = [=[Down the Rabbit Hole||45|45|0|110|0]=],
             Start = "103092|734|32|81.50|60.30",
             End = "103092|734|32|81.50|60.30",
             Objectives = {
@@ -18602,12 +17776,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46724] = {
-            Quest = [=[Champion: The Great Akazamzarak||45|45|0|0|0]=],
+            Quest = [=[Champion: The Great Akazamzarak||45|45|0|110|0]=],
             Start = "103092|734|32|81.50|60.30",
             End = "103092|734|32|81.50|60.30",
         },
         [46725] = {
-            Quest = [=[Power Outage||45|45|0|0|0]=],
+            Quest = [=[Power Outage||45|45|0|72|0]=],
             Start = "117709|646|32|52.10|21.30",
             End = "117709|646|32|52.10|21.30",
             Objectives = {
@@ -18617,7 +17791,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46730] = {
-            Quest = [=[Armies of Legionfall||45|45|46734|0|0]=],
+            Quest = [=[Armies of Legionfall||45|45|46734|104|0]=],
             Start = "120215|627|32|66.20|42.60",
             End = "665|625|32|69.20|43.40",
             Objectives = {
@@ -18643,7 +17817,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46734] = {
-            Quest = [=[Assault on Broken Shore||45|45|0|0|0]=],
+            Quest = [=[Assault on Broken Shore||45|45|0|104|0]=],
             Start = "120215|627|32|69.40|43.50",
             End = "665|676|32|44.60|63.20",
             Objectives = {
@@ -18655,29 +17829,8 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [46743] = {
-            Quest = [=[Supplies From Highmountain||45|45|0|0|0]=],
-            End = "5132|750|32|38.20|45.80",
-        },
-        [46745] = {
-            Quest = [=[Supplies From the Court||45|45|0|0|0]=],
-            End = "5134|630|32|46.80|41.40",
-        },
-        [46746] = {
-            Quest = [=[Supplies From the Valarjar||45|45|0|0|0]=],
-            End = "5135|634|32|60.20|51.20",
-        },
-        [46747] = {
-            Quest = [=[Supplies From the Dreamweavers||45|45|0|0|0]=],
-            End = "5147|641|32|54.60|73.20",
-        },
-        [46748] = {
-            Quest = [=[Supplies From the Nightfallen||45|45|0|0|0]=],
-            Start = "97140|680|32|36.58|46.91",
-            End = "5040|680|32|36.40|45.80",
-        },
         [46765] = {
-            Quest = [=[The Broken Shore: Investigating the Legion||45|45|47000|0|0]=],
+            Quest = [=[The Broken Shore: Investigating the Legion||45|45|47000|54|0]=],
             Start = "116302|646|32|44.60|63.20",
             End = "116302|646|32|44.60|63.20",
             Objectives = {
@@ -18752,7 +17905,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46769] = {
-            Quest = [=[Relieved of Their Valuables||45|45|0|0|0]=],
+            Quest = [=[Relieved of Their Valuables||45|45|0|104|0]=],
             Start = "116302|646|32|44.60|63.10",
             End = "116302|646|32|44.60|63.10",
             Objectives = {
@@ -18792,7 +17945,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46778] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "100635|695|32|59.70|13.40",
             End = "100635|695|32|59.70|13.40",
             Objectives = {
@@ -18805,7 +17958,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46779] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "98092|626|32|37.70|44.80",
             End = "98092|626|32|37.70|44.80",
             Objectives = {
@@ -18818,11 +17971,11 @@ function Nx.ModQuests:Data5()
             },
         },
         [46780] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "103732|721|32|54.00|46.70",
         },
         [46781] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "96746|726|32|33.00|60.00",
             End = "96746|726|32|33.00|60.00",
             Objectives = {
@@ -18834,7 +17987,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46782] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "108515|734|32|80.80|63.00",
             End = "108515|734|32|80.80|63.00",
             Objectives = {
@@ -18849,7 +18002,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46783] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "103023|739|32|42.90|46.90",
             End = "103023|739|32|42.90|46.90",
             Objectives = {
@@ -18861,7 +18014,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46784] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "106199|717|32|67.00|46.60",
             End = "5164|717|32|66.60|46.00",
             Objectives = {
@@ -18873,7 +18026,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46785] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "99179|709|32|52.80|59.60",
             End = "99179|709|32|52.80|59.60",
             Objectives = {
@@ -18883,7 +18036,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46786] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "98002|747|32|52.60|51.40",
             End = "98002|747|32|52.60|51.40",
             Objectives = {
@@ -18895,7 +18048,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46787] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Objectives = {
                 [1] = {
                     "nil|23|32|74.92|47.88|9.62|9.62",
@@ -18903,7 +18056,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46788] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "109776|702|32|51.30|47.80",
             End = "109776|702|32|51.30|47.80",
             Objectives = {
@@ -18917,7 +18070,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46789] = {
-            Quest = [=[Further Advancement||45|45|0|0|0]=],
+            Quest = [=[Further Advancement||45|45|0|124|0]=],
             Start = "93568|648|32|49.70|51.30",
             End = "93568|648|32|49.70|51.30",
             Objectives = {
@@ -18930,12 +18083,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46791] = {
-            Quest = [=[Carried On the Wind||45|45|46792|0|0]=],
+            Quest = [=[Carried On the Wind||45|45|46792|147|0]=],
             Start = "117888|646|32|44.60|61.60",
             End = "5426|725|32|28.40|45.00",
         },
         [46792] = {
-            Quest = [=[Gathering of the Storms||45|45|0|0|0]=],
+            Quest = [=[Gathering of the Storms||45|45|0|147|0]=],
             Start = "106521|726|32|28.40|45.00",
             End = "5426|725|32|28.40|45.00",
             Objectives = {
@@ -18985,21 +18138,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [46805] = {
-            Quest = [=[The Deceiver's Downfall||45|45|0|0|0]=],
+            Quest = [=[The Deceiver's Downfall||45|45|0|104|0]=],
             Start = "120372|646|32|44.60|63.20",
             End = "120372|646|32|44.60|63.20",
         },
-        [46810] = {
-            Quest = [=[To the Forge It Goes...|1|45|45|0|0|0]=],
-            End = "5422|625|32|33.60|73.40",
-            Objectives = {
-                [1] = {
-                    "Obliterate the Gladiator's Tattered Cloak|627|32|26.07|66.56|0|0",
-                },
-            },
-        },
         [46812] = {
-            Quest = [=[Draconic Secrets||45|45|46813|0|0]=],
+            Quest = [=[Draconic Secrets||45|45|46813|67|0]=],
             Start = "0|118|32|44.70|4.40",
             Objectives = {
                 [1] = {
@@ -19041,7 +18185,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46813] = {
-            Quest = [=[The Lost Glacier||45|45|0|0|0]=],
+            Quest = [=[The Lost Glacier||45|45|0|67|0]=],
             Objectives = {
                 [1] = {
                     "nil|871|35|48.96|36.00|28.86|9.62",
@@ -19117,7 +18261,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [46827] = {
-            Quest = [=[Meld Into the Shadows|2|45|45|0|0|0]=],
+            Quest = [=[Meld Into the Shadows|2|45|45|0|144|0]=],
             Start = "117259|646|32|76.90|39.80",
             End = "117259|646|32|76.90|39.80",
         },
@@ -19245,7 +18389,8 @@ function Nx.ModQuests:Data5()
             End = "120183|646|32|44.40|63.10",
         },
         [46924] = {
-            Quest = [=[The Wolf's Tale||45|45|46674|0|0]=],
+            Quest = [=[The Wolf's Tale||45|45|46674|76|0]=],
+            Start = "115750|80|32|68.10|55.30",
             End = "5419|80|32|69.40|47.80",
             Objectives = {
                 [1] = {
@@ -19260,6 +18405,7 @@ function Nx.ModQuests:Data5()
         },
         [46935] = {
             Quest = [=[The Shadow of the Sentinax||45|45|0|0|0]=],
+            Start = "145965|646|32|62.30|30.40",
             End = "5418|676|32|44.40|62.20",
         },
         [46938] = {
@@ -19288,15 +18434,6 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [46946] = {
-            Quest = [=[To the Forge It Goes...|2|45|45|0|0|0]=],
-            End = "5417|625|32|59.20|25.20",
-            Objectives = {
-                [1] = {
-                    "Obliterate the Gladiator's Tattered Cloak|627|32|74.72|40.32|0|0",
-                },
-            },
-        },
         [46997] = {
             Quest = [=[Boon of the Command Center||45|45|0|0|0]=],
             Start = "120183|646|32|44.40|63.10",
@@ -19313,7 +18450,7 @@ function Nx.ModQuests:Data5()
             End = "120183|646|32|44.40|63.10",
         },
         [47000] = {
-            Quest = [=[The Council's Call||45|45|44782|0|0]=],
+            Quest = [=[The Council's Call||45|45|44782|54|0]=],
             Start = "116302|646|32|44.60|63.20",
             End = "116302|646|32|44.60|63.20",
         },
@@ -19341,22 +18478,22 @@ function Nx.ModQuests:Data5()
             },
         },
         [47003] = {
-            Quest = [=[Restoration: The Bradensbrook Investigation||45|45|46079|0|0]=],
+            Quest = [=[Restoration: The Bradensbrook Investigation||45|45|46079|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
         },
         [47004] = {
-            Quest = [=[Restoration: The Bradensbrook Investigation||45|45|46079|0|0]=],
+            Quest = [=[Restoration: The Bradensbrook Investigation||45|45|46079|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
         },
         [47005] = {
-            Quest = [=[Mistweaver: The Bradensbrook Investigation||45|45|46079|0|0]=],
+            Quest = [=[Mistweaver: The Bradensbrook Investigation||45|45|46079|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
         },
         [47006] = {
-            Quest = [=[Holy: The Bradensbrook Investigation||45|45|46079|0|0]=],
+            Quest = [=[Holy: The Bradensbrook Investigation||45|45|46079|54|0]=],
             Start = "90418|627|32|23.40|39.60",
             End = "90418|627|32|23.40|39.60",
         },
@@ -19405,22 +18542,22 @@ function Nx.ModQuests:Data5()
             Start = "121081|646|32|43.60|64.00",
         },
         [47018] = {
-            Quest = [=[Beast Mastery: Rumblings Near Feltotem||45|45|45564|0|0]=],
+            Quest = [=[Beast Mastery: Rumblings Near Feltotem||45|45|45564|54|0]=],
             Start = "90418|627|32|23.40|39.60",
             End = "90418|627|32|23.40|39.60",
         },
         [47019] = {
-            Quest = [=[Windwalker: Rumblings Near Feltotem||45|45|45564|0|0]=],
+            Quest = [=[Windwalker: Rumblings Near Feltotem||45|45|45564|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
         },
         [47020] = {
-            Quest = [=[Discipline: Rumblings Near Feltotem||45|45|45564|0|0]=],
+            Quest = [=[Discipline: Rumblings Near Feltotem||45|45|45564|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
         },
         [47022] = {
-            Quest = [=[Protection: Aid of the Illidari||45|45|45413|0|0]=],
+            Quest = [=[Protection: Aid of the Illidari||45|45|45413|54|0]=],
             Start = "90431|627|32|22.80|40.20",
             End = "90431|627|32|22.80|40.20",
             Objectives = {
@@ -19430,7 +18567,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47023] = {
-            Quest = [=[Guardian: Aid of the Illidari||45|45|45413|0|0]=],
+            Quest = [=[Guardian: Aid of the Illidari||45|45|45413|54|0]=],
             Start = "5244|625|32|22.80|40.20",
             End = "4796|100|32|85.20|50.20",
             Objectives = {
@@ -19440,7 +18577,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47024] = {
-            Quest = [=[Brewmaster: Aid of the Illidari||45|45|45413|0|0]=],
+            Quest = [=[Brewmaster: Aid of the Illidari||45|45|45413|54|0]=],
             Start = "90431|627|32|28.50|49.50",
             End = "90431|627|32|28.50|49.50",
             Objectives = {
@@ -19450,7 +18587,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47025] = {
-            Quest = [=[Blood: Aid of the Illidari||45|45|45413|0|0]=],
+            Quest = [=[Blood: Aid of the Illidari||45|45|45413|54|0]=],
             Start = "90431|627|32|22.80|40.20",
             End = "90431|627|32|22.80|40.20",
             Objectives = {
@@ -19460,47 +18597,47 @@ function Nx.ModQuests:Data5()
             },
         },
         [47027] = {
-            Quest = [=[Legion Threat: Val'sharah||45|45|46078|0|0]=],
+            Quest = [=[Legion Threat: Val'sharah||45|45|46078|54|0]=],
             Start = "116302|646|32|44.60|63.20",
             End = "116302|646|32|44.60|63.20",
         },
         [47030] = {
-            Quest = [=[Legion Threat: Dalaran Infiltration||45|45|45412|0|0]=],
+            Quest = [=[Legion Threat: Dalaran Infiltration||45|45|45412|54|0]=],
             Start = "116302|646|32|44.60|63.20",
             End = "116302|646|32|44.60|63.20",
         },
         [47031] = {
-            Quest = [=[Legion Threat: Highmountain||45|45|45560|0|0]=],
+            Quest = [=[Legion Threat: Highmountain||45|45|45560|54|0]=],
             Start = "116302|646|32|44.60|63.20",
             End = "116302|646|32|44.60|63.20",
         },
         [47032] = {
-            Quest = [=[Legion Threat: Azshara||45|45|44914|0|0]=],
+            Quest = [=[Legion Threat: Azshara||45|45|44914|54|0]=],
             Start = "116302|646|32|44.60|63.20",
             End = "116302|646|32|44.60|63.20",
         },
         [47033] = {
-            Quest = [=[Legion Threat: Suramar||45|45|45482|0|0]=],
+            Quest = [=[Legion Threat: Suramar||45|45|45482|54|0]=],
             Start = "116302|646|32|44.70|63.20",
             End = "116302|646|32|44.70|63.20",
         },
         [47034] = {
-            Quest = [=[Legion Threat: The Necromancer||45|45|45182|0|0]=],
+            Quest = [=[Legion Threat: The Necromancer||45|45|45182|54|0]=],
             Start = "116302|646|32|44.70|63.20",
             End = "116302|646|32|44.70|63.20",
         },
         [47035] = {
-            Quest = [=[Legion Threat: The Missing Mage||45|45|45560|0|0]=],
+            Quest = [=[Legion Threat: The Missing Mage||45|45|45560|54|0]=],
             Start = "116302|646|32|44.70|63.20",
             End = "116302|646|32|44.70|63.20",
         },
         [47037] = {
-            Quest = [=[Balance: The Twisted Twin||45|45|0|0|0]=],
+            Quest = [=[Balance: The Twisted Twin||45|45|0|54|0]=],
             Start = "5022|625|32|22.80|38.60",
             End = "5415|676|32|56.40|27.20",
         },
         [47039] = {
-            Quest = [=[Marksmanship: The Twisted Twin||45|45|0|0|0]=],
+            Quest = [=[Marksmanship: The Twisted Twin||45|45|0|54|0]=],
             Start = "90463|627|32|23.40|39.80",
             End = "5415|676|32|56.40|27.20",
         },
@@ -19510,17 +18647,17 @@ function Nx.ModQuests:Data5()
             End = "121137|646|32|41.20|64.40",
         },
         [47041] = {
-            Quest = [=[Affliction: The Twisted Twin||45|45|0|0|0]=],
+            Quest = [=[Affliction: The Twisted Twin||45|45|0|54|0]=],
             Start = "90463|627|32|23.40|39.80",
             End = "5415|676|32|56.40|27.20",
         },
         [47042] = {
-            Quest = [=[Shadow: The Twisted Twin||45|45|0|0|0]=],
+            Quest = [=[Shadow: The Twisted Twin||45|45|0|54|0]=],
             Start = "5022|625|32|22.80|38.60",
             End = "5415|676|32|56.40|27.20",
         },
         [47043] = {
-            Quest = [=[Havoc: The Thieving Apprentice||45|45|0|0|0]=],
+            Quest = [=[Havoc: The Thieving Apprentice||45|45|0|54|0]=],
             Start = "105081|627|32|22.90|41.10",
             End = "2159|76|32|25.00|38.60",
         },
@@ -19530,22 +18667,22 @@ function Nx.ModQuests:Data5()
             End = "121137|646|32|41.20|64.40",
         },
         [47046] = {
-            Quest = [=[Frost: The Thieving Apprentice||45|45|0|0|0]=],
+            Quest = [=[Frost: The Thieving Apprentice||45|45|0|54|0]=],
             Start = "105081|627|32|23.00|40.60",
             End = "105081|627|32|23.00|40.60",
         },
         [47047] = {
-            Quest = [=[Survival: The Thieving Apprentice||45|45|0|0|0]=],
+            Quest = [=[Survival: The Thieving Apprentice||45|45|0|54|0]=],
             Start = "105081|627|32|23.00|40.60",
             End = "105081|627|32|23.00|40.60",
         },
         [47048] = {
-            Quest = [=[Subtlety: The Thieving Apprentice||45|45|0|0|0]=],
+            Quest = [=[Subtlety: The Thieving Apprentice||45|45|0|54|0]=],
             Start = "105081|627|32|28.70|49.90",
             End = "105081|627|32|28.70|49.90",
         },
         [47049] = {
-            Quest = [=[Demonology: Fate of the Tideskorn||45|45|0|0|0]=],
+            Quest = [=[Demonology: Fate of the Tideskorn||45|45|0|54|0]=],
             Start = "90417|627|32|22.80|39.10",
             End = "5414|680|32|76.20|50.00",
             Objectives = {
@@ -19561,7 +18698,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47050] = {
-            Quest = [=[Enhancement: Fate of the Tideskorn||45|45|0|0|0]=],
+            Quest = [=[Enhancement: Fate of the Tideskorn||45|45|0|54|0]=],
             Start = "90417|627|32|22.60|39.20",
             End = "90417|627|32|22.60|39.20",
             Objectives = {
@@ -19577,7 +18714,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47051] = {
-            Quest = [=[Assassination: Fate of the Tideskorn||45|45|0|0|0]=],
+            Quest = [=[Assassination: Fate of the Tideskorn||45|45|0|54|0]=],
             Start = "90417|627|32|22.60|39.20",
             End = "90417|627|32|22.60|39.20",
             Objectives = {
@@ -19593,7 +18730,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47052] = {
-            Quest = [=[Retribution: Fate of the Tideskorn||45|45|0|0|0]=],
+            Quest = [=[Retribution: Fate of the Tideskorn||45|45|0|54|0]=],
             Start = "90417|627|32|22.60|39.20",
             End = "90417|627|32|22.60|39.20",
             Objectives = {
@@ -19614,7 +18751,7 @@ function Nx.ModQuests:Data5()
             End = "121137|646|32|41.20|64.40",
         },
         [47055] = {
-            Quest = [=[Fire: The Folly of Levia Laurence||45|45|0|0|0]=],
+            Quest = [=[Fire: The Folly of Levia Laurence||45|45|0|54|0]=],
             Start = "90418|635|32|22.20|39.60",
             End = "1402|625|32|28.80|48.80",
             Objectives = {
@@ -19633,7 +18770,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47056] = {
-            Quest = [=[Fury: The Folly of Levia Laurence||45|45|0|0|0]=],
+            Quest = [=[Fury: The Folly of Levia Laurence||45|45|0|54|0]=],
             Start = "90418|627|32|22.60|39.20",
             End = "90418|627|32|22.60|39.20",
             Objectives = {
@@ -19652,7 +18789,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47057] = {
-            Quest = [=[Unholy: The Folly of Levia Laurence||45|45|0|0|0]=],
+            Quest = [=[Unholy: The Folly of Levia Laurence||45|45|0|54|0]=],
             Start = "90418|627|32|23.40|39.60",
             End = "90418|627|32|23.40|39.60",
             Objectives = {
@@ -19671,7 +18808,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47058] = {
-            Quest = [=[Outlaw: The Folly of Levia Laurence||45|45|0|0|0]=],
+            Quest = [=[Outlaw: The Folly of Levia Laurence||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -19690,7 +18827,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47059] = {
-            Quest = [=[Feral: The Folly of Levia Laurence||45|45|0|0|0]=],
+            Quest = [=[Feral: The Folly of Levia Laurence||45|45|0|54|0]=],
             Start = "90418|627|32|28.50|48.90",
             End = "90418|627|32|28.50|48.90",
             Objectives = {
@@ -19718,20 +18855,8 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [47080] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Felskin Armor|2|45|0|0|0|0]=],
-        },
-        [47081] = {
-            Quest = [=[Elite - Legion Season 3 and 4 - Gladiator's Felskin Armor|1|45|0|0|0|0]=],
-        },
-        [47082] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Felskin Armor|2|45|0|0|0|0]=],
-        },
-        [47083] = {
-            Quest = [=[Legion Season 3 and 4 - Gladiator's Felskin Armor|1|45|0|0|0|0]=],
-        },
         [47097] = {
-            Quest = [=[A Walk to Remember|1|45|45|0|0|0]=],
+            Quest = [=[A Walk to Remember|1|45|45|0|159|0]=],
             Start = "121224|646|32|41.40|59.40",
             End = "3697|676|32|52.60|48.40",
             Objectives = {
@@ -19804,7 +18929,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47112] = {
-            Quest = [=[Lost Souls|1|45|45|0|0|0]=],
+            Quest = [=[Lost Souls|1|45|45|0|159|0]=],
             Start = "121226|646|32|52.50|48.40",
             End = "3697|676|32|58.20|26.60",
             Objectives = {
@@ -19986,12 +19111,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [47137] = {
-            Quest = [=[Champions of Legionfall||45|45|0|0|0]=],
+            Quest = [=[Champions of Legionfall||45|45|0|104|0]=],
             Start = "116576|646|32|44.40|63.40",
             End = "116576|646|32|44.40|63.40",
         },
         [47139] = {
-            Quest = [=[Mark of the Sentinax||45|45|0|0|0]=],
+            Quest = [=[Mark of the Sentinax||45|45|0|104|0]=],
             Start = "117873|646|32|44.60|63.10",
             End = "117873|646|32|44.60|63.10",
             Objectives = {
@@ -20070,78 +19195,6 @@ function Nx.ModQuests:Data5()
                     "nil|676|35|51.84|72.00|19.24|9.62",
                 },
             },
-        },
-        [47150] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Silk Armor|2|45|0|0|0|0]=],
-        },
-        [47151] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Silk Armor|1|45|0|0|0|0]=],
-        },
-        [47152] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Scaled Armor|2|45|0|0|0|0]=],
-        },
-        [47153] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Scaled Armor|1|45|0|0|0|0]=],
-        },
-        [47154] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Satin Armor|2|45|0|0|0|0]=],
-        },
-        [47155] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Satin Armor|1|45|0|0|0|0]=],
-        },
-        [47156] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Ringmail Armor|2|45|0|0|0|0]=],
-        },
-        [47157] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Ringmail Armor|1|45|0|0|0|0]=],
-        },
-        [47158] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Plate Armor|1|45|0|0|0|0]=],
-        },
-        [47159] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Plate Armor|2|45|0|0|0|0]=],
-        },
-        [47160] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Leather Armor|2|45|0|0|0|0]=],
-        },
-        [47161] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Leather Armor|1|45|0|0|0|0]=],
-        },
-        [47162] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Ironskin Armor|1|45|0|0|0|0]=],
-        },
-        [47163] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Ironskin Armor|2|45|0|0|0|0]=],
-        },
-        [47164] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Felweave Armor|1|45|0|0|0|0]=],
-        },
-        [47165] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Felweave Armor|2|45|0|0|0|0]=],
-        },
-        [47166] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Felskin Armor|2|45|0|0|0|0]=],
-        },
-        [47167] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Felskin Armor|1|45|0|0|0|0]=],
-        },
-        [47168] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Dreadplate Armor|2|45|0|0|0|0]=],
-        },
-        [47169] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Dreadplate Armor|1|45|0|0|0|0]=],
-        },
-        [47170] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Dragonhide Armor|2|45|0|0|0|0]=],
-        },
-        [47171] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Dragonhide Armor|1|45|0|0|0|0]=],
-        },
-        [47172] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Chain Armor|2|45|0|0|0|0]=],
-        },
-        [47173] = {
-            Quest = [=[Legion Season 3 and 4 - Combatant's Chain Armor|1|45|0|0|0|0]=],
         },
         [47180] = {
             Quest = [=[The Pulsing Madness||45|45|0|0|0]=],
@@ -20248,11 +19301,8 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [47191] = {
-            Quest = [=[Illusion - Demonic Tyranny||45|0|0|0|0]=],
-        },
         [47202] = {
-            Quest = [=[A Personal Message|1|45|45|0|0|0]=],
+            Quest = [=[A Personal Message|1|45|45|0|159|0]=],
             Start = "120268|84|32|85.90|34.30",
             End = "619|676|32|60.40|25.00",
         },
@@ -20376,7 +19426,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47222] = {
-            Quest = [=[Two If By Sea|1|45|45|47223|0|0]=],
+            Quest = [=[Two If By Sea|1|45|45|47223|53|0]=],
             Start = "121754|84|32|21.40|30.40",
             Objectives = {
                 [1] = {
@@ -20388,7 +19438,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47223] = {
-            Quest = [=[Light's Exodus||45|45|47224|0|0]=],
+            Quest = [=[Light's Exodus||45|45|47224|53|0]=],
             Start = "121756|891|32|21.40|55.20",
             Objectives = {
                 [1] = {
@@ -20479,7 +19529,8 @@ function Nx.ModQuests:Data5()
             Start = "141952|862|32|68.20|41.70",
         },
         [47283] = {
-            Quest = [=[Chop, Chop!|1|50|50|0|0|0]=],
+            Quest = [=[Chop, Chop!|1|50|50|0|178|0]=],
+            Start = "129107|14|32|46.20|19.40",
         },
         [47287] = {
             Quest = [=[The Vindicaar Matrix Core||45|45|0|0|0]=],
@@ -20554,12 +19605,6 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [47444] = {
-            Quest = [=[Vindictive Combatant's Leather Armor|2|45|0|0|0|0]=],
-        },
-        [47446] = {
-            Quest = [=[Vindictive Combatant's Leather Armor|1|45|0|0|0|0]=],
-        },
         [47473] = {
             Quest = [=[Sizing Up The Opposition||45|45|0|0|0]=],
             Start = "127033|885|32|72.40|74.80",
@@ -20613,17 +19658,17 @@ function Nx.ModQuests:Data5()
             },
         },
         [47543] = {
-            Quest = [=[The Day That Chromie Dies||45|45|47545|0|0]=],
+            Quest = [=[The Day That Chromie Dies||45|45|47545|155|0]=],
             Start = "27856|115|32|60.00|54.50",
             End = "27856|115|32|60.00|54.50",
         },
         [47545] = {
-            Quest = [=[Rewind||45|45|47550|0|0]=],
+            Quest = [=[Rewind||45|45|47550|155|0]=],
             Start = "27856|115|32|60.00|54.50",
             End = "27856|115|32|60.00|54.50",
         },
         [47550] = {
-            Quest = [=[The Many Advantages of Being a Time Dragon||45|45|0|0|0]=],
+            Quest = [=[The Many Advantages of Being a Time Dragon||45|45|0|155|0]=],
             Start = "27856|115|32|60.00|54.50",
             End = "27856|115|32|60.00|54.50",
         },
@@ -20641,16 +19686,16 @@ function Nx.ModQuests:Data5()
             },
         },
         [47557] = {
-            Quest = [=[Smoldering Chronoshard||45|45|0|0|0]=],
+            Quest = [=[Smoldering Chronoshard||45|45|0|155|0]=],
         },
         [47558] = {
-            Quest = [=[Fel-Touched Chronoshard||45|45|0|0|0]=],
+            Quest = [=[Fel-Touched Chronoshard||45|45|0|155|0]=],
         },
         [47559] = {
-            Quest = [=[Gleaming Chronoshard||45|45|0|0|0]=],
+            Quest = [=[Gleaming Chronoshard||45|45|0|155|0]=],
         },
         [47560] = {
-            Quest = [=[Frozen Chronoshard||45|45|0|0|0]=],
+            Quest = [=[Frozen Chronoshard||45|45|0|155|0]=],
         },
         [47589] = {
             Quest = [=[Righteous Fury||45|45|0|0|0]=],
@@ -20698,16 +19743,16 @@ function Nx.ModQuests:Data5()
             },
         },
         [47642] = {
-            Quest = [=[Soul Crystal||45|45|0|0|0]=],
+            Quest = [=[Soul Crystal||45|45|0|155|0]=],
         },
         [47643] = {
-            Quest = [=[The Ancients' Wisdom||45|45|0|0|0]=],
+            Quest = [=[The Ancients' Wisdom||45|45|0|155|0]=],
         },
         [47644] = {
-            Quest = [=[Demonic Corestone||45|45|0|0|0]=],
+            Quest = [=[Demonic Corestone||45|45|0|155|0]=],
         },
         [47645] = {
-            Quest = [=[Voidcallers' Scroll||45|45|0|0|0]=],
+            Quest = [=[Voidcallers' Scroll||45|45|0|155|0]=],
         },
         [47652] = {
             Quest = [=[The Light Mother||45|45|47653|0|0]=],
@@ -20864,9 +19909,6 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [47704] = {
-            Quest = [=[Ranishu Feeding Frenzy||50|50|0|0|0]=],
-        },
         [47725] = {
             Quest = [=[Tomb of Sargeras: Aegwynn's Path||45|45|0|0|0]=],
             Objectives = {
@@ -20902,7 +19944,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47744] = {
-            Quest = [=[Smoke, Meat, and Pretty Flowers||45|45|47745|0|0]=],
+            Quest = [=[Smoke, Meat, and Pretty Flowers||45|45|47745|155|0]=],
             Start = "123781|902|32|56.30|68.30",
             End = "123781|902|32|56.30|68.30",
             Objectives = {
@@ -20918,7 +19960,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47745] = {
-            Quest = [=[Yeah, Definitely for the Kids||45|45|0|0|0]=],
+            Quest = [=[Yeah, Definitely for the Kids||45|45|0|155|0]=],
             Start = "123781|902|32|56.30|68.30",
             End = "123781|902|32|56.30|68.30",
             Objectives = {
@@ -20928,7 +19970,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47746] = {
-            Quest = [=[Holing Up||45|45|47750|0|0]=],
+            Quest = [=[Holing Up||45|45|47750|155|0]=],
             Start = "123790|902|32|49.30|71.70",
             End = "123790|902|32|49.30|71.70",
             Objectives = {
@@ -20944,7 +19986,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47747] = {
-            Quest = [=[Fight Plague with Fire||45|45|0|0|0]=],
+            Quest = [=[Fight Plague with Fire||45|45|0|155|0]=],
             Start = "123781|902|32|56.30|68.30",
             End = "123781|902|32|56.30|68.30",
             Objectives = {
@@ -20957,7 +19999,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47750] = {
-            Quest = [=[For Emery||45|45|47747|0|0]=],
+            Quest = [=[For Emery||45|45|47747|155|0]=],
             Start = "123790|902|32|49.30|71.70",
             End = "123790|902|32|49.30|71.70",
             Objectives = {
@@ -20982,27 +20024,17 @@ function Nx.ModQuests:Data5()
             End = "5386|830|32|31.40|63.60",
         },
         [47772] = {
-            Quest = [=[Sky Ablaze With Cannonfire|1|45|45|0|0|0]=],
+            Quest = [=[Sky Ablaze With Cannonfire|1|45|45|0|155|0]=],
             Start = "124154|899|32|43.90|69.20",
             End = "124154|899|32|43.90|69.20",
         },
         [47773] = {
-            Quest = [=[Sky Ablaze With Cannonfire|2|45|45|0|0|0]=],
+            Quest = [=[Sky Ablaze With Cannonfire|2|45|45|0|155|0]=],
             Start = "124154|899|32|43.90|69.20",
             End = "124154|899|32|43.90|69.20",
         },
-        [47790] = {
-            Quest = [=[Unsettled Power||45|45|0|0|0]=],
-            Start = "106655|627|32|44.90|28.80",
-            End = "106655|627|32|44.90|28.80",
-        },
-        [47791] = {
-            Quest = [=[Unsettled Power||45|45|0|0|0]=],
-            Start = "106655|627|32|44.90|28.80",
-            End = "106655|627|32|44.90|28.80",
-        },
         [47807] = {
-            Quest = [=[Worried About My Friends||45|45|0|0|0]=],
+            Quest = [=[Worried About My Friends||45|45|0|155|0]=],
             Start = "122510|897|32|60.00|54.50",
             End = "1561|897|32|60.00|54.40",
             Objectives = {
@@ -21014,7 +20046,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47808] = {
-            Quest = [=[The Dead Walk||45|45|0|0|0]=],
+            Quest = [=[The Dead Walk||45|45|0|155|0]=],
             Start = "122511|897|32|59.80|54.70",
             End = "1450|897|32|59.80|54.60",
             Objectives = {
@@ -21024,7 +20056,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47809] = {
-            Quest = [=[Darkness in the Ley||45|45|0|0|0]=],
+            Quest = [=[Darkness in the Ley||45|45|0|155|0]=],
             Start = "122514|897|32|59.50|54.30",
             End = "1171|897|32|59.60|54.20",
             Objectives = {
@@ -21036,7 +20068,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47810] = {
-            Quest = [=[Darkened Dreams||45|45|0|0|0]=],
+            Quest = [=[Darkened Dreams||45|45|0|155|0]=],
             Start = "122513|897|32|59.60|54.60",
             End = "1553|897|32|59.60|54.40",
             Objectives = {
@@ -21305,7 +20337,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47867] = {
-            Quest = [=[Two If By Sea|2|45|45|47223|0|0]=],
+            Quest = [=[Two If By Sea|2|45|45|47223|53|0]=],
             Start = "122065|1|32|58.20|12.00",
             Objectives = {
                 [1] = {
@@ -21394,7 +20426,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47904] = {
-            Quest = [=[Preserve the True Future||45|45|47906|0|0]=],
+            Quest = [=[Preserve the True Future||45|45|47906|155|0]=],
             Start = "27856|115|32|60.00|54.50",
             End = "27856|115|32|60.00|54.50",
             Objectives = {
@@ -21404,7 +20436,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [47906] = {
-            Quest = [=[The Deaths of Chromie||45|45|0|0|0]=],
+            Quest = [=[The Deaths of Chromie||45|45|0|155|0]=],
             Start = "27856|115|32|60.00|54.50",
             End = "27856|115|32|60.00|54.50",
             Objectives = {
@@ -21412,18 +20444,6 @@ function Nx.ModQuests:Data5()
                     "Stop all eight attacks on Chromie|115|35|45.50|40.00|0|0",
                 },
             },
-        },
-        [47920] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [47921] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [47922] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
-        },
-        [47923] = {
-            Quest = [=[Tracking Quest||45|0|0|0|0]=],
         },
         [47967] = {
             Quest = [=[An Argus Roper||45|45|0|0|0]=],
@@ -21617,7 +20637,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48002] = {
-            Quest = [=[Limited Supplies||45|45|48016|0|0]=],
+            Quest = [=[Limited Supplies||45|45|48016|13|0]=],
             Start = "125346|830|32|56.20|66.80",
             End = "125346|830|32|56.20|66.80",
             Objectives = {
@@ -21633,7 +20653,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48013] = {
-            Quest = [=[Tracking the Trackers||45|45|48016|0|0]=],
+            Quest = [=[Tracking the Trackers||45|45|48016|13|0]=],
             Start = "125346|830|32|56.20|66.80",
             End = "125346|830|32|56.20|66.80",
             Objectives = {
@@ -21653,7 +20673,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48016] = {
-            Quest = [=[Ascending Alchemy||45|45|0|0|0]=],
+            Quest = [=[Ascending Alchemy||45|45|0|13|0]=],
             Start = "125346|830|32|56.20|66.80",
             End = "125346|830|32|56.20|66.80",
             Objectives = {
@@ -21704,7 +20724,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48021] = {
-            Quest = [=[Chromie||45|45|0|0|0]=],
+            Quest = [=[Chromie||45|45|0|155|0]=],
             Start = "90417|627|32|26.40|44.60",
             End = "665|625|32|28.80|48.40",
             Objectives = {
@@ -21714,55 +20734,55 @@ function Nx.ModQuests:Data5()
             },
         },
         [48027] = {
-            Quest = [=[The Glory of Argus||45|45|0|0|0]=],
+            Quest = [=[The Glory of Argus||45|45|0|6|0]=],
             End = "5367|830|32|56.20|66.80",
         },
         [48028] = {
-            Quest = [=[Youthful Resistance||45|45|0|0|0]=],
+            Quest = [=[Youthful Resistance||45|45|0|6|0]=],
             End = "5367|830|32|56.20|66.80",
         },
         [48029] = {
-            Quest = [=[The Heart of It||45|45|0|0|0]=],
+            Quest = [=[The Heart of It||45|45|0|6|0]=],
             End = "5367|830|32|56.20|66.80",
         },
         [48034] = {
-            Quest = [=[Empyrium Deposit Chunk||45|45|0|0|0]=],
+            Quest = [=[Empyrium Deposit Chunk||45|45|0|115|0]=],
             End = "5375|885|32|78.80|38.20",
         },
         [48035] = {
-            Quest = [=[Angling For a Better Strike||45|45|0|0|0]=],
+            Quest = [=[Angling For a Better Strike||45|45|0|115|0]=],
             End = "5375|885|32|78.80|38.20",
         },
         [48036] = {
-            Quest = [=[Precision Perfected||45|45|0|0|0]=],
+            Quest = [=[Precision Perfected||45|45|0|115|0]=],
             End = "5375|885|32|78.80|38.20",
         },
         [48037] = {
-            Quest = [=[Empyrium Seam Chunk||45|45|0|0|0]=],
+            Quest = [=[Empyrium Seam Chunk||45|45|0|115|0]=],
             End = "5375|885|32|78.80|38.20",
         },
         [48038] = {
-            Quest = [=[Don't Just Pick At It||45|45|0|0|0]=],
+            Quest = [=[Don't Just Pick At It||45|45|0|115|0]=],
             End = "5375|885|32|78.80|38.20",
         },
         [48039] = {
-            Quest = [=[Balancing the Break||45|45|0|0|0]=],
+            Quest = [=[Balancing the Break||45|45|0|115|0]=],
             End = "5375|885|32|78.80|38.20",
         },
         [48040] = {
-            Quest = [=[Tainted Scraps||45|45|0|0|0]=],
+            Quest = [=[Tainted Scraps||45|45|0|150|0]=],
             End = "5371|885|32|78.60|38.60",
         },
         [48041] = {
-            Quest = [=[A Larger Cut||45|45|0|0|0]=],
+            Quest = [=[A Larger Cut||45|45|0|150|0]=],
             End = "5371|885|32|78.60|38.60",
         },
         [48042] = {
-            Quest = [=[Order of Operations||45|45|0|0|0]=],
+            Quest = [=[Order of Operations||45|45|0|150|0]=],
             End = "5371|885|32|78.60|38.60",
         },
         [48053] = {
-            Quest = [=[Weigh Anchor|1|45|45|0|0|0]=],
+            Quest = [=[Weigh Anchor|1|45|45|0|11|0]=],
             Start = "92183|627|32|45.00|29.60",
             End = "92183|627|32|45.00|29.60",
             Objectives = {
@@ -21779,7 +20799,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48054] = {
-            Quest = [=[Weigh Anchor|2|45|45|0|0|0]=],
+            Quest = [=[Weigh Anchor|2|45|45|0|11|0]=],
             Start = "106655|627|32|45.00|29.60",
             End = "106655|627|32|45.00|29.60",
             Objectives = {
@@ -21796,7 +20816,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48055] = {
-            Quest = [=[Empyrial Strength||45|45|0|0|0]=],
+            Quest = [=[Empyrial Strength||45|45|0|11|0]=],
             Start = "125341|832|32|40.60|65.60",
             End = "5375|885|32|78.80|38.20",
             Objectives = {
@@ -21806,7 +20826,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48056] = {
-            Quest = [=[A Harsh Mistress||45|45|0|0|0]=],
+            Quest = [=[A Harsh Mistress||45|45|0|10|0]=],
             Start = "93539|627|32|38.60|25.00",
             End = "93539|627|32|38.60|25.00",
             Objectives = {
@@ -21828,7 +20848,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48065] = {
-            Quest = [=[Extraterrestrial Exploration||45|45|0|0|0]=],
+            Quest = [=[Extraterrestrial Exploration||45|45|0|10|0]=],
             Start = "93520|627|32|38.80|25.60",
             End = "5100|625|32|38.60|25.00",
             Objectives = {
@@ -21850,12 +20870,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [48069] = {
-            Quest = [=[The Wrench Calls||45|45|48065|0|0]=],
+            Quest = [=[The Wrench Calls||45|45|48065|10|0]=],
             Start = "5374|885|32|78.60|38.20",
             End = "5100|625|32|38.60|25.00",
         },
         [48074] = {
-            Quest = [=[Looming Over Me||45|45|0|0|0]=],
+            Quest = [=[Looming Over Me||45|45|0|21|0]=],
             Start = "5373|884|32|42.80|61.80",
             End = "5373|885|32|78.40|38.20",
             Objectives = {
@@ -21865,7 +20885,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48075] = {
-            Quest = [=[A Colorful Key||45|45|48076|0|0]=],
+            Quest = [=[A Colorful Key||45|45|48076|36|0]=],
             Start = "5372|885|32|78.60|37.80",
             End = "5372|885|32|78.60|37.80",
             Objectives = {
@@ -21875,7 +20895,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48076] = {
-            Quest = [=[A Crowning Achievement||45|45|0|0|0]=],
+            Quest = [=[A Crowning Achievement||45|45|0|36|0]=],
             Start = "125343|831|32|44.45|73.35",
             End = "5372|885|32|78.60|37.80",
             Objectives = {
@@ -21885,7 +20905,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48078] = {
-            Quest = [=[Counterbalancing||45|45|0|0|0]=],
+            Quest = [=[Counterbalancing||45|45|0|14|0]=],
             Start = "125349|831|32|39.60|73.60",
             End = "5371|885|32|78.60|38.60",
             Objectives = {
@@ -22039,6 +21059,7 @@ function Nx.ModQuests:Data5()
         },
         [48230] = {
             Quest = [=[Fragment of the Past||45|45|0|0|0]=],
+            Start = "123668|831|32|51.70|74.40",
         },
         [48231] = {
             Quest = [=[The Seat of the Triumvirate: Armor of the Triumvirate||45|45|0|0|0]=],
@@ -22358,32 +21379,6 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [48375] = {
-            Quest = [=[Primal Obliterum||45|45|0|0|0]=],
-            Start = "114719|627|32|42.30|27.00",
-            End = "5361|625|32|42.40|27.40",
-            Objectives = {
-                [1] = {
-                    "nil|0|35|0|0|0|0",
-                },
-                [2] = {
-                    "nil|0|35|0|0|0|0",
-                },
-            },
-        },
-        [48376] = {
-            Quest = [=[Mass Primal Obliterum||45|45|0|0|0]=],
-            Start = "114719|627|32|42.30|27.00",
-            End = "5361|625|32|42.40|27.40",
-            Objectives = {
-                [1] = {
-                    "nil|0|35|0|0|0|0",
-                },
-                [2] = {
-                    "nil|0|35|0|0|0|0",
-                },
-            },
-        },
         [48394] = {
             Quest = [=[The Necrodark||45|0|0|0|0]=],
         },
@@ -22528,7 +21523,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48489] = {
-            Quest = [=[The Spires of Home||45|45|0|0|0]=],
+            Quest = [=[The Spires of Home||45|45|0|175|0]=],
         },
         [48500] = {
             Quest = [=[A Moment of Respite||45|45|0|0|0]=],
@@ -22641,7 +21636,7 @@ function Nx.ModQuests:Data5()
             End = "126160|830|32|64.40|62.60",
         },
         [48559] = {
-            Quest = [=[An Offering of Light||45|45|0|0|0]=],
+            Quest = [=[An Offering of Light||45|45|0|54|0]=],
             Start = "126307|831|32|46.00|36.70",
             End = "619|830|32|61.80|86.80",
             Objectives = {
@@ -22651,7 +21646,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [48560] = {
-            Quest = [=[An Offering of Shadow||45|45|0|0|0]=],
+            Quest = [=[An Offering of Shadow||45|45|0|54|0]=],
             Start = "120533|831|32|40.70|24.20",
             End = "5338|830|32|63.20|90.40",
             Objectives = {
@@ -22704,6 +21699,12 @@ function Nx.ModQuests:Data5()
                     "Vindicaar Beacon|882|35|44.50|52.96|0|0",
                 },
             },
+        },
+        [48796] = {
+            Quest = [=[Supporting Light's Purchase||45|45|0|0|6150]=],
+        },
+        [48798] = {
+            Quest = [=[Ice the Ace||45|45|0|0|6150]=],
         },
         [48799] = {
             Quest = [=[Fuel of a Doomed World||45|45|0|0|0]=],
@@ -22832,9 +21833,6 @@ function Nx.ModQuests:Data5()
         [49007] = {
             Quest = [=[Commander on Deck!||45|45|0|0|0]=],
         },
-        [49013] = {
-            Quest = [=[A Jolt of Power||50|50|0|0|0]=],
-        },
         [49014] = {
             Quest = [=[The Burning Throne||45|45|0|0|0]=],
             Start = "124312|883|32|46.20|23.50",
@@ -22868,9 +21866,6 @@ function Nx.ModQuests:Data5()
                     "nil|919|35|30.26|51.33|0|0",
                 },
             },
-        },
-        [49068] = {
-            Quest = [=[Quelling the Cove|1|50|50|0|0|0]=],
         },
         [49075] = {
             Quest = [=[Antorus, the Burning Throne: Dark Passage||45|45|0|0|0]=],
@@ -22942,7 +21937,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [49143] = {
-            Quest = [=[Essence of the Light Mother||45|45|0|0|0]=],
+            Quest = [=[Essence of the Light Mother||45|45|0|54|0]=],
             Start = "126307|831|32|45.90|34.00",
             End = "619|830|32|61.80|86.80",
             Objectives = {
@@ -22973,7 +21968,7 @@ function Nx.ModQuests:Data5()
             Start = "129940|1161|32|70.30|8.40",
         },
         [49224] = {
-            Quest = [=[The Netherlight Crucible||45|45|0|0|0]=],
+            Quest = [=[The Netherlight Crucible||45|45|0|54|0]=],
             Start = "126389|832|32|58.80|69.40",
             End = "5338|882|32|52.40|91.60",
         },
@@ -22982,154 +21977,145 @@ function Nx.ModQuests:Data5()
             Start = "120978|831|32|40.10|21.30",
             End = "3745|885|32|75.60|37.60",
         },
-        [49345] = {
-            Quest = [=[Buried Treasure||50|50|0|0|0]=],
-        },
-        [49397] = {
-            Quest = [=[Sausage Party|2|50|50|0|0|0]=],
-        },
         [49445] = {
             Quest = [=[The Prime Exchange||45|45|0|0|0]=],
             Start = "129674|832|32|40.40|64.70",
         },
         [49472] = {
             Quest = [=[A Titanic Effort||45|45|0|0|0]=],
+            Start = "113986|627|32|23.40|39.80",
         },
         [49473] = {
             Quest = [=[A Titanic Effort||45|45|0|0|0]=],
+            Start = "113986|627|32|23.40|39.80",
         },
         [49474] = {
             Quest = [=[The Cursed Shard||45|45|49472|0|0]=],
+            Start = "113655|42|32|41.20|74.80",
         },
         [49570] = {
-            Quest = [=[A Rocky Start|2|50|50|49571|0|0]=],
+            Quest = [=[A Rocky Start|2|50|50|49571|36|0]=],
             Start = "-278570|1161|32|75.00|10.20",
         },
         [49571] = {
-            Quest = [=[Digging Through the Past|2|50|50|49574|0|0]=],
+            Quest = [=[Digging Through the Past|2|50|50|49574|36|0]=],
             Start = "130399|1161|32|73.40|6.30",
             End = "130399|1161|32|73.40|6.30",
         },
         [49572] = {
-            Quest = [=[The Shrine of the Sea|2|50|50|49575|0|0]=],
+            Quest = [=[The Shrine of the Sea|2|50|50|49575|36|0]=],
             Start = "130368|1161|32|75.20|9.90",
             End = "130368|1161|32|75.20|9.90",
         },
         [49573] = {
-            Quest = [=[The Shrine of the Eventide|2|50|50|49576|0|0]=],
+            Quest = [=[The Shrine of the Eventide|2|50|50|49576|36|0]=],
             Start = "130368|1161|32|75.20|9.90",
             End = "130368|1161|32|75.20|9.90",
         },
         [49574] = {
-            Quest = [=[The Shrine of Storms|2|50|50|49577|0|0]=],
+            Quest = [=[The Shrine of Storms|2|50|50|49577|36|0]=],
             Start = "130368|1161|32|75.20|9.90",
             End = "130368|1161|32|75.20|9.90",
         },
         [49575] = {
-            Quest = [=[Tol Dagor: Jewel of the Tides|2|50|50|0|0|0]=],
+            Quest = [=[Tol Dagor: Jewel of the Tides|2|50|50|0|36|0]=],
             Start = "150893|895|32|46.40|23.50",
             End = "150893|895|32|46.40|23.50",
         },
         [49576] = {
-            Quest = [=[High Prospects|2|50|50|0|0|0]=],
+            Quest = [=[High Prospects|2|50|50|0|36|0]=],
             Start = "150896|896|32|34.10|35.50",
             End = "150896|896|32|34.10|35.50",
         },
         [49577] = {
-            Quest = [=[Cracking the Surface|2|50|50|0|0|0]=],
+            Quest = [=[Cracking the Surface|2|50|50|0|36|0]=],
             Start = "150898|942|32|60.70|58.50",
             End = "150898|942|32|60.70|58.50",
         },
         [49581] = {
-            Quest = [=[Sun-Speckled Dunes|1|50|50|0|0|0]=],
+            Quest = [=[Sun-Speckled Dunes|1|50|50|0|36|0]=],
             Start = "150895|864|32|44.20|38.00",
             End = "150895|864|32|44.20|38.00",
         },
         [49582] = {
-            Quest = [=[Atal'Dazar: Not All That Glitters...|1|50|50|0|0|0]=],
+            Quest = [=[Atal'Dazar: Not All That Glitters...|1|50|50|0|36|0]=],
             Start = "150894|862|32|43.20|64.30",
             End = "150894|862|32|43.20|64.30",
         },
         [49583] = {
-            Quest = [=[Out With the Old|1|50|50|0|0|0]=],
+            Quest = [=[Out With the Old|1|50|50|0|36|0]=],
             Start = "150897|863|32|61.40|37.20",
             End = "150897|863|32|61.40|37.20",
         },
         [49584] = {
-            Quest = [=[The Missing Chapter|2|50|50|0|0|0]=],
+            Quest = [=[The Missing Chapter|2|50|50|0|36|0]=],
             Start = "130368|1161|32|75.20|9.90",
             End = "130368|1161|32|75.20|9.90",
         },
         [49585] = {
-            Quest = [=[A Rocky Start|1|50|50|49586|0|0]=],
+            Quest = [=[A Rocky Start|1|50|50|49586|36|0]=],
             Start = "-278570|1165|32|46.91|38.03",
         },
         [49586] = {
-            Quest = [=[Digging Through the Past|1|50|50|49589|0|0]=],
+            Quest = [=[Digging Through the Past|1|50|50|49589|36|0]=],
             Start = "130901|1165|32|42.30|39.70",
             End = "130901|1165|32|42.30|39.70",
         },
         [49587] = {
-            Quest = [=[The Shrine of Nature|1|50|50|49582|0|0]=],
+            Quest = [=[The Shrine of Nature|1|50|50|49582|36|0]=],
             Start = "122695|1165|32|47.10|37.90",
             End = "122695|1165|32|47.10|37.90",
         },
         [49588] = {
-            Quest = [=[The Shrine of the Sands|1|50|50|49581|0|0]=],
+            Quest = [=[The Shrine of the Sands|1|50|50|49581|36|0]=],
             Start = "122695|1165|32|47.10|37.90",
             End = "122695|1165|32|47.10|37.90",
         },
         [49589] = {
-            Quest = [=[The Shrine of the Dawning|1|50|50|49583|0|0]=],
+            Quest = [=[The Shrine of the Dawning|1|50|50|49583|36|0]=],
             Start = "122695|1165|32|47.10|37.90",
             End = "122695|1165|32|47.10|37.90",
         },
         [49590] = {
-            Quest = [=[REUSE ME|1|50|50|0|0|0]=],
+            Quest = [=[REUSE ME|1|50|50|0|36|0]=],
         },
         [49592] = {
-            Quest = [=[REUSE ME|1|50|50|0|0|0]=],
+            Quest = [=[REUSE ME|1|50|50|0|36|0]=],
         },
         [49596] = {
-            Quest = [=[REUSE ME|1|50|50|0|0|0]=],
+            Quest = [=[REUSE ME|1|50|50|0|36|0]=],
         },
         [49597] = {
-            Quest = [=[REUSE ME|1|50|50|0|0|0]=],
+            Quest = [=[REUSE ME|1|50|50|0|36|0]=],
         },
         [49598] = {
-            Quest = [=[REUSE ME|1|50|50|0|0|0]=],
+            Quest = [=[REUSE ME|1|50|50|0|36|0]=],
         },
         [49782] = {
-            Quest = [=[Heritage of the Lightforged|2|50|50|0|0|0]=],
+            Quest = [=[Heritage of the Lightforged|2|50|50|0|105|0]=],
             Start = "130993|940|32|42.96|24.16",
         },
         [49783] = {
-            Quest = [=[Heritage of Highmountain|1|50|50|0|0|0]=],
+            Quest = [=[Heritage of Highmountain|1|50|50|0|94|0]=],
             Start = "93826|650|32|46.60|61.00",
         },
         [49784] = {
-            Quest = [=[Heritage of the Nightborne|1|50|50|0|0|0]=],
+            Quest = [=[Heritage of the Nightborne|1|50|50|0|122|0]=],
             Start = "131326|680|32|59.40|85.40",
             End = "131326|680|32|59.40|85.40",
         },
         [49789] = {
-            Quest = [=[The Pledge||45|45|0|0|0]=],
+            Quest = [=[The Pledge||45|45|0|175|0]=],
         },
         [49928] = {
-            Quest = [=[Heritage of the Void|2|50|50|0|0|0]=],
+            Quest = [=[Heritage of the Void|2|50|50|0|175|0]=],
             Start = "131345|971|32|28.60|22.30",
             End = "131345|971|32|28.60|22.30",
         },
         [49943] = {
-            Quest = [=[Drawing Blood|1|50|50|49944|0|0]=],
+            Quest = [=[Drawing Blood|1|50|50|49944|34|0]=],
             Start = "130901|1165|32|42.30|39.70",
             End = "130901|1165|32|42.30|39.70",
-        },
-        [49994] = {
-            Quest = [=[Sliding with Style|2|50|50|0|0|0]=],
-        },
-        [50000] = {
-            Quest = [=[Beastly Dealings|2|50|50|0|0|0]=],
         },
         [50046] = {
             Quest = [=[It's a Sabotage|1|45|45|0|0|0]=],
@@ -23159,6 +22145,7 @@ function Nx.ModQuests:Data5()
         },
         [50048] = {
             Quest = [=[The Seething Shore|2|45|45|0|0|0]=],
+            Start = "132606|81|32|69.40|19.00",
         },
         [50049] = {
             Quest = [=[The Speaker's Perspective|1|45|45|0|0|0]=],
@@ -23199,6 +22186,7 @@ function Nx.ModQuests:Data5()
         },
         [50054] = {
             Quest = [=[The Seething Shore|1|45|45|0|0|0]=],
+            Start = "132606|81|32|69.40|19.00",
         },
         [50055] = {
             Quest = [=[The Speaker's Perspective|2|45|45|0|0|0]=],
@@ -23210,22 +22198,19 @@ function Nx.ModQuests:Data5()
             },
         },
         [50112] = {
-            Quest = [=[Casting the First Stone|1|50|50|0|0|0]=],
+            Quest = [=[Casting the First Stone|1|50|50|0|13|0]=],
             Start = "122703|1165|32|42.22|37.96",
             End = "122703|1165|32|42.20|38.00",
         },
         [50121] = {
-            Quest = [=[Casting the First Stone|2|50|50|0|0|0]=],
+            Quest = [=[Casting the First Stone|2|50|50|0|13|0]=],
             Start = "132228|1161|32|74.20|6.50",
             End = "132228|1161|32|74.20|6.50",
         },
         [50123] = {
-            Quest = [=[A Recipe For the Ages|2|50|50|0|0|0]=],
+            Quest = [=[A Recipe For the Ages|2|50|50|0|11|0]=],
             Start = "133536|1161|32|73.60|8.60",
             End = "133536|1161|32|73.60|8.60",
-        },
-        [50164] = {
-            Quest = [=[Polly Want A Cracker?|2|50|50|0|0|0]=],
         },
         [50226] = {
             Quest = [=[The Source of Power|1|45|45|0|0|0]=],
@@ -23309,57 +22294,13 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [50234] = {
-            Quest = [=[Crews of Freehold|2|50|50|0|0|0]=],
-        },
         [50276] = {
-            Quest = [=[A Recipe For the Ages|1|50|50|0|0|0]=],
+            Quest = [=[A Recipe For the Ages|1|50|50|0|11|0]=],
             Start = "127112|1165|32|43.60|38.30",
             End = "127112|1165|32|43.60|38.30",
         },
-        [50287] = {
-            Quest = [=[Unending Gorilla Warfare|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|862|35|47.04|50.40|28.86|9.62",
-                    "nil|862|35|46.08|51.84|57.72|9.62",
-                    "nil|862|35|47.04|53.28|57.72|19.24",
-                    "nil|862|35|48.00|56.16|38.48|9.62",
-                },
-                [2] = {
-                    "nil|862|35|48.00|50.40|9.62|9.62",
-                    "nil|862|35|47.04|51.84|38.48|9.62",
-                    "nil|862|35|47.04|53.28|48.10|9.62",
-                    "nil|862|35|47.04|54.72|57.72|9.62",
-                    "nil|862|35|48.00|56.16|38.48|9.62",
-                },
-                [3] = {
-                    "nil|862|35|47.04|50.40|19.24|9.62",
-                    "nil|862|35|46.08|51.84|38.48|9.62",
-                    "nil|862|35|47.04|53.28|19.24|9.62",
-                },
-                [4] = {
-                    "nil|862|32|47.72|53.28|9.62|9.62",
-                },
-            },
-        },
-        [50295] = {
-            Quest = [=[Like Pulling Teeth|2|50|50|0|0|0]=],
-        },
-        [50296] = {
-            Quest = [=[Billy Goat Barber|2|50|50|0|0|0]=],
-        },
-        [50299] = {
-            Quest = [=[Gryphon Wranglin'|2|50|50|0|0|0]=],
-        },
-        [50315] = {
-            Quest = [=[Not On the Itinerary|2|50|50|0|0|0]=],
-        },
-        [50322] = {
-            Quest = [=[A Feathery Fad|2|50|50|0|0|0]=],
-        },
-        [50324] = {
-            Quest = [=[Picturesque Fizzsprings Resort|2|50|50|0|0|0]=],
+        [50326] = {
+            Quest = [=[Ain't No Place Like Home||50|50|0|178|0]=],
         },
         [50358] = {
             Quest = [=[Desert Research|2|45|45|0|0|0]=],
@@ -23374,9 +22315,6 @@ function Nx.ModQuests:Data5()
         [50364] = {
             Quest = [=[The Blood of Azeroth|2|45|45|0|0|0]=],
             Start = "130216|81|32|42.50|44.20",
-        },
-        [50369] = {
-            Quest = [=[Bruin Potions|2|50|50|0|0|0]=],
         },
         [50372] = {
             Quest = [=[Desert Research|1|45|45|0|0|0]=],
@@ -23419,6 +22357,7 @@ function Nx.ModQuests:Data5()
         },
         [50393] = {
             Quest = [=[A Child of Pa'ku|1|50|50|50394|0|0]=],
+            Start = "129717|862|32|40.00|76.50",
         },
         [50394] = {
             Quest = [=[Your Problem Now|1|50|50|0|0|0]=],
@@ -23456,291 +22395,10 @@ function Nx.ModQuests:Data5()
             Start = "-281348|942|32|50.00|31.80",
             End = "5318|942|32|78.60|55.00",
         },
-        [50421] = {
-            Quest = [=[Sparring on the Spar|2|50|50|0|0|0]=],
-        },
         [50432] = {
             Quest = [=[Titanic Innovation||45|45|0|0|0]=],
             Start = "106655|627|32|44.90|28.80",
             End = "106655|627|32|44.90|28.80",
-        },
-        [50443] = {
-            Quest = [=[Down to the Roots|1|50|50|0|0|0]=],
-        },
-        [50459] = {
-            Quest = [=[Vugthuth||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Vugthuth|863|35|66.53|53.49|0|0",
-                },
-            },
-        },
-        [50461] = {
-            Quest = [=[Zujothgul||50|50|0|0|0]=],
-        },
-        [50468] = {
-            Quest = [=[Shul-Nagruth||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Maw of Shul-Nagruth|863|35|32.81|50.10|0|0",
-                },
-            },
-        },
-        [50483] = {
-            Quest = [=[Underlord Xerxiz||50|50|0|0|0]=],
-        },
-        [50488] = {
-            Quest = [=[Ancient Jawbreaker||50|50|0|0|0]=],
-        },
-        [50489] = {
-            Quest = [=[Xu'ba||50|50|0|0|0]=],
-        },
-        [50490] = {
-            Quest = [=[Uroku the Bound||50|50|0|0|0]=],
-        },
-        [50491] = {
-            Quest = [=[Corpse Bringer Yal'kar||50|50|0|0|0]=],
-        },
-        [50492] = {
-            Quest = [=[Cursed Chest||50|50|0|0|0]=],
-        },
-        [50496] = {
-            Quest = [=[Glompmaw||50|50|0|0|0]=],
-        },
-        [50497] = {
-            Quest = [=[Krag'wa's Favor|1|50|50|0|0|0]=],
-        },
-        [50498] = {
-            Quest = [=[Gutrip||50|50|0|0|0]=],
-        },
-        [50499] = {
-            Quest = [=[Gwugnug||50|50|0|0|0]=],
-        },
-        [50501] = {
-            Quest = [=[Queen Tzxi'kik||50|50|0|0|0]=],
-        },
-        [50502] = {
-            Quest = [=[Jax'teb the Reanimated||50|50|0|0|0]=],
-        },
-        [50503] = {
-            Quest = [=[Juba the Scarred||50|50|0|0|0]=],
-        },
-        [50505] = {
-            Quest = [=[Kal'draxa||50|50|0|0|0]=],
-        },
-        [50506] = {
-            Quest = [=[King Kooba||50|50|0|0|0]=],
-        },
-        [50507] = {
-            Quest = [=[Krubbs||50|50|0|0|0]=],
-        },
-        [50509] = {
-            Quest = [=[Lo'kuno||50|50|0|0|0]=],
-        },
-        [50510] = {
-            Quest = [=[Overstuffed Saurolisk||50|50|0|0|0]=],
-        },
-        [50511] = {
-            Quest = [=[Bajiatha||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|42.24|59.04|9.62|9.62",
-                    "nil|863|35|41.28|60.48|28.86|9.62",
-                    "nil|863|35|42.24|61.92|9.62|9.62",
-                },
-            },
-        },
-        [50512] = {
-            Quest = [=[Scout Skrasniss||50|50|0|0|0]=],
-        },
-        [50513] = {
-            Quest = [=[Tainted Guardian||50|50|0|0|0]=],
-        },
-        [50514] = {
-            Quest = [=[Totem Maker Jash'ga||50|50|0|0|0]=],
-        },
-        [50515] = {
-            Quest = [=[Venomjaw||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|29.76|48.96|9.62|9.62",
-                    "nil|863|35|28.80|50.40|28.86|9.62",
-                    "nil|863|35|29.76|51.84|9.62|9.62",
-                },
-            },
-        },
-        [50516] = {
-            Quest = [=[Wardrummer Zurula||50|50|0|0|0]=],
-        },
-        [50517] = {
-            Quest = [=[Mala'kili and Rohnkor||50|50|0|0|0]=],
-        },
-        [50518] = {
-            Quest = [=[Zanxib||50|50|0|0|0]=],
-        },
-        [50519] = {
-            Quest = [=[Za'amar||50|50|0|0|0]=],
-        },
-        [50521] = {
-            Quest = [=[Scorched Earth|1|50|50|0|0|0]=],
-        },
-        [50524] = {
-            Quest = [=[Purify the Temple||50|50|0|0|0]=],
-        },
-        [50527] = {
-            Quest = [=[Behind Mogu Lines|2|50|50|0|0|0]=],
-        },
-        [50529] = {
-            Quest = [=[The Spirits Within|1|50|50|0|0|0]=],
-        },
-        [50540] = {
-            Quest = [=[Rally the Rastari|1|50|50|0|0|0]=],
-        },
-        [50545] = {
-            Quest = [=[Forked Lightning|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|24.96|36.00|38.48|9.62",
-                    "nil|863|35|24.00|37.44|57.72|9.62",
-                    "nil|863|35|24.96|38.88|48.10|19.24",
-                    "nil|863|35|25.92|41.76|38.48|9.62",
-                    "nil|863|35|26.88|43.20|19.24|9.62",
-                },
-            },
-        },
-        [50547] = {
-            Quest = [=[Knives of Zul||50|50|0|0|0]=],
-        },
-        [50548] = {
-            Quest = [=[Enforcing the Will of the King|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|862|35|65.28|25.92|9.62|9.62",
-                    "nil|862|35|64.32|27.36|28.86|9.62",
-                    "nil|862|35|63.36|28.80|48.10|9.62",
-                    "nil|862|35|64.32|30.24|38.48|9.62",
-                    "nil|862|35|65.28|31.68|19.24|9.62",
-                },
-                [2] = {
-                    "nil|862|35|65.28|25.92|9.62|9.62",
-                    "nil|862|35|64.32|27.36|38.48|9.62",
-                    "nil|862|35|64.32|28.80|48.10|9.62",
-                    "nil|862|35|65.28|30.24|28.86|9.62",
-                    "nil|862|35|66.24|31.68|9.62|9.62",
-                },
-                [3] = {
-                    "nil|862|35|62.40|27.36|9.62|9.62",
-                    "nil|862|35|61.44|28.80|38.48|9.62",
-                    "nil|862|35|61.44|30.24|48.10|9.62",
-                    "nil|862|35|62.40|31.68|38.48|9.62",
-                    "nil|862|35|62.40|33.12|48.10|9.62",
-                    "nil|862|35|63.36|34.56|38.48|9.62",
-                    "nil|862|35|63.36|36.00|28.86|9.62",
-                    "nil|862|35|64.32|37.44|9.62|9.62",
-                },
-                [4] = {
-                    "nil|862|35|62.40|27.36|9.62|9.62",
-                    "nil|862|35|61.44|28.80|38.48|19.24",
-                    "nil|862|35|62.40|31.68|38.48|9.62",
-                    "nil|862|35|62.40|33.12|38.48|9.62",
-                    "nil|862|35|64.32|34.56|9.62|9.62",
-                },
-                [5] = {
-                    "nil|862|35|62.40|27.36|19.24|9.62",
-                    "nil|862|35|61.44|28.80|38.48|9.62",
-                    "nil|862|35|62.40|30.24|28.86|9.62",
-                    "nil|862|35|62.40|31.68|38.48|9.62",
-                    "nil|862|35|63.36|33.12|28.86|19.24",
-                    "nil|862|35|64.32|36.00|9.62|9.62",
-                },
-                [6] = {
-                    "nil|862|35|65.28|28.80|19.24|9.62",
-                    "nil|862|35|64.32|30.24|38.48|9.62",
-                    "nil|862|35|65.28|31.68|19.24|9.62",
-                },
-            },
-        },
-        [50549] = {
-            Quest = [=[Absolutely Barbaric|1|50|50|0|0|0]=],
-        },
-        [50559] = {
-            Quest = [=[Getting Out of Hand|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|63.36|11.52|9.62|9.62",
-                    "nil|863|35|61.44|12.96|38.48|9.62",
-                    "nil|863|35|60.48|14.40|48.10|9.62",
-                    "nil|863|35|60.48|15.84|57.72|9.62",
-                    "nil|863|35|61.44|17.28|48.10|9.62",
-                    "nil|863|35|62.40|18.72|28.86|9.62",
-                },
-            },
-        },
-        [50562] = {
-            Quest = [=[Champions of Azeroth||50|50|0|0|0]=],
-            Start = "0|81|32|42.22|44.27",
-        },
-        [50564] = {
-            Quest = [=[Azerite Infused Slag||50|50|0|0|0]=],
-        },
-        [50566] = {
-            Quest = [=[Lost Scroll||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|32|81.32|60.08|9.62|9.62",
-                },
-            },
-        },
-        [50568] = {
-            Quest = [=[Chag's Challenge||50|50|0|0|0]=],
-        },
-        [50570] = {
-            Quest = [=[Azerite Infused Elemental||50|50|0|0|0]=],
-        },
-        [50571] = {
-            Quest = [=[Eggstermination|1|50|50|0|0|0]=],
-        },
-        [50572] = {
-            Quest = [=[Bloody Intrusion||50|50|0|0|0]=],
-        },
-        [50574] = {
-            Quest = [=[Preservation Methods|1|50|50|0|0|0]=],
-        },
-        [50577] = {
-            Quest = [=[Unaccounted For|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|34.56|77.76|19.24|9.62",
-                    "nil|863|35|32.64|79.20|57.72|19.24",
-                    "nil|863|35|31.68|82.08|76.95|19.24",
-                    "nil|863|35|30.72|84.96|76.95|9.62",
-                    "nil|863|35|31.68|86.40|67.33|9.62",
-                    "nil|863|35|33.60|87.84|38.48|9.62",
-                },
-            },
-        },
-        [50578] = {
-            Quest = [=[Bring Ruin Again||50|50|0|0|0]=],
-        },
-        [50581] = {
-            Quest = [=[Scrolls and Scales|1|50|50|0|0|0]=],
-        },
-        [50587] = {
-            Quest = [=[Nagative Feedback|1|50|50|0|0|0]=],
-        },
-        [50591] = {
-            Quest = [=[Son of a Bee|2|50|50|0|0|0]=],
-        },
-        [50592] = {
-            Quest = [=[Tiny Terror||50|50|0|0|0]=],
-        },
-        [50619] = {
-            Quest = [=[What Goes Up||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Traps set|862|32|26.38|60.36|0|0",
-                },
-            },
         },
         [50627] = {
             Quest = [=[LFGDungeons - BFA - Heroic Random - 1st||50|50|0|0|0]=],
@@ -23748,142 +22406,15 @@ function Nx.ModQuests:Data5()
         [50628] = {
             Quest = [=[LFGDungeons - BFA - Heroic Random - Nth||50|50|0|0|0]=],
         },
-        [50633] = {
-            Quest = [=[Pterrible Ingredients|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|862|35|67.20|33.12|9.62|9.62",
-                    "nil|862|35|66.24|34.56|28.86|19.24",
-                    "nil|862|35|67.20|37.44|9.62|9.62",
-                },
-            },
+        [50632] = {
+            Quest = [=[Battlefield Scavenging|2|50|50|0|178|0]=],
         },
-        [50634] = {
-            Quest = [=[Save Our Scrolls!|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Intact Tortollan Scroll collected|863|32|77.41|35.99|0|0",
-                },
-            },
+        [50709] = {
+            Quest = [=[Resourceful Recon|2|50|50|0|178|0]=],
         },
-        [50636] = {
-            Quest = [=[Ravoracious|1|50|50|0|0|0]=],
-        },
-        [50648] = {
-            Quest = [=[Bubbles and Trouble|1|50|50|0|0|0]=],
-        },
-        [50650] = {
-            Quest = [=[Smashing Zalamar|1|50|50|0|0|0]=],
-        },
-        [50651] = {
-            Quest = [=[Cut Off Potential|2|50|50|0|0|0]=],
-        },
-        [50652] = {
-            Quest = [=[Biting the Hand that Feeds Them|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|862|35|70.08|37.44|9.62|9.62",
-                    "nil|862|35|69.12|38.88|28.86|19.24",
-                    "nil|862|35|70.08|41.76|9.62|9.62",
-                },
-            },
-        },
-        [50660] = {
-            Quest = [=[Survival Strategy|1|50|50|0|0|0]=],
-        },
-        [50665] = {
-            Quest = [=[Cancel the Blood Troll Apocalypse|1|50|50|0|0|0]=],
-        },
-        [50667] = {
-            Quest = [=[Past Due||50|50|0|0|0]=],
-        },
-        [50676] = {
-            Quest = [=[River Toll||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|68.16|44.64|9.62|9.62",
-                    "nil|863|35|66.24|46.08|48.10|9.62",
-                    "nil|863|35|65.28|47.52|67.33|19.24",
-                    "nil|863|35|64.32|50.40|86.57|9.62",
-                    "nil|863|35|65.28|51.84|67.33|19.24",
-                    "nil|863|35|67.20|54.72|38.48|9.62",
-                },
-            },
-        },
-        [50689] = {
-            Quest = [=[It's the Pits|1|50|50|0|0|0]=],
-        },
-        [50695] = {
-            Quest = [=[It's Never Time for Cannibalism||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|48.96|27.36|9.62|9.62",
-                    "nil|863|35|48.00|28.80|28.86|19.24",
-                    "nil|863|35|47.04|31.68|48.10|9.62",
-                    "nil|863|35|47.04|33.12|48.10|9.62",
-                    "nil|863|35|46.08|34.56|67.33|9.62",
-                    "nil|863|35|47.04|36.00|57.72|9.62",
-                    "nil|863|35|47.04|37.44|67.33|9.62",
-                    "nil|863|35|48.00|38.88|48.10|9.62",
-                    "nil|863|35|48.96|40.32|38.48|9.62",
-                    "nil|863|35|50.88|41.76|9.62|9.62",
-                },
-                [2] = {
-                    "nil|863|35|48.96|33.12|9.62|9.62",
-                    "nil|863|35|48.00|34.56|28.86|9.62",
-                    "nil|863|35|48.00|36.00|19.24|9.62",
-                    "nil|863|35|47.04|37.44|28.86|9.62",
-                    "nil|863|35|48.00|38.88|9.62|9.62",
-                },
-            },
-        },
-        [50717] = {
-            Quest = [=[Don't Stalk Me, Troll|1|50|50|0|0|0]=],
-        },
-        [50718] = {
-            Quest = [=[Agent of Death||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Corpse Rituals prevented|863|32|63.02|56.88|0|0",
-                },
-                [2] = {
-                    "Soiled Bograider|863|32|63.02|56.88|0|0",
-                },
-                [3] = {
-                    "Reconstructed Horror|863|32|63.85|56.80|0|0",
-                },
-                [4] = {
-                    "Powerless Hexguard|863|32|63.16|56.99|0|0",
-                },
-                [5] = {
-                    "Crawg Rider|863|32|62.16|57.14|0|0",
-                },
-                [6] = {
-                    "Vilebone Ravager|863|32|58.88|61.58|0|0",
-                },
-                [7] = {
-                    "Mire Terror|863|32|63.02|56.88|0|0",
-                },
-            },
-        },
-        [50735] = {
-            Quest = [=[Burial Detail|1|50|50|0|0|0]=],
-        },
-        [50756] = {
-            Quest = [=[Subterranean Evacuation|2|50|50|0|0|0]=],
-        },
-        [50786] = {
-            Quest = [=[Revenge of Krag'wa|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|59.52|51.84|38.48|9.62",
-                    "nil|863|35|58.56|53.28|57.72|9.62",
-                    "nil|863|35|59.52|54.72|48.10|9.62",
-                    "nil|863|35|59.52|56.16|48.10|9.62",
-                    "nil|863|35|60.48|57.60|28.86|19.24",
-                    "nil|863|35|61.44|60.48|9.62|9.62",
-                },
-            },
+        [50764] = {
+            Quest = [=[Redemptive Refurbishment|2|50|50|0|178|0]=],
+            Start = "134720|942|32|43.00|56.60",
         },
         [50791] = {
             Quest = [=[Skree...|1|50|50|0|0|0]=],
@@ -23905,9 +22436,6 @@ function Nx.ModQuests:Data5()
             Start = "135308|862|32|70.80|50.80",
             End = "135308|862|32|70.80|50.90",
         },
-        [50813] = {
-            Quest = [=[Cargo Reclamation|1|50|50|0|0|0]=],
-        },
         [50838] = {
             Quest = [=[A Nose for Ptrouble|1|50|50|0|0|0]=],
             Start = "135308|862|32|70.70|50.80",
@@ -23927,117 +22455,10 @@ function Nx.ModQuests:Data5()
             Start = "135308|862|32|70.70|50.80",
             End = "135308|862|32|70.70|50.80",
         },
-        [50846] = {
-            Quest = [=[Headhunter Lee'za||50|50|0|0|0]=],
-        },
-        [50847] = {
-            Quest = [=[Twisted Child of Rezan||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Twisted Child of Rezan|862|35|72.12|23.10|0|0",
-                },
-            },
-        },
-        [50848] = {
-            Quest = [=[Brgl-Lrgl the Basher||50|50|0|0|0]=],
-        },
-        [50849] = {
-            Quest = [=[Witch Doctor Habra'du||50|50|0|0|0]=],
-        },
-        [50850] = {
-            Quest = [=[Tia'Kawan||50|50|0|0|0]=],
-        },
-        [50851] = {
-            Quest = [=[Mor'fani the Exile||50|50|0|0|0]=],
-        },
-        [50852] = {
-            Quest = [=[Lady Seirine||50|50|0|0|0]=],
-        },
-        [50853] = {
-            Quest = [=[Umbra'rix||50|50|0|0|0]=],
-        },
-        [50854] = {
-            Quest = [=[Crimsonclaw||50|50|0|0|0]=],
-        },
-        [50855] = {
-            Quest = [=[Old R'gal|2|50|50|0|0|0]=],
-        },
-        [50857] = {
-            Quest = [=[Golrakahn||50|50|0|0|0]=],
-        },
-        [50859] = {
-            Quest = [=[Kandak||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|862|32|68.12|47.48|9.62|9.62",
-                },
-            },
-        },
         [50860] = {
             Quest = [=[A Nose for Ptrouble|1|50|50|0|0|0]=],
             Start = "135308|862|32|70.80|50.70",
             End = "135308|862|32|70.80|50.70",
-        },
-        [50861] = {
-            Quest = [=[Torraske the Eternal||50|50|0|0|0]=],
-        },
-        [50862] = {
-            Quest = [=[Bloodbulge||50|50|0|0|0]=],
-        },
-        [50863] = {
-            Quest = [=[Avatar of Xolotal||50|50|0|0|0]=],
-        },
-        [50864] = {
-            Quest = [=[Atal'zul Gotaka||50|50|0|0|0]=],
-        },
-        [50866] = {
-            Quest = [=[Zayoos||50|50|0|0|0]=],
-        },
-        [50867] = {
-            Quest = [=[Tambano||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|862|32|77.12|10.48|9.62|9.62",
-                },
-            },
-        },
-        [50868] = {
-            Quest = [=[Bramblewing||50|50|0|0|0]=],
-        },
-        [50869] = {
-            Quest = [=[Kiboku||50|50|0|0|0]=],
-        },
-        [50870] = {
-            Quest = [=[G'Naat||50|50|0|0|0]=],
-        },
-        [50871] = {
-            Quest = [=[Daggerjaw||50|50|0|0|0]=],
-        },
-        [50872] = {
-            Quest = [=[Warcrawler Karkithiss||50|50|0|0|0]=],
-        },
-        [50873] = {
-            Quest = [=[Strange Egg||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|862|32|61.52|45.48|9.62|9.62",
-                },
-            },
-        },
-        [50874] = {
-            Quest = [=[Hakbi the Risen||50|50|0|0|0]=],
-        },
-        [50875] = {
-            Quest = [=[Darkspeaker Jo'la||50|50|0|0|0]=],
-        },
-        [50876] = {
-            Quest = [=[Murderbeak||50|50|0|0|0]=],
-        },
-        [50877] = {
-            Quest = [=[Gahz'ralka||50|50|0|0|0]=],
-        },
-        [50885] = {
-            Quest = [=[Lei-zhi||50|50|0|0|0]=],
         },
         [50886] = {
             Quest = [=[Surrogate Wings|1|50|50|0|0|0]=],
@@ -24047,9 +22468,6 @@ function Nx.ModQuests:Data5()
             Quest = [=[Ptrust Fall|1|50|50|0|0|0]=],
             Start = "135308|862|32|70.80|51.00",
         },
-        [50899] = {
-            Quest = [=[Don't Stalk Me, Troll|2|50|50|0|0|0]=],
-        },
         [50900] = {
             Quest = [=[Maybe When You're Older|1|50|50|0|0|0]=],
             Start = "135595|862|32|72.40|57.00",
@@ -24058,9 +22476,6 @@ function Nx.ModQuests:Data5()
             Quest = [=[Falling With Style|1|50|50|0|0|0]=],
             Start = "141026|862|32|70.80|50.70",
             End = "135308|862|32|70.80|50.70",
-        },
-        [50936] = {
-            Quest = [=[Survival Strategy|2|50|50|0|0|0]=],
         },
         [50940] = {
             Quest = [=[Wisdom of the Wingless|1|50|50|0|0|0]=],
@@ -24080,240 +22495,24 @@ function Nx.ModQuests:Data5()
             Quest = [=[Down, But Not Out|1|50|50|0|0|0]=],
             Start = "135744|862|32|70.60|50.60",
         },
-        [50957] = {
-            Quest = [=[Wrath of Rezan|1|50|50|0|0|0]=],
-        },
-        [50961] = {
-            Quest = [=[Save Our Scrolls!|2|50|50|0|0|0]=],
-        },
-        [50962] = {
-            Quest = [=[Cargo Reclamation|2|50|50|0|0|0]=],
-        },
-        [50966] = {
-            Quest = [=[Cleanup Crew||50|50|0|0|0]=],
-        },
-        [50969] = {
-            Quest = [=[Emergency Management|2|50|50|0|0|0]=],
-        },
-        [50975] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-        },
-        [50977] = {
-            Quest = [=[Smuggler Shakedown|2|50|50|0|0|0]=],
-        },
-        [50981] = {
-            Quest = [=[Work Order: Riverbud|2|50|50|0|0|0]=],
-        },
-        [50982] = {
-            Quest = [=[Work Order: Star Moss|2|50|50|0|0|0]=],
-        },
-        [50983] = {
-            Quest = [=[Work Order: Akunda's Bite|2|50|50|0|0|0]=],
-        },
-        [50985] = {
-            Quest = [=[Work Order: Siren's Pollen|2|50|50|0|0|0]=],
-        },
-        [50986] = {
-            Quest = [=[Work Order: Sea Stalk|2|50|50|0|0|0]=],
-        },
-        [50987] = {
-            Quest = [=[Work Order: Monelite Ore|2|50|50|0|0|0]=],
-        },
-        [50989] = {
-            Quest = [=[Work Order: Storm Silver Ore|2|50|50|0|0|0]=],
-        },
-        [50991] = {
-            Quest = [=[Work Order: Blood-Stained Bone|2|50|50|0|0|0]=],
-        },
-        [50993] = {
-            Quest = [=[Work Order: Coarse Leather|2|50|50|0|0|0]=],
-        },
-        [50994] = {
-            Quest = [=[Work Order: Tempest Hide|2|50|50|0|0|0]=],
-        },
-        [50996] = {
-            Quest = [=[Work Order: Mistscale|2|50|50|0|0|0]=],
-        },
-        [50997] = {
-            Quest = [=[Work Order: Tidespray Linen|2|50|50|0|0|0]=],
-        },
-        [50998] = {
-            Quest = [=[Work Order: Deep Sea Satin|2|50|50|0|0|0]=],
-        },
-        [51002] = {
-            Quest = [=[Work Order: Akunda's Bite|1|50|50|0|0|0]=],
-        },
-        [51003] = {
-            Quest = [=[Work Order: Winter's Kiss|1|50|50|0|0|0]=],
-        },
-        [51004] = {
-            Quest = [=[Work Order: Siren's Pollen|1|50|50|0|0|0]=],
-        },
-        [51005] = {
-            Quest = [=[Work Order: Sea Stalk|1|50|50|0|0|0]=],
-        },
-        [51006] = {
-            Quest = [=[Work Order: Monelite Ore|1|50|50|0|0|0]=],
-        },
-        [51007] = {
-            Quest = [=[Work Order: Storm Silver Ore|1|50|50|0|0|0]=],
-        },
-        [51008] = {
-            Quest = [=[Work Order: Blood-Stained Bone|1|50|50|0|0|0]=],
-        },
-        [51009] = {
-            Quest = [=[Work Order: Calcified Bone|1|50|50|0|0|0]=],
-        },
-        [51010] = {
-            Quest = [=[Work Order: Coarse Leather|1|50|50|0|0|0]=],
-        },
-        [51011] = {
-            Quest = [=[Work Order: Tempest Hide|1|50|50|0|0|0]=],
-        },
-        [51012] = {
-            Quest = [=[Work Order: Shimmerscale|1|50|50|0|0|0]=],
-        },
-        [51015] = {
-            Quest = [=[Work Order: Deep Sea Satin|1|50|50|0|0|0]=],
-        },
         [51052] = {
             Quest = [=[Azerite for the Alliance!|2|50|50|0|0|0]=],
         },
-        [51064] = {
-            Quest = [=[Azerite Wounds||50|50|0|0|0]=],
+        [51068] = {
+            Quest = [=[Raiding Their Stores|2|50|50|0|178|0]=],
         },
-        [51081] = {
-            Quest = [=[Syrawon the Dominus||50|50|0|0|0]=],
+        [51070] = {
+            Quest = [=[Raiding the Boulderfist|2|50|50|0|178|0]=],
         },
         [51082] = {
-            Quest = [=[Iron Stores|1|50|50|0|0|0]=],
+            Quest = [=[Iron Stores|1|50|50|0|178|0]=],
             Start = "131750|943|32|61.40|25.60",
         },
-        [51084] = {
-            Quest = [=[Dark Chronicler||50|50|0|0|0]=],
-        },
         [51086] = {
-            Quest = [=[Break's Over|1|50|50|0|0|0]=],
-        },
-        [51090] = {
-            Quest = [=[Picturesque Norwington Estate|2|50|50|0|0|0]=],
-        },
-        [51095] = {
-            Quest = [=[Ashmane||50|50|0|0|0]=],
-        },
-        [51096] = {
-            Quest = [=[Azer'tor||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Azer'tor|864|35|10.97|50.98|0|0",
-                },
-            },
-        },
-        [51097] = {
-            Quest = [=[Bloated Krolusk||50|50|0|0|0]=],
-        },
-        [51098] = {
-            Quest = [=[Commodore Calhoun||50|50|0|0|0]=],
-        },
-        [51099] = {
-            Quest = [=[Gut-Gut the Glutton||50|50|0|0|0]=],
-        },
-        [51100] = {
-            Quest = [=[Jumbo Sandsnapper||50|50|0|0|0]=],
-        },
-        [51102] = {
-            Quest = [=[Kamid the Trapper||50|50|0|0|0]=],
-        },
-        [51103] = {
-            Quest = [=[Nez'ara||50|50|0|0|0]=],
-        },
-        [51104] = {
-            Quest = [=[Skycaller Teskris||50|50|0|0|0]=],
-        },
-        [51105] = {
-            Quest = [=[Ak'tar||50|50|0|0|0]=],
-        },
-        [51106] = {
-            Quest = [=[Songstress Nahjeen||50|50|0|0|0]=],
-        },
-        [51107] = {
-            Quest = [=[Scaleclaw Broodmother||50|50|0|0|0]=],
-        },
-        [51108] = {
-            Quest = [=[Hivemother Kraxi||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|35|53.76|51.84|9.62|9.62",
-                    "nil|864|35|52.80|53.28|28.86|9.62",
-                    "nil|864|35|53.76|54.72|9.62|9.62",
-                },
-            },
-        },
-        [51109] = {
-            Quest = [=[Scorched Earth||50|50|0|0|0]=],
-        },
-        [51112] = {
-            Quest = [=[Warbringer Hozzik||50|50|0|0|0]=],
-        },
-        [51113] = {
-            Quest = [=[Warlord Zothix||50|50|0|0|0]=],
-        },
-        [51114] = {
-            Quest = [=[Warmother Captive||50|50|0|0|0]=],
-        },
-        [51115] = {
-            Quest = [=[Zunashi the Exile||50|50|0|0|0]=],
-        },
-        [51116] = {
-            Quest = [=[Skycarver Krakit||50|50|0|0|0]=],
-        },
-        [51117] = {
-            Quest = [=[Bajiani the Slick||50|50|0|0|0]=],
-        },
-        [51118] = {
-            Quest = [=[Bloodwing Bonepicker||50|50|0|0|0]=],
-        },
-        [51119] = {
-            Quest = [=[Vathikur||50|50|0|0|0]=],
-        },
-        [51120] = {
-            Quest = [=[Stef "Marrow" Quin||50|50|0|0|0]=],
-        },
-        [51121] = {
-            Quest = [=[Enraged Krolusk||50|50|0|0|0]=],
-        },
-        [51122] = {
-            Quest = [=[Scorpox||50|50|0|0|0]=],
-        },
-        [51123] = {
-            Quest = [=[Sirokar||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|35|24.96|67.68|9.62|9.62",
-                    "nil|864|35|24.00|69.12|28.86|9.62",
-                    "nil|864|35|24.96|70.56|9.62|9.62",
-                },
-            },
-        },
-        [51124] = {
-            Quest = [=[Relic Hunter Hazaak||50|50|0|0|0]=],
-        },
-        [51125] = {
-            Quest = [=[Jungleweb Hunter||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|32|59.72|17.28|9.62|9.62",
-                },
-            },
-        },
-        [51127] = {
-            Quest = [=[Getting Out of Hand|2|50|50|0|0|0]=],
+            Quest = [=[Break's Over|1|50|50|0|178|0]=],
         },
         [51130] = {
             Quest = [=[Azerite for the Horde!|1|50|50|0|0|0]=],
-        },
-        [51131] = {
-            Quest = [=[Absolutely Barbaric|2|50|50|0|0|0]=],
         },
         [51146] = {
             Quest = [=[Kua'fon's Day Off|1|50|50|0|0|0]=],
@@ -24324,1704 +22523,293 @@ function Nx.ModQuests:Data5()
             Start = "135308|862|32|70.80|50.70",
             End = "135308|862|32|70.80|50.70",
         },
-        [51153] = {
-            Quest = [=[Mor'fani the Exile||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Mor'fani the Exile|864|35|10.90|62.56|0|0",
-                },
-            },
-        },
-        [51154] = {
-            Quest = [=[Past Due||50|50|0|0|0]=],
-        },
-        [51155] = {
-            Quest = [=[Brgl-Lrgl the Basher||50|50|0|0|0]=],
-        },
-        [51156] = {
-            Quest = [=[Fangcaller Xorreth||50|50|0|0|0]=],
-        },
-        [51157] = {
-            Quest = [=[Golanar||50|50|0|0|0]=],
-        },
-        [51166] = {
-            Quest = [=[Down to the Roots|2|50|50|0|0|0]=],
-        },
-        [51172] = {
-            Quest = [=[Forked Lightning|2|50|50|0|0|0]=],
-        },
-        [51173] = {
-            Quest = [=[Sandfishing|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|32|52.52|58.48|9.62|9.62",
-                },
-            },
-        },
-        [51174] = {
-            Quest = [=[Instructions Not Included||50|50|0|0|0]=],
-        },
-        [51175] = {
-            Quest = [=[Azerite Wounds||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Azeroth wounds healed|862|32|77.65|42.82|0|0",
-                },
-            },
-        },
-        [51176] = {
-            Quest = [=[Unaccounted For|2|50|50|0|0|0]=],
-        },
-        [51178] = {
-            Quest = [=[Hundred Troll Holdout|2|50|50|0|0|0]=],
-        },
-        [51179] = {
-            Quest = [=[Azerite Madness||50|50|0|0|0]=],
-        },
-        [51180] = {
-            Quest = [=[Instructions Not Included|1|50|50|0|0|0]=],
-        },
-        [51181] = {
-            Quest = [=[Instructions Not Included||50|50|0|0|0]=],
-        },
-        [51185] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|32|60.12|61.68|9.62|9.62",
-                },
-            },
-        },
-        [51198] = {
-            Quest = [=[Fertilizer Duty|1|50|50|0|0|0]=],
-        },
-        [51210] = {
-            Quest = [=[Blast Back the Siege||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|35|27.84|48.96|9.62|9.62",
-                    "nil|864|35|26.88|50.40|28.86|9.62",
-                    "nil|864|35|26.88|51.84|28.86|9.62",
-                    "nil|864|35|27.84|53.28|28.86|19.24",
-                    "nil|864|35|28.80|56.16|9.62|9.62",
-                },
-            },
-        },
-        [51223] = {
-            Quest = [=[Walking on Broken Glass||50|50|0|0|0]=],
-        },
-        [51228] = {
-            Quest = [=[Instant Meat, Ready to Eat|1|50|50|0|0|0]=],
-        },
-        [51232] = {
-            Quest = [=[Hundred Troll Holdout|1|50|50|0|0|0]=],
-        },
-        [51238] = {
-            Quest = [=[Abandoned in the Burrows||50|50|0|0|0]=],
-        },
-        [51239] = {
-            Quest = [=[Instructions Not Included||50|50|0|0|0]=],
-        },
-        [51241] = {
-            Quest = [=[The Bear Witch Project|2|50|50|0|0|0]=],
-        },
-        [51245] = {
-            Quest = [=[I'm a Lumberjack and I'm Okay|2|50|50|0|0|0]=],
-        },
-        [51250] = {
-            Quest = [=[Buzz Off!||50|50|0|0|0]=],
-        },
-        [51252] = {
-            Quest = [=[Kiro's Desert Flower||50|50|0|0|0]=],
-        },
-        [51284] = {
-            Quest = [=[Falcon Hunt|2|50|50|0|0|0]=],
-        },
-        [51285] = {
-            Quest = [=[Feeding Frenzy||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "King Rakataka fed to death|864|32|56.74|63.63|0|0",
-                },
-                [2] = {
-                    "Gulch Beetle|864|32|56.74|63.63|0|0",
-                },
-            },
-        },
-        [51305] = {
-            Quest = [=[Jelly Clouds||50|50|0|0|0]=],
-        },
-        [51311] = {
-            Quest = [=[Energizing Extract|2|50|50|0|0|0]=],
-        },
-        [51315] = {
-            Quest = [=[Wild Flutterbies|1|50|50|0|0|0]=],
-        },
-        [51316] = {
-            Quest = [=[Walking in a Spiderweb||50|50|0|0|0]=],
-        },
-        [51317] = {
-            Quest = [=[Grounding the Grimestone|2|50|50|0|0|0]=],
-        },
-        [51318] = {
-            Quest = [=[Go for the Boat|2|50|50|0|0|0]=],
-        },
-        [51322] = {
-            Quest = [=[Wings and Stingers||50|50|0|0|0]=],
-        },
-        [51330] = {
-            Quest = [=[Resilient Seeds|1|50|50|0|0|0]=],
-        },
         [51342] = {
             Quest = [=[Battle for Stromgarde||50|50|0|0|0]=],
         },
         [51355] = {
             Quest = [=[Secretest Fish||50|50|0|0|0]=],
+            Start = "173350|1670|32|64.40|35.80",
         },
         [51370] = {
             Quest = [=[Short-Supply Reward||50|50|0|0|0]=],
         },
-        [51373] = {
-            Quest = [=[Ears Everywhere|2|50|50|0|0|0]=],
-        },
-        [51374] = {
-            Quest = [=[Unending Gorilla Warfare|2|50|50|0|0|0]=],
-        },
-        [51385] = {
-            Quest = [=[A Supply of Stingers|2|50|50|0|0|0]=],
-        },
-        [51388] = {
-            Quest = [=[Stopping the Infestation|2|50|50|0|0|0]=],
-        },
-        [51397] = {
-            Quest = [=[Up In Your Drill|2|50|50|0|0|0]=],
-        },
-        [51405] = {
-            Quest = [=[Corruption in the Bay|2|50|50|0|0|0]=],
-        },
-        [51406] = {
-            Quest = [=[The Lord's Hunt|2|50|50|0|0|0]=],
-        },
-        [51411] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-        },
-        [51412] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|23.04|61.92|19.24|9.62",
-                    "nil|863|35|22.08|63.36|38.48|9.62",
-                    "nil|863|35|23.04|64.80|19.24|9.62",
-                },
-            },
-        },
-        [51415] = {
-            Quest = [=[Azerite Madness||50|50|0|0|0]=],
-        },
-        [51422] = {
-            Quest = [=[Azerite Madness||50|50|0|0|0]=],
-        },
         [51425] = {
-            Quest = [=[There's No Place Like Home|2|50|50|0|0|0]=],
-        },
-        [51428] = {
-            Quest = [=[Azerite Wounds||50|50|0|0|0]=],
-        },
-        [51429] = {
-            Quest = [=[King Clickyclack||50|50|0|0|0]=],
-        },
-        [51431] = {
-            Quest = [=[Soul Goliath||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|23.04|53.28|19.24|9.62",
-                    "nil|896|35|21.12|54.72|48.10|9.62",
-                    "nil|896|35|20.16|56.16|48.10|9.62",
-                    "nil|896|35|19.20|57.60|57.72|9.62",
-                    "nil|896|35|20.16|59.04|28.86|9.62",
-                },
-            },
-        },
-        [51433] = {
-            Quest = [=[Matron Morana||50|50|0|0|0]=],
-        },
-        [51434] = {
-            Quest = [=[Stone Golem||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|49.92|41.76|9.62|9.62",
-                    "nil|896|35|48.96|43.20|28.86|9.62",
-                    "nil|896|35|49.92|44.64|9.62|9.62",
-                },
-            },
-        },
-        [51444] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|862|32|56.12|22.48|9.62|9.62",
-                },
-            },
+            Quest = [=[There's No Place Like Home|2|50|50|0|178|0]=],
         },
         [51445] = {
-            Quest = [=[Thros, the Blighted Lands|2|50|50|0|0|0]=],
+            Quest = [=[Thros, the Blighted Lands|2|50|50|0|160|0]=],
             Start = "141785|896|32|27.50|58.80",
         },
-        [51450] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-        },
-        [51454] = {
-            Quest = [=[Once More Into Battle|2|50|50|0|0|0]=],
-        },
-        [51457] = {
-            Quest = [=[Whargarble the Ill-Tempered||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|32|64.32|21.48|9.62|9.62",
-                },
-            },
-        },
-        [51461] = {
-            Quest = [=[Deathcap||50|50|0|0|0]=],
-        },
-        [51462] = {
-            Quest = [=[Paratroopers||50|50|0|0|0]=],
-        },
-        [51463] = {
-            Quest = [=[Sky Drop Rescue|1|50|50|0|0|0]=],
-        },
         [51465] = {
-            Quest = [=[A Load of Scrap|1|50|50|0|0|0]=],
+            Quest = [=[A Load of Scrap|1|50|50|0|4|0]=],
             Start = "137818|1165|32|44.90|39.60",
         },
-        [51466] = {
-            Quest = [=[Arvon the Betrayed||50|50|0|0|0]=],
-        },
-        [51467] = {
-            Quest = [=[Hyo'gi||50|50|0|0|0]=],
-        },
-        [51468] = {
-            Quest = [=[Bonesquall||50|50|0|0|0]=],
-        },
-        [51469] = {
-            Quest = [=[Betsy||50|50|0|0|0]=],
-        },
-        [51475] = {
-            Quest = [=[Brutal Escort||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Roughneck|862|32|49.83|48.56|0|0",
-                },
-                [2] = {
-                    "Dazarian Stalker|862|35|49.83|48.56|0|0",
-                },
-                [3] = {
-                    "Da'kani Provocator|862|32|59.53|47.27|0|0",
-                },
-            },
-        },
         [51483] = {
-            Quest = [=[Heritage o' the Dark Iron||50|50|0|0|0]=],
+            Quest = [=[Heritage o' the Dark Iron||50|50|0|65|0]=],
             Start = "144152|1186|32|56.60|31.80",
             End = "144152|1186|32|56.60|31.80",
         },
         [51484] = {
-            Quest = [=[Heritage of the Mag'har||50|50|0|0|0]=],
+            Quest = [=[Heritage of the Mag'har||50|50|0|109|0]=],
             Start = "143845|85|32|70.60|44.60",
             End = "143845|85|32|70.60|44.60",
         },
-        [51491] = {
-            Quest = [=[Balethorn||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|57.60|24.48|19.24|9.62",
-                    "nil|896|35|55.68|25.92|48.10|9.62",
-                    "nil|896|35|54.72|27.36|57.72|9.62",
-                    "nil|896|35|54.72|28.80|67.33|9.62",
-                    "nil|896|35|55.68|30.24|48.10|9.62",
-                    "nil|896|35|57.60|31.68|19.24|9.62",
-                },
-            },
-        },
-        [51494] = {
-            Quest = [=[The Blood Gate||50|50|0|0|0]=],
-        },
-        [51495] = {
-            Quest = [=[Old Rotana||50|50|0|0|0]=],
-        },
-        [51497] = {
-            Quest = [=[Hex Education|1|50|50|0|0|0]=],
-        },
-        [51505] = {
-            Quest = [=[Quillrat Matriarch||50|50|0|0|0]=],
-        },
-        [51506] = {
-            Quest = [=[Barbthorn Queen||50|50|0|0|0]=],
-        },
-        [51507] = {
-            Quest = [=[Gorehorn||50|50|0|0|0]=],
-        },
-        [51508] = {
-            Quest = [=[Vicemaul||50|50|0|0|0]=],
-        },
-        [51512] = {
-            Quest = [=[Bilefang Mother||50|50|0|0|0]=],
-        },
         [51513] = {
-            Quest = [=[Zalazane Returns|1|50|50|51514|0|0]=],
+            Quest = [=[Zalazane Returns|1|50|50|51514|161|0]=],
             Start = "120171|1164|32|39.43|72.43",
         },
         [51514] = {
-            Quest = [=[Broken Bargain|1|50|50|0|0|0]=],
+            Quest = [=[Broken Bargain|1|50|50|0|161|0]=],
             Start = "137878|463|32|59.46|51.49",
             End = "137878|463|32|59.50|51.50",
         },
         [51515] = {
-            Quest = [=[Vengeance for Vol'jin|1|50|50|0|0|0]=],
+            Quest = [=[Vengeance for Vol'jin|1|50|50|0|161|0]=],
             Start = "137878|463|32|59.45|51.49",
             End = "137878|463|32|59.50|51.50",
         },
         [51516] = {
-            Quest = [=[Atal'Dazar: Ashes of a Warchief|1|50|50|51517|0|0]=],
+            Quest = [=[Atal'Dazar: Ashes of a Warchief|1|50|50|51517|161|0]=],
             Start = "138138|862|32|43.77|39.54",
         },
         [51517] = {
-            Quest = [=[You Owe Me a Spirit|1|50|50|0|0|0]=],
+            Quest = [=[You Owe Me a Spirit|1|50|50|0|161|0]=],
             Start = "138148|862|32|38.90|36.60",
         },
         [51518] = {
-            Quest = [=[The Lost Spirit|1|50|50|0|0|0]=],
+            Quest = [=[The Lost Spirit|1|50|50|0|161|0]=],
             Start = "140907|1165|32|45.13|20.00",
         },
         [51519] = {
-            Quest = [=[Spirit Call|1|50|50|51520|0|0]=],
+            Quest = [=[Spirit Call|1|50|50|51520|161|0]=],
             Start = "140724|862|32|57.62|62.58",
         },
         [51520] = {
-            Quest = [=[Justice for the Fallen|1|50|50|51521|0|0]=],
+            Quest = [=[Justice for the Fallen|1|50|50|51521|161|0]=],
             Start = "140725|862|32|57.59|62.97",
         },
         [51521] = {
-            Quest = [=[The True Leader of Zandalar|1|50|50|0|0|0]=],
+            Quest = [=[The True Leader of Zandalar|1|50|50|0|161|0]=],
             Start = "140725|1165|32|49.92|39.42",
         },
-        [51527] = {
-            Quest = [=[Executioner Blackwell||50|50|0|0|0]=],
-        },
-        [51528] = {
-            Quest = [=[Captain Leadfist||50|50|0|0|0]=],
-        },
-        [51529] = {
-            Quest = [=[Talon||50|50|0|0|0]=],
-        },
-        [51530] = {
-            Quest = [=[Wedding Crashers|2|50|50|0|0|0]=],
-        },
         [51533] = {
-            Quest = [=[The Glaive of Vol'jin|1|50|50|0|0|0]=],
+            Quest = [=[The Glaive of Vol'jin|1|50|50|0|161|0]=],
             Start = "120173|463|32|59.21|52.00",
         },
-        [51541] = {
-            Quest = [=[Arclight||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|28.80|67.68|9.62|9.62",
-                    "nil|896|35|27.84|69.12|28.86|9.62",
-                    "nil|896|35|28.80|70.56|9.62|9.62",
-                },
-            },
-        },
-        [51542] = {
-            Quest = [=[Avalanche||50|50|0|0|0]=],
-        },
-        [51546] = {
-            Quest = [=[It's the Pits|2|50|50|0|0|0]=],
-        },
-        [51548] = {
-            Quest = [=[Nagative Feedback|2|50|50|0|0|0]=],
-        },
-        [51550] = {
-            Quest = [=[Bubbles and Trouble|2|50|50|0|0|0]=],
-        },
-        [51558] = {
-            Quest = [=[Spider Scorching|1|50|50|0|0|0]=],
-        },
-        [51559] = {
-            Quest = [=[Damaged Goods|1|50|50|0|0|0]=],
-        },
-        [51561] = {
-            Quest = [=[Spider Scorching|2|50|50|0|0|0]=],
-        },
-        [51562] = {
-            Quest = [=[Damaged Goods|2|50|50|0|0|0]=],
-        },
-        [51564] = {
-            Quest = [=[Fertilizer Duty|2|50|50|0|0|0]=],
-        },
-        [51565] = {
-            Quest = [=[Feeding Frenzy||50|50|0|0|0]=],
-        },
-        [51566] = {
-            Quest = [=[Resurgence of the Beast|2|50|50|0|0|0]=],
-        },
-        [51576] = {
-            Quest = [=[Any Witch Way but Dead|2|50|50|0|0|0]=],
-        },
-        [51578] = {
-            Quest = [=[The Sea Runs Red|1|50|50|0|0|0]=],
-        },
-        [51581] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-        },
-        [51583] = {
-            Quest = [=[Azerite Wounds||50|50|0|0|0]=],
-        },
-        [51584] = {
-            Quest = [=[Azerite Madness||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|35|40.32|36.00|9.62|9.62",
-                    "nil|864|35|39.36|37.44|28.86|9.62",
-                    "nil|864|35|38.40|38.88|28.86|9.62",
-                    "nil|864|35|39.36|40.32|9.62|9.62",
-                    "nil|864|35|56.64|51.84|9.62|9.62",
-                    "nil|864|35|79.68|51.84|9.62|9.62",
-                    "nil|864|35|55.68|53.28|38.48|9.62",
-                    "nil|864|35|78.72|53.28|28.86|9.62",
-                    "nil|864|35|55.68|54.72|48.10|9.62",
-                    "nil|864|35|78.72|54.72|38.48|9.62",
-                    "nil|864|35|56.64|56.16|38.48|9.62",
-                    "nil|864|35|78.72|56.16|28.86|9.62",
-                    "nil|864|35|56.64|57.60|48.10|9.62",
-                    "nil|864|35|79.68|57.60|9.62|9.62",
-                    "nil|864|35|57.60|59.04|38.48|9.62",
-                    "nil|864|35|57.60|60.48|48.10|9.62",
-                    "nil|864|35|58.56|61.92|28.86|9.62",
-                    "nil|864|35|39.36|66.24|28.86|9.62",
-                    "nil|864|35|38.40|67.68|48.10|19.24",
-                    "nil|864|35|39.36|70.56|28.86|9.62",
-                },
-                [2] = {
-                    "nil|864|35|55.68|21.60|9.62|9.62",
-                    "nil|864|35|54.72|23.04|28.86|9.62",
-                    "nil|864|35|55.68|24.48|9.62|9.62",
-                    "nil|864|35|41.28|34.56|9.62|9.62",
-                    "nil|864|35|39.36|36.00|38.48|9.62",
-                    "nil|864|35|38.40|37.44|48.10|9.62",
-                    "nil|864|35|38.40|38.88|57.72|9.62",
-                    "nil|864|35|38.40|40.32|48.10|9.62",
-                    "nil|864|35|39.36|41.76|19.24|9.62",
-                    "nil|864|35|57.60|50.40|19.24|9.62",
-                    "nil|864|35|55.68|51.84|48.10|9.62",
-                    "nil|864|35|76.80|51.84|38.48|9.62",
-                    "nil|864|35|54.72|53.28|57.72|9.62",
-                    "nil|864|35|75.84|53.28|57.72|9.62",
-                    "nil|864|35|55.68|54.72|57.72|9.62",
-                    "nil|864|35|75.84|54.72|67.33|9.62",
-                    "nil|864|35|55.68|56.16|57.72|9.62",
-                    "nil|864|35|76.80|56.16|57.72|9.62",
-                    "nil|864|35|56.64|57.60|57.72|9.62",
-                    "nil|864|35|78.72|57.60|28.86|9.62",
-                    "nil|864|35|56.64|59.04|57.72|9.62",
-                    "nil|864|35|24.00|60.48|19.24|9.62",
-                    "nil|864|35|57.60|60.48|48.10|9.62",
-                    "nil|864|35|22.08|61.92|48.10|9.62",
-                    "nil|864|35|58.56|61.92|38.48|9.62",
-                    "nil|864|35|21.12|63.36|57.72|9.62",
-                    "nil|864|35|60.48|63.36|9.62|9.62",
-                    "nil|864|35|22.08|64.80|38.48|9.62",
-                    "nil|864|35|23.04|66.24|19.24|9.62",
-                    "nil|864|35|39.36|66.24|28.86|9.62",
-                    "nil|864|35|38.40|67.68|48.10|19.24",
-                    "nil|864|35|39.36|70.56|28.86|9.62",
-                    "nil|864|35|69.12|82.08|38.48|9.62",
-                    "nil|864|35|68.16|83.52|57.72|9.62",
-                    "nil|864|35|68.16|84.96|57.72|9.62",
-                    "nil|864|35|69.12|86.40|48.10|9.62",
-                    "nil|864|35|69.12|87.84|38.48|9.62",
-                    "nil|864|35|70.08|89.28|9.62|9.62",
-                },
-                [3] = {
-                    "nil|864|35|40.32|37.44|9.62|9.62",
-                    "nil|864|35|39.36|38.88|28.86|9.62",
-                    "nil|864|35|40.32|40.32|9.62|9.62",
-                    "nil|864|35|80.64|51.84|9.62|9.62",
-                    "nil|864|35|79.68|53.28|28.86|9.62",
-                    "nil|864|35|78.72|54.72|28.86|9.62",
-                    "nil|864|35|79.68|56.16|9.62|9.62",
-                    "nil|864|35|59.52|60.48|19.24|9.62",
-                    "nil|864|35|58.56|61.92|38.48|9.62",
-                    "nil|864|35|23.04|63.36|9.62|9.62",
-                    "nil|864|35|59.52|63.36|19.24|9.62",
-                    "nil|864|35|22.08|64.80|28.86|9.62",
-                    "nil|864|35|23.04|66.24|9.62|9.62",
-                    "nil|864|35|40.32|66.24|9.62|9.62",
-                    "nil|864|35|39.36|67.68|28.86|19.24",
-                    "nil|864|35|40.32|70.56|9.62|9.62",
-                    "nil|864|35|69.12|82.08|9.62|9.62",
-                    "nil|864|35|68.16|83.52|38.48|9.62",
-                    "nil|864|35|68.16|84.96|38.48|9.62",
-                    "nil|864|35|69.12|86.40|38.48|9.62",
-                    "nil|864|35|71.04|87.84|9.62|9.62",
-                },
-                [4] = {
-                    "nil|864|35|41.28|36.00|9.62|9.62",
-                    "nil|864|35|40.32|37.44|28.86|9.62",
-                    "nil|864|35|41.28|38.88|9.62|9.62",
-                    "nil|864|35|60.48|60.48|9.62|9.62",
-                    "nil|864|35|59.52|61.92|28.86|9.62",
-                    "nil|864|35|60.48|63.36|9.62|9.62",
-                    "nil|864|35|40.32|66.24|9.62|9.62",
-                    "nil|864|35|39.36|67.68|28.86|9.62",
-                    "nil|864|35|40.32|69.12|9.62|9.62",
-                },
-            },
-        },
-        [51585] = {
-            Quest = [=[Quit Your Witchin'|2|50|50|0|0|0]=],
-        },
-        [51586] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-        },
-        [51588] = {
-            Quest = [=[Familiar Foes|2|50|50|0|0|0]=],
-        },
         [51589] = {
-            Quest = [=[Breaking Kul Tiran Will|1|50|50|51590|0|0]=],
+            Quest = [=[Breaking Kul Tiran Will|1|50|50|51590|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [51590] = {
-            Quest = [=[Into the Heart of Tiragarde|1|50|50|51591|0|0]=],
+            Quest = [=[Into the Heart of Tiragarde|1|50|50|51591|95|0]=],
             Start = "138285|895|32|87.00|50.50",
         },
         [51591] = {
-            Quest = [=[Our Mountain Now|1|50|50|0|0|0]=],
+            Quest = [=[Our Mountain Now|1|50|50|0|95|0]=],
             Start = "138285|895|32|71.19|50.91",
         },
         [51592] = {
-            Quest = [=[Making Ourselves at Home|1|50|50|0|0|0]=],
+            Quest = [=[Making Ourselves at Home|1|50|50|0|95|0]=],
             Start = "138285|895|32|72.00|51.80",
             End = "138285|895|32|72.00|51.80",
         },
         [51593] = {
-            Quest = [=[Bridgeport Investigation|1|50|50|51594|0|0]=],
+            Quest = [=[Bridgeport Investigation|1|50|50|51594|95|0]=],
             Start = "138287|895|32|72.05|51.77",
             End = "138287|895|32|72.00|51.80",
         },
         [51594] = {
-            Quest = [=[Explosives in the Foundry|1|50|50|51595|0|0]=],
+            Quest = [=[Explosives in the Foundry|1|50|50|51595|95|0]=],
             Start = "138287|895|32|72.00|51.80",
             End = "138287|895|32|72.00|51.80",
         },
         [51595] = {
-            Quest = [=[Explosivity|1|50|50|0|0|0]=],
+            Quest = [=[Explosivity|1|50|50|0|95|0]=],
             Start = "138287|895|32|77.50|49.90",
             End = "138287|895|32|77.50|49.90",
         },
         [51596] = {
-            Quest = [=[Ammunition Acquisition|1|50|50|51599|0|0]=],
+            Quest = [=[Ammunition Acquisition|1|50|50|51599|95|0]=],
             Start = "138287|895|32|77.50|49.90",
             End = "138287|895|32|77.50|49.90",
         },
         [51597] = {
-            Quest = [=[Gunpowder Research|1|50|50|51599|0|0]=],
+            Quest = [=[Gunpowder Research|1|50|50|51599|95|0]=],
             Start = "138287|895|32|77.50|49.90",
             End = "138287|895|32|77.50|49.90",
         },
         [51598] = {
-            Quest = [=[A Bit of Chaos|1|50|50|51599|0|0]=],
+            Quest = [=[A Bit of Chaos|1|50|50|51599|95|0]=],
             Start = "138287|895|32|77.50|49.90",
             End = "138287|895|32|77.50|49.90",
         },
         [51599] = {
-            Quest = [=[Death Trap|1|50|50|51601|0|0]=],
+            Quest = [=[Death Trap|1|50|50|51601|95|0]=],
             Start = "138287|895|32|77.50|49.90",
             End = "138287|895|32|77.50|49.90",
         },
         [51601] = {
-            Quest = [=[The Bridgeport Ride|1|50|50|0|0|0]=],
+            Quest = [=[The Bridgeport Ride|1|50|50|0|95|0]=],
             Start = "138287|895|32|72.05|51.77",
         },
-        [51604] = {
-            Quest = [=[Hunters Hunted|2|50|50|0|0|0]=],
-        },
-        [51608] = {
-            Quest = [=[Azerite Madness||50|50|0|0|0]=],
-        },
-        [51609] = {
-            Quest = [=[Azerite Wounds||50|50|0|0|0]=],
-        },
-        [51610] = {
-            Quest = [=[Adhara White||50|50|0|0|0]=],
-        },
-        [51611] = {
-            Quest = [=[Ghost of the Deep||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Ghost of the Deep|895|35|52.98|30.51|0|0",
-                },
-            },
-        },
-        [51612] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-        },
-        [51613] = {
-            Quest = [=[Bloodmaw||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|32|58.32|32.28|9.62|9.62",
-                },
-            },
-        },
-        [51615] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-        },
-        [51616] = {
-            Quest = [=[A Final Rest|2|50|50|0|0|0]=],
-        },
-        [51617] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Tidesage Morris|942|35|14.19|29.19|0|0",
-                },
-            },
-        },
-        [51618] = {
-            Quest = [=[Azerite Madness||50|50|0|0|0]=],
-        },
-        [51619] = {
-            Quest = [=[Trapline|2|50|50|0|0|0]=],
-        },
-        [51620] = {
-            Quest = [=[Natural Resources|2|50|50|0|0|0]=],
-        },
-        [51622] = {
-            Quest = [=[Tidal Teachings|1|50|50|0|0|0]=],
-        },
-        [51623] = {
-            Quest = [=[Azerite Wounds||50|50|0|0|0]=],
-        },
-        [51625] = {
-            Quest = [=[Shell Game||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Speak to Collector Kojo|896|35|77.68|78.19|0|0",
-                },
-                [2] = {
-                    "Complete Collector Kojo's Shell Game|896|32|77.68|78.19|0|0",
-                },
-            },
-        },
-        [51626] = {
-            Quest = [=[Shell Game||50|50|0|0|0]=],
-        },
-        [51627] = {
-            Quest = [=[Shell Game||50|50|0|0|0]=],
-        },
-        [51628] = {
-            Quest = [=[Shell Game||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Speak to Collector Kojo|863|35|59.48|27.78|0|0",
-                },
-                [2] = {
-                    "Complete Collector Kojo's Shell Game|863|32|59.48|27.78|0|0",
-                },
-            },
-        },
-        [51629] = {
-            Quest = [=[Shell Game||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Speak to Collector Kojo|864|35|49.79|72.66|0|0",
-                },
-                [2] = {
-                    "Complete Collector Kojo's Shell Game|864|32|49.79|72.66|0|0",
-                },
-            },
-        },
-        [51630] = {
-            Quest = [=[Shell Game||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Speak to Collector Kojo|862|35|21.17|62.17|0|0",
-                },
-                [2] = {
-                    "Complete Collector Kojo's Shell Game|862|32|21.17|62.17|0|0",
-                },
-            },
-        },
-        [51632] = {
-            Quest = [=[Make Loh Go||50|50|0|0|0]=],
-        },
-        [51633] = {
-            Quest = [=[Make Loh Go||50|50|0|0|0]=],
-        },
-        [51635] = {
-            Quest = [=[Make Loh Go||50|50|0|0|0]=],
-        },
-        [51636] = {
-            Quest = [=[Make Loh Go||50|50|0|0|0]=],
-        },
-        [51637] = {
-            Quest = [=[Beachhead||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Speak to Scrollsage Nola|896|35|73.29|78.37|0|0",
-                },
-                [2] = {
-                    "Help the Juvenile Turtles Reach the Ocean|896|32|73.29|78.37|0|0",
-                },
-            },
-        },
-        [51638] = {
-            Quest = [=[Beachhead||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Speak to Scrollsage Nola|895|35|23.78|41.93|0|0",
-                },
-                [2] = {
-                    "Help the Juvenile Turtles Reach the Ocean|895|32|23.78|41.93|0|0",
-                },
-            },
-        },
-        [51639] = {
-            Quest = [=[Beachhead||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Speak to Scrollsage Nola|942|35|43.19|69.65|0|0",
-                },
-                [2] = {
-                    "Help the Juvenile Turtles Reach the Ocean|942|32|43.19|69.65|0|0",
-                },
-            },
-        },
-        [51640] = {
-            Quest = [=[Beachhead||50|50|0|0|0]=],
-        },
-        [51641] = {
-            Quest = [=[Beachhead||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Speak to Scrollsage Nola|864|35|78.50|33.47|0|0",
-                },
-                [2] = {
-                    "Help the Juvenile Turtles Reach the Ocean|864|32|78.50|33.47|0|0",
-                },
-            },
-        },
-        [51642] = {
-            Quest = [=[Beachhead||50|50|0|0|0]=],
-        },
-        [51644] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|35|41.28|36.00|9.62|9.62",
-                    "nil|864|35|40.32|37.44|28.86|9.62",
-                    "nil|864|35|41.28|38.88|9.62|9.62",
-                    "nil|864|35|60.48|60.48|9.62|9.62",
-                    "nil|864|35|59.52|61.92|28.86|9.62",
-                    "nil|864|35|60.48|63.36|9.62|9.62",
-                    "nil|864|35|40.32|66.24|9.62|9.62",
-                    "nil|864|35|39.36|67.68|28.86|9.62",
-                    "nil|864|35|40.32|69.12|9.62|9.62",
-                },
-                [2] = {
-                    "nil|864|35|40.32|37.44|9.62|9.62",
-                    "nil|864|35|39.36|38.88|28.86|9.62",
-                    "nil|864|35|40.32|40.32|9.62|9.62",
-                    "nil|864|35|80.64|51.84|9.62|9.62",
-                    "nil|864|35|79.68|53.28|28.86|9.62",
-                    "nil|864|35|78.72|54.72|28.86|9.62",
-                    "nil|864|35|79.68|56.16|9.62|9.62",
-                    "nil|864|35|59.52|60.48|19.24|9.62",
-                    "nil|864|35|58.56|61.92|38.48|9.62",
-                    "nil|864|35|23.04|63.36|9.62|9.62",
-                    "nil|864|35|59.52|63.36|19.24|9.62",
-                    "nil|864|35|22.08|64.80|28.86|9.62",
-                    "nil|864|35|23.04|66.24|9.62|9.62",
-                    "nil|864|35|40.32|66.24|9.62|9.62",
-                    "nil|864|35|39.36|67.68|28.86|19.24",
-                    "nil|864|35|40.32|70.56|9.62|9.62",
-                    "nil|864|35|69.12|82.08|9.62|9.62",
-                    "nil|864|35|68.16|83.52|38.48|9.62",
-                    "nil|864|35|68.16|84.96|38.48|9.62",
-                    "nil|864|35|69.12|86.40|38.48|9.62",
-                    "nil|864|35|71.04|87.84|9.62|9.62",
-                },
-                [3] = {
-                    "nil|864|35|55.68|21.60|9.62|9.62",
-                    "nil|864|35|54.72|23.04|28.86|9.62",
-                    "nil|864|35|55.68|24.48|9.62|9.62",
-                    "nil|864|35|41.28|34.56|9.62|9.62",
-                    "nil|864|35|39.36|36.00|38.48|9.62",
-                    "nil|864|35|38.40|37.44|48.10|9.62",
-                    "nil|864|35|38.40|38.88|57.72|9.62",
-                    "nil|864|35|38.40|40.32|48.10|9.62",
-                    "nil|864|35|39.36|41.76|19.24|9.62",
-                    "nil|864|35|57.60|50.40|19.24|9.62",
-                    "nil|864|35|55.68|51.84|48.10|9.62",
-                    "nil|864|35|76.80|51.84|38.48|9.62",
-                    "nil|864|35|54.72|53.28|57.72|9.62",
-                    "nil|864|35|75.84|53.28|57.72|9.62",
-                    "nil|864|35|55.68|54.72|57.72|9.62",
-                    "nil|864|35|75.84|54.72|67.33|9.62",
-                    "nil|864|35|55.68|56.16|57.72|9.62",
-                    "nil|864|35|76.80|56.16|57.72|9.62",
-                    "nil|864|35|56.64|57.60|57.72|9.62",
-                    "nil|864|35|78.72|57.60|28.86|9.62",
-                    "nil|864|35|56.64|59.04|57.72|9.62",
-                    "nil|864|35|24.00|60.48|19.24|9.62",
-                    "nil|864|35|57.60|60.48|48.10|9.62",
-                    "nil|864|35|22.08|61.92|48.10|9.62",
-                    "nil|864|35|58.56|61.92|38.48|9.62",
-                    "nil|864|35|21.12|63.36|57.72|9.62",
-                    "nil|864|35|60.48|63.36|9.62|9.62",
-                    "nil|864|35|22.08|64.80|38.48|9.62",
-                    "nil|864|35|23.04|66.24|19.24|9.62",
-                    "nil|864|35|39.36|66.24|28.86|9.62",
-                    "nil|864|35|38.40|67.68|48.10|19.24",
-                    "nil|864|35|39.36|70.56|28.86|9.62",
-                    "nil|864|35|69.12|82.08|38.48|9.62",
-                    "nil|864|35|68.16|83.52|57.72|9.62",
-                    "nil|864|35|68.16|84.96|57.72|9.62",
-                    "nil|864|35|69.12|86.40|48.10|9.62",
-                    "nil|864|35|69.12|87.84|38.48|9.62",
-                    "nil|864|35|70.08|89.28|9.62|9.62",
-                },
-                [4] = {
-                    "nil|864|35|40.32|36.00|9.62|9.62",
-                    "nil|864|35|39.36|37.44|28.86|9.62",
-                    "nil|864|35|38.40|38.88|28.86|9.62",
-                    "nil|864|35|39.36|40.32|9.62|9.62",
-                    "nil|864|35|56.64|51.84|9.62|9.62",
-                    "nil|864|35|79.68|51.84|9.62|9.62",
-                    "nil|864|35|55.68|53.28|38.48|9.62",
-                    "nil|864|35|78.72|53.28|28.86|9.62",
-                    "nil|864|35|55.68|54.72|48.10|9.62",
-                    "nil|864|35|78.72|54.72|38.48|9.62",
-                    "nil|864|35|56.64|56.16|38.48|9.62",
-                    "nil|864|35|78.72|56.16|28.86|9.62",
-                    "nil|864|35|56.64|57.60|48.10|9.62",
-                    "nil|864|35|79.68|57.60|9.62|9.62",
-                    "nil|864|35|57.60|59.04|38.48|9.62",
-                    "nil|864|35|57.60|60.48|48.10|9.62",
-                    "nil|864|35|58.56|61.92|28.86|9.62",
-                    "nil|864|35|39.36|66.24|28.86|9.62",
-                    "nil|864|35|38.40|67.68|48.10|19.24",
-                    "nil|864|35|39.36|70.56|28.86|9.62",
-                },
-            },
-        },
-        [51646] = {
-            Quest = [=[Polly Want A Cracker?|1|50|50|0|0|0]=],
-        },
-        [51647] = {
-            Quest = [=[Crews of Freehold|1|50|50|0|0|0]=],
-        },
-        [51651] = {
-            Quest = [=[Squacks||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|32|80.32|81.88|9.62|9.62",
-                },
-            },
-        },
-        [51652] = {
-            Quest = [=[Barman Bill||50|50|0|0|0]=],
-        },
-        [51653] = {
-            Quest = [=[Auditor Dolp||50|50|0|0|0]=],
-        },
-        [51654] = {
-            Quest = [=[Fowlmouth||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|35|90.24|74.88|9.62|9.62",
-                    "nil|895|35|89.28|76.32|28.86|19.24",
-                    "nil|895|35|90.24|79.20|9.62|9.62",
-                },
-            },
-        },
-        [51655] = {
-            Quest = [=[Teres||50|50|0|0|0]=],
-        },
-        [51656] = {
-            Quest = [=[Saurolisk Tamer Mugg||50|50|0|0|0]=],
-        },
-        [51657] = {
-            Quest = [=[Twin-Hearted Construct||50|50|0|0|0]=],
-        },
-        [51658] = {
-            Quest = [=[Fly the Coop!|2|50|50|0|0|0]=],
-        },
-        [51659] = {
-            Quest = [=[Merianae||50|50|0|0|0]=],
-        },
-        [51660] = {
-            Quest = [=[Pack Leader Asenya||50|50|0|0|0]=],
-        },
-        [51661] = {
-            Quest = [=[Raging Swell||50|50|0|0|0]=],
-        },
-        [51662] = {
-            Quest = [=[Foxhollow Skyterror||50|50|0|0|0]=],
-        },
-        [51664] = {
-            Quest = [=[Kulett the Ornery||50|50|0|0|0]=],
-        },
-        [51665] = {
-            Quest = [=[Broodmother Razora||50|50|0|0|0]=],
-        },
-        [51666] = {
-            Quest = [=[Bashmu||50|50|0|0|0]=],
-        },
-        [51667] = {
-            Quest = [=[This Bird You Cannot Change|2|50|50|0|0|0]=],
-        },
-        [51669] = {
-            Quest = [=[Black-Eyed Bart||50|50|0|0|0]=],
-        },
-        [51670] = {
-            Quest = [=[Lumbergrasp Sentinel||50|50|0|0|0]=],
-        },
-        [51671] = {
-            Quest = [=[Billy Goat Barber|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|32|80.97|50.32|0|0",
-                },
-            },
-        },
-        [51672] = {
-            Quest = [=[Tangled Webs|2|50|50|0|0|0]=],
-        },
-        [51676] = {
-            Quest = [=[What a Gull Wants|2|50|50|0|0|0]=],
-        },
-        [51681] = {
-            Quest = [=[Basic Witch|2|50|50|0|0|0]=],
-        },
-        [51682] = {
-            Quest = [=[Witches by the Dozen|2|50|50|0|0|0]=],
-        },
-        [51683] = {
-            Quest = [=[Slash and Burn Tactics|2|50|50|0|0|0]=],
-        },
-        [51686] = {
-            Quest = [=[Where My Witches at?|2|50|50|0|0|0]=],
-        },
-        [51687] = {
-            Quest = [=[A Smelly Solution|2|50|50|0|0|0]=],
-        },
-        [51690] = {
-            Quest = [=[The Shadows of Corlain|2|50|50|0|0|0]=],
-        },
-        [51693] = {
-            Quest = [=[Intercepting the Irontide|2|50|50|0|0|0]=],
-        },
-        [51694] = {
-            Quest = [=[Which Witch?|2|50|50|0|0|0]=],
-        },
-        [51697] = {
-            Quest = [=[Hunting for Truffle Hunters|2|50|50|0|0|0]=],
-        },
-        [51699] = {
-            Quest = [=[Blighted Monstrosity||50|50|0|0|0]=],
-        },
-        [51706] = {
-            Quest = [=[Deadwood|2|50|50|0|0|0]=],
-        },
-        [51707] = {
-            Quest = [=[More Valuable Than Gold|2|50|50|0|0|0]=],
-        },
-        [51709] = {
-            Quest = [=[Bombarbment|2|50|50|0|0|0]=],
-        },
-        [51710] = {
-            Quest = [=[Rise of the Yetis|2|50|50|0|0|0]=],
-        },
-        [51719] = {
-            Quest = [=[A Glaive Mistake|1|50|50|0|0|0]=],
-        },
-        [51727] = {
-            Quest = [=[A Shot at the Dark Iron|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|32.64|43.20|9.62|9.62",
-                    "nil|896|35|31.68|44.64|28.86|19.24",
-                    "nil|896|35|32.64|47.52|9.62|9.62",
-                },
-                [2] = {
-                    "nil|896|35|32.64|44.64|9.62|9.62",
-                    "nil|896|35|31.68|46.08|28.86|9.62",
-                    "nil|896|35|32.64|47.52|9.62|9.62",
-                },
-            },
-        },
-        [51737] = {
-            Quest = [=[Bruin Potions|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Bear Heart collected|896|32|39.44|78.84|0|0",
-                },
-                [2] = {
-                    "nil|896|32|41.50|79.71|0|0",
-                },
-                [3] = {
-                    "nil|896|32|42.36|80.58|0|0",
-                },
-            },
-        },
-        [51738] = {
-            Quest = [=[Witches by the Dozen|1|50|50|0|0|0]=],
-        },
-        [51739] = {
-            Quest = [=[Rise of the Yetis|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|46.08|25.92|9.62|9.62",
-                    "nil|896|35|44.16|27.36|38.48|9.62",
-                    "nil|896|35|43.20|28.80|57.72|9.62",
-                    "nil|896|35|42.24|30.24|67.33|9.62",
-                    "nil|896|35|42.24|31.68|67.33|9.62",
-                    "nil|896|35|42.24|33.12|57.72|19.24",
-                    "nil|896|35|43.20|36.00|38.48|9.62",
-                    "nil|896|35|44.16|37.44|9.62|9.62",
-                },
-                [2] = {
-                    "nil|896|35|44.16|25.92|9.62|9.62",
-                    "nil|896|35|43.20|27.36|38.48|9.62",
-                    "nil|896|35|43.20|28.80|48.10|9.62",
-                    "nil|896|35|42.24|30.24|57.72|9.62",
-                    "nil|896|35|42.24|31.68|67.33|9.62",
-                    "nil|896|35|41.28|33.12|76.95|19.24",
-                    "nil|896|35|41.28|36.00|67.33|9.62",
-                    "nil|896|35|41.28|37.44|67.33|9.62",
-                    "nil|896|35|42.24|38.88|48.10|9.62",
-                    "nil|896|35|44.16|40.32|9.62|9.62",
-                },
-            },
-        },
-        [51740] = {
-            Quest = [=[Hunting for Truffle Hunters||50|50|0|0|0]=],
-        },
-        [51741] = {
-            Quest = [=[Bombarbment|1|50|50|0|0|0]=],
-        },
-        [51742] = {
-            Quest = [=[Intercepting the Irontide|1|50|50|0|0|0]=],
-        },
-        [51743] = {
-            Quest = [=[More Valuable Than Gold|1|50|50|0|0|0]=],
-        },
-        [51745] = {
-            Quest = [=[A Smelly Solution|1|50|50|0|0|0]=],
-        },
-        [51746] = {
-            Quest = [=[The Shadows of Corlain||50|50|0|0|0]=],
-        },
-        [51747] = {
-            Quest = [=[Early Warning|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|17.28|5.76|9.62|9.62",
-                    "nil|896|35|15.36|7.20|48.10|9.62",
-                    "nil|896|35|14.40|8.64|67.33|9.62",
-                    "nil|896|35|14.40|10.08|76.95|9.62",
-                    "nil|896|35|15.36|11.52|57.72|9.62",
-                    "nil|896|35|17.28|12.96|19.24|9.62",
-                },
-                [2] = {
-                    "nil|896|32|18.92|7.48|9.62|9.62",
-                },
-            },
-        },
-        [51754] = {
-            Quest = [=[Dogged Tenacity||50|50|0|0|0]=],
-        },
-        [51759] = {
-            Quest = [=[Seabreaker Skoloth||50|50|0|0|0]=],
-        },
-        [51760] = {
-            Quest = [=[Ranishu Feeding Frenzy|2|50|50|0|0|0]=],
-        },
-        [51761] = {
-            Quest = [=[Familiar Foes|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|57.60|24.48|19.24|9.62",
-                    "nil|896|35|55.68|25.92|48.10|9.62",
-                    "nil|896|35|54.72|27.36|67.33|19.24",
-                    "nil|896|35|55.68|30.24|67.33|9.62",
-                    "nil|896|35|57.60|31.68|38.48|9.62",
-                },
-            },
-        },
-        [51763] = {
-            Quest = [=[Zem'lan Rescue|1|50|50|0|0|0]=],
-        },
-        [51764] = {
-            Quest = [=[Hunters Hunted|1|50|50|0|0|0]=],
-        },
-        [51765] = {
-            Quest = [=[Tangled Webs|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|65.28|48.96|38.48|9.62",
-                    "nil|896|35|63.36|50.40|67.33|9.62",
-                    "nil|896|35|63.36|51.84|57.72|9.62",
-                    "nil|896|35|62.40|53.28|67.33|9.62",
-                    "nil|896|35|62.40|54.72|57.72|9.62",
-                    "nil|896|35|61.44|56.16|67.33|9.62",
-                    "nil|896|35|61.44|57.60|57.72|9.62",
-                    "nil|896|35|60.48|59.04|57.72|9.62",
-                    "nil|896|35|61.44|60.48|28.86|9.62",
-                },
-                [2] = {
-                    "nil|896|35|66.24|48.96|9.62|9.62",
-                    "nil|896|35|64.32|50.40|38.48|9.62",
-                    "nil|896|35|64.32|51.84|38.48|9.62",
-                    "nil|896|35|63.36|53.28|48.10|19.24",
-                    "nil|896|35|62.40|56.16|48.10|9.62",
-                    "nil|896|35|63.36|57.60|28.86|9.62",
-                },
-            },
-        },
-        [51767] = {
-            Quest = [=[Trapline|1|50|50|0|0|0]=],
-        },
-        [51768] = {
-            Quest = [=[Natural Resources||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|66.24|34.56|19.24|9.62",
-                    "nil|896|35|64.32|36.00|57.72|9.62",
-                    "nil|896|35|63.36|37.44|86.57|9.62",
-                    "nil|896|35|64.32|38.88|86.57|19.24",
-                    "nil|896|35|65.28|41.76|67.33|9.62",
-                    "nil|896|35|66.24|43.20|57.72|9.62",
-                    "nil|896|35|68.16|44.64|28.86|9.62",
-                },
-                [2] = {
-                    "nil|896|35|67.20|37.44|9.62|9.62",
-                    "nil|896|35|65.28|38.88|48.10|9.62",
-                    "nil|896|35|64.32|40.32|67.33|19.24",
-                    "nil|896|35|64.32|43.20|76.95|9.62",
-                    "nil|896|35|65.28|44.64|57.72|9.62",
-                    "nil|896|35|67.20|46.08|28.86|9.62",
-                },
-            },
-        },
-        [51769] = {
-            Quest = [=[What a Gull Wants|1|50|50|0|0|0]=],
-        },
-        [51774] = {
-            Quest = [=[Ragna||50|50|0|0|0]=],
-        },
-        [51776] = {
-            Quest = [=[Galestorm||50|50|0|0|0]=],
-        },
-        [51777] = {
-            Quest = [=[Dagrus the Scorned||50|50|0|0|0]=],
-        },
-        [51778] = {
-            Quest = [=[Deepfang||50|50|0|0|0]=],
-        },
-        [51779] = {
-            Quest = [=[Grimscowl the Hairbrained||50|50|0|0|0]=],
-            Start = "0|942|32|62.00|73.90",
-        },
-        [51780] = {
-            Quest = [=[Dinner for Dolly and Dot||50|50|0|0|0]=],
-        },
-        [51781] = {
-            Quest = [=[Foreman Scripps||50|50|0|0|0]=],
-        },
-        [51782] = {
-            Quest = [=[Captain Razorspine||50|50|0|0|0]=],
-        },
-        [51783] = {
-            Quest = [=[Zem'lan Rescue|2|50|50|0|0|0]=],
-        },
         [51784] = {
-            Quest = [=[A Stroll Through a Cemetery|1|50|50|0|0|0]=],
+            Quest = [=[A Stroll Through a Cemetery|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [51785] = {
-            Quest = [=[Examining the Epitaphs|1|50|50|0|0|0]=],
+            Quest = [=[Examining the Epitaphs|1|50|50|0|95|0]=],
             Start = "139061|896|32|61.40|51.10",
             End = "139061|896|32|61.40|51.10",
         },
         [51786] = {
-            Quest = [=[State of Unrest|1|50|50|0|0|0]=],
+            Quest = [=[State of Unrest|1|50|50|0|95|0]=],
             Start = "139061|896|32|61.40|51.10",
             End = "139061|896|32|61.40|51.10",
         },
         [51787] = {
-            Quest = [=[Our Lot in Life|1|50|50|0|0|0]=],
+            Quest = [=[Our Lot in Life|1|50|50|0|95|0]=],
             Start = "139062|896|32|61.30|51.10",
         },
         [51788] = {
-            Quest = [=[The Crypt Keeper|1|50|50|51789|0|0]=],
+            Quest = [=[The Crypt Keeper|1|50|50|51789|95|0]=],
             Start = "139061|896|32|61.40|51.10",
             End = "139061|896|32|61.40|51.10",
         },
         [51789] = {
-            Quest = [=[What Remains of Marshal M. Valentine|1|50|50|0|0|0]=],
+            Quest = [=[What Remains of Marshal M. Valentine|1|50|50|0|95|0]=],
             Start = "139061|896|32|61.40|51.10",
             End = "139061|896|32|61.40|51.10",
         },
-        [51791] = {
-            Quest = [=[Bubbling Totem Testing|1|50|50|0|0|0]=],
-        },
-        [51792] = {
-            Quest = [=[Erupting Totem Testing|1|50|50|0|0|0]=],
-        },
-        [51793] = {
-            Quest = [=[Bubbling Totem Testing|2|50|50|0|0|0]=],
-        },
-        [51794] = {
-            Quest = [=[Erupting Totem Testing|2|50|50|0|0|0]=],
-        },
         [51797] = {
-            Quest = [=[Tracking Tidesages|1|50|50|51798|0|0]=],
+            Quest = [=[Tracking Tidesages|1|50|50|51798|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [51798] = {
-            Quest = [=[No Price Too High|1|50|50|0|0|0]=],
+            Quest = [=[No Price Too High|1|50|50|0|95|0]=],
             Start = "138876|942|32|52.10|33.70",
             End = "138876|942|32|52.10|33.70",
         },
-        [51804] = {
-            Quest = [=[Running Interference||50|50|0|0|0]=],
-        },
         [51805] = {
-            Quest = [=[They Will Know Fear|1|50|50|0|0|0]=],
+            Quest = [=[They Will Know Fear|1|50|50|0|95|0]=],
             Start = "139101|942|32|62.60|31.90",
             End = "139101|942|32|62.60|31.90",
         },
-        [51806] = {
-            Quest = [=[Pest Remover Mk. II||50|50|0|0|0]=],
-        },
-        [51811] = {
-            Quest = [=[Trapped Tortollans|1|50|50|0|0|0]=],
-        },
-        [51814] = {
-            Quest = [=[Ravoracious|2|50|50|0|0|0]=],
-        },
-        [51815] = {
-            Quest = [=[Eggstermination|2|50|50|0|0|0]=],
-        },
-        [51816] = {
-            Quest = [=[Pterrible Ingredients|2|50|50|0|0|0]=],
-        },
-        [51817] = {
-            Quest = [=[Trapped Tortollans|2|50|50|0|0|0]=],
-        },
         [51818] = {
-            Quest = [=[Commander and Captain|1|50|50|0|0|0]=],
+            Quest = [=[Commander and Captain|1|50|50|0|95|0]=],
             Start = "139098|942|32|62.60|31.90",
             End = "139098|942|32|62.60|31.90",
         },
         [51819] = {
-            Quest = [=[Scattering Our Enemies|1|50|50|0|0|0]=],
+            Quest = [=[Scattering Our Enemies|1|50|50|0|95|0]=],
             Start = "139102|942|32|62.70|31.80",
         },
-        [51820] = {
-            Quest = [=[Oily Mess|2|50|50|0|0|0]=],
-        },
-        [51821] = {
-            Quest = [=[Quelling the Cove|2|50|50|0|0|0]=],
-        },
-        [51822] = {
-            Quest = [=[Scrolls and Scales|2|50|50|0|0|0]=],
-        },
-        [51824] = {
-            Quest = [=[You're Grounded|2|50|50|0|0|0]=],
-        },
-        [51827] = {
-            Quest = [=[They Came From Behind!|1|50|50|0|0|0]=],
-        },
-        [51828] = {
-            Quest = [=[Burning the Legion|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|35|50.88|23.04|9.62|9.62",
-                    "nil|942|35|49.92|24.48|28.86|9.62",
-                    "nil|942|35|49.92|25.92|38.48|9.62",
-                    "nil|942|35|49.92|27.36|38.48|19.24",
-                    "nil|942|35|50.88|30.24|28.86|9.62",
-                    "nil|942|35|51.84|31.68|9.62|9.62",
-                },
-                [2] = {
-                    "nil|942|32|49.92|24.68|9.62|9.62",
-                },
-            },
-        },
         [51830] = {
-            Quest = [=[Zelling's Potential|1|50|50|0|0|0]=],
+            Quest = [=[Zelling's Potential|1|50|50|0|95|0]=],
             Start = "139098|942|32|62.60|31.90",
             End = "139098|942|32|62.60|31.90",
         },
-        [51831] = {
-            Quest = [=[Swift Strike|2|50|50|0|0|0]=],
-        },
-        [51832] = {
-            Quest = [=[Beat Around The Bush|1|50|50|0|0|0]=],
-        },
-        [51834] = {
-            Quest = [=[No Negotiations||50|50|0|0|0]=],
-        },
-        [51836] = {
-            Quest = [=[Sourcing Resources||50|50|0|0|0]=],
-        },
         [51837] = {
-            Quest = [=[Whatever Will Be|1|50|50|0|0|0]=],
+            Quest = [=[Whatever Will Be|1|50|50|0|95|0]=],
             Start = "139101|942|32|62.60|31.90",
             End = "139101|942|32|62.60|31.90",
         },
-        [51839] = {
-            Quest = [=[Squirgle of the Depths||50|50|0|0|0]=],
-        },
-        [51840] = {
-            Quest = [=[Oily Mess|1|50|50|0|0|0]=],
-        },
-        [51841] = {
-            Quest = [=[Blackthorne||50|50|0|0|0]=],
-        },
-        [51842] = {
-            Quest = [=[Carla Smirk||50|50|0|0|0]=],
-        },
-        [51843] = {
-            Quest = [=[P4-N73R4||50|50|0|0|0]=],
-        },
-        [51844] = {
-            Quest = [=[Gulliver||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|35|57.60|54.72|9.62|9.62",
-                    "nil|895|35|56.64|56.16|28.86|9.62",
-                    "nil|895|35|57.60|57.60|9.62|9.62",
-                },
-            },
-        },
-        [51847] = {
-            Quest = [=[Tort Jaw||50|50|0|0|0]=],
-        },
-        [51848] = {
-            Quest = [=[Captain Wintersail||50|50|0|0|0]=],
-        },
-        [51849] = {
-            Quest = [=[Tempestria||50|50|0|0|0]=],
-        },
-        [51850] = {
-            Quest = [=[Preserve the Oasis|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|35|40.32|57.60|19.24|9.62",
-                    "nil|864|35|39.36|59.04|48.10|9.62",
-                    "nil|864|35|39.36|60.48|57.72|9.62",
-                    "nil|864|35|38.40|61.92|67.33|9.62",
-                    "nil|864|35|38.40|63.36|76.95|9.62",
-                    "nil|864|35|39.36|64.80|57.72|9.62",
-                    "nil|864|35|41.28|66.24|19.24|9.62",
-                },
-            },
-        },
-        [51853] = {
-            Quest = [=[Preserve the Oasis|2|50|50|0|0|0]=],
-        },
-        [51854] = {
-            Quest = [=[I Am the Shark|2|50|50|0|0|0]=],
-        },
-        [51855] = {
-            Quest = [=[A Pirate's Life For Me|2|50|50|0|0|0]=],
-        },
-        [51856] = {
-            Quest = [=[The Underrot: Rotmaw||50|50|0|0|0]=],
-        },
-        [51874] = {
-            Quest = [=[Gorged Boar||50|50|0|0|0]=],
-        },
-        [51884] = {
-            Quest = [=[Haywire Golem||50|50|0|0|0]=],
-        },
-        [51886] = {
-            Quest = [=[Pinku'shon||50|50|0|0|0]=],
-        },
-        [51887] = {
-            Quest = [=[Fungi Trio||50|50|0|0|0]=],
-        },
-        [51890] = {
-            Quest = [=[Ranja the Last Chillpaw||50|50|0|0|0]=],
-        },
-        [51891] = {
-            Quest = [=[Sythian the Swift||50|50|0|0|0]=],
-        },
-        [51892] = {
-            Quest = [=[Shiverscale the Toxic||50|50|0|0|0]=],
-        },
-        [51894] = {
-            Quest = [=[Tentulos the Drifter||50|50|0|0|0]=],
-        },
-        [51895] = {
-            Quest = [=[Maison the Portable||50|50|0|0|0]=],
-        },
-        [51897] = {
-            Quest = [=[Rimestone||50|50|0|0|0]=],
-        },
-        [51900] = {
-            Quest = [=[Faithless Follow-Through||50|50|0|0|0]=],
-        },
-        [51901] = {
-            Quest = [=[Crushtacean||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|35|50.88|53.28|9.62|9.62",
-                    "nil|942|35|49.92|54.72|28.86|9.62",
-                    "nil|942|35|49.92|56.16|28.86|19.24",
-                    "nil|942|35|50.88|59.04|9.62|9.62",
-                },
-            },
-        },
-        [51905] = {
-            Quest = [=[Reinforced Hullbreaker||50|50|0|0|0]=],
-        },
-        [51906] = {
-            Quest = [=[Sister Martha||50|50|0|0|0]=],
-        },
-        [51908] = {
-            Quest = [=[Nevermore||50|50|0|0|0]=],
-        },
-        [51909] = {
-            Quest = [=[Grozgore||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|50.88|18.72|9.62|9.62",
-                    "nil|896|35|49.92|20.16|28.86|9.62",
-                    "nil|896|35|50.88|21.60|9.62|9.62",
-                },
-            },
-        },
         [51916] = {
-            Quest = [=[Uniting Zandalar|1|50|50|0|0|0]=],
+            Quest = [=[Uniting Zandalar|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
-        [51917] = {
-            Quest = [=[Beshol||50|50|0|0|0]=],
-        },
         [51918] = {
-            Quest = [=[Uniting Kul Tiras|2|50|50|0|0|0]=],
+            Quest = [=[Uniting Kul Tiras|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.20|26.80",
             End = "135612|1161|32|69.40|27.00",
         },
-        [51919] = {
-            Quest = [=[Emily Mayville||50|50|0|0|0]=],
-        },
-        [51920] = {
-            Quest = [=[Cottontail Matron||50|50|0|0|0]=],
-        },
-        [51921] = {
-            Quest = [=[Slickspill||50|50|0|0|0]=],
-        },
-        [51924] = {
-            Quest = [=[Faithless Follow-Through||50|50|0|0|0]=],
-        },
-        [51925] = {
-            Quest = [=[Instructions Not Included||50|50|0|0|0]=],
-        },
-        [51928] = {
-            Quest = [=[Instructions Not Included||50|50|0|0|0]=],
-        },
-        [51931] = {
-            Quest = [=[Instructions Not Included||50|50|0|0|0]=],
-        },
-        [51933] = {
-            Quest = [=[Instructions Not Included||50|50|0|0|0]=],
-        },
-        [51947] = {
-            Quest = [=[Sabertron||50|50|0|0|0]=],
-        },
-        [51957] = {
-            Quest = [=[The Wrath of Vorrik|1|50|50|0|0|0]=],
-        },
-        [51963] = {
-            Quest = [=[The Wrath of Vorrik|2|50|50|0|0|0]=],
-        },
-        [51970] = {
-            Quest = [=[The Caterer||50|50|0|0|0]=],
-        },
-        [51972] = {
-            Quest = [=[Lost Goat||50|50|0|0|0]=],
-        },
-        [51974] = {
-            Quest = [=[Sabertron||50|50|0|0|0]=],
-        },
-        [51976] = {
-            Quest = [=[Sabertron||50|50|0|0|0]=],
-        },
-        [51977] = {
-            Quest = [=[Sabertron||50|50|0|0|0]=],
-        },
-        [51978] = {
-            Quest = [=[Sabertron||50|50|0|0|0]=],
-        },
-        [51981] = {
-            Quest = [=[Earthcaller's Abode|2|50|50|0|0|0]=],
-        },
         [51982] = {
-            Quest = [=[Storm's Rage|2|50|50|0|0|0]=],
-        },
-        [51983] = {
-            Quest = [=[Vorrik's Vengeance||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|32|46.72|38.48|9.62|9.62",
-                },
-            },
-        },
-        [51988] = {
-            Quest = [=[Whitney "Steelclaw" Ramsay||50|50|0|0|0]=],
-        },
-        [51989] = {
-            Quest = [=[Braedan Whitewall||50|50|0|0|0]=],
-        },
-        [51995] = {
-            Quest = [=[Vorrik's Vengeance|2|50|50|0|0|0]=],
-        },
-        [51996] = {
-            Quest = [=[Earthcaller's Abode||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|35|48.96|54.72|19.24|9.62",
-                    "nil|942|35|48.00|56.16|38.48|9.62",
-                    "nil|942|35|48.96|57.60|19.24|9.62",
-                },
-                [2] = {
-                    "nil|942|35|46.08|50.40|38.48|9.62",
-                    "nil|942|35|45.12|51.84|67.33|9.62",
-                    "nil|942|35|45.12|53.28|86.57|9.62",
-                    "nil|942|35|44.16|54.72|105.81|9.62",
-                    "nil|942|35|45.12|56.16|96.19|9.62",
-                    "nil|942|35|45.12|57.60|86.57|9.62",
-                    "nil|942|35|46.08|59.04|76.95|9.62",
-                    "nil|942|35|47.04|60.48|48.10|9.62",
-                    "nil|942|35|48.96|61.92|9.62|9.62",
-                },
-            },
-        },
-        [51997] = {
-            Quest = [=[Thar She Sinks|1|50|50|0|0|0]=],
-        },
-        [52004] = {
-            Quest = [=[Counter Intelligence|1|50|50|0|0|0]=],
+            Quest = [=[Storm's Rage|2|50|50|0|55|0]=],
         },
         [52005] = {
-            Quest = [=[Mission Report: The Wolf's Den|1|50|50|52127|0|0]=],
+            Quest = [=[Mission Report: The Wolf's Den|1|50|50|52127|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
-        [52006] = {
-            Quest = [=[Preemptive Assault|1|50|50|0|0|0]=],
-        },
-        [52007] = {
-            Quest = [=[Engines of War|1|50|50|0|0|0]=],
-        },
-        [52009] = {
-            Quest = [=[Crab People||50|50|0|0|0]=],
-        },
-        [52010] = {
-            Quest = [=[The Tendrils of Fate|2|50|50|0|0|0]=],
-        },
-        [52011] = {
-            Quest = [=[Fiendish Fields|2|50|50|0|0|0]=],
-        },
         [52012] = {
-            Quest = [=[Wolves For The Den|1|50|50|0|0|0]=],
+            Quest = [=[Wolves For The Den|1|50|50|0|95|0]=],
         },
         [52026] = {
-            Quest = [=[Overseas Assassination|2|50|50|0|0|0]=],
+            Quest = [=[Overseas Assassination|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.20|26.90",
         },
         [52027] = {
-            Quest = [=[The Vol'dun Plan|2|50|50|0|0|0]=],
+            Quest = [=[The Vol'dun Plan|2|50|50|0|50|0]=],
             Start = "139705|864|32|37.70|35.80",
             End = "139705|864|32|37.70|35.80",
         },
         [52028] = {
-            Quest = [=[Comb the Desert|2|50|50|0|0|0]=],
+            Quest = [=[Comb the Desert|2|50|50|0|50|0]=],
             Start = "139705|864|32|37.70|35.80",
             End = "139705|864|32|37.70|35.80",
         },
         [52029] = {
-            Quest = [=[Dirty Work|2|50|50|0|0|0]=],
+            Quest = [=[Dirty Work|2|50|50|0|50|0]=],
             Start = "139719|864|32|40.70|47.80",
             End = "139719|864|32|40.70|47.80",
         },
         [52030] = {
-            Quest = [=[Keep Combing|2|50|50|0|0|0]=],
+            Quest = [=[Keep Combing|2|50|50|0|50|0]=],
             Start = "139705|864|32|40.70|47.80",
             End = "139705|864|32|40.70|47.80",
         },
         [52031] = {
-            Quest = [=[Classic Reliquary|2|50|50|0|0|0]=],
+            Quest = [=[Classic Reliquary|2|50|50|0|50|0]=],
             Start = "139719|864|32|44.90|58.70",
             End = "139719|864|32|44.90|58.70",
         },
         [52032] = {
-            Quest = [=[Never Stop Combing|2|50|50|0|0|0]=],
+            Quest = [=[Never Stop Combing|2|50|50|0|50|0]=],
             Start = "139705|864|32|44.90|58.70",
             End = "139705|864|32|44.90|58.70",
         },
         [52034] = {
-            Quest = [=[A Message to the Zandalari|2|50|50|0|0|0]=],
+            Quest = [=[A Message to the Zandalari|2|50|50|0|50|0]=],
             Start = "139719|864|32|41.00|72.50",
             End = "139719|864|32|41.00|72.50",
         },
         [52035] = {
-            Quest = [=[Improvised Survival|2|50|50|0|0|0]=],
+            Quest = [=[Improvised Survival|2|50|50|0|50|0]=],
             Start = "139705|864|32|41.00|72.50",
             End = "139705|864|32|41.00|72.50",
         },
         [52036] = {
-            Quest = [=[They Have Alpacas Here|2|50|50|0|0|0]=],
+            Quest = [=[They Have Alpacas Here|2|50|50|0|50|0]=],
             Start = "139722|864|32|41.00|72.50",
             End = "139722|864|32|41.00|72.50",
         },
         [52038] = {
-            Quest = [=[Splitting Up|2|50|50|0|0|0]=],
+            Quest = [=[Splitting Up|2|50|50|0|50|0]=],
             Start = "139705|864|32|41.00|72.50",
             End = "139705|864|32|41.00|72.50",
         },
         [52039] = {
-            Quest = [=[Delayed Deathification|2|50|50|0|0|0]=],
+            Quest = [=[Delayed Deathification|2|50|50|0|50|0]=],
             Start = "139719|864|32|29.90|78.50",
             End = "139719|864|32|29.90|78.50",
         },
         [52040] = {
-            Quest = [=[Full of Arrows|2|50|50|0|0|0]=],
+            Quest = [=[Full of Arrows|2|50|50|0|50|0]=],
             Start = "139719|864|32|29.90|78.50",
             End = "139719|864|32|29.90|78.50",
         },
         [52041] = {
-            Quest = [=[Report to Wyrmbane|2|50|50|0|0|0]=],
+            Quest = [=[Report to Wyrmbane|2|50|50|0|50|0]=],
             Start = "139719|864|32|29.90|78.50",
             End = "139719|864|32|29.90|78.50",
         },
         [52042] = {
-            Quest = [=[The Big Boom|2|50|50|0|0|0]=],
+            Quest = [=[The Big Boom|2|50|50|0|50|0]=],
             Start = "139705|864|32|39.60|83.90",
             End = "139705|864|32|39.60|83.90",
-        },
-        [52045] = {
-            Quest = [=[Boarder Patrol|2|50|50|0|0|0]=],
         },
         [52051] = {
             Quest = [=[LFGDungeons - BFA - Raid Finder - 1st||50|50|0|0|0]=],
@@ -26029,129 +22817,45 @@ function Nx.ModQuests:Data5()
         [52052] = {
             Quest = [=[LFGDungeons - BFA - Raid Finder - Nth||50|50|0|0|0]=],
         },
-        [52054] = {
-            Quest = [=[Too Much To Bear|2|50|50|0|0|0]=],
-        },
-        [52056] = {
-            Quest = [=[The Tendrils of Fate|1|50|50|0|0|0]=],
-        },
-        [52059] = {
-            Quest = [=[Thar She Sinks|2|50|50|0|0|0]=],
-        },
         [52061] = {
             Quest = [=[Taptaf the Pig!||50|50|0|0|0]=],
             Start = "139380|896|32|65.00|83.20",
         },
-        [52063] = {
-            Quest = [=[Boarder Patrol|1|50|50|0|0|0]=],
-        },
-        [52064] = {
-            Quest = [=[Fiendish Fields|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|35|51.84|64.80|9.62|9.62",
-                    "nil|942|35|50.88|66.24|28.86|9.62",
-                    "nil|942|35|51.84|67.68|9.62|9.62",
-                },
-                [2] = {
-                    "nil|942|35|47.04|60.48|9.62|9.62",
-                    "nil|942|35|46.08|61.92|38.48|9.62",
-                    "nil|942|35|45.12|63.36|57.72|9.62",
-                    "nil|942|35|46.08|64.80|57.72|9.62",
-                    "nil|942|35|46.08|66.24|48.10|9.62",
-                    "nil|942|35|48.00|67.68|19.24|9.62",
-                },
-                [3] = {
-                    "nil|942|35|48.00|60.48|9.62|9.62",
-                    "nil|942|35|46.08|61.92|48.10|9.62",
-                    "nil|942|35|46.08|63.36|57.72|9.62",
-                    "nil|942|35|45.12|64.80|57.72|9.62",
-                    "nil|942|35|46.08|66.24|48.10|9.62",
-                    "nil|942|35|47.04|67.68|28.86|9.62",
-                },
-                [4] = {
-                    "nil|942|35|48.96|63.36|9.62|9.62",
-                    "nil|942|35|48.00|64.80|28.86|9.62",
-                    "nil|942|35|48.96|66.24|9.62|9.62",
-                },
-            },
-        },
-        [52071] = {
-            Quest = [=[Briarback Mountain|2|50|50|0|0|0]=],
-        },
         [52113] = {
-            Quest = [=[Vol'jin, Son of Sen'jin|1|50|50|51516|0|0]=],
+            Quest = [=[Vol'jin, Son of Sen'jin|1|50|50|51516|161|0]=],
             Start = "139928|862|32|45.50|35.80",
         },
         [52114] = {
-            Quest = [=[Honoring a True Leader|1|50|50|0|0|0]=],
+            Quest = [=[Honoring a True Leader|1|50|50|0|161|0]=],
             Start = "137878|463|32|59.46|51.50",
             End = "137878|463|32|59.50|51.50",
         },
-        [52115] = {
-            Quest = [=[In the Shadow of the Kraken||50|50|0|0|0]=],
-        },
-        [52117] = {
-            Quest = [=[Briarback Mountain|1|50|50|0|0|0]=],
-        },
         [52118] = {
-            Quest = [=[Cutting Out the Competition|2|50|50|0|0|0]=],
+            Quest = [=[Cutting Out the Competition|2|50|50|0|178|0]=],
             Start = "139446|1044|32|36.50|59.60",
         },
-        [52119] = {
-            Quest = [=[Goblin Azerite Extraction|1|50|50|0|0|0]=],
-        },
-        [52120] = {
-            Quest = [=[Gnomish Azerite Extraction|2|50|50|0|0|0]=],
-        },
         [52122] = {
-            Quest = [=[To Be Forsaken|1|50|50|0|0|0]=],
+            Quest = [=[To Be Forsaken|1|50|50|0|95|0]=],
             Start = "139101|942|32|62.60|31.90",
             End = "139101|942|32|62.60|31.90",
         },
-        [52124] = {
-            Quest = [=[Losers Weepers||50|50|0|0|0]=],
-        },
-        [52126] = {
-            Quest = [=[This Little Piggy Has Sharp Tusks||50|50|0|0|0]=],
-            Start = "139987|942|32|42.41|76.61",
-        },
         [52127] = {
-            Quest = [=[The Wolf's Den|1|50|50|0|0|0]=],
+            Quest = [=[The Wolf's Den|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
-        [52133] = {
-            Quest = [=[Good Boy!|2|50|50|0|0|0]=],
-        },
-        [52140] = {
-            Quest = [=[A Thorny Problem|2|50|50|0|0|0]=],
-        },
-        [52142] = {
-            Quest = [=[Restocking|2|50|50|0|0|0]=],
-        },
-        [52143] = {
-            Quest = [=[Smaller Haulers|2|50|50|0|0|0]=],
-        },
-        [52144] = {
-            Quest = [=[Foundry Meltdown||50|50|0|0|0]=],
-        },
-        [52145] = {
-            Quest = [=[Heave-Ho!||50|50|0|0|0]=],
-            Start = "0|895|32|77.10|76.25",
-        },
         [52146] = {
-            Quest = [=[Blood on the Sand|2|50|50|0|0|0]=],
+            Quest = [=[Blood on the Sand|2|50|50|0|50|0]=],
             Start = "139705|864|32|39.60|83.90",
             End = "139705|864|32|39.60|83.90",
         },
         [52147] = {
-            Quest = [=[Crippling the Horde|2|50|50|0|0|0]=],
+            Quest = [=[Crippling the Horde|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
         [52150] = {
-            Quest = [=[How to Kill a Dark Ranger|2|50|50|0|0|0]=],
+            Quest = [=[How to Kill a Dark Ranger|2|50|50|0|50|0]=],
             Start = "140258|863|32|61.90|41.10",
         },
         [52151] = {
@@ -26159,273 +22863,168 @@ function Nx.ModQuests:Data5()
             Start = "120788|1161|32|67.90|22.20",
         },
         [52154] = {
-            Quest = [=[Our Next Target|2|50|50|0|0|0]=],
+            Quest = [=[Our Next Target|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [52155] = {
-            Quest = [=[Treasure in the Tides||50|50|0|0|0]=],
-        },
         [52156] = {
-            Quest = [=[Tortollans in Distress|2|50|50|0|0|0]=],
+            Quest = [=[Tortollans in Distress|2|50|50|0|50|0]=],
             Start = "140258|863|32|61.90|41.20",
         },
         [52158] = {
-            Quest = [=[The Savage Hunt|2|50|50|0|0|0]=],
+            Quest = [=[The Savage Hunt|2|50|50|0|50|0]=],
             Start = "139609|863|32|61.80|41.30",
             End = "139609|863|32|61.80|41.30",
         },
-        [52159] = {
-            Quest = [=[Swab This!|2|50|50|0|0|0]=],
-        },
-        [52160] = {
-            Quest = [=[Restocking|1|50|50|0|0|0]=],
-        },
-        [52164] = {
-            Quest = [=[Rum- Paaaage!|2|50|50|0|0|0]=],
-        },
-        [52165] = {
-            Quest = [=[Automated Chaos||50|50|0|0|0]=],
-            Start = "140315|942|32|36.61|33.61",
-        },
-        [52166] = {
-            Quest = [=[The Faceless Herald||50|0|0|0|0]=],
-            Start = "0|942|32|83.20|49.60",
-        },
-        [52167] = {
-            Quest = [=[Hardcore Raiders|2|50|50|0|0|0]=],
-        },
-        [52168] = {
-            Quest = [=[It's Lit|2|50|50|0|0|0]=],
-        },
-        [52169] = {
-            Quest = [=[The Matriarch||50|0|0|0|0]=],
-            Start = "0|862|32|69.00|31.00",
-        },
         [52170] = {
-            Quest = [=[Ending Areiel|2|50|50|0|0|0]=],
+            Quest = [=[Ending Areiel|2|50|50|0|50|0]=],
             Start = "140258|863|32|51.20|21.80",
             End = "140258|863|32|51.20|21.80",
         },
         [52171] = {
-            Quest = [=[One Option: Fire|2|50|50|0|0|0]=],
+            Quest = [=[One Option: Fire|2|50|50|0|50|0]=],
             Start = "139609|863|32|51.20|21.80",
             End = "139609|863|32|51.20|21.80",
         },
         [52172] = {
-            Quest = [=[They Can't Stay Here|2|50|50|0|0|0]=],
+            Quest = [=[They Can't Stay Here|2|50|50|0|50|0]=],
             Start = "139609|863|32|51.20|21.80",
             End = "139609|863|32|51.20|21.80",
         },
         [52173] = {
-            Quest = [=[The Void Elves Stand Ready|2|50|50|0|0|0]=],
+            Quest = [=[The Void Elves Stand Ready|2|50|50|0|50|0]=],
             Start = "140348|1161|32|69.40|26.70",
         },
-        [52174] = {
-            Quest = [=[Snakes in the Shallows|2|50|50|0|0|0]=],
-        },
-        [52179] = {
-            Quest = [=[Fortified Resistance|2|50|50|0|0|0]=],
-        },
-        [52180] = {
-            Quest = [=[A Brennadam Shame|2|50|50|0|0|0]=],
-        },
-        [52181] = {
-            Quest = [=[Smoke and Shadow||50|0|0|0|0]=],
-            Start = "0|863|32|35.60|33.60",
-            Objectives = {
-                [1] = {
-                    "nil|863|32|34.92|32.28|9.62|9.62",
-                },
-            },
-        },
         [52183] = {
-            Quest = [=[When a Plan Comes Together|1|50|50|0|0|0]=],
+            Quest = [=[When a Plan Comes Together|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [52184] = {
-            Quest = [=[Relics of Ritual|1|50|50|0|0|0]=],
+            Quest = [=[Relics of Ritual|1|50|50|0|95|0]=],
             Start = "140487|1161|32|71.00|84.80",
             End = "140487|1161|32|71.00|84.80",
         },
         [52185] = {
-            Quest = [=[A Well Placed Portal|1|50|50|0|0|0]=],
+            Quest = [=[A Well Placed Portal|1|50|50|0|95|0]=],
             Start = "140485|895|32|86.90|53.10",
             End = "140485|895|32|86.90|53.10",
         },
         [52186] = {
-            Quest = [=[The Bulk of the Guard|1|50|50|52185|0|0]=],
+            Quest = [=[The Bulk of the Guard|1|50|50|52185|95|0]=],
             Start = "140485|895|32|86.90|53.10",
             End = "140485|895|32|86.90|53.10",
         },
         [52187] = {
-            Quest = [=[Old Colleagues|1|50|50|0|0|0]=],
+            Quest = [=[Old Colleagues|1|50|50|0|95|0]=],
             Start = "140484|895|32|87.00|53.10",
         },
         [52188] = {
-            Quest = [=[Tidesage Teachings|1|50|50|0|0|0]=],
+            Quest = [=[Tidesage Teachings|1|50|50|0|95|0]=],
             Start = "140487|1161|32|71.00|84.80",
             End = "140487|1161|32|71.00|84.80",
         },
         [52189] = {
-            Quest = [=[Forfeit Souls|1|50|50|0|0|0]=],
+            Quest = [=[Forfeit Souls|1|50|50|0|95|0]=],
             Start = "140487|1161|32|71.00|84.80",
             End = "140487|1161|32|71.00|84.80",
         },
         [52190] = {
-            Quest = [=[Gaining the Upper Hand|1|50|50|52990|0|0]=],
+            Quest = [=[Gaining the Upper Hand|1|50|50|52990|95|0]=],
             Start = "140487|1161|32|71.00|84.80",
             End = "140487|1161|32|71.00|84.80",
         },
         [52191] = {
-            Quest = [=[Life Held Hostage|1|50|50|52192|0|0]=],
+            Quest = [=[Life Held Hostage|1|50|50|52192|95|0]=],
             Start = "140485|895|32|86.90|53.10",
             End = "140485|895|32|86.90|53.10",
         },
         [52192] = {
-            Quest = [=[The Aid of the Tides|1|50|50|53003|0|0]=],
+            Quest = [=[The Aid of the Tides|1|50|50|53003|95|0]=],
             Start = "140485|895|32|86.90|53.10",
             End = "140485|895|32|86.90|53.10",
         },
         [52194] = {
-            Quest = [=[What You May Regret|2|50|50|0|0|0]=],
+            Quest = [=[What You May Regret|2|50|50|0|160|0]=],
             Start = "122370|1161|32|67.90|22.00",
             End = "122370|1161|32|67.90|22.00",
         },
-        [52196] = {
-            Quest = [=[Sandswept Bones||50|0|0|0|0]=],
-            Start = "0|864|32|44.30|55.50",
-        },
-        [52198] = {
-            Quest = [=[Tank and Spank|2|50|50|0|0|0]=],
-        },
-        [52199] = {
-            Quest = [=[Rum- Paaaage!||50|50|0|0|0]=],
-        },
-        [52200] = {
-            Quest = [=[Turtle Tactics|2|50|50|0|0|0]=],
-        },
         [52203] = {
-            Quest = [=[Find the Paper Trail|2|50|50|0|0|0]=],
+            Quest = [=[Find the Paper Trail|2|50|50|0|50|0]=],
             Start = "140477|862|32|40.60|70.70",
             End = "140477|862|32|40.60|70.70",
         },
         [52204] = {
-            Quest = [=[The Void Solution|2|50|50|0|0|0]=],
+            Quest = [=[The Void Solution|2|50|50|0|50|0]=],
             Start = "140477|862|32|40.60|70.70",
             End = "140477|862|32|40.60|70.70",
         },
         [52205] = {
-            Quest = [=[Bilgewater Bonanza Go Boom|2|50|50|0|0|0]=],
+            Quest = [=[Bilgewater Bonanza Go Boom|2|50|50|0|50|0]=],
             Start = "140477|862|32|40.60|70.70",
             End = "140477|862|32|40.60|70.70",
         },
         [52208] = {
-            Quest = [=[Meeting of the Minds|2|50|50|0|0|0]=],
+            Quest = [=[Meeting of the Minds|2|50|50|0|50|0]=],
             Start = "140258|863|32|51.20|21.80",
             End = "140258|863|32|51.20|21.80",
-        },
-        [52209] = {
-            Quest = [=[Turtle Tactics||50|50|0|0|0]=],
-        },
-        [52211] = {
-            Quest = [=[Red Sunrise|2|50|50|0|0|0]=],
         },
         [52212] = {
             Quest = [=[Battle for Stromgarde||50|50|0|0|0]=],
         },
-        [52218] = {
-            Quest = [=[Night Horrors||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|32|63.12|58.88|9.62|9.62",
-                },
-            },
-        },
         [52219] = {
-            Quest = [=[Target: Blood Prince Dreven|2|50|50|0|0|0]=],
+            Quest = [=[Target: Blood Prince Dreven|2|50|50|0|50|0]=],
             Start = "140519|863|32|42.10|39.70",
         },
         [52221] = {
-            Quest = [=[Mission Report: Stonefist Watch|1|50|50|52222|0|0]=],
+            Quest = [=[Mission Report: Stonefist Watch|1|50|50|52222|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [52222] = {
-            Quest = [=[Stonefist Watch|1|50|50|0|0|0]=],
+            Quest = [=[Stonefist Watch|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
-        [52229] = {
-            Quest = [=[Too Much To Bear|1|50|50|0|0|0]=],
-        },
-        [52230] = {
-            Quest = [=[Loose Change|2|50|50|0|0|0]=],
-        },
-        [52236] = {
-            Quest = [=[A Thorny Problem|1|50|50|0|0|0]=],
-        },
-        [52239] = {
-            Quest = [=[Loose Change|1|50|50|0|0|0]=],
-        },
         [52241] = {
-            Quest = [=[A Greedy Goblin's Paradise|2|50|50|0|0|0]=],
+            Quest = [=[A Greedy Goblin's Paradise|2|50|50|0|50|0]=],
             Start = "140477|862|32|40.60|70.70",
             End = "140477|862|32|40.60|70.70",
         },
         [52246] = {
-            Quest = [=[Lost Shipment|2|50|50|0|0|0]=],
+            Quest = [=[Lost Shipment|2|50|50|0|160|0]=],
             Start = "140495|895|32|67.00|36.20",
         },
         [52247] = {
-            Quest = [=[Chasing Gallywix|2|50|50|0|0|0]=],
+            Quest = [=[Chasing Gallywix|2|50|50|0|50|0]=],
             Start = "140712|862|32|40.30|39.70",
         },
-        [52248] = {
-            Quest = [=[The Shores of Xibala|1|50|50|0|0|0]=],
-        },
-        [52249] = {
-            Quest = [=[The Shores of Xibala|2|50|50|0|0|0]=],
-        },
-        [52250] = {
-            Quest = [=[Saving Xibala|2|50|50|0|0|0]=],
-        },
         [52252] = {
-            Quest = [=[An Explosive Entrance|2|50|50|0|0|0]=],
+            Quest = [=[An Explosive Entrance|2|50|50|0|160|0]=],
             Start = "140732|1161|32|67.70|22.10",
         },
         [52253] = {
-            Quest = [=[The Keys to Success in Freehold|2|50|50|0|0|0]=],
+            Quest = [=[The Keys to Success in Freehold|2|50|50|0|160|0]=],
             Start = "140732|895|32|76.90|82.80",
         },
         [52259] = {
-            Quest = [=[I Take No Pleasure In This|2|50|50|0|0|0]=],
+            Quest = [=[I Take No Pleasure In This|2|50|50|0|50|0]=],
             Start = "140740|76|32|21.50|52.30",
         },
         [52260] = {
-            Quest = [=[We Have Him Cornered|2|50|50|0|0|0]=],
+            Quest = [=[We Have Him Cornered|2|50|50|0|50|0]=],
         },
         [52261] = {
-            Quest = [=[Gallywix Got Away|2|50|50|0|0|0]=],
-        },
-        [52271] = {
-            Quest = [=[Sea Salt Flavored|2|50|50|0|0|0]=],
+            Quest = [=[Gallywix Got Away|2|50|50|0|50|0]=],
         },
         [52275] = {
-            Quest = [=[Mission Report: Swiftwind Post|1|50|50|52276|0|0]=],
+            Quest = [=[Mission Report: Swiftwind Post|1|50|50|52276|95|0]=],
             Start = "138704|1165|32|51.59|99.58",
             End = "138704|1165|32|51.59|99.58",
         },
         [52276] = {
-            Quest = [=[Swiftwind Post|1|50|50|0|0|0]=],
+            Quest = [=[Swiftwind Post|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.44|62.67",
-        },
-        [52278] = {
-            Quest = [=[Rogue Azerite||50|50|0|0|0]=],
-        },
-        [52280] = {
-            Quest = [=[Sea Salt Flavored|1|50|50|0|0|0]=],
         },
         [52281] = {
             Quest = [=[Under the Cover of Swiftwing|2|50|50|0|0|0]=],
@@ -26433,349 +23032,102 @@ function Nx.ModQuests:Data5()
             End = "141287|862|32|40.70|70.80",
         },
         [52282] = {
-            Quest = [=[How to Sink a Zandalari Battleship|2|50|50|0|0|0]=],
+            Quest = [=[How to Sink a Zandalari Battleship|2|50|50|0|50|0]=],
             Start = "140257|862|32|40.70|70.80",
             End = "140257|862|32|40.70|70.80",
         },
         [52283] = {
-            Quest = [=[Sabotaging the Pa'ku|2|50|50|0|0|0]=],
+            Quest = [=[Sabotaging the Pa'ku|2|50|50|0|50|0]=],
             Start = "141289|862|32|57.60|87.50",
             End = "141289|862|32|57.60|87.50",
         },
         [52284] = {
-            Quest = [=[Ship Logs|2|50|50|0|0|0]=],
+            Quest = [=[Ship Logs|2|50|50|0|50|0]=],
             Start = "141290|862|32|57.60|87.50",
             End = "141290|862|32|57.60|87.50",
         },
         [52285] = {
-            Quest = [=[The Enlarged Miniaturized Submarine|2|50|50|0|0|0]=],
+            Quest = [=[The Enlarged Miniaturized Submarine|2|50|50|0|50|0]=],
             Start = "141290|862|32|57.60|87.50",
             End = "141290|862|32|57.60|87.50",
         },
         [52286] = {
-            Quest = [=[Right Beneath Their Nose|2|50|50|0|0|0]=],
+            Quest = [=[Right Beneath Their Nose|2|50|50|0|50|0]=],
             Start = "141291|862|32|48.80|68.50",
             End = "141291|862|32|48.80|68.50",
         },
         [52287] = {
-            Quest = [=[Intelligence Denial|2|50|50|0|0|0]=],
+            Quest = [=[Intelligence Denial|2|50|50|0|50|0]=],
             Start = "141291|862|32|48.80|68.50",
             End = "141291|862|32|48.80|68.50",
         },
         [52288] = {
-            Quest = [=[Void Vacation|2|50|50|0|0|0]=],
+            Quest = [=[Void Vacation|2|50|50|0|50|0]=],
             Start = "141288|862|32|48.80|68.50",
             End = "141288|862|32|48.80|68.50",
         },
         [52289] = {
-            Quest = [=[Victory is Assured|2|50|50|0|0|0]=],
+            Quest = [=[Victory is Assured|2|50|50|0|50|0]=],
             Start = "141291|862|32|48.80|68.50",
             End = "141291|862|32|48.80|68.50",
         },
         [52290] = {
-            Quest = [=[My Enemy's Enemy is My Disguise|2|50|50|0|0|0]=],
+            Quest = [=[My Enemy's Enemy is My Disguise|2|50|50|0|50|0]=],
             Start = "141291|862|32|48.80|68.50",
             End = "141291|862|32|48.80|68.50",
         },
         [52291] = {
-            Quest = [=[Victory Was Assured|2|50|50|0|0|0]=],
+            Quest = [=[Victory Was Assured|2|50|50|0|50|0]=],
             Start = "140257|862|32|40.40|71.50",
-        },
-        [52297] = {
-            Quest = [=[What's the Buzz?||50|50|0|0|0]=],
-        },
-        [52299] = {
-            Quest = [=[Whiplash||50|50|0|0|0]=],
-        },
-        [52300] = {
-            Quest = [=[Wagga Snarltusk||50|50|0|0|0]=],
-        },
-        [52301] = {
-            Quest = [=[Vinespeaker Ratha||50|50|0|0|0]=],
         },
         [52305] = {
             Quest = [=[Nature Versus Nurture|1|50|50|0|0|0]=],
             Start = "135308|862|32|70.80|50.80",
             End = "135308|862|32|70.80|50.90",
         },
-        [52306] = {
-            Quest = [=[Croaker||50|50|0|0|0]=],
-        },
         [52308] = {
-            Quest = [=[Intercepted Orders|2|50|50|0|0|0]=],
+            Quest = [=[Intercepted Orders|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [52309] = {
-            Quest = [=[SandFang||50|50|0|0|0]=],
-        },
-        [52310] = {
-            Quest = [=[Corrupted Tideskipper||50|50|0|0|0]=],
-        },
         [52311] = {
-            Quest = [=[Sweete's Strongbox|2|50|50|0|0|0]=],
+            Quest = [=[Sweete's Strongbox|2|50|50|0|160|0]=],
+            Start = "141032|895|32|42.40|22.20",
         },
         [52313] = {
-            Quest = [=[Mission Report: Mudfisher Cove|1|50|50|52314|0|0]=],
+            Quest = [=[Mission Report: Mudfisher Cove|1|50|50|52314|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [52314] = {
-            Quest = [=[Mudfisher Cove|1|50|50|0|0|0]=],
+            Quest = [=[Mudfisher Cove|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
-        },
-        [52315] = {
-            Quest = [=[Severus the Outcast||50|50|0|0|0]=],
-        },
-        [52316] = {
-            Quest = [=[Sea Creatures Are Weird||50|50|0|0|0]=],
         },
         [52317] = {
             Quest = [=[No Ptake, Only Throw|1|50|50|0|0|0]=],
             Start = "141025|862|32|70.70|51.10",
         },
         [52319] = {
-            Quest = [=[Mission Report: Windfall Cavern|1|50|50|52320|0|0]=],
+            Quest = [=[Mission Report: Windfall Cavern|1|50|50|52320|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [52320] = {
-            Quest = [=[Windfall Cavern|1|50|50|0|0|0]=],
+            Quest = [=[Windfall Cavern|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
-        [52321] = {
-            Quest = [=[Kickers||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|35|31.68|60.48|9.62|9.62",
-                    "nil|942|35|30.72|61.92|28.86|9.62",
-                    "nil|942|35|31.68|63.36|9.62|9.62",
-                },
-            },
-        },
-        [52322] = {
-            Quest = [=[Taja the Tidehowler||50|50|0|0|0]=],
-        },
-        [52325] = {
-            Quest = [=[Captured Evil||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|32|76.72|28.28|9.62|9.62",
-                },
-            },
-        },
-        [52328] = {
-            Quest = [=[Ice Sickle||50|50|0|0|0]=],
-        },
-        [52330] = {
-            Quest = [=[Beehemoth||50|50|0|0|0]=],
-        },
-        [52331] = {
-            Quest = [=[Work Order: Demitri's Draught of Deception|2|50|50|0|0|0]=],
-        },
-        [52332] = {
-            Quest = [=[Work Order: Lightfoot Potion|2|50|50|0|0|0]=],
-        },
-        [52333] = {
-            Quest = [=[Work Order: Sea Mist Potion|2|50|50|0|0|0]=],
-        },
-        [52334] = {
-            Quest = [=[Work Order: Potion of Concealment|2|50|50|0|0|0]=],
-        },
-        [52335] = {
-            Quest = [=[Work Order: Demitri's Draught of Deception|1|50|50|0|0|0]=],
-        },
-        [52336] = {
-            Quest = [=[Work Order: Lightfoot Potion|1|50|50|0|0|0]=],
-        },
-        [52337] = {
-            Quest = [=[Work Order: Sea Mist Potion|1|50|50|0|0|0]=],
-        },
-        [52338] = {
-            Quest = [=[Work Order: Potion of Concealment|1|50|50|0|0|0]=],
-        },
-        [52341] = {
-            Quest = [=[Work Order: Monel-Hardened Stirrups|1|50|50|0|0|0]=],
-        },
-        [52342] = {
-            Quest = [=[Work Order: Monel-Hardened Hoofplates|1|50|50|0|0|0]=],
-        },
-        [52344] = {
-            Quest = [=[Work Order: Kul Tiramisu||50|50|0|0|0]=],
-            Start = "135793|942|32|40.54|36.41",
-        },
-        [52345] = {
-            Quest = [=[Work Order: Ravenberry Tarts||50|50|0|0|0]=],
-        },
-        [52346] = {
-            Quest = [=[Work Order: Sailor's Pie||50|50|0|0|0]=],
-            Start = "135793|942|32|40.54|36.41",
-        },
-        [52347] = {
-            Quest = [=[Work Order: Honey-Glazed Haunches||50|50|0|0|0]=],
-            Start = "135793|942|32|40.54|36.41",
-        },
-        [52348] = {
-            Quest = [=[Work Order: Mon'Dazi||50|50|0|0|0]=],
-        },
-        [52349] = {
-            Quest = [=[Work Order: Loa Loaf||50|50|0|0|0]=],
-        },
-        [52350] = {
-            Quest = [=[Work Order: Swamp Fish 'n Chips||50|50|0|0|0]=],
-        },
-        [52351] = {
-            Quest = [=[Work Order: Spiced Snapper||50|50|0|0|0]=],
-        },
-        [52352] = {
-            Quest = [=[Zeritarj||50|50|0|0|0]=],
-        },
-        [52353] = {
-            Quest = [=[Work Order: Enchant Ring - Seal of Haste|2|50|50|0|0|0]=],
-        },
-        [52354] = {
-            Quest = [=[Work Order: Enchant Ring - Seal of Mastery|2|50|50|0|0|0]=],
-        },
-        [52357] = {
-            Quest = [=[Work Order: Enchant Weapon - Quick Navigation|2|50|50|0|0|0]=],
-        },
-        [52360] = {
-            Quest = [=[Work Order: Enchant Weapon - Coastal Surge|1|50|50|0|0|0]=],
-        },
-        [52361] = {
-            Quest = [=[Work Order: Enchant Weapon - Torrent of Elements|1|50|50|0|0|0]=],
-        },
-        [52362] = {
-            Quest = [=[Work Order: Enchant Weapon - Quick Navigation|1|50|50|0|0|0]=],
-        },
-        [52364] = {
-            Quest = [=[Work Order: Thermo-Accelerated Plague Spreader|2|50|50|0|0|0]=],
-        },
-        [52365] = {
-            Quest = [=[Work Order: F.R.I.E.D.|2|50|50|0|0|0]=],
-        },
-        [52367] = {
-            Quest = [=[Work Order: Electroshock Mount Motivator|2|50|50|0|0|0]=],
-        },
-        [52370] = {
-            Quest = [=[Work Order: Thermo-Accelerated Plague Spreader|1|50|50|0|0|0]=],
-        },
-        [52371] = {
-            Quest = [=[Work Order: F.R.I.E.D.|1|50|50|0|0|0]=],
-        },
-        [52372] = {
-            Quest = [=[Work Order: XA-1000 Surface Skimmer|1|50|50|0|0|0]=],
-        },
-        [52380] = {
-            Quest = [=[Supplies Needed: Frenzied Fangtooth|2|50|50|0|0|0]=],
-        },
-        [52381] = {
-            Quest = [=[Supplies Needed: Lane Snapper|2|50|50|0|0|0]=],
-        },
-        [52385] = {
-            Quest = [=[Supplies Needed: Slimy Mackerel|1|50|50|0|0|0]=],
-        },
-        [52386] = {
-            Quest = [=[Supplies Needed: Redtail Loach|1|50|50|0|0|0]=],
-        },
-        [52390] = {
-            Quest = [=[Work Order: Contract: Order of Embers|2|50|50|0|0|0]=],
-        },
-        [52391] = {
-            Quest = [=[Work Order: Contract: Storm's Wake|2|50|50|0|0|0]=],
-        },
-        [52393] = {
-            Quest = [=[Work Order: Contract: Tortollan Seekers||50|50|0|0|0]=],
-        },
-        [52394] = {
-            Quest = [=[Work Order: Contract: Champions of Azeroth||50|50|0|0|0]=],
-        },
-        [52396] = {
-            Quest = [=[Work Order: Contract: Talanji's Expedition|1|50|50|0|0|0]=],
-        },
-        [52397] = {
-            Quest = [=[Work Order: Contract: Voldunai|1|50|50|0|0|0]=],
-        },
-        [52400] = {
-            Quest = [=[Work Order: Kyanite|2|50|50|0|0|0]=],
-        },
-        [52402] = {
-            Quest = [=[Work Order: Viridium|2|50|50|0|0|0]=],
-        },
-        [52404] = {
-            Quest = [=[Work Order: Solstone|2|50|50|0|0|0]=],
-        },
-        [52406] = {
-            Quest = [=[Work Order: Rubellite|2|50|50|0|0|0]=],
-        },
-        [52407] = {
-            Quest = [=[Work Order: Golden Beryl|2|50|50|0|0|0]=],
-        },
-        [52408] = {
-            Quest = [=[Work Order: Kyanite|1|50|50|0|0|0]=],
-        },
-        [52410] = {
-            Quest = [=[Work Order: Solstone|1|50|50|0|0|0]=],
-        },
-        [52411] = {
-            Quest = [=[Work Order: Kubiline|1|50|50|0|0|0]=],
-        },
-        [52412] = {
-            Quest = [=[Work Order: Rubellite|1|50|50|0|0|0]=],
-        },
-        [52413] = {
-            Quest = [=[Work Order: Golden Beryl|1|50|50|0|0|0]=],
-        },
-        [52414] = {
-            Quest = [=[Work Order: Drums of the Maelstrom|2|50|50|0|0|0]=],
-        },
-        [52415] = {
-            Quest = [=[Work Order: Coarse Leather Barding|2|50|50|0|0|0]=],
-        },
-        [52418] = {
-            Quest = [=[Work Order: Drums of the Maelstrom|1|50|50|0|0|0]=],
-        },
-        [52419] = {
-            Quest = [=[Work Order: Coarse Leather Barding|1|50|50|0|0|0]=],
-        },
-        [52420] = {
-            Quest = [=[Work Order: Shimmerscale Diving Suit|1|50|50|0|0|0]=],
-        },
-        [52422] = {
-            Quest = [=[Work Order: Battle Flag: Spirit of Freedom|2|50|50|0|0|0]=],
-        },
-        [52423] = {
-            Quest = [=[Work Order: Battle Flag: Phalanx Defense|2|50|50|0|0|0]=],
-        },
-        [52424] = {
-            Quest = [=[Work Order: Battle Flag: Rallying Swiftness|2|50|50|0|0|0]=],
-        },
-        [52426] = {
-            Quest = [=[Work Order: Battle Flag: Phalanx Defense|1|50|50|0|0|0]=],
-        },
-        [52427] = {
-            Quest = [=[Work Order: Battle Flag: Rallying Swiftness|1|50|50|0|0|0]=],
-        },
-        [52430] = {
-            Quest = [=[Not So Bad Down Here||50|50|0|0|0]=],
-        },
-        [52432] = {
-            Quest = [=[Squall||50|50|0|0|0]=],
-        },
         [52439] = {
-            Quest = [=[Iron Stores|2|50|50|0|0|0]=],
+            Quest = [=[Iron Stores|2|50|50|0|178|0]=],
+            Start = "139942|14|32|61.00|7.20",
         },
         [52440] = {
-            Quest = [=[Resource Recruitment|2|50|50|0|0|0]=],
+            Quest = [=[Resource Recruitment|2|50|50|0|178|0]=],
         },
         [52445] = {
-            Quest = [=[Tol Dagor: The Fourth Key|2|50|50|0|0|0]=],
+            Quest = [=[Tol Dagor: The Fourth Key|2|50|50|0|160|0]=],
             Start = "140732|895|32|75.30|48.80",
-        },
-        [52446] = {
-            Quest = [=[Sister Absinthe||50|50|0|0|0]=],
         },
         [52447] = {
             Quest = [=[Room To Grow|1|50|50|0|0|0]=],
@@ -26783,441 +23135,267 @@ function Nx.ModQuests:Data5()
             End = "135308|862|32|70.80|50.90",
         },
         [52449] = {
-            Quest = [=[The Mysterious Island|2|50|50|0|0|0]=],
+            Quest = [=[The Mysterious Island|2|50|50|0|160|0]=],
             Start = "140732|1161|32|68.00|22.60",
         },
         [52450] = {
-            Quest = [=[Uniting Kul Tiras|2|50|50|0|0|0]=],
+            Quest = [=[Uniting Kul Tiras|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
         [52451] = {
-            Quest = [=[Uniting Zandalar|1|50|50|0|0|0]=],
+            Quest = [=[Uniting Zandalar|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
-        [52452] = {
-            Quest = [=[Song Mistress Dadalea||50|50|0|0|0]=],
-        },
         [52453] = {
-            Quest = [=[A Forlorn Hope|2|50|50|0|0|0]=],
+            Quest = [=[A Forlorn Hope|2|50|50|0|160|0]=],
             Start = "140495|1161|32|36.40|62.80",
         },
-        [52455] = {
-            Quest = [=[Unbreakable||50|50|0|0|0]=],
-        },
-        [52459] = {
-            Quest = [=[Whirlwing||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|35|47.04|40.32|9.62|9.62",
-                    "nil|942|35|46.08|41.76|28.86|9.62",
-                    "nil|942|35|46.08|43.20|28.86|9.62",
-                    "nil|942|35|47.04|44.64|9.62|9.62",
-                },
-            },
-        },
         [52462] = {
-            Quest = [=[A Load of Scrap|2|50|50|0|0|0]=],
+            Quest = [=[A Load of Scrap|2|50|50|0|4|0]=],
             Start = "141274|1161|32|77.10|16.40",
         },
-        [52463] = {
-            Quest = [=[Haegol the Hammer||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|32|33.12|74.28|9.62|9.62",
-                },
-            },
+        [52467] = {
+            Quest = [=[Battlefield Scavenging|1|50|50|0|178|0]=],
         },
-        [52464] = {
-            Quest = [=[Osca the Bloodied||50|50|0|0|0]=],
-        },
-        [52471] = {
-            Quest = [=[That's a Big Carcass||50|50|0|0|0]=],
+        [52468] = {
+            Quest = [=[Raiding Their Stores|1|50|50|0|178|0]=],
         },
         [52473] = {
-            Quest = [=[Bringing Down the Fleet|2|50|50|0|0|0]=],
+            Quest = [=[Bringing Down the Fleet|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [52474] = {
-            Quest = [=[Poacher Zane||50|50|0|0|0]=],
-        },
-        [52475] = {
-            Quest = [=[Where Eagles Prey|2|50|50|0|0|0]=],
-        },
-        [52476] = {
-            Quest = [=[The Lichen King||50|50|0|0|0]=],
-        },
         [52478] = {
-            Quest = [=[Mission Report: Hillcrest Pasture|1|50|50|52479|0|0]=],
+            Quest = [=[Mission Report: Hillcrest Pasture|1|50|50|52479|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [52479] = {
-            Quest = [=[Hillcrest Pasture|1|50|50|0|0|0]=],
+            Quest = [=[Hillcrest Pasture|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [52481] = {
-            Quest = [=[Of Myth and Fable|2|50|50|0|0|0]=],
+            Quest = [=[Of Myth and Fable|2|50|50|0|160|0]=],
             Start = "140495|1161|32|36.40|62.80",
         },
         [52482] = {
-            Quest = [=[The Old Bear|2|50|50|0|0|0]=],
+            Quest = [=[The Old Bear|2|50|50|0|160|0]=],
             Start = "129642|896|32|36.90|50.10",
         },
         [52483] = {
-            Quest = [=[Nightmare Catcher|2|50|50|0|0|0]=],
+            Quest = [=[Nightmare Catcher|2|50|50|0|160|0]=],
             Start = "141894|896|32|45.20|45.80",
             End = "141894|896|32|45.20|45.80",
         },
         [52484] = {
-            Quest = [=[Buried Power|2|50|50|0|0|0]=],
+            Quest = [=[Buried Power|2|50|50|0|160|0]=],
             Start = "141894|896|32|45.20|45.80",
             End = "141894|896|32|45.20|45.80",
         },
         [52485] = {
-            Quest = [=[Hatred's Focus|2|50|50|0|0|0]=],
+            Quest = [=[Hatred's Focus|2|50|50|0|160|0]=],
             Start = "141894|896|32|45.20|45.80",
             End = "141894|896|32|45.20|45.80",
         },
         [52486] = {
-            Quest = [=[Waycrest Manor: Draining the Heartsbane|2|50|50|0|0|0]=],
+            Quest = [=[Waycrest Manor: Draining the Heartsbane|2|50|50|0|160|0]=],
             Start = "141159|896|32|45.20|45.80",
             End = "141159|896|32|45.20|45.80",
         },
         [52487] = {
-            Quest = [=[Into Darkness|2|50|50|0|0|0]=],
+            Quest = [=[Into Darkness|2|50|50|0|160|0]=],
             Start = "129642|896|32|36.90|50.10",
         },
         [52488] = {
-            Quest = [=[Runic Resistance|2|50|50|0|0|0]=],
+            Quest = [=[Runic Resistance|2|50|50|0|160|0]=],
             Start = "142287|896|32|27.50|58.80",
         },
         [52489] = {
-            Quest = [=[Hunting Blood Prince Dreven|2|50|50|0|0|0]=],
+            Quest = [=[Hunting Blood Prince Dreven|2|50|50|0|50|0]=],
             Start = "141356|1161|32|69.40|27.00",
             End = "141356|1161|32|69.40|27.00",
         },
         [52490] = {
-            Quest = [=[Behind Enemy Boats|2|50|50|0|0|0]=],
+            Quest = [=[Behind Enemy Boats|2|50|50|0|50|0]=],
             Start = "141567|1156|32|38.50|45.70",
         },
         [52491] = {
-            Quest = [=[Broadside Bedlam|2|50|50|0|0|0]=],
+            Quest = [=[Broadside Bedlam|2|50|50|0|50|0]=],
             Start = "-293821|1156|32|36.80|52.40",
         },
         [52492] = {
-            Quest = [=[The Wildhammer Specialty|2|50|50|0|0|0]=],
+            Quest = [=[The Wildhammer Specialty|2|50|50|0|50|0]=],
             Start = "141541|1156|32|43.10|49.10",
         },
         [52493] = {
-            Quest = [=[An Unnatural Crew|2|50|50|0|0|0]=],
+            Quest = [=[An Unnatural Crew|2|50|50|0|50|0]=],
             Start = "142228|1156|32|41.70|56.90",
             End = "142228|1156|32|41.70|56.90",
         },
         [52494] = {
-            Quest = [=[Foul Crystals for Foul People|2|50|50|0|0|0]=],
+            Quest = [=[Foul Crystals for Foul People|2|50|50|0|50|0]=],
             Start = "142228|1156|32|41.70|56.90",
             End = "142228|1156|32|41.70|56.90",
         },
         [52495] = {
-            Quest = [=[Ending the San'layn Threat|2|50|50|0|0|0]=],
+            Quest = [=[Ending the San'layn Threat|2|50|50|0|50|0]=],
             Start = "142232|1156|32|41.60|55.30",
         },
         [52496] = {
-            Quest = [=[A Clean Escape|2|50|50|0|0|0]=],
+            Quest = [=[A Clean Escape|2|50|50|0|50|0]=],
             Start = "141567|1156|32|42.00|47.30",
         },
-        [52507] = {
-            Quest = [=[Sticky Mess|2|50|50|0|0|0]=],
+        [52497] = {
+            Quest = [=[Raiding the Boulderfist|1|50|50|0|178|0]=],
         },
         [52508] = {
-            Quest = [=[Ritual Effects|2|50|50|0|0|0]=],
+            Quest = [=[Ritual Effects|2|50|50|0|160|0]=],
             Start = "141223|942|32|70.30|36.40",
         },
         [52509] = {
-            Quest = [=[The Strength of the Storm|2|50|50|0|0|0]=],
+            Quest = [=[The Strength of the Storm|2|50|50|0|160|0]=],
             Start = "141223|942|32|70.30|36.40",
         },
         [52510] = {
-            Quest = [=[Shrine of the Storm: The Missing Ritual|2|50|50|0|0|0]=],
+            Quest = [=[Shrine of the Storm: The Missing Ritual|2|50|50|0|160|0]=],
             Start = "137691|942|32|78.30|28.80",
         },
         [52511] = {
-            Quest = [=[Opening the Way|2|50|50|0|0|0]=],
+            Quest = [=[Opening the Way|2|50|50|0|160|0]=],
             Start = "141223|942|32|21.30|69.50",
         },
         [52512] = {
-            Quest = [=[Fate's End|2|50|50|0|0|0]=],
+            Quest = [=[Fate's End|2|50|50|0|160|0]=],
             Start = "141223|942|32|21.30|69.50",
         },
         [52513] = {
-            Quest = [=[Lost in Darkness|2|50|50|0|0|0]=],
+            Quest = [=[Lost in Darkness|2|50|50|0|160|0]=],
             Start = "141223|942|32|6.64|31.60",
         },
         [52748] = {
             Quest = [=[Eyes on the Skies|1|50|50|0|0|0]=],
             Start = "135308|862|32|70.80|51.00",
         },
-        [52751] = {
-            Quest = [=[Strange Looking Dogs||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|32|67.12|12.08|9.62|9.62",
-                },
-            },
-        },
-        [52752] = {
-            Quest = [=[Vigilant Lookouts|1|50|50|0|0|0]=],
-        },
-        [52754] = {
-            Quest = [=[Marshdwellers||50|50|0|0|0]=],
-        },
-        [52755] = {
-            Quest = [=[Bringing the Heat|1|50|50|0|0|0]=],
-        },
-        [52756] = {
-            Quest = [=[Snow Way Out|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|35|41.28|10.08|9.62|9.62",
-                    "nil|895|35|39.36|11.52|48.10|9.62",
-                    "nil|895|35|38.40|12.96|67.33|19.24",
-                    "nil|895|35|38.40|15.84|67.33|9.62",
-                    "nil|895|35|39.36|17.28|48.10|9.62",
-                    "nil|895|35|41.28|18.72|9.62|9.62",
-                },
-            },
-        },
-        [52757] = {
-            Quest = [=[Grimestone Crimes||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|35|56.64|12.96|28.86|9.62",
-                    "nil|895|35|54.72|14.40|57.72|19.24",
-                    "nil|895|35|53.76|17.28|67.33|9.62",
-                    "nil|895|35|53.76|18.72|57.72|9.62",
-                    "nil|895|35|52.80|20.16|48.10|9.62",
-                    "nil|895|35|53.76|21.60|19.24|9.62",
-                },
-                [2] = {
-                    "nil|895|35|58.56|12.96|9.62|9.62",
-                    "nil|895|35|57.60|14.40|28.86|19.24",
-                    "nil|895|35|58.56|17.28|9.62|9.62",
-                },
-                [3] = {
-                    "nil|895|35|55.68|12.96|9.62|9.62",
-                    "nil|895|35|54.72|14.40|28.86|9.62",
-                    "nil|895|35|55.68|15.84|9.62|9.62",
-                },
-                [4] = {
-                    "nil|895|35|56.64|12.96|9.62|9.62",
-                    "nil|895|35|55.68|14.40|28.86|9.62",
-                    "nil|895|35|56.64|15.84|28.86|9.62",
-                    "nil|895|35|57.60|17.28|9.62|9.62",
-                },
-            },
-        },
-        [52760] = {
-            Quest = [=[Like Fish in a Barrel|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|32|58.72|48.08|9.62|9.62",
-                },
-                [2] = {
-                    "nil|895|32|58.32|40.88|9.62|9.62",
-                },
-                [3] = {
-                    "nil|895|32|57.72|41.28|9.62|9.62",
-                },
-                [4] = {
-                    "nil|895|32|58.12|40.88|9.62|9.62",
-                },
-                [5] = {
-                    "nil|895|35|58.56|40.32|9.62|9.62",
-                    "nil|895|35|57.60|41.76|28.86|9.62",
-                    "nil|895|35|56.64|43.20|28.86|9.62",
-                    "nil|895|35|57.60|44.64|9.62|9.62",
-                },
-            },
-        },
         [52762] = {
-            Quest = [=[A Local Guide|2|50|50|0|0|0]=],
+            Quest = [=[A Local Guide|2|50|50|0|160|0]=],
             Start = "140649|895|32|67.00|36.20",
         },
-        [52763] = {
-            Quest = [=[Siege of Boralus: Breaking Their Ranks||50|50|0|0|0]=],
-        },
         [52764] = {
-            Quest = [=[Journey to the Middle of Nowhere|1|50|50|52765|0|0]=],
+            Quest = [=[Journey to the Middle of Nowhere|1|50|50|52765|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [52765] = {
-            Quest = [=[Deep Dive|1|50|50|52766|0|0]=],
+            Quest = [=[Deep Dive|1|50|50|52766|95|0]=],
             Start = "141644|1157|32|40.40|67.20",
             End = "141644|1157|32|40.40|67.20",
         },
         [52766] = {
-            Quest = [=[Seafloor Shipwreck|1|50|50|52767|0|0]=],
+            Quest = [=[Seafloor Shipwreck|1|50|50|52767|95|0]=],
             Start = "141645|1157|32|41.60|67.40",
             End = "141645|1157|32|41.60|67.40",
         },
         [52767] = {
-            Quest = [=[Checking Dog Tags|1|50|50|52768|0|0]=],
+            Quest = [=[Checking Dog Tags|1|50|50|52768|95|0]=],
         },
         [52768] = {
-            Quest = [=[The Sunken Graveyard|1|50|50|52769|0|0]=],
+            Quest = [=[The Sunken Graveyard|1|50|50|52769|95|0]=],
         },
         [52769] = {
-            Quest = [=[Captain By Captain|1|50|50|52772|0|0]=],
+            Quest = [=[Captain By Captain|1|50|50|52772|95|0]=],
         },
         [52770] = {
-            Quest = [=[Biolumi-Nuisance|1|50|50|52772|0|0]=],
+            Quest = [=[Biolumi-Nuisance|1|50|50|52772|95|0]=],
         },
         [52772] = {
-            Quest = [=[The Undersea Ledge|1|50|50|52773|0|0]=],
+            Quest = [=[The Undersea Ledge|1|50|50|52773|95|0]=],
+            Start = "141654|1157|32|41.40|66.60",
         },
         [52773] = {
-            Quest = [=[Water-Breathing Dragon|1|50|50|52774|0|0]=],
+            Quest = [=[Water-Breathing Dragon|1|50|50|52774|95|0]=],
+            Start = "141654|1157|32|41.40|66.60",
         },
         [52774] = {
-            Quest = [=[Grab and Go|1|50|50|52978|0|0]=],
+            Quest = [=[Grab and Go|1|50|50|52978|95|0]=],
             Start = "141645|1157|32|41.60|67.40",
             End = "141645|1157|32|41.60|67.40",
         },
         [52776] = {
-            Quest = [=[Mission Report: Stonetusk Watch|1|50|50|52777|0|0]=],
+            Quest = [=[Mission Report: Stonetusk Watch|1|50|50|52777|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [52777] = {
-            Quest = [=[Stonetusk Watch|1|50|50|0|0|0]=],
+            Quest = [=[Stonetusk Watch|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
-        },
-        [52779] = {
-            Quest = [=[Crawg in the Bog||50|50|0|0|0]=],
-        },
-        [52780] = {
-            Quest = [=[Siege of Boralus: Breaking the Alliance||50|50|0|0|0]=],
         },
         [52782] = {
             Quest = [=[Call to Arms: Stormsong Valley|2|50|50|0|0|0]=],
             Start = "154640|1161|32|56.40|26.00",
             End = "143559|1161|32|56.40|26.00",
         },
-        [52785] = {
-            Quest = [=[Smashing Zalamar|2|50|50|0|0|0]=],
-        },
         [52788] = {
-            Quest = [=[Leave None Alive|2|50|50|0|0|0]=],
+            Quest = [=[Leave None Alive|2|50|50|0|50|0]=],
             Start = "141719|862|32|35.10|77.20",
         },
         [52789] = {
-            Quest = [=[Silencing the Advisor|2|50|50|0|0|0]=],
+            Quest = [=[Silencing the Advisor|2|50|50|0|50|0]=],
         },
         [52790] = {
-            Quest = [=[An End to the Killing|2|50|50|0|0|0]=],
-        },
-        [52794] = {
-            Quest = [=[Lizards and Ledgers|2|50|50|0|0|0]=],
-        },
-        [52798] = {
-            Quest = [=[A Few More Charges|1|50|50|0|0|0]=],
-        },
-        [52799] = {
-            Quest = [=[Pack Leader||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|32|35.52|53.88|9.62|9.62",
-                },
-            },
+            Quest = [=[An End to the Killing|2|50|50|0|50|0]=],
+            Start = "140257|862|32|34.80|76.40",
         },
         [52801] = {
-            Quest = [=[Mission Report: Veiled Grotto|2|50|50|52802|0|0]=],
+            Quest = [=[Mission Report: Veiled Grotto|2|50|50|52802|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [52802] = {
-            Quest = [=[Veiled Grotto|2|50|50|0|0|0]=],
+            Quest = [=[Veiled Grotto|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [52803] = {
-            Quest = [=[Accidental Dread||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|39.36|37.44|9.62|9.62",
-                    "nil|863|35|38.40|38.88|28.86|9.62",
-                    "nil|863|35|39.36|40.32|9.62|9.62",
-                },
-            },
-        },
-        [52804] = {
-            Quest = [=[Something Stirs in the Depths|1|50|50|0|0|0]=],
-        },
-        [52805] = {
-            Quest = [=[Like Pulling Teeth|1|50|50|0|0|0]=],
-        },
-        [52832] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|32|67.12|20.48|9.62|9.62",
-                },
-            },
-        },
         [52834] = {
-            Quest = [=[Seal of Wartorn Fate: Gold||50|50|0|0|0]=],
+            Quest = [=[Seal of Wartorn Fate: Gold||50|50|0|4|0]=],
             Start = "141584|1161|32|71.60|13.70",
             End = "141584|1161|32|71.60|13.70",
         },
         [52835] = {
-            Quest = [=[Seal of Wartorn Fate: Marks of Honor||50|50|0|0|0]=],
+            Quest = [=[Seal of Wartorn Fate: Marks of Honor||50|50|0|4|0]=],
             Start = "141584|1161|32|71.60|13.70",
             End = "141584|1161|32|71.60|13.70",
         },
         [52837] = {
-            Quest = [=[Seal of Wartorn Fate: War Resources||50|50|0|0|0]=],
+            Quest = [=[Seal of Wartorn Fate: War Resources||50|50|0|4|0]=],
             Start = "141584|1161|32|71.60|13.70",
             End = "141584|1161|32|71.60|13.70",
         },
         [52838] = {
-            Quest = [=[Seal of Wartorn Fate: Piles of Gold||50|50|0|0|0]=],
+            Quest = [=[Seal of Wartorn Fate: Piles of Gold||50|50|0|4|0]=],
             Start = "141584|1161|32|71.60|13.70",
             End = "141584|1161|32|71.60|13.70",
         },
         [52839] = {
-            Quest = [=[Seal of Wartorn Fate: Additional Marks of Honor||50|50|0|0|0]=],
+            Quest = [=[Seal of Wartorn Fate: Additional Marks of Honor||50|50|0|4|0]=],
             Start = "141584|1161|32|71.60|13.70",
             End = "141584|1161|32|71.60|13.70",
         },
         [52840] = {
-            Quest = [=[Seal of Wartorn Fate: Stashed War Resources||50|50|0|0|0]=],
+            Quest = [=[Seal of Wartorn Fate: Stashed War Resources||50|50|0|4|0]=],
             Start = "141584|1161|32|71.60|13.70",
             End = "141584|1161|32|71.60|13.70",
         },
-        [52849] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-        },
-        [52850] = {
-            Quest = [=[Keeyo's Champions of Vol'dun||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|32|56.52|48.28|9.62|9.62",
-                },
-            },
-        },
         [52851] = {
-            Quest = [=[Mission Report: Mugamba Overlook|2|50|50|52852|0|0]=],
+            Quest = [=[Mission Report: Mugamba Overlook|2|50|50|52852|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [52852] = {
-            Quest = [=[Mugamba Overlook|2|50|50|0|0|0]=],
+            Quest = [=[Mugamba Overlook|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
@@ -27225,329 +23403,29 @@ function Nx.ModQuests:Data5()
             Quest = [=[Alchemy is an Inexact Science|1|50|50|0|0|0]=],
             Start = "122129|862|32|66.80|42.60",
         },
-        [52856] = {
-            Quest = [=[Snakes on a Terrace||50|50|0|0|0]=],
-        },
         [52857] = {
             Quest = [=[Held For Observation|1|50|50|0|0|0]=],
             Start = "122129|862|32|66.80|42.60",
         },
-        [52858] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-        },
         [52861] = {
-            Quest = [=[Champion: Lilian Voss|1|50|50|0|0|0]=],
+            Quest = [=[Champion: Lilian Voss|1|50|50|0|95|0]=],
             Start = "141961|862|32|58.40|62.60",
             End = "141961|862|32|58.40|62.60",
         },
-        [52862] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|22.08|28.80|9.62|9.62",
-                    "nil|896|35|21.12|30.24|28.86|9.62",
-                    "nil|896|35|22.08|31.68|9.62|9.62",
-                },
-            },
-        },
-        [52864] = {
-            Quest = [=[What Do You Mean, Mind Controlling Plants?||50|50|0|0|0]=],
-        },
-        [52865] = {
-            Quest = [=[Blockade Runner|2|50|50|0|0|0]=],
-        },
-        [52869] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-        },
-        [52871] = {
-            Quest = [=[Azerite Empowerment||50|50|0|0|0]=],
-        },
-        [52872] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|35|41.28|36.00|9.62|9.62",
-                    "nil|864|35|40.32|37.44|28.86|9.62",
-                    "nil|864|35|41.28|38.88|9.62|9.62",
-                    "nil|864|35|60.48|60.48|9.62|9.62",
-                    "nil|864|35|59.52|61.92|28.86|9.62",
-                    "nil|864|35|60.48|63.36|9.62|9.62",
-                    "nil|864|35|40.32|66.24|9.62|9.62",
-                    "nil|864|35|39.36|67.68|28.86|9.62",
-                    "nil|864|35|40.32|69.12|9.62|9.62",
-                },
-                [2] = {
-                    "nil|864|35|40.32|37.44|9.62|9.62",
-                    "nil|864|35|39.36|38.88|28.86|9.62",
-                    "nil|864|35|40.32|40.32|9.62|9.62",
-                    "nil|864|35|80.64|51.84|9.62|9.62",
-                    "nil|864|35|79.68|53.28|28.86|9.62",
-                    "nil|864|35|78.72|54.72|28.86|9.62",
-                    "nil|864|35|79.68|56.16|9.62|9.62",
-                    "nil|864|35|59.52|60.48|19.24|9.62",
-                    "nil|864|35|58.56|61.92|38.48|9.62",
-                    "nil|864|35|23.04|63.36|9.62|9.62",
-                    "nil|864|35|59.52|63.36|19.24|9.62",
-                    "nil|864|35|22.08|64.80|28.86|9.62",
-                    "nil|864|35|23.04|66.24|9.62|9.62",
-                    "nil|864|35|40.32|66.24|9.62|9.62",
-                    "nil|864|35|39.36|67.68|28.86|19.24",
-                    "nil|864|35|40.32|70.56|9.62|9.62",
-                    "nil|864|35|69.12|82.08|9.62|9.62",
-                    "nil|864|35|68.16|83.52|38.48|9.62",
-                    "nil|864|35|68.16|84.96|38.48|9.62",
-                    "nil|864|35|69.12|86.40|38.48|9.62",
-                    "nil|864|35|71.04|87.84|9.62|9.62",
-                },
-                [3] = {
-                    "nil|864|35|55.68|21.60|9.62|9.62",
-                    "nil|864|35|54.72|23.04|28.86|9.62",
-                    "nil|864|35|55.68|24.48|9.62|9.62",
-                    "nil|864|35|41.28|34.56|9.62|9.62",
-                    "nil|864|35|39.36|36.00|38.48|9.62",
-                    "nil|864|35|38.40|37.44|48.10|9.62",
-                    "nil|864|35|38.40|38.88|57.72|9.62",
-                    "nil|864|35|38.40|40.32|48.10|9.62",
-                    "nil|864|35|39.36|41.76|19.24|9.62",
-                    "nil|864|35|57.60|50.40|19.24|9.62",
-                    "nil|864|35|55.68|51.84|48.10|9.62",
-                    "nil|864|35|76.80|51.84|38.48|9.62",
-                    "nil|864|35|54.72|53.28|57.72|9.62",
-                    "nil|864|35|75.84|53.28|57.72|9.62",
-                    "nil|864|35|55.68|54.72|57.72|9.62",
-                    "nil|864|35|75.84|54.72|67.33|9.62",
-                    "nil|864|35|55.68|56.16|57.72|9.62",
-                    "nil|864|35|76.80|56.16|57.72|9.62",
-                    "nil|864|35|56.64|57.60|57.72|9.62",
-                    "nil|864|35|78.72|57.60|28.86|9.62",
-                    "nil|864|35|56.64|59.04|57.72|9.62",
-                    "nil|864|35|24.00|60.48|19.24|9.62",
-                    "nil|864|35|57.60|60.48|48.10|9.62",
-                    "nil|864|35|22.08|61.92|48.10|9.62",
-                    "nil|864|35|58.56|61.92|38.48|9.62",
-                    "nil|864|35|21.12|63.36|57.72|9.62",
-                    "nil|864|35|60.48|63.36|9.62|9.62",
-                    "nil|864|35|22.08|64.80|38.48|9.62",
-                    "nil|864|35|23.04|66.24|19.24|9.62",
-                    "nil|864|35|39.36|66.24|28.86|9.62",
-                    "nil|864|35|38.40|67.68|48.10|19.24",
-                    "nil|864|35|39.36|70.56|28.86|9.62",
-                    "nil|864|35|69.12|82.08|38.48|9.62",
-                    "nil|864|35|68.16|83.52|57.72|9.62",
-                    "nil|864|35|68.16|84.96|57.72|9.62",
-                    "nil|864|35|69.12|86.40|48.10|9.62",
-                    "nil|864|35|69.12|87.84|38.48|9.62",
-                    "nil|864|35|70.08|89.28|9.62|9.62",
-                },
-                [4] = {
-                    "nil|864|35|40.32|36.00|9.62|9.62",
-                    "nil|864|35|39.36|37.44|28.86|9.62",
-                    "nil|864|35|38.40|38.88|28.86|9.62",
-                    "nil|864|35|39.36|40.32|9.62|9.62",
-                    "nil|864|35|56.64|51.84|9.62|9.62",
-                    "nil|864|35|79.68|51.84|9.62|9.62",
-                    "nil|864|35|55.68|53.28|38.48|9.62",
-                    "nil|864|35|78.72|53.28|28.86|9.62",
-                    "nil|864|35|55.68|54.72|48.10|9.62",
-                    "nil|864|35|78.72|54.72|38.48|9.62",
-                    "nil|864|35|56.64|56.16|38.48|9.62",
-                    "nil|864|35|78.72|56.16|28.86|9.62",
-                    "nil|864|35|56.64|57.60|48.10|9.62",
-                    "nil|864|35|79.68|57.60|9.62|9.62",
-                    "nil|864|35|57.60|59.04|38.48|9.62",
-                    "nil|864|35|57.60|60.48|48.10|9.62",
-                    "nil|864|35|58.56|61.92|28.86|9.62",
-                    "nil|864|35|39.36|66.24|28.86|9.62",
-                    "nil|864|35|38.40|67.68|48.10|19.24",
-                    "nil|864|35|39.36|70.56|28.86|9.62",
-                },
-            },
-        },
-        [52873] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-        },
-        [52874] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-        },
-        [52875] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|864|35|41.28|36.00|9.62|9.62",
-                    "nil|864|35|40.32|37.44|28.86|9.62",
-                    "nil|864|35|41.28|38.88|9.62|9.62",
-                    "nil|864|35|60.48|60.48|9.62|9.62",
-                    "nil|864|35|59.52|61.92|28.86|9.62",
-                    "nil|864|35|60.48|63.36|9.62|9.62",
-                    "nil|864|35|40.32|66.24|9.62|9.62",
-                    "nil|864|35|39.36|67.68|28.86|9.62",
-                    "nil|864|35|40.32|69.12|9.62|9.62",
-                },
-                [2] = {
-                    "nil|864|35|40.32|37.44|9.62|9.62",
-                    "nil|864|35|39.36|38.88|28.86|9.62",
-                    "nil|864|35|40.32|40.32|9.62|9.62",
-                    "nil|864|35|80.64|51.84|9.62|9.62",
-                    "nil|864|35|79.68|53.28|28.86|9.62",
-                    "nil|864|35|78.72|54.72|28.86|9.62",
-                    "nil|864|35|79.68|56.16|9.62|9.62",
-                    "nil|864|35|59.52|60.48|19.24|9.62",
-                    "nil|864|35|58.56|61.92|38.48|9.62",
-                    "nil|864|35|23.04|63.36|9.62|9.62",
-                    "nil|864|35|59.52|63.36|19.24|9.62",
-                    "nil|864|35|22.08|64.80|28.86|9.62",
-                    "nil|864|35|23.04|66.24|9.62|9.62",
-                    "nil|864|35|40.32|66.24|9.62|9.62",
-                    "nil|864|35|39.36|67.68|28.86|19.24",
-                    "nil|864|35|40.32|70.56|9.62|9.62",
-                    "nil|864|35|69.12|82.08|9.62|9.62",
-                    "nil|864|35|68.16|83.52|38.48|9.62",
-                    "nil|864|35|68.16|84.96|38.48|9.62",
-                    "nil|864|35|69.12|86.40|38.48|9.62",
-                    "nil|864|35|71.04|87.84|9.62|9.62",
-                },
-                [3] = {
-                    "nil|864|35|55.68|21.60|9.62|9.62",
-                    "nil|864|35|54.72|23.04|28.86|9.62",
-                    "nil|864|35|55.68|24.48|9.62|9.62",
-                    "nil|864|35|41.28|34.56|9.62|9.62",
-                    "nil|864|35|39.36|36.00|38.48|9.62",
-                    "nil|864|35|38.40|37.44|48.10|9.62",
-                    "nil|864|35|38.40|38.88|57.72|9.62",
-                    "nil|864|35|38.40|40.32|48.10|9.62",
-                    "nil|864|35|39.36|41.76|19.24|9.62",
-                    "nil|864|35|57.60|50.40|19.24|9.62",
-                    "nil|864|35|55.68|51.84|48.10|9.62",
-                    "nil|864|35|76.80|51.84|38.48|9.62",
-                    "nil|864|35|54.72|53.28|57.72|9.62",
-                    "nil|864|35|75.84|53.28|57.72|9.62",
-                    "nil|864|35|55.68|54.72|57.72|9.62",
-                    "nil|864|35|75.84|54.72|67.33|9.62",
-                    "nil|864|35|55.68|56.16|57.72|9.62",
-                    "nil|864|35|76.80|56.16|57.72|9.62",
-                    "nil|864|35|56.64|57.60|57.72|9.62",
-                    "nil|864|35|78.72|57.60|28.86|9.62",
-                    "nil|864|35|56.64|59.04|57.72|9.62",
-                    "nil|864|35|24.00|60.48|19.24|9.62",
-                    "nil|864|35|57.60|60.48|48.10|9.62",
-                    "nil|864|35|22.08|61.92|48.10|9.62",
-                    "nil|864|35|58.56|61.92|38.48|9.62",
-                    "nil|864|35|21.12|63.36|57.72|9.62",
-                    "nil|864|35|60.48|63.36|9.62|9.62",
-                    "nil|864|35|22.08|64.80|38.48|9.62",
-                    "nil|864|35|23.04|66.24|19.24|9.62",
-                    "nil|864|35|39.36|66.24|28.86|9.62",
-                    "nil|864|35|38.40|67.68|48.10|19.24",
-                    "nil|864|35|39.36|70.56|28.86|9.62",
-                    "nil|864|35|69.12|82.08|38.48|9.62",
-                    "nil|864|35|68.16|83.52|57.72|9.62",
-                    "nil|864|35|68.16|84.96|57.72|9.62",
-                    "nil|864|35|69.12|86.40|48.10|9.62",
-                    "nil|864|35|69.12|87.84|38.48|9.62",
-                    "nil|864|35|70.08|89.28|9.62|9.62",
-                },
-                [4] = {
-                    "nil|864|35|40.32|36.00|9.62|9.62",
-                    "nil|864|35|39.36|37.44|28.86|9.62",
-                    "nil|864|35|38.40|38.88|28.86|9.62",
-                    "nil|864|35|39.36|40.32|9.62|9.62",
-                    "nil|864|35|56.64|51.84|9.62|9.62",
-                    "nil|864|35|79.68|51.84|9.62|9.62",
-                    "nil|864|35|55.68|53.28|38.48|9.62",
-                    "nil|864|35|78.72|53.28|28.86|9.62",
-                    "nil|864|35|55.68|54.72|48.10|9.62",
-                    "nil|864|35|78.72|54.72|38.48|9.62",
-                    "nil|864|35|56.64|56.16|38.48|9.62",
-                    "nil|864|35|78.72|56.16|28.86|9.62",
-                    "nil|864|35|56.64|57.60|48.10|9.62",
-                    "nil|864|35|79.68|57.60|9.62|9.62",
-                    "nil|864|35|57.60|59.04|38.48|9.62",
-                    "nil|864|35|57.60|60.48|48.10|9.62",
-                    "nil|864|35|58.56|61.92|28.86|9.62",
-                    "nil|864|35|39.36|66.24|28.86|9.62",
-                    "nil|864|35|38.40|67.68|48.10|19.24",
-                    "nil|864|35|39.36|70.56|28.86|9.62",
-                },
-            },
-        },
-        [52877] = {
-            Quest = [=[Azerite Mining||50|50|0|0|0]=],
-        },
-        [52878] = {
-            Quest = [=[Desert Survivors||50|50|0|0|0]=],
-        },
-        [52879] = {
-            Quest = [=[Stiff Policy|2|50|50|0|0|0]=],
-        },
-        [52880] = {
-            Quest = [=[Milden Mud Snout||50|50|0|0|0]=],
-        },
-        [52882] = {
-            Quest = [=[Controlled Burn|1|50|50|0|0|0]=],
-        },
-        [52884] = {
-            Quest = [=[Azerite Wounds||50|50|0|0|0]=],
-        },
         [52886] = {
-            Quest = [=[Mission Report: Verdant Hollow|2|50|50|52888|0|0]=],
+            Quest = [=[Mission Report: Verdant Hollow|2|50|50|52888|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [52888] = {
-            Quest = [=[Verdant Hollow|2|50|50|0|0|0]=],
+            Quest = [=[Verdant Hollow|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
-        },
-        [52889] = {
-            Quest = [=[Sandscour||50|50|0|0|0]=],
-        },
-        [52891] = {
-            Quest = [=[Wendigo to Sleep|2|50|50|0|0|0]=],
-        },
-        [52892] = {
-            Quest = [=[Critters are Friends, Not Food||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|862|35|70.08|28.80|19.24|9.62",
-                    "nil|862|35|69.12|30.24|38.48|9.62",
-                    "nil|862|35|70.08|31.68|19.24|9.62",
-                },
-            },
-        },
-        [52923] = {
-            Quest = [=[Add More to the Collection||50|50|0|0|0]=],
-        },
-        [52924] = {
-            Quest = [=[Mead Some Help?|2|50|50|0|0|0]=],
-        },
-        [52935] = {
-            Quest = [=[A New Era|2|50|50|0|0|0]=],
-        },
-        [52936] = {
-            Quest = [=[Plagued Earth Policy||50|50|0|0|0]=],
-        },
-        [52937] = {
-            Quest = [=[You've Never Seen Jammer Upset||50|50|0|0|0]=],
-        },
-        [52938] = {
-            Quest = [=[Small Beginnings||50|50|0|0|0]=],
-        },
-        [52939] = {
-            Quest = [=[Ordnance Orders|2|50|50|0|0|0]=],
-        },
-        [52940] = {
-            Quest = [=[Arms Deal|1|50|50|0|0|0]=],
-        },
-        [52941] = {
-            Quest = [=[Light in the Darkness|2|50|50|0|0|0]=],
         },
         [52944] = {
             Quest = [=[Call to Arms: Drustvar|2|50|50|0|0|0]=],
             Start = "143559|1161|32|56.40|26.00",
             End = "143559|1161|32|56.40|26.00",
-        },
-        [52947] = {
-            Quest = [=[Ettin Outta Here|2|50|50|0|0|0]=],
         },
         [52948] = {
             Quest = [=[Call to Arms: Tiragarde Sound|2|50|50|0|0|0]=],
@@ -27599,270 +23477,115 @@ function Nx.ModQuests:Data5()
             End = "143536|862|32|51.50|58.10",
         },
         [52962] = {
-            Quest = [=[Mission Report: Mistvine Ledge|2|50|50|52963|0|0]=],
+            Quest = [=[Mission Report: Mistvine Ledge|2|50|50|52963|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [52963] = {
-            Quest = [=[Mistvine Ledge|2|50|50|0|0|0]=],
+            Quest = [=[Mistvine Ledge|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [52964] = {
-            Quest = [=[Pest Problem|2|50|50|0|0|0]=],
-        },
-        [52968] = {
-            Quest = [=[Time for a Little Blood||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|35|66.24|38.88|28.86|9.62",
-                    "nil|942|35|65.28|40.32|48.10|19.24",
-                    "nil|942|35|64.32|43.20|57.72|19.24",
-                    "nil|942|35|65.28|46.08|38.48|9.62",
-                    "nil|942|35|65.28|47.52|38.48|9.62",
-                    "nil|942|35|66.24|48.96|19.24|9.62",
-                },
-            },
-        },
-        [52972] = {
-            Quest = [=[Favored Grandchild|2|50|50|0|0|0]=],
-        },
         [52978] = {
-            Quest = [=[With Prince in Tow|1|50|50|0|0|0]=],
+            Quest = [=[With Prince in Tow|1|50|50|0|95|0]=],
             Start = "141644|1157|32|40.11|68.01",
             End = "141644|1157|32|40.40|67.20",
         },
-        [52979] = {
-            Quest = [=[Ritual Cleansing|2|50|50|0|0|0]=],
-            Start = "0|942|32|53.20|33.40",
-        },
-        [52982] = {
-            Quest = [=[Mine or Trouble|2|50|50|0|0|0]=],
-        },
-        [52986] = {
-            Quest = [=[A Wicked Vessel||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|942|35|66.24|41.76|28.86|9.62",
-                    "nil|942|35|65.28|43.20|48.10|9.62",
-                    "nil|942|35|65.28|44.64|38.48|19.24",
-                    "nil|942|35|65.28|47.52|28.86|9.62",
-                    "nil|942|35|66.24|48.96|9.62|9.62",
-                },
-            },
-        },
-        [52987] = {
-            Quest = [=[Let's Burn!|2|50|50|0|0|0]=],
-        },
-        [52988] = {
-            Quest = [=[House Cleaning|2|50|50|0|0|0]=],
-        },
         [52990] = {
-            Quest = [=[Return to the Harbor|1|50|50|52191|0|0]=],
+            Quest = [=[Return to the Harbor|1|50|50|52191|95|0]=],
             Start = "141602|1161|32|71.15|82.25",
         },
         [53003] = {
-            Quest = [=[A Cycle of Hatred|1|50|50|0|0|0]=],
+            Quest = [=[A Cycle of Hatred|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [53006] = {
-            Quest = [=[Mission Report: Grimwatt's Crash|2|50|50|53007|0|0]=],
+            Quest = [=[Mission Report: Grimwatt's Crash|2|50|50|53007|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [53007] = {
-            Quest = [=[Grimwatt's Crash|2|50|50|0|0|0]=],
+            Quest = [=[Grimwatt's Crash|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [53008] = {
-            Quest = [=[Sage Wisdom|1|50|50|0|0|0]=],
-        },
-        [53012] = {
-            Quest = [=[Put Away Your Toys|2|50|50|0|0|0]=],
-        },
-        [53025] = {
-            Quest = [=[The Culling|2|50|50|0|0|0]=],
-        },
-        [53027] = {
-            Quest = [=[Edge of Glory|1|50|50|0|0|0]=],
-        },
-        [53030] = {
-            Quest = [=[The World Awaits||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
-        [53032] = {
-            Quest = [=[A Burning Path Through Time||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
-        [53033] = {
-            Quest = [=[A Frozen Path Through Time||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
-        [53034] = {
-            Quest = [=[A Shattered Path Through Time||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
-        [53035] = {
-            Quest = [=[A Shrouded Path Through Time||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
-        [53036] = {
-            Quest = [=[A Call to Battle||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
-        [53037] = {
-            Quest = [=[Emissary of War||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
-        [53038] = {
-            Quest = [=[The Very Best||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
-        [53039] = {
-            Quest = [=[The Arena Calls||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
-        [53040] = {
-            Quest = [=[Squall Squelching||50|50|0|0|0]=],
-        },
-        [53042] = {
-            Quest = [=[Stormcaller|1|50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Southern Anchor empowered|942|32|42.87|28.14|0|0",
-                },
-                [2] = {
-                    "Western Anchor empowered|942|32|42.87|28.14|0|0",
-                },
-                [3] = {
-                    "Eastern Anchor empowered|942|32|42.87|28.14|0|0",
-                },
-                [4] = {
-                    "Fulminous Squall contained|942|32|42.87|28.14|0|0",
-                },
-            },
-        },
         [53043] = {
-            Quest = [=[Mission Report: Vulture's Nest|2|50|50|53044|0|0]=],
+            Quest = [=[Mission Report: Vulture's Nest|2|50|50|53044|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [53044] = {
-            Quest = [=[Vulture's Nest|2|50|50|0|0|0]=],
+            Quest = [=[Vulture's Nest|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
         [53053] = {
-            Quest = [=[To The Mugambala!|1|50|50|0|0|0]=],
+            Quest = [=[To The Mugambala!|1|50|50|0|182|0]=],
             Start = "138708|1165|32|58.40|62.60",
         },
         [53054] = {
-            Quest = [=[Dueler's Guild|1|50|50|0|0|0]=],
+            Quest = [=[Dueler's Guild|1|50|50|0|182|0]=],
             Start = "143536|862|32|51.50|58.20",
         },
         [53063] = {
-            Quest = [=[A Mission of Unity|2|50|50|51918|0|0]=],
+            Quest = [=[A Mission of Unity|2|50|50|51918|50|0]=],
             Start = "135612|1161|32|69.27|27.00",
         },
         [53064] = {
-            Quest = [=[A Mission of Unity|1|50|50|51916|0|0]=],
+            Quest = [=[A Mission of Unity|1|50|50|51916|95|0]=],
             Start = "135691|862|32|58.40|62.60",
         },
         [53065] = {
-            Quest = [=[Operation: Grave Digger|1|50|50|51784|0|0]=],
+            Quest = [=[Operation: Grave Digger|1|50|50|51784|95|0]=],
         },
         [53066] = {
-            Quest = [=[Operation: Water Wise|1|50|50|51797|0|0]=],
+            Quest = [=[Operation: Water Wise|1|50|50|51797|95|0]=],
         },
         [53067] = {
-            Quest = [=[Operation: Bottom Feeder|1|50|50|52764|0|0]=],
+            Quest = [=[Operation: Bottom Feeder|1|50|50|52764|95|0]=],
             Start = "135691|862|32|58.40|62.60",
         },
         [53068] = {
-            Quest = [=[Operation: Hook and Line|1|50|50|52183|0|0]=],
+            Quest = [=[Operation: Hook and Line|1|50|50|52183|95|0]=],
             Start = "141644|1157|32|40.30|67.26",
         },
         [53069] = {
-            Quest = [=[Operation: Blood Arrow|2|50|50|52147|0|0]=],
+            Quest = [=[Operation: Blood Arrow|2|50|50|52147|50|0]=],
         },
         [53070] = {
-            Quest = [=[Operation: Cutpurse|2|50|50|52154|0|0]=],
+            Quest = [=[Operation: Cutpurse|2|50|50|52154|50|0]=],
+            Start = "140348|1161|32|69.40|26.70",
         },
         [53071] = {
-            Quest = [=[Operation: Gryphon's Claw|2|50|50|52308|0|0]=],
+            Quest = [=[Operation: Gryphon's Claw|2|50|50|52308|50|0]=],
         },
         [53072] = {
-            Quest = [=[Operation: Heartstrike|2|50|50|52473|0|0]=],
+            Quest = [=[Operation: Heartstrike|2|50|50|52473|50|0]=],
         },
         [53073] = {
-            Quest = [=[Hook Point Investigation|2|50|50|0|0|0]=],
+            Quest = [=[Hook Point Investigation|2|50|50|0|182|0]=],
             Start = "135614|1161|32|70.40|26.90",
         },
         [53075] = {
-            Quest = [=[Dueler's Guild|2|50|50|0|0|0]=],
+            Quest = [=[Dueler's Guild|2|50|50|0|182|0]=],
             Start = "143559|1161|32|56.30|26.00",
         },
-        [53076] = {
-            Quest = [=[Foundry Meltdown||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|35|79.68|44.64|28.86|9.62",
-                    "nil|895|35|78.72|46.08|48.10|9.62",
-                    "nil|895|35|78.72|47.52|48.10|19.24",
-                    "nil|895|35|78.72|50.40|38.48|9.62",
-                    "nil|895|35|79.68|51.84|28.86|9.62",
-                    "nil|895|35|80.64|53.28|9.62|9.62",
-                },
-                [2] = {
-                    "nil|895|35|78.72|44.64|28.86|9.62",
-                    "nil|895|35|77.76|46.08|48.10|9.62",
-                    "nil|895|35|78.72|47.52|38.48|9.62",
-                    "nil|895|35|78.72|48.96|48.10|9.62",
-                    "nil|895|35|79.68|50.40|38.48|9.62",
-                    "nil|895|35|81.60|51.84|9.62|9.62",
-                },
-            },
-        },
-        [53078] = {
-            Quest = [=[Treasure in the Tides||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|895|35|87.36|70.56|9.62|9.62",
-                    "nil|895|35|86.40|72.00|38.48|9.62",
-                    "nil|895|35|86.40|73.44|48.10|9.62",
-                    "nil|895|35|85.44|74.88|57.72|9.62",
-                    "nil|895|35|85.44|76.32|67.33|9.62",
-                    "nil|895|35|84.48|77.76|76.95|9.62",
-                    "nil|895|35|84.48|79.20|67.33|19.24",
-                    "nil|895|35|84.48|82.08|57.72|19.24",
-                    "nil|895|35|84.48|84.96|38.48|9.62",
-                    "nil|895|35|85.44|86.40|9.62|9.62",
-                },
-            },
+        [53080] = {
+            Quest = [=[Bumps in the Road|1|50|50|0|178|0]=],
         },
         [53081] = {
-            Quest = [=[Mission Report: Spare Parts|1|50|50|53082|0|0]=],
+            Quest = [=[Mission Report: Spare Parts|1|50|50|53082|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [53082] = {
-            Quest = [=[Spare Parts|1|50|50|0|0|0]=],
+            Quest = [=[Spare Parts|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [53098] = {
-            Quest = [=[Champion: Shandris Feathermoon|2|50|50|0|0|0]=],
+            Quest = [=[Champion: Shandris Feathermoon|2|50|50|0|50|0]=],
             Start = "141291|84|32|85.70|31.70",
             End = "141291|84|32|85.70|31.70",
         },
@@ -27872,22 +23595,22 @@ function Nx.ModQuests:Data5()
             End = "133640|942|32|78.50|54.80",
         },
         [53100] = {
-            Quest = [=[Mission Report: Giant Slaying|1|50|50|53101|0|0]=],
+            Quest = [=[Mission Report: Giant Slaying|1|50|50|53101|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [53101] = {
-            Quest = [=[Nettin' Ettin|1|50|50|0|0|0]=],
+            Quest = [=[Nettin' Ettin|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [53102] = {
-            Quest = [=[Mission Report: Nature Calls|1|50|50|53103|0|0]=],
+            Quest = [=[Mission Report: Nature Calls|1|50|50|53103|95|0]=],
             Start = "138704|1165|32|51.59|99.58",
             End = "138704|1165|32|51.59|99.58",
         },
         [53103] = {
-            Quest = [=[Wicker Magic|1|50|50|0|0|0]=],
+            Quest = [=[Wicker Magic|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.44|62.67",
         },
         [53105] = {
@@ -27895,26 +23618,17 @@ function Nx.ModQuests:Data5()
             Start = "133640|942|32|78.50|54.80",
             End = "133640|942|32|78.50|54.80",
         },
-        [53106] = {
-            Quest = [=[Censership||50|50|0|0|0]=],
-        },
-        [53107] = {
-            Quest = [=[Plunder and Provisions|2|50|50|0|0|0]=],
-        },
-        [53108] = {
-            Quest = [=[Iconoclasm||50|50|0|0|0]=],
-        },
         [53121] = {
-            Quest = [=[Siege of Boralus|1|50|50|0|0|0]=],
+            Quest = [=[Siege of Boralus|1|50|50|0|95|0]=],
             Start = "141654|1157|32|41.40|66.60",
         },
         [53125] = {
-            Quest = [=[Mission Report: Into The Wicker|1|50|50|53126|0|0]=],
+            Quest = [=[Mission Report: Into The Wicker|1|50|50|53126|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [53126] = {
-            Quest = [=[The Wicker Totem|1|50|50|0|0|0]=],
+            Quest = [=[The Wicker Totem|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
@@ -27933,13 +23647,16 @@ function Nx.ModQuests:Data5()
             Start = "-296536|62|32|45.20|18.00",
         },
         [53131] = {
-            Quest = [=[Kings' Rest|2|50|50|0|0|0]=],
+            Quest = [=[Kings' Rest|2|50|50|0|50|0]=],
+            Start = "142232|1156|32|41.60|55.30",
         },
         [53146] = {
             Quest = [=[Boulderfist Beatdown|2|50|50|0|0|0]=],
+            Start = "143172|14|32|21.60|64.80",
         },
         [53148] = {
             Quest = [=[Boulderfist Beatdown|1|50|50|0|0|0]=],
+            Start = "143381|14|32|27.20|29.80",
             Objectives = {
                 [1] = {
                     "Boulderfist clan ogres slain|14|32|50.39|73.83|0|0",
@@ -27948,17 +23665,19 @@ function Nx.ModQuests:Data5()
         },
         [53149] = {
             Quest = [=[Wiping Out the Witherbark|2|50|50|0|0|0]=],
+            Start = "143172|14|32|21.60|64.80",
         },
         [53150] = {
             Quest = [=[Wiping Out the Witherbark|1|50|50|0|0|0]=],
+            Start = "143381|14|32|27.20|29.80",
         },
         [53151] = {
-            Quest = [=[Mission Report: Wolves For The Den|1|50|50|53152|0|0]=],
+            Quest = [=[Mission Report: Wolves For The Den|1|50|50|53152|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [53152] = {
-            Quest = [=[Wolves for the Den|1|50|50|0|0|0]=],
+            Quest = [=[Wolves for the Den|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
@@ -27968,6 +23687,7 @@ function Nx.ModQuests:Data5()
         },
         [53154] = {
             Quest = [=[The League Will Lose|1|50|50|0|0|0]=],
+            Start = "143381|14|32|27.20|29.80",
             Objectives = {
                 [1] = {
                     "League of Arathor slain|14|32|58.76|48.49|0|0",
@@ -27976,12 +23696,11 @@ function Nx.ModQuests:Data5()
         },
         [53162] = {
             Quest = [=[Sins of the Syndicate|2|50|50|0|0|0]=],
-        },
-        [53165] = {
-            Quest = [=[Stopping Antiquities Theft|2|50|50|0|0|0]=],
+            Start = "143172|14|32|21.60|64.80",
         },
         [53173] = {
             Quest = [=[Sins of the Syndicate|1|50|50|0|0|0]=],
+            Start = "143381|14|32|27.20|29.80",
             Objectives = {
                 [1] = {
                     "Syndicate members slain|14|32|40.95|43.92|0|0",
@@ -27989,34 +23708,30 @@ function Nx.ModQuests:Data5()
             },
         },
         [53175] = {
-            Quest = [=[The Warfront Looms|2|50|50|53194|0|0]=],
+            Quest = [=[The Warfront Looms|2|50|50|53194|178|0]=],
         },
         [53179] = {
             Quest = [=[Executing Exorcisms|2|50|50|0|0|0]=],
+            Start = "143172|14|32|21.60|64.80",
         },
         [53185] = {
-            Quest = [=[Warfront Contribution|2|50|50|0|0|0]=],
+            Quest = [=[Warfront Contribution|2|50|50|0|178|0]=],
             Start = "142721|1161|32|66.00|26.00",
             End = "142721|1161|32|66.00|26.00",
         },
         [53186] = {
-            Quest = [=[Mission Report: Ambush at Grimwatt's Crash|2|50|50|53187|0|0]=],
+            Quest = [=[Mission Report: Ambush at Grimwatt's Crash|2|50|50|53187|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [53187] = {
-            Quest = [=[An Unexpected Guest|2|50|50|0|0|0]=],
+            Quest = [=[An Unexpected Guest|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [53188] = {
-            Quest = [=[Frozen Freestyle|2|50|50|0|0|0]=],
-        },
-        [53189] = {
-            Quest = [=[Slippery Slopes|2|50|50|0|0|0]=],
-        },
         [53190] = {
             Quest = [=[Executing Exorcisms|1|50|50|0|0|0]=],
+            Start = "143381|14|32|27.20|29.80",
             Objectives = {
                 [1] = {
                     "Vengeful Ghosts slain|14|32|39.52|76.65|0|0",
@@ -28025,9 +23740,11 @@ function Nx.ModQuests:Data5()
         },
         [53192] = {
             Quest = [=[Twice-Exiled|2|50|50|0|0|0]=],
+            Start = "143172|14|32|21.60|64.80",
         },
         [53193] = {
             Quest = [=[Twice-Exiled|1|50|50|0|0|0]=],
+            Start = "143381|14|32|27.20|29.80",
             Objectives = {
                 [1] = {
                     "Elementals slain|14|32|55.22|68.31|0|0",
@@ -28035,239 +23752,86 @@ function Nx.ModQuests:Data5()
             },
         },
         [53194] = {
-            Quest = [=[To the Front|2|50|50|0|0|0]=],
+            Quest = [=[To the Front|2|50|50|0|178|0]=],
             Start = "142721|1161|32|65.86|26.03",
         },
-        [53196] = {
-            Quest = [=[Swab This!|1|50|50|0|0|0]=],
-        },
         [53197] = {
-            Quest = [=[Touring the Front|2|50|50|0|0|0]=],
+            Quest = [=[Touring the Front|2|50|50|0|178|0]=],
             Start = "143018|14|32|19.26|61.77",
             End = "143018|14|32|19.26|61.77",
         },
         [53198] = {
-            Quest = [=[Back to Boralus|2|50|50|53153|0|0]=],
+            Quest = [=[Back to Boralus|2|50|50|53153|178|0]=],
             Start = "143018|14|32|19.26|61.77",
             End = "143018|14|32|19.26|61.77",
         },
+        [53199] = {
+            Quest = [=[The Torcanata||50|50|0|0|0]=],
+        },
         [53207] = {
-            Quest = [=[The Warfront Looms|1|50|50|53208|0|0]=],
+            Quest = [=[The Warfront Looms|1|50|50|53208|178|0]=],
             Start = "138949|1165|32|52.97|94.35",
             End = "138949|1165|32|52.97|94.35",
         },
         [53208] = {
-            Quest = [=[To the Front|1|50|50|0|0|0]=],
+            Quest = [=[To the Front|1|50|50|0|178|0]=],
             Start = "138949|1165|32|52.90|94.40",
         },
         [53209] = {
-            Quest = [=[Warfront Contribution|1|50|50|0|0|0]=],
+            Quest = [=[Warfront Contribution|1|50|50|0|178|0]=],
             Start = "138949|1165|32|53.00|94.30",
         },
         [53210] = {
-            Quest = [=[Touring the Front|1|50|50|0|0|0]=],
+            Quest = [=[Touring the Front|1|50|50|0|178|0]=],
             Start = "143019|14|32|26.10|35.50",
         },
         [53212] = {
-            Quest = [=[Back to Zuldazar|1|50|50|53416|0|0]=],
+            Quest = [=[Back to Zuldazar|1|50|50|53416|178|0]=],
             Start = "143019|14|32|26.11|35.59",
         },
         [53221] = {
-            Quest = [=[Mission Report: Missing Supplies|2|50|50|53222|0|0]=],
+            Quest = [=[Mission Report: Missing Supplies|2|50|50|53222|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [53222] = {
-            Quest = [=[Necessary Supplies|2|50|50|0|0|0]=],
+            Quest = [=[Necessary Supplies|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [53266] = {
-            Quest = [=[Flourishing Sea Stalks||50|50|0|0|0]=],
-        },
         [53267] = {
-            Quest = [=[Mission Report: Dino Research|2|50|50|53268|0|0]=],
+            Quest = [=[Mission Report: Dino Research|2|50|50|53268|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [53268] = {
-            Quest = [=[Dino Research|2|50|50|0|0|0]=],
+            Quest = [=[Dino Research|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [53270] = {
-            Quest = [=[Flourishing Riverbud||50|50|0|0|0]=],
-        },
-        [53272] = {
-            Quest = [=[Blooming Siren's Sting||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "Blooming Siren's Sting Gathered|896|35|33.08|72.65|0|0",
-                },
-            },
-        },
-        [53273] = {
-            Quest = [=[Winter's Kiss Cluster||50|50|0|0|0]=],
-        },
-        [53274] = {
-            Quest = [=[Overgrown Anchor Weed|2|50|50|0|0|0]=],
-        },
         [53275] = {
-            Quest = [=[Mission Report: Spare Parts|2|50|50|53276|0|0]=],
+            Quest = [=[Mission Report: Spare Parts|2|50|50|53276|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [53276] = {
-            Quest = [=[Spare Parts|2|50|50|0|0|0]=],
+            Quest = [=[Spare Parts|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
-        },
-        [53277] = {
-            Quest = [=[Flourishing Sea Stalks||50|50|0|0|0]=],
-        },
-        [53278] = {
-            Quest = [=[Flourishing Riverbud||50|50|0|0|0]=],
-        },
-        [53279] = {
-            Quest = [=[Blooming Star Moss||50|50|0|0|0]=],
-        },
-        [53280] = {
-            Quest = [=[Blooming Siren's Sting||50|50|0|0|0]=],
-        },
-        [53282] = {
-            Quest = [=[Overgrown Anchor Weed|1|50|50|0|0|0]=],
-        },
-        [53285] = {
-            Quest = [=[Blooming Star Moss||50|50|0|0|0]=],
-        },
-        [53286] = {
-            Quest = [=[Blooming Siren's Sting||50|50|0|0|0]=],
-        },
-        [53287] = {
-            Quest = [=[Winter's Kiss Cluster||50|50|0|0|0]=],
-        },
-        [53288] = {
-            Quest = [=[Overgrown Anchor Weed||50|50|0|0|0]=],
-        },
-        [53289] = {
-            Quest = [=[Flourishing Sea Stalks||50|50|0|0|0]=],
-        },
-        [53290] = {
-            Quest = [=[Flourishing Riverbud||50|50|0|0|0]=],
-        },
-        [53291] = {
-            Quest = [=[Blooming Star Moss||50|50|0|0|0]=],
-        },
-        [53292] = {
-            Quest = [=[Blooming Siren's Sting||50|50|0|0|0]=],
-        },
-        [53293] = {
-            Quest = [=[Overgrown Anchor Weed||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|863|35|42.97|46.71|0|0",
-                },
-            },
-        },
-        [53294] = {
-            Quest = [=[Akunda's Bite Cluster||50|50|0|0|0]=],
         },
         [53295] = {
             Quest = [=[Do Your Part|2|50|50|0|0|0]=],
             Start = "141698|1161|32|56.40|25.80",
         },
-        [53296] = {
-            Quest = [=[Flourishing Sea Stalks||50|50|0|0|0]=],
-        },
-        [53298] = {
-            Quest = [=[Blooming Star Moss||50|50|0|0|0]=],
-        },
-        [53300] = {
-            Quest = [=[Overgrown Anchor Weed||50|50|0|0|0]=],
-        },
-        [53301] = {
-            Quest = [=[Flourishing Sea Stalks||50|50|0|0|0]=],
-        },
-        [53303] = {
-            Quest = [=[Blooming Star Moss||50|50|0|0|0]=],
-        },
-        [53304] = {
-            Quest = [=[Blooming Siren's Sting||50|50|0|0|0]=],
-        },
-        [53305] = {
-            Quest = [=[Overgrown Anchor Weed||50|50|0|0|0]=],
-        },
         [53306] = {
-            Quest = [=[Mission Report: Jungle Escort|2|50|50|53307|0|0]=],
+            Quest = [=[Mission Report: Jungle Escort|2|50|50|53307|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [53307] = {
-            Quest = [=[Jungle Escort|2|50|50|0|0|0]=],
+            Quest = [=[Jungle Escort|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
-        },
-        [53308] = {
-            Quest = [=[Luminous Monelite||50|50|0|0|0]=],
-        },
-        [53311] = {
-            Quest = [=[Gleaming Storm Silver||50|50|0|0|0]=],
-        },
-        [53312] = {
-            Quest = [=[Burnished Platinum||50|50|0|0|0]=],
-            Objectives = {
-                [1] = {
-                    "nil|896|35|49.19|79.34|0|0",
-                },
-            },
-        },
-        [53313] = {
-            Quest = [=[Rough Monelite||50|50|0|0|0]=],
-        },
-        [53314] = {
-            Quest = [=[Coarse Storm Silver||50|50|0|0|0]=],
-        },
-        [53315] = {
-            Quest = [=[Smooth Platinum||50|50|0|0|0]=],
-        },
-        [53316] = {
-            Quest = [=[Hardened Monelite||50|50|0|0|0]=],
-        },
-        [53317] = {
-            Quest = [=[Dense Storm Silver||50|50|0|0|0]=],
-        },
-        [53318] = {
-            Quest = [=[Ductile Platinum||50|50|0|0|0]=],
-        },
-        [53321] = {
-            Quest = [=[Luminous Monelite||50|50|0|0|0]=],
-        },
-        [53322] = {
-            Quest = [=[Gleaming Storm Silver||50|50|0|0|0]=],
-        },
-        [53323] = {
-            Quest = [=[Burnished Platinum||50|50|0|0|0]=],
-        },
-        [53324] = {
-            Quest = [=[Rough Monelite||50|50|0|0|0]=],
-        },
-        [53325] = {
-            Quest = [=[Coarse Storm Silver||50|50|0|0|0]=],
-        },
-        [53326] = {
-            Quest = [=[Smooth Platinum||50|50|0|0|0]=],
-        },
-        [53327] = {
-            Quest = [=[Hardened Monelite||50|50|0|0|0]=],
-        },
-        [53328] = {
-            Quest = [=[Dense Storm Silver||50|50|0|0|0]=],
-        },
-        [53329] = {
-            Quest = [=[Ductile Platinum||50|50|0|0|0]=],
-        },
-        [53331] = {
-            Quest = [=[Show-Off|2|50|50|0|0|0]=],
         },
         [53338] = {
             Quest = [=[Prove your Worth|1|50|50|0|0|0]=],
@@ -28281,18 +23845,6 @@ function Nx.ModQuests:Data5()
         },
         [53341] = {
             Quest = [=[LFG  - BFA - Island Expedition - PvP Win - Nth||50|50|0|0|0]=],
-        },
-        [53343] = {
-            Quest = [=[Censership||50|50|0|0|0]=],
-        },
-        [53344] = {
-            Quest = [=[Iconoclasm||50|50|0|0|0]=],
-        },
-        [53345] = {
-            Quest = [=[Plunder and Provisions||50|50|0|0|0]=],
-        },
-        [53346] = {
-            Quest = [=[Trogg Tromping|2|50|50|0|0|0]=],
         },
         [53374] = {
             Quest = [=[BFA 111-119 E||50|50|0|0|0]=],
@@ -28342,31 +23894,24 @@ function Nx.ModQuests:Data5()
         [53393] = {
             Quest = [=[BFA 120 E||50|50|0|0|0]=],
         },
+        [53413] = {
+            Quest = [=[A Greater Effort|1|50|50|0|178|850]=],
+        },
         [53414] = {
-            Quest = [=[Warfront: The Battle for Stromgarde|2|50|50|0|0|0]=],
+            Quest = [=[Warfront: The Battle for Stromgarde|2|50|50|0|178|0]=],
             Start = "142721|1161|32|66.01|26.01",
             End = "142721|1161|32|66.01|26.01",
         },
+        [53415] = {
+            Quest = [=[A Greater Effort|2|50|50|0|178|850]=],
+        },
         [53416] = {
-            Quest = [=[Warfront: The Battle for Stromgarde|1|50|50|0|0|0]=],
+            Quest = [=[Warfront: The Battle for Stromgarde|1|50|50|0|178|0]=],
             Start = "138949|1165|32|52.97|94.35",
             End = "138949|1165|32|52.97|94.35",
         },
-        [53435] = {
-            Quest = [=[Azerite for the Horde|1|50|50|0|0|0]=],
-            Start = "123000|1163|32|44.60|95.40",
-            Objectives = {
-                [1] = {
-                    "Collect 36000 Azerite on Island Expeditions|1165|35|4.56|55.54|0|0",
-                },
-            },
-        },
-        [53436] = {
-            Quest = [=[Azerite for the Alliance|2|50|50|0|0|0]=],
-            Start = "131290|1161|32|66.60|35.50",
-        },
         [53457] = {
-            Quest = [=[Quartermaster's Bounty||50|50|0|0|0]=],
+            Quest = [=[Quartermaster's Bounty||50|50|0|139|0]=],
             Start = "143555|875|32|51.60|58.20",
             End = "143555|875|32|51.60|58.20",
         },
@@ -28401,7 +23946,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[LFGDungeons - BFA - Stromgarde (Arathi)||50|50|0|0|0]=],
         },
         [53665] = {
-            Quest = [=[Ready for Battle|1|50|50|0|0|0]=],
+            Quest = [=[Ready for Battle|1|50|50|0|178|0]=],
             Start = "133959|943|32|60.60|28.10",
             Objectives = {
                 [1] = {
@@ -28410,7 +23955,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [53666] = {
-            Quest = [=[Armor Up!|1|50|50|0|0|0]=],
+            Quest = [=[Armor Up!|1|50|50|0|178|0]=],
             Start = "133374|943|32|58.90|25.80",
             Objectives = {
                 [1] = {
@@ -28419,7 +23964,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [53667] = {
-            Quest = [=[Welcome to the Workshop|1|50|50|0|0|0]=],
+            Quest = [=[Welcome to the Workshop|1|50|50|0|178|0]=],
+            Start = "134855|14|32|58.60|21.60",
             Objectives = {
                 [1] = {
                     "See what the Workshop has to offer|943|35|77.99|42.10|0|0",
@@ -28427,7 +23973,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [53668] = {
-            Quest = [=[Flightgineer's Network|1|50|50|0|0|0]=],
+            Quest = [=[Flightgineer's Network|1|50|50|0|178|0]=],
+            Start = "127068|14|32|51.20|47.20",
             Objectives = {
                 [1] = {
                     "Flight taken to Ar'gorok|943|35|52.89|48.91|0|0",
@@ -28435,7 +23982,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [53669] = {
-            Quest = [=[The Altar's Power|1|50|50|0|0|0]=],
+            Quest = [=[The Altar's Power|1|50|50|0|178|0]=],
             Start = "131602|943|32|60.80|25.30",
             Objectives = {
                 [1] = {
@@ -28444,7 +23991,8 @@ function Nx.ModQuests:Data5()
             },
         },
         [53670] = {
-            Quest = [=[Beasts of Newstead|1|50|50|0|0|0]=],
+            Quest = [=[Beasts of Newstead|1|50|50|0|178|0]=],
+            Start = "132349|14|32|42.60|41.60",
             Objectives = {
                 [1] = {
                     "See what Kodo Rider Tanauk has to offer|943|35|59.42|58.56|0|0",
@@ -28452,81 +24000,54 @@ function Nx.ModQuests:Data5()
             },
         },
         [53671] = {
-            Quest = [=[The Circle's Power|1|50|50|0|0|0]=],
+            Quest = [=[The Circle's Power|1|50|50|0|178|0]=],
             Start = "144612|943|32|69.50|47.60",
         },
         [53672] = {
-            Quest = [=[Ready for Battle|2|50|50|0|0|0]=],
+            Quest = [=[Ready for Battle|2|50|50|0|178|0]=],
             Start = "139727|1044|32|46.10|73.40",
         },
         [53673] = {
-            Quest = [=[Armor Up!|2|50|50|0|0|0]=],
+            Quest = [=[Armor Up!|2|50|50|0|178|0]=],
             Start = "139103|1044|32|49.60|76.30",
         },
         [53674] = {
-            Quest = [=[The Altar's Power|2|50|50|0|0|0]=],
+            Quest = [=[The Altar's Power|2|50|50|0|178|0]=],
             Start = "137698|1044|32|48.00|79.90",
         },
         [53675] = {
-            Quest = [=[Welcome to the Workshop|2|50|50|0|0|0]=],
+            Quest = [=[Welcome to the Workshop|2|50|50|0|178|0]=],
         },
         [53676] = {
-            Quest = [=[The Circle's Power|2|50|50|0|0|0]=],
+            Quest = [=[The Circle's Power|2|50|50|0|178|0]=],
+            Start = "144613|14|32|69.60|47.60",
         },
         [53677] = {
-            Quest = [=[Beasts of Newstead|2|50|50|0|0|0]=],
+            Quest = [=[Beasts of Newstead|2|50|50|0|178|0]=],
+            Start = "139478|14|32|42.40|40.80",
         },
         [53678] = {
-            Quest = [=[Establishing a Connection|2|50|50|0|0|0]=],
-        },
-        [53699] = {
-            Quest = [=[Gate Crashers|2|50|50|0|0|0]=],
+            Quest = [=[Establishing a Connection|2|50|50|0|178|0]=],
+            Start = "132005|14|32|51.20|47.20",
         },
         [53701] = {
-            Quest = [=[A Drust Cause|2|50|50|0|0|0]=],
-        },
-        [53706] = {
-            Quest = [=[Salvage the Supplies|2|50|50|0|0|0]=],
-        },
-        [53707] = {
-            Quest = [=[Smoke the Supplies|1|50|50|0|0|0]=],
+            Quest = [=[A Drust Cause|2|50|50|0|55|0]=],
         },
         [53711] = {
-            Quest = [=[A Sound Defense|2|50|50|0|0|0]=],
-        },
-        [53712] = {
-            Quest = [=[Unfriendly Skies|2|50|50|0|0|0]=],
-        },
-        [53713] = {
-            Quest = [=[Wet Work: Bridgeport|1|50|50|0|0|0]=],
-        },
-        [53714] = {
-            Quest = [=[Apothecary Jerrod|2|50|50|0|0|0]=],
-        },
-        [53715] = {
-            Quest = [=[Firewarden Viton Darkflare|2|50|50|0|0|0]=],
-        },
-        [53716] = {
-            Quest = [=[Eastpoint Emergency|1|50|50|0|0|0]=],
-        },
-        [53717] = {
-            Quest = [=[Hold the Highland|2|50|50|0|0|0]=],
+            Quest = [=[A Sound Defense|2|50|50|0|55|0]=],
         },
         [53721] = {
-            Quest = [=[Heritage of the Zandalari|1|50|50|0|0|0]=],
+            Quest = [=[Heritage of the Zandalari|1|50|50|0|184|0]=],
             Start = "146335|1165|32|42.20|9.40",
             End = "146335|1165|32|42.20|9.40",
         },
         [53722] = {
-            Quest = [=[Heritage of the Kul Tiran|2|50|50|0|0|0]=],
+            Quest = [=[Heritage of the Kul Tiran|2|50|50|0|101|0]=],
             Start = "150941|1161|32|67.80|21.80",
             End = "150941|1161|32|67.80|21.80",
         },
-        [53724] = {
-            Quest = [=[Shadow Hunter Mutumba|2|50|50|0|0|0]=],
-        },
         [53725] = {
-            Quest = [=[A People Shattered|1|50|50|0|0|0]=],
+            Quest = [=[A People Shattered|1|50|50|0|93|0]=],
             Start = "145793|122|32|48.30|36.00",
             End = "145793|122|32|48.30|36.00",
         },
@@ -28542,139 +24063,103 @@ function Nx.ModQuests:Data5()
         [53730] = {
             Quest = [=[Legion 110 H||45|45|0|0|0]=],
         },
-        [53731] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
-        [53732] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
-        [53733] = {
-            Quest = [=[Legion 110 A||45|45|0|0|0]=],
-        },
         [53734] = {
-            Quest = [=[Walk Among Ghosts|1|50|50|0|0|0]=],
+            Quest = [=[Walk Among Ghosts|1|50|50|0|93|0]=],
             Start = "16802|110|32|53.80|20.26",
         },
         [53735] = {
-            Quest = [=[The First to Fall|1|50|50|0|0|0]=],
+            Quest = [=[The First to Fall|1|50|50|0|93|0]=],
             Start = "145005|95|32|47.50|84.10",
         },
         [53736] = {
-            Quest = [=[Lament of the Highborne|1|50|50|0|0|0]=],
+            Quest = [=[Lament of the Highborne|1|50|50|0|93|0]=],
             Start = "145005|95|32|37.20|65.96",
         },
         [53737] = {
-            Quest = [=[The Day Hope Died|1|50|50|0|0|0]=],
+            Quest = [=[The Day Hope Died|1|50|50|0|93|0]=],
             Start = "145005|95|32|12.67|56.87",
         },
         [53738] = {
-            Quest = [=[Defense of Quel'Danas|1|50|50|0|0|0]=],
+            Quest = [=[Defense of Quel'Danas|1|50|50|0|93|0]=],
             Start = "145005|94|32|51.39|68.81",
         },
-        [53752] = {
-            Quest = [=[Shell Outs|1|50|50|0|0|0]=],
-        },
-        [53753] = {
-            Quest = [=[Shell Outs|2|50|50|0|0|0]=],
-        },
-        [53755] = {
-            Quest = [=[Blight and Sound|2|50|50|0|0|0]=],
-        },
-        [53759] = {
-            Quest = [=[Look Out Below!|1|50|50|0|0|0]=],
-        },
         [53760] = {
-            Quest = [=[Unintended Consequences||50|50|53761|0|0]=],
+            Quest = [=[Unintended Consequences||50|50|53761|64|0]=],
             Start = "-311218|862|32|78.00|36.70",
             End = "0|862|32|78.00|36.70",
         },
         [53761] = {
-            Quest = [=[The Pirate's Treasure||50|50|53762|0|0]=],
+            Quest = [=[The Pirate's Treasure||50|50|53762|64|0]=],
             Start = "144773|896|32|20.00|35.80",
         },
         [53762] = {
-            Quest = [=[The Tempest Crown||50|50|0|0|0]=],
+            Quest = [=[The Tempest Crown||50|50|0|64|0]=],
             Start = "145396|895|32|75.00|77.70",
         },
         [53763] = {
-            Quest = [=[Twist the Knife|1|50|50|0|0|0]=],
+            Quest = [=[Twist the Knife|1|50|50|0|64|0]=],
             Start = "146384|864|32|53.00|13.60",
             End = "146384|864|32|53.00|13.60",
         },
         [53765] = {
-            Quest = [=[His Eye Upon You|2|50|50|0|0|0]=],
+            Quest = [=[His Eye Upon You|2|50|50|0|64|0]=],
             Start = "146902|1161|32|67.40|21.00",
             End = "146902|1161|32|67.40|21.00",
         },
         [53766] = {
-            Quest = [=[His Eye Upon You|1|50|50|0|0|0]=],
+            Quest = [=[His Eye Upon You|1|50|50|0|64|0]=],
             Start = "146335|1163|32|41.70|66.70",
             End = "133050|1163|32|41.70|66.70",
         },
-        [53768] = {
-            Quest = [=[Furious Fracas|2|50|50|0|0|0]=],
-        },
-        [53769] = {
-            Quest = [=[Furious Fracas|1|50|50|0|0|0]=],
-        },
-        [53771] = {
-            Quest = [=[Gurin Stonebinder|2|50|50|0|0|0]=],
-        },
-        [53772] = {
-            Quest = [=[Zagg Brokeneye|2|50|50|0|0|0]=],
-        },
-        [53773] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
-        },
         [53774] = {
-            Quest = [=[Wisdom of the Warchief|1|50|50|53775|0|0]=],
+            Quest = [=[Wisdom of the Warchief|1|50|50|53775|161|0]=],
             Start = "141555|1165|32|49.51|46.06",
         },
         [53775] = {
-            Quest = [=[Shades of Disruption|1|50|50|0|0|0]=],
+            Quest = [=[Shades of Disruption|1|50|50|0|161|0]=],
             Start = "145190|1167|32|66.40|70.80",
         },
         [53776] = {
-            Quest = [=[To the Broken Shore|1|50|50|0|0|0]=],
+            Quest = [=[To the Broken Shore|1|50|50|0|161|0]=],
             Start = "145225|1167|32|67.60|72.80",
         },
         [53777] = {
-            Quest = [=[Where He Died|1|50|50|53779|0|0]=],
+            Quest = [=[Where He Died|1|50|50|53779|161|0]=],
             Start = "146290|1|32|45.90|15.90",
         },
         [53778] = {
-            Quest = [=[Where He Fell|1|50|50|54120|0|0]=],
+            Quest = [=[Where He Fell|1|50|50|54120|161|0]=],
             Start = "145965|646|32|63.20|33.30",
         },
         [53779] = {
-            Quest = [=[The Lies of a Loa|1|50|50|54145|0|0]=],
+            Quest = [=[The Lies of a Loa|1|50|50|54145|161|0]=],
             Start = "146630|85|32|48.40|71.40",
         },
         [53780] = {
-            Quest = [=[Jailor of the Damned|1|50|50|0|0|0]=],
+            Quest = [=[Jailor of the Damned|1|50|50|0|161|0]=],
             Start = "122688|863|32|39.50|24.60",
             End = "122688|863|32|39.50|24.60",
         },
         [53781] = {
-            Quest = [=[Eyir|1|50|50|54147|0|0]=],
+            Quest = [=[Eyir|1|50|50|54147|161|0]=],
             Start = "122688|863|32|39.50|24.60",
             End = "122688|863|32|39.50|24.60",
         },
         [53782] = {
-            Quest = [=[Mysteries of Death|1|50|50|0|0|0]=],
+            Quest = [=[Mysteries of Death|1|50|50|0|161|0]=],
             Start = "122688|863|32|39.50|24.60",
             End = "122688|863|32|39.50|24.60",
         },
         [53783] = {
-            Quest = [=[In the Dunes|1|50|50|0|0|0]=],
+            Quest = [=[In the Dunes|1|50|50|0|10|0]=],
             Start = "131840|1165|32|45.10|40.60",
             End = "131840|1165|32|45.10|40.60",
         },
         [53787] = {
-            Quest = [=[Modular Construction||50|50|0|0|0]=],
+            Quest = [=[Modular Construction||50|50|0|10|0]=],
         },
         [53791] = {
-            Quest = [=[The Pride of the Sin'dorei|1|50|50|53734|0|0]=],
+            Quest = [=[The Pride of the Sin'dorei|1|50|50|53734|93|0]=],
             Start = "146939|85|32|39.20|79.00",
         },
         [53800] = {
@@ -28684,465 +24169,406 @@ function Nx.ModQuests:Data5()
             Quest = [=[Battle for Darkshore|1|50|50|0|0|0]=],
         },
         [53802] = {
-            Quest = [=[Sethrak Persuasion||50|50|0|0|0]=],
+            Quest = [=[Sethrak Persuasion||50|50|0|10|0]=],
             Start = "145131|864|32|26.30|47.30",
             End = "145131|864|32|26.30|47.30",
         },
-        [53804] = {
-            Quest = [=[Dinomancer Zakuru|2|50|50|0|0|0]=],
-        },
         [53805] = {
-            Quest = [=[A Friend in Needle|2|50|50|0|0|0]=],
+            Quest = [=[A Friend in Needle|2|50|50|0|21|0]=],
             Start = "145022|1161|32|76.73|11.74",
             End = "145022|1161|32|76.60|11.80",
         },
         [53806] = {
-            Quest = [=[Heavy is the Head||50|50|0|0|0]=],
+            Quest = [=[Heavy is the Head||50|50|0|10|0]=],
             Start = "145131|864|32|26.30|47.30",
             End = "145131|864|32|26.30|47.30",
         },
         [53807] = {
-            Quest = [=[A Stitch in Time|2|50|50|55177|0|0]=],
+            Quest = [=[A Stitch in Time|2|50|50|55177|21|0]=],
             Start = "151134|1161|32|76.73|11.74",
             End = "145022|1161|32|76.60|11.80",
         },
         [53810] = {
-            Quest = [=[The Severed Thread||50|50|0|0|0]=],
+            Quest = [=[The Severed Thread||50|50|0|21|0]=],
             Start = "151134|75|32|61.98|53.87",
-        },
-        [53812] = {
-            Quest = [=[A Carefully Laid Trap|2|50|50|0|0|0]=],
         },
         [53813] = {
-            Quest = [=[Rolling Up the Sleeves||50|50|0|0|0]=],
+            Quest = [=[Rolling Up the Sleeves||50|50|0|21|0]=],
             Start = "151134|75|32|61.98|53.87",
         },
-        [53814] = {
-            Quest = [=[First Sergeant Steelfang|2|50|50|0|0|0]=],
-        },
         [53815] = {
-            Quest = [=[Whatever Happened to Saffy Flivvers?|2|50|50|0|0|0]=],
+            Quest = [=[Whatever Happened to Saffy Flivvers?|2|50|50|0|58|0]=],
             Start = "143851|1161|32|67.80|26.20",
         },
         [53816] = {
-            Quest = [=[Some Reassembly Required||50|50|0|0|0]=],
+            Quest = [=[Some Reassembly Required||50|50|0|58|0]=],
             Start = "151132|71|32|62.10|45.30",
             End = "151132|71|32|62.10|45.30",
         },
         [53817] = {
-            Quest = [=[Whatever Happened to Grizzek Fizzwrench?|1|50|50|0|0|0]=],
+            Quest = [=[Whatever Happened to Grizzek Fizzwrench?|1|50|50|0|58|0]=],
             Start = "136683|1163|32|58.50|62.60",
         },
         [53818] = {
-            Quest = [=[Re-parrot||50|50|0|0|0]=],
+            Quest = [=[Re-parrot||50|50|0|58|0]=],
             Start = "151132|71|32|62.10|45.30",
             End = "151132|71|32|62.10|45.30",
         },
         [53819] = {
-            Quest = [=[Return to the Nest||50|50|0|0|0]=],
+            Quest = [=[Return to the Nest||50|50|0|58|0]=],
             Start = "151132|71|32|62.10|45.30",
             End = "151132|71|32|62.10|45.30",
         },
         [53820] = {
-            Quest = [=[She's in a Happier Place|2|50|50|0|0|0]=],
+            Quest = [=[She's in a Happier Place|2|50|50|0|58|0]=],
             Start = "151129|71|32|27.10|60.00",
         },
         [53821] = {
-            Quest = [=[He's Dead, Jastor|1|50|50|0|0|0]=],
+            Quest = [=[He's Dead, Jastor|1|50|50|0|58|0]=],
             Start = "151130|71|32|27.20|60.10",
         },
-        [53832] = {
-            Quest = [=[Counter-Sabotage|1|50|50|0|0|0]=],
-        },
         [53833] = {
-            Quest = [=[Vengeful Venture|1|50|50|0|0|0]=],
+            Quest = [=[Vengeful Venture|1|50|50|0|10|0]=],
             Start = "-307748|864|32|26.30|47.30",
             End = "0|864|32|26.30|47.30",
         },
         [53835] = {
-            Quest = [=[Something Valuable, Perhaps?|2|50|50|0|0|0]=],
+            Quest = [=[Something Valuable, Perhaps?|2|50|50|0|93|0]=],
             Start = "-311155|31|32|40.80|21.00",
         },
         [53836] = {
-            Quest = [=[Ancient Armor, Ancient Mystery|2|50|50|0|0|0]=],
+            Quest = [=[Ancient Armor, Ancient Mystery|2|50|50|0|93|0]=],
             Start = "145462|87|32|77.20|9.80",
             End = "145462|87|32|77.20|9.80",
         },
         [53837] = {
-            Quest = [=[Watch Yer Back|2|50|50|0|0|0]=],
+            Quest = [=[Watch Yer Back|2|50|50|0|93|0]=],
             Start = "145464|1361|32|56.90|47.90",
         },
         [53838] = {
-            Quest = [=[Keep Yer Feet On The Ground|2|50|50|0|0|0]=],
+            Quest = [=[Keep Yer Feet On The Ground|2|50|50|0|93|0]=],
             Start = "146988|84|32|54.60|18.00",
         },
         [53839] = {
-            Quest = [=[Aegrim's Study|2|50|50|0|0|0]=],
+            Quest = [=[Aegrim's Study|2|50|50|0|93|0]=],
             Start = "145707|87|32|44.50|49.40",
         },
         [53840] = {
-            Quest = [=[Interest Yah In A Pint?|2|50|50|0|0|0]=],
+            Quest = [=[Interest Yah In A Pint?|2|50|50|0|93|0]=],
             Start = "145462|87|32|77.44|9.53",
             End = "145462|87|32|77.20|9.80",
         },
         [53841] = {
-            Quest = [=[Shards of the Past|2|50|50|0|0|0]=],
+            Quest = [=[Shards of the Past|2|50|50|0|93|0]=],
             Start = "-309498|87|32|19.80|51.90",
         },
         [53842] = {
-            Quest = [=[Earthen Blessing|2|50|50|0|0|0]=],
+            Quest = [=[Earthen Blessing|2|50|50|0|93|0]=],
             Start = "145462|48|32|35.00|48.67",
             End = "145462|48|32|35.00|48.80",
         },
         [53844] = {
-            Quest = [=[Recruiting the Furnace Master|2|50|50|0|0|0]=],
+            Quest = [=[Recruiting the Furnace Master|2|50|50|0|93|0]=],
             Start = "145462|48|32|35.00|48.67",
             End = "145462|48|32|35.00|48.80",
         },
         [53845] = {
-            Quest = [=[Forging the Armor|2|50|50|0|0|0]=],
+            Quest = [=[Forging the Armor|2|50|50|0|93|0]=],
             Start = "5164|87|32|48.80|46.00",
         },
         [53846] = {
-            Quest = [=[Legacy of the Bronzebeard|2|50|50|0|0|0]=],
+            Quest = [=[Legacy of the Bronzebeard|2|50|50|0|93|0]=],
             Start = "145462|87|32|45.87|49.94",
         },
         [53847] = {
-            Quest = [=[On Whispered Winds|2|50|50|0|0|0]=],
+            Quest = [=[On Whispered Winds|2|50|50|0|170|0]=],
             Start = "152000|1161|32|70.70|26.80",
         },
         [53848] = {
-            Quest = [=[Tooling Around Vol'dun||50|50|0|0|0]=],
+            Quest = [=[Tooling Around Vol'dun||50|50|0|10|0]=],
             Start = "145131|864|32|26.30|47.30",
             End = "145131|864|32|26.30|47.30",
         },
         [53849] = {
-            Quest = [=[Waning Hope|2|50|50|0|0|0]=],
+            Quest = [=[Waning Hope|2|50|50|0|170|0]=],
             Start = "146050|84|32|86.60|35.70",
             End = "146050|84|32|86.60|35.70",
         },
         [53850] = {
-            Quest = [=[Our War Continues|1|50|50|0|0|0]=],
+            Quest = [=[Our War Continues|1|50|50|0|95|0]=],
             Start = "134711|85|32|48.40|71.40",
         },
         [53851] = {
-            Quest = [=[Our War Continues|1|50|50|0|0|0]=],
+            Quest = [=[Our War Continues|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [53852] = {
-            Quest = [=[Azerite Denied|1|50|50|0|0|0]=],
+            Quest = [=[Azerite Denied|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [53853] = {
-            Quest = [=[The Setting Sun|1|50|50|0|0|0]=],
+            Quest = [=[The Setting Sun|1|50|50|0|93|0]=],
             Start = "145793|122|32|48.36|36.00",
             End = "145793|122|32|48.30|36.00",
         },
         [53856] = {
-            Quest = [=[The Fury of the Horde|1|50|50|0|0|0]=],
+            Quest = [=[The Fury of the Horde|1|50|50|0|95|0]=],
             Start = "145422|895|32|47.50|21.80",
         },
-        [53857] = {
-            Quest = [=[Cap'n Gorok|2|50|50|0|0|0]=],
-        },
         [53858] = {
-            Quest = [=[Step Into Her Shoes||50|50|53866|0|0]=],
+            Quest = [=[Step Into Her Shoes||50|50|53866|21|0]=],
             Start = "151134|75|32|39.11|63.27",
         },
         [53866] = {
-            Quest = [=[If The Shoe Fits...||50|50|55214|0|0]=],
+            Quest = [=[If The Shoe Fits...||50|50|55214|21|0]=],
             Start = "151134|680|32|63.77|68.84",
         },
-        [53867] = {
-            Quest = [=[Engineer Bolthold|2|50|50|0|0|0]=],
-        },
         [53868] = {
-            Quest = [=[Saving Nine||50|50|53869|0|0]=],
+            Quest = [=[Saving Nine||50|50|53869|21|0]=],
             Start = "151134|942|32|7.18|24.49",
         },
         [53869] = {
-            Quest = [=[Killing Time||50|50|0|0|0]=],
+            Quest = [=[Killing Time||50|50|0|21|0]=],
             Start = "151134|115|32|71.58|39.78",
             End = "151134|115|32|71.60|39.80",
         },
-        [53874] = {
-            Quest = [=[End Their Vigil||50|50|0|0|0]=],
-        },
-        [53875] = {
-            Quest = [=[Fogsail for a Day|1|50|50|0|0|0]=],
-        },
-        [53877] = {
-            Quest = [=[Eastpoint Encounter|2|50|50|0|0|0]=],
-        },
-        [53878] = {
-            Quest = [=[Emergency Extrication|1|50|50|0|0|0]=],
-        },
         [53879] = {
-            Quest = [=[Cleaning Out the Estate|1|50|50|0|0|0]=],
+            Quest = [=[Cleaning Out the Estate|1|50|50|0|95|0]=],
             Start = "145422|895|32|48.92|24.99",
             End = "145422|895|32|48.90|25.00",
         },
         [53880] = {
-            Quest = [=[Machines of War and Azerite|1|50|50|0|0|0]=],
+            Quest = [=[Machines of War and Azerite|1|50|50|0|95|0]=],
             Start = "145423|895|32|48.90|25.00",
             End = "145423|895|32|48.90|25.00",
         },
         [53881] = {
-            Quest = [=[Cut from the Same Cloth|2|50|50|0|0|0]=],
+            Quest = [=[Cut from the Same Cloth|2|50|50|0|21|0]=],
             Start = "151134|115|32|71.58|39.78",
             End = "151134|115|32|71.60|39.80",
         },
         [53882] = {
-            Quest = [=[Writing on the Wall|1|50|50|0|0|0]=],
+            Quest = [=[Writing on the Wall|1|50|50|0|93|0]=],
             Start = "145015|95|32|46.20|31.80",
         },
         [53885] = {
-            Quest = [=[Isolated Victory|1|50|50|0|0|0]=],
-        },
-        [53886] = {
-            Quest = [=[Self Guided Tour|1|50|50|0|0|0]=],
+            Quest = [=[Isolated Victory|1|50|50|0|55|0]=],
         },
         [53887] = {
-            Quest = [=[War Marches On|2|50|50|0|0|0]=],
+            Quest = [=[War Marches On|2|50|50|0|50|0]=],
             Start = "145580|895|32|36.40|30.70",
         },
         [53888] = {
-            Quest = [=[To Anglepoint|2|50|50|0|0|0]=],
+            Quest = [=[To Anglepoint|2|50|50|0|50|0]=],
             Start = "145580|895|32|67.00|36.20",
         },
         [53896] = {
-            Quest = [=[Stand Fast|2|50|50|0|0|0]=],
+            Quest = [=[Stand Fast|2|50|50|0|50|0]=],
             Start = "145580|895|32|42.10|29.90",
             End = "145580|895|32|42.10|29.90",
         },
         [53909] = {
-            Quest = [=[Besieged Allies|2|50|50|0|0|0]=],
+            Quest = [=[Besieged Allies|2|50|50|0|50|0]=],
             Start = "145580|895|32|42.10|29.90",
             End = "145580|895|32|42.10|29.90",
         },
         [53910] = {
-            Quest = [=[Repel the Horde!|2|50|50|0|0|0]=],
+            Quest = [=[Repel the Horde!|2|50|50|0|50|0]=],
             Start = "145580|895|32|42.10|29.90",
             End = "145580|895|32|42.10|29.90",
         },
         [53912] = {
-            Quest = [=[The Hunt Never Ends|1|50|50|0|0|0]=],
+            Quest = [=[The Hunt Never Ends|1|50|50|0|95|0]=],
             Start = "146462|895|32|50.83|26.84",
         },
         [53913] = {
-            Quest = [=[With Honor|1|50|50|0|0|0]=],
+            Quest = [=[With Honor|1|50|50|0|95|0]=],
             Start = "146462|895|32|50.83|26.84",
         },
         [53916] = {
-            Quest = [=[Outrigger Outfitters|2|50|50|0|0|0]=],
+            Quest = [=[Outrigger Outfitters|2|50|50|0|50|0]=],
             Start = "145593|895|32|41.50|27.10",
             End = "145593|895|32|41.50|27.10",
         },
         [53919] = {
-            Quest = [=[Shots Fired|2|50|50|0|0|0]=],
+            Quest = [=[Shots Fired|2|50|50|0|50|0]=],
             Start = "145593|895|32|37.50|24.90",
         },
         [53936] = {
-            Quest = [=[Stopping the Sappers|2|50|50|0|0|0]=],
+            Quest = [=[Stopping the Sappers|2|50|50|0|50|0]=],
             Start = "145580|895|32|37.40|24.90",
         },
         [53937] = {
-            Quest = [=[The Ub3r-Spanner|1|50|50|0|0|0]=],
+            Quest = [=[The Ub3r-Spanner|1|50|50|0|10|0]=],
             Start = "131840|1165|32|45.10|40.60",
             End = "131840|1165|32|45.10|40.60",
         },
         [53938] = {
-            Quest = [=[A Friend in Needle|1|50|50|0|0|0]=],
+            Quest = [=[A Friend in Needle|1|50|50|0|21|0]=],
             Start = "145022|1165|32|43.50|34.80",
             End = "145022|1165|32|43.50|34.80",
         },
         [53939] = {
-            Quest = [=[Breaching Boralus|1|50|50|0|0|0]=],
+            Quest = [=[Breaching Boralus|1|50|50|0|55|0]=],
         },
         [53940] = {
-            Quest = [=[A Stitch in Time|1|50|50|55188|0|0]=],
+            Quest = [=[A Stitch in Time|1|50|50|55188|21|0]=],
             Start = "151134|1165|32|43.50|34.80",
             End = "145022|1165|32|43.50|34.80",
         },
         [53941] = {
-            Quest = [=[A Mech for a Goblin|1|50|50|0|0|0]=],
+            Quest = [=[A Mech for a Goblin|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [53942] = {
-            Quest = [=[The Right Mech for the Job|1|50|50|0|0|0]=],
+            Quest = [=[The Right Mech for the Job|1|50|50|0|95|0]=],
             Start = "145751|862|32|36.20|72.00",
             End = "145751|862|32|36.20|72.00",
         },
         [53943] = {
-            Quest = [=[Modular Construction|2|50|50|0|0|0]=],
-        },
-        [53945] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
+            Quest = [=[Modular Construction|2|50|50|0|10|0]=],
         },
         [53947] = {
-            Quest = [=[In the Dunes|2|50|50|0|0|0]=],
+            Quest = [=[In the Dunes|2|50|50|0|10|0]=],
             Start = "136059|1161|32|77.40|14.20",
             End = "136059|1161|32|77.40|14.20",
         },
         [53948] = {
-            Quest = [=[Vengeful Venture|2|50|50|0|0|0]=],
+            Quest = [=[Vengeful Venture|2|50|50|0|10|0]=],
             Start = "-307748|864|32|26.30|47.30",
             End = "0|864|32|26.30|47.30",
         },
         [53949] = {
-            Quest = [=[The Ub3r-Spanner|2|50|50|0|0|0]=],
+            Quest = [=[The Ub3r-Spanner|2|50|50|0|10|0]=],
             Start = "136059|1161|32|77.40|14.20",
             End = "136059|1161|32|77.40|14.20",
         },
-        [53950] = {
-            Quest = [=[Explosive Relief|1|50|50|0|0|0]=],
-        },
-        [53951] = {
-            Quest = [=[Explosive Relief|2|50|50|0|0|0]=],
-        },
         [53955] = {
-            Quest = [=[Warfront: The Battle for Darkshore|1|50|50|0|0|0]=],
+            Quest = [=[Warfront: The Battle for Darkshore|1|50|50|0|178|0]=],
             Start = "138949|1165|32|52.97|94.35",
             End = "138949|1165|32|52.97|94.35",
         },
         [53957] = {
-            Quest = [=[Darkshore Recruits|2|50|50|0|0|0]=],
+            Quest = [=[Darkshore Recruits|2|50|50|0|178|0]=],
             Start = "145770|1203|32|51.00|56.80",
             End = "145770|1203|32|51.00|56.80",
         },
         [53959] = {
-            Quest = [=[Armor for Armies|2|50|50|0|0|0]=],
+            Quest = [=[Armor for Armies|2|50|50|0|178|0]=],
             Start = "145783|1203|32|51.00|57.60",
             End = "145783|1203|32|51.00|57.60",
         },
         [53960] = {
-            Quest = [=[The Altar of Elders|2|50|50|0|0|0]=],
+            Quest = [=[The Altar of Elders|2|50|50|0|178|0]=],
             Start = "145783|1203|32|51.00|57.60",
             End = "145783|1203|32|51.00|57.60",
         },
         [53961] = {
-            Quest = [=[Glaiveworks For Me|2|50|50|0|0|0]=],
+            Quest = [=[Glaiveworks For Me|2|50|50|0|178|0]=],
             Start = "145784|1203|32|51.00|57.40",
         },
         [53962] = {
-            Quest = [=[Cut from the Same Cloth|1|50|50|0|0|0]=],
+            Quest = [=[Cut from the Same Cloth|1|50|50|0|21|0]=],
             Start = "151134|115|32|71.58|39.78",
             End = "151134|115|32|71.60|39.80",
         },
-        [53963] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
-        },
         [53973] = {
-            Quest = [=[Ride Out to Meet Them|1|50|50|0|0|0]=],
+            Quest = [=[Ride Out to Meet Them|1|50|50|0|95|0]=],
             Start = "145422|895|32|53.02|30.49",
         },
         [53974] = {
-            Quest = [=[Druids of Gloomtide|2|50|50|0|0|0]=],
+            Quest = [=[Druids of Gloomtide|2|50|50|0|178|0]=],
             Start = "145779|1203|32|51.80|55.40",
         },
         [53975] = {
-            Quest = [=[Flying at Night|2|50|50|0|0|0]=],
+            Quest = [=[Flying at Night|2|50|50|0|178|0]=],
             Start = "144786|1203|32|49.40|34.60",
         },
         [53976] = {
-            Quest = [=[Iron in Hand|2|50|50|0|0|0]=],
+            Quest = [=[Iron in Hand|2|50|50|0|178|0]=],
             Start = "145770|1203|32|51.00|56.80",
             End = "145770|1203|32|51.00|56.80",
         },
         [53977] = {
-            Quest = [=[The War Chest|2|50|50|0|0|0]=],
+            Quest = [=[The War Chest|2|50|50|0|178|0]=],
             Start = "145770|1203|32|51.00|56.80",
             End = "145770|1203|32|51.00|56.80",
         },
         [53978] = {
-            Quest = [=[Gunpowder Plots|2|50|50|0|0|0]=],
+            Quest = [=[Gunpowder Plots|2|50|50|0|50|0]=],
             Start = "145593|895|32|41.50|27.10",
             End = "145593|895|32|41.50|27.10",
         },
-        [53979] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
-        },
         [53981] = {
-            Quest = [=[The Day is Won|1|50|50|0|0|0]=],
+            Quest = [=[The Day is Won|1|50|50|0|95|0]=],
             Start = "145422|895|32|47.40|21.81",
         },
-        [53982] = {
-            Quest = [=[Supplies From The Unshackled|1|50|50|0|0|0]=],
-        },
-        [53983] = {
-            Quest = [=[Wet Work: Fort Knight|1|50|50|0|0|0]=],
-        },
         [53986] = {
-            Quest = [=[The Calm Before|2|50|50|0|0|0]=],
+            Quest = [=[The Calm Before|2|50|50|0|50|0]=],
             Start = "135614|1161|32|70.40|27.00",
         },
+        [53987] = {
+            Quest = [=[Wonders of Goblin Technology|2|50|50|0|95|850]=],
+        },
         [53988] = {
-            Quest = [=[Shores of Fate|2|50|50|0|0|0]=],
+            Quest = [=[Shores of Fate|2|50|50|0|170|0]=],
             Start = "146050|84|32|86.60|35.70",
             End = "146050|84|32|86.60|35.70",
         },
         [53989] = {
-            Quest = [=[Hope|2|50|50|0|0|0]=],
+            Quest = [=[Hope|2|50|50|0|170|0]=],
             Start = "146374|63|32|11.50|17.60",
         },
         [53990] = {
-            Quest = [=[In Darkest Night|2|50|50|0|0|0]=],
+            Quest = [=[In Darkest Night|2|50|50|0|170|0]=],
             Start = "146373|84|32|86.60|35.70",
             End = "146050|84|32|86.60|35.70",
         },
         [53992] = {
-            Quest = [=[Warfront: The Battle for Darkshore|2|50|50|0|0|0]=],
+            Quest = [=[Warfront: The Battle for Darkshore|2|50|50|0|178|0]=],
             Start = "142721|1161|32|66.00|26.00",
             End = "142721|1161|32|66.00|26.00",
         },
-        [53994] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
-        },
         [53995] = {
-            Quest = [=[The Tauren Tanner|1|50|50|0|0|0]=],
+            Quest = [=[The Tauren Tanner|1|50|50|0|14|0]=],
             Start = "122698|1165|32|44.10|34.60",
             End = "122698|1165|32|44.10|34.60",
         },
         [54004] = {
-            Quest = [=[Test Case #1; Mech vs. Mekkatorque|1|50|50|0|0|0]=],
+            Quest = [=[Test Case #1; Mech vs. Mekkatorque|1|50|50|0|95|0]=],
             Start = "145816|896|32|37.30|26.00",
             End = "145816|896|32|37.30|26.00",
         },
         [54005] = {
-            Quest = [=[What the Drust Knew|2|50|50|0|0|0]=],
+            Quest = [=[What the Drust Knew|2|50|50|0|82|0]=],
             Start = "136041|1161|32|74.20|11.30",
         },
         [54006] = {
-            Quest = [=[A New Hope|2|50|50|0|0|0]=],
+            Quest = [=[A New Hope|2|50|50|0|170|0]=],
+            Start = "149418|62|32|46.30|35.10",
         },
         [54007] = {
-            Quest = [=[Insurance Policy|1|50|50|0|0|0]=],
+            Quest = [=[Insurance Policy|1|50|50|0|95|0]=],
             Start = "146073|895|32|54.60|64.60",
             End = "146073|895|32|54.60|64.60",
         },
         [54008] = {
-            Quest = [=[Insurance Renewal|1|50|50|0|0|0]=],
+            Quest = [=[Insurance Renewal|1|50|50|0|95|0]=],
             Start = "146073|895|32|54.60|64.60",
             End = "146073|895|32|54.60|64.60",
         },
         [54009] = {
-            Quest = [=[Killing on the Side|1|50|50|0|0|0]=],
+            Quest = [=[Killing on the Side|1|50|50|0|95|0]=],
             Start = "146073|895|32|54.60|64.60",
             End = "146073|895|32|54.60|64.60",
-        },
-        [54011] = {
-            Quest = [=[Wet Work: Arom's Stand|1|50|50|0|0|0]=],
         },
         [54012] = {
             Quest = [=[Fortunate Souls|1|50|50|0|0|0]=],
             Start = "150196|1355|32|41.90|80.60",
             End = "150196|1355|32|41.90|80.60",
-        },
-        [54014] = {
-            Quest = [=[Wet Work: Blood in the Sand|2|50|50|0|0|0]=],
         },
         [54015] = {
             Quest = [=[In Deep|1|50|50|0|0|0]=],
@@ -29153,23 +24579,21 @@ function Nx.ModQuests:Data5()
             Quest = [=[Descent|1|50|50|0|0|0]=],
             Start = "150206|1355|32|36.60|86.90",
         },
-        [54020] = {
-            Quest = [=[Wet Work: Gloomwater Span|2|50|50|0|0|0]=],
-        },
         [54021] = {
             Quest = [=[The First Arcanist|1|50|50|0|0|0]=],
             Start = "150207|1355|32|36.30|82.10",
         },
         [54022] = {
-            Quest = [=[Mekkatorque's Battle Plans|1|50|50|0|0|0]=],
+            Quest = [=[Mekkatorque's Battle Plans|1|50|50|0|95|0]=],
+            Start = "146623|895|32|59.10|61.80",
         },
         [54028] = {
-            Quest = [=[Mech versus Airship|1|50|50|0|0|0]=],
+            Quest = [=[Mech versus Airship|1|50|50|0|95|0]=],
             Start = "146073|895|32|54.60|64.60",
             End = "146073|895|32|54.60|64.60",
         },
         [54041] = {
-            Quest = [=[No Survivors|2|50|50|0|0|0]=],
+            Quest = [=[No Survivors|2|50|50|0|170|0]=],
             Start = "146375|63|32|11.40|17.80",
         },
         [54042] = {
@@ -29192,6 +24616,7 @@ function Nx.ModQuests:Data5()
         },
         [54046] = {
             Quest = [=[We're Not Out of the Woods Yet|1|50|50|0|0|0]=],
+            Start = "146536|1203|32|57.20|66.10",
         },
         [54047] = {
             Quest = [=[Where Hope Dies|1|50|50|0|0|0]=],
@@ -29209,11 +24634,8 @@ function Nx.ModQuests:Data5()
             Quest = [=[Aftermath|1|50|50|0|0|0]=],
             Start = "146601|1333|32|54.60|20.80",
         },
-        [54051] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
-        },
         [54058] = {
-            Quest = [=[Unintended Consequences||50|50|53761|0|0]=],
+            Quest = [=[Unintended Consequences||50|50|53761|64|0]=],
             Start = "-311885|862|32|78.00|36.70",
             End = "0|862|32|78.00|36.70",
         },
@@ -29222,639 +24644,502 @@ function Nx.ModQuests:Data5()
             Start = "146323|1333|32|53.60|20.40",
             End = "146323|1333|32|53.60|20.40",
         },
-        [54060] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
-        },
-        [54089] = {
-            Quest = [=[Omgar Doombow|2|50|50|0|0|0]=],
-        },
-        [54091] = {
-            Quest = [=[Strong Arm John|1|50|50|0|0|0]=],
-        },
         [54094] = {
-            Quest = [=[A Goblin's Definition of Success|1|50|50|0|0|0]=],
+            Quest = [=[A Goblin's Definition of Success|1|50|50|0|95|0]=],
             Start = "146623|895|32|87.60|53.50",
         },
         [54096] = {
-            Quest = [=[The Fall of the Sunwell|1|50|50|0|0|0]=],
+            Quest = [=[The Fall of the Sunwell|1|50|50|0|93|0]=],
             Start = "145793|122|32|48.36|35.99",
             End = "145793|122|32|48.30|36.00",
         },
         [54097] = {
-            Quest = [=[The Dark Lady Calls|1|50|50|0|0|0]=],
+            Quest = [=[The Dark Lady Calls|1|50|50|0|156|0]=],
             Start = "146013|862|32|58.40|62.70",
             End = "146013|862|32|58.40|62.70",
         },
         [54099] = {
-            Quest = [=[The High Overlord|1|50|50|0|0|0]=],
+            Quest = [=[The High Overlord|1|50|50|0|156|0]=],
             Start = "146654|85|32|48.30|71.20",
         },
         [54100] = {
-            Quest = [=[A Way Out|1|50|50|0|0|0]=],
+            Quest = [=[A Way Out|1|50|50|0|156|0]=],
             Start = "146654|85|32|48.30|71.00",
         },
         [54101] = {
-            Quest = [=[On Track|1|50|50|0|0|0]=],
+            Quest = [=[On Track|1|50|50|0|156|0]=],
             Start = "146010|37|32|30.50|57.60",
         },
         [54102] = {
-            Quest = [=[Eastern Escape|1|50|50|0|0|0]=],
+            Quest = [=[Eastern Escape|1|50|50|0|156|0]=],
             Start = "146791|37|32|34.56|63.26",
         },
         [54103] = {
-            Quest = [=[Corner Crossing|1|50|50|0|0|0]=],
+            Quest = [=[Corner Crossing|1|50|50|0|156|0]=],
             Start = "146806|49|32|11.30|66.80",
         },
         [54104] = {
-            Quest = [=[Signs of Saurfang|1|50|50|0|0|0]=],
+            Quest = [=[Signs of Saurfang|1|50|50|0|156|0]=],
             Start = "146937|49|32|25.87|39.99",
         },
         [54105] = {
-            Quest = [=[Ever Eastward|1|50|50|0|0|0]=],
+            Quest = [=[Ever Eastward|1|50|50|0|156|0]=],
             Start = "146937|49|32|29.00|68.10",
         },
         [54106] = {
-            Quest = [=[Tracking Tipoff|1|50|50|0|0|0]=],
+            Quest = [=[Tracking Tipoff|1|50|50|0|156|0]=],
             Start = "147210|49|32|80.60|46.90",
         },
         [54107] = {
-            Quest = [=[Grim Tidings|1|50|50|0|0|0]=],
+            Quest = [=[Grim Tidings|1|50|50|0|156|0]=],
             Start = "146012|49|32|81.40|52.40",
             End = "146012|49|32|81.40|52.40",
         },
         [54108] = {
-            Quest = [=[A Warrior's Death|1|50|50|0|0|0]=],
+            Quest = [=[A Warrior's Death|1|50|50|0|156|0]=],
             Start = "147297|51|32|79.70|74.70",
         },
         [54109] = {
-            Quest = [=[Queen's Favor|1|50|50|0|0|0]=],
+            Quest = [=[Queen's Favor|1|50|50|0|156|0]=],
             Start = "146011|51|32|80.80|78.70",
         },
-        [54112] = {
-            Quest = [=[Mistweaver Nian|1|50|50|0|0|0]=],
-        },
         [54113] = {
-            Quest = [=[Every Little Death Helps|2|50|50|53760|0|0]=],
+            Quest = [=[Every Little Death Helps|2|50|50|53760|64|0]=],
             Start = "-311218|942|32|34.20|31.80",
             End = "0|942|32|34.20|31.80",
         },
         [54114] = {
-            Quest = [=[Every Little Death Helps|2|50|50|54058|0|0]=],
+            Quest = [=[Every Little Death Helps|2|50|50|54058|64|0]=],
             Start = "-311885|862|32|78.00|36.70",
             End = "0|862|32|78.00|36.70",
         },
         [54117] = {
-            Quest = [=[Every Little Death Helps|1|50|50|53760|0|0]=],
+            Quest = [=[Every Little Death Helps|1|50|50|53760|64|0]=],
             Start = "-311218|862|32|78.00|36.70",
             End = "0|862|32|78.00|36.70",
         },
         [54118] = {
-            Quest = [=[Every Little Death Helps|1|50|50|54058|0|0]=],
+            Quest = [=[Every Little Death Helps|1|50|50|54058|64|0]=],
             Start = "-311218|862|32|78.00|36.70",
             End = "0|862|32|78.00|36.70",
-        },
-        [54119] = {
-            Quest = [=[Hartford Sternbach|1|50|50|0|0|0]=],
         },
         [54120] = {
             Quest = [=[To Orgrimmar|1|50|50|0|0|0]=],
             Start = "145981|646|32|62.30|30.40",
         },
         [54121] = {
-            Quest = [=[Breaking Out Ashvane|1|50|50|0|0|0]=],
+            Quest = [=[Breaking Out Ashvane|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [54123] = {
-            Quest = [=[It Belongs in My Mech!|1|50|50|0|0|0]=],
+            Quest = [=[It Belongs in My Mech!|1|50|50|0|95|0]=],
             Start = "145751|862|32|36.20|72.00",
             End = "145751|862|32|36.20|72.00",
         },
         [54124] = {
-            Quest = [=[Avoiding Lawsuits 101|1|50|50|0|0|0]=],
+            Quest = [=[Avoiding Lawsuits 101|1|50|50|0|95|0]=],
             Start = "148339|862|32|36.30|72.00",
         },
         [54126] = {
-            Quest = [=[Twist the Knife|2|50|50|0|0|0]=],
+            Quest = [=[Twist the Knife|2|50|50|0|64|0]=],
             Start = "146384|864|32|51.90|13.70",
         },
-        [54127] = {
-            Quest = [=[Rocket Hop|2|50|50|0|0|0]=],
-        },
         [54128] = {
-            Quest = [=[Necessary Precautions|1|50|50|0|0|0]=],
+            Quest = [=[Necessary Precautions|1|50|50|0|95|0]=],
             Start = "145816|896|32|37.30|26.00",
             End = "145816|896|32|37.30|26.00",
         },
-        [54129] = {
-            Quest = [=[First Mate Malone|2|50|50|0|0|0]=],
-        },
         [54132] = {
-            Quest = [=[Horde of Heroes|1|50|50|0|0|0]=],
+            Quest = [=[Horde of Heroes|1|50|50|0|55|0]=],
         },
         [54134] = {
-            Quest = [=[Many Fine Heroes|2|50|50|0|0|0]=],
+            Quest = [=[Many Fine Heroes|2|50|50|0|55|0]=],
         },
         [54135] = {
-            Quest = [=[Romp in the Swamp|1|50|50|0|0|0]=],
+            Quest = [=[Romp in the Swamp|1|50|50|0|55|0]=],
         },
         [54136] = {
-            Quest = [=[March on the Marsh|2|50|50|0|0|0]=],
+            Quest = [=[March on the Marsh|2|50|50|0|55|0]=],
         },
         [54137] = {
-            Quest = [=[In Every Dark Corner|1|50|50|0|0|0]=],
+            Quest = [=[In Every Dark Corner|1|50|50|0|55|0]=],
         },
         [54139] = {
-            Quest = [=[War Is Here|1|50|50|0|0|0]=],
+            Quest = [=[War Is Here|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [54140] = {
-            Quest = [=[Ride of the Zandalari|1|50|50|0|0|0]=],
+            Quest = [=[Ride of the Zandalari|1|50|50|0|95|0]=],
             Start = "133050|1164|32|41.10|66.50",
         },
         [54141] = {
-            Quest = [=[The Azsharan Medallion|2|50|50|0|0|0]=],
-        },
-        [54143] = {
-            Quest = [=[Bird's-Eye View|2|50|50|0|0|0]=],
+            Quest = [=[The Azsharan Medallion|2|50|50|0|64|0]=],
         },
         [54144] = {
-            Quest = [=[Orders from Azshara|2|50|50|54113|0|0]=],
+            Quest = [=[Orders from Azshara|2|50|50|54113|64|0]=],
             Start = "135793|942|32|40.40|36.40",
         },
         [54145] = {
-            Quest = [=[The Loa of Death|1|50|50|0|0|0]=],
+            Quest = [=[The Loa of Death|1|50|50|0|161|0]=],
             Start = "146824|863|32|39.50|27.00",
         },
         [54147] = {
-            Quest = [=[Confront The Val'kyr|1|50|50|53782|0|0]=],
+            Quest = [=[Confront The Val'kyr|1|50|50|53782|161|0]=],
             Start = "146877|634|32|61.20|68.10",
         },
-        [54154] = {
-            Quest = [=[The Hills Have Spies|1|50|50|0|0|0]=],
-        },
         [54156] = {
-            Quest = [=[A Path of Blood|1|50|50|0|0|0]=],
+            Quest = [=[A Path of Blood|1|50|50|0|95|0]=],
             Start = "147075|862|32|58.00|21.30",
             End = "147075|862|32|58.00|21.30",
         },
         [54157] = {
-            Quest = [=[No One Left Behind|1|50|50|0|0|0]=],
+            Quest = [=[No One Left Behind|1|50|50|0|95|0]=],
             Start = "146921|862|32|58.00|21.30",
             End = "146921|862|32|58.00|21.30",
         },
         [54161] = {
-            Quest = [=[What the Drust Knew|1|50|50|0|0|0]=],
+            Quest = [=[What the Drust Knew|1|50|50|0|82|0]=],
             Start = "122702|1165|32|47.10|35.70",
         },
         [54163] = {
-            Quest = [=[As the Dust Settles|2|50|50|0|0|0]=],
+            Quest = [=[As the Dust Settles|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.27|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
         [54164] = {
-            Quest = [=[The King's Death|1|50|50|0|0|0]=],
+            Quest = [=[The King's Death|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
         [54165] = {
-            Quest = [=[The Return of Derek Proudmoore|1|50|50|0|0|0]=],
+            Quest = [=[The Return of Derek Proudmoore|1|50|50|0|95|0]=],
             Start = "145411|1165|32|49.80|38.80",
         },
         [54169] = {
-            Quest = [=[The Treasury Heist|2|50|50|0|0|0]=],
+            Quest = [=[The Treasury Heist|2|50|50|0|50|0]=],
             Start = "146982|862|32|40.60|70.70",
             End = "146982|862|32|40.60|70.70",
         },
-        [54170] = {
-            Quest = [=[Ormin Rocketbop|1|50|50|0|0|0]=],
-        },
         [54171] = {
-            Quest = [=[The Abyssal Scepter|2|50|50|0|0|0]=],
+            Quest = [=[The Abyssal Scepter|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
         [54172] = {
-            Quest = [=[The Azsharan Medallion|1|50|50|0|0|0]=],
+            Quest = [=[The Azsharan Medallion|1|50|50|0|64|0]=],
+            Start = "135793|942|32|40.40|36.40",
         },
         [54174] = {
-            Quest = [=[Orders from Azshara|1|50|50|54117|0|0]=],
+            Quest = [=[Orders from Azshara|1|50|50|54117|64|0]=],
             Start = "134345|862|32|71.40|30.20",
             End = "134345|862|32|71.40|30.20",
         },
         [54175] = {
-            Quest = [=[Face Your Enemy|1|50|50|0|0|0]=],
+            Quest = [=[Face Your Enemy|1|50|50|0|95|0]=],
             Start = "147088|895|32|82.90|49.50",
             End = "147088|895|32|82.90|49.50",
         },
         [54176] = {
-            Quest = [=[Be More Uniform|1|50|50|0|0|0]=],
+            Quest = [=[Be More Uniform|1|50|50|0|95|0]=],
             Start = "147088|895|32|82.90|49.50",
             End = "147088|895|32|82.90|49.50",
         },
         [54177] = {
-            Quest = [=[A Brilliant Distraction|1|50|50|0|0|0]=],
+            Quest = [=[A Brilliant Distraction|1|50|50|0|95|0]=],
             Start = "146931|895|32|83.00|49.60",
         },
         [54178] = {
-            Quest = [=[Catching a Ride|1|50|50|54179|0|0]=],
+            Quest = [=[Catching a Ride|1|50|50|54179|95|0]=],
             Start = "147088|895|32|82.90|49.50",
             End = "147088|895|32|82.90|49.50",
         },
         [54179] = {
-            Quest = [=[Through the Front Door|1|50|50|0|0|0]=],
+            Quest = [=[Through the Front Door|1|50|50|0|95|0]=],
             Start = "147135|895|32|88.20|50.80",
         },
-        [54182] = {
-            Quest = [=[Bilgewater Bash Brothers|2|50|50|0|0|0]=],
-        },
         [54183] = {
-            Quest = [=[Dead Reckoning|2|50|50|0|0|0]=],
+            Quest = [=[Dead Reckoning|2|50|50|0|50|0]=],
             Start = "147885|1161|32|49.20|85.40",
         },
         [54184] = {
-            Quest = [=[Trouble in Gnomeregan|2|50|50|54185|0|0]=],
+            Quest = [=[Trouble in Gnomeregan|2|50|50|54185|58|0]=],
             Start = "147645|1161|32|50.30|46.90",
             End = "147645|1161|32|50.30|46.90",
         },
         [54185] = {
-            Quest = [=[Gnomeregan's New Guardians||50|50|0|0|0]=],
+            Quest = [=[Gnomeregan's New Guardians||50|50|0|58|0]=],
             Start = "147070|30|32|31.67|71.61",
         },
         [54186] = {
-            Quest = [=[Pet Battle Challenge: Gnomeregan|2|50|50|0|0|0]=],
+            Quest = [=[Pet Battle Challenge: Gnomeregan|2|50|50|0|58|0]=],
             Start = "147070|469|32|31.20|37.40",
         },
-        [54187] = {
-            Quest = [=[Tea for Two|2|50|50|0|0|0]=],
-        },
-        [54188] = {
-            Quest = [=[Scrambled Bots|2|50|50|0|0|0]=],
-        },
-        [54189] = {
-            Quest = [=[Desert Crawl|1|50|50|0|0|0]=],
-        },
-        [54190] = {
-            Quest = [=[Tea for Two|1|50|50|0|0|0]=],
-        },
         [54191] = {
-            Quest = [=[Changing Course|2|50|50|54192|0|0]=],
+            Quest = [=[Changing Course|2|50|50|54192|50|0]=],
         },
         [54192] = {
-            Quest = [=[Sensitive Intel|2|50|50|0|0|0]=],
+            Quest = [=[Sensitive Intel|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
         [54193] = {
-            Quest = [=[This is Huge!|2|50|50|0|0|0]=],
+            Quest = [=[This is Huge!|2|50|50|0|50|0]=],
             Start = "147151|862|32|41.10|70.60",
             End = "147151|862|32|41.10|70.60",
         },
         [54194] = {
-            Quest = [=[Real Big Power|2|50|50|0|0|0]=],
+            Quest = [=[Real Big Power|2|50|50|0|50|0]=],
             Start = "147148|862|32|41.10|70.60",
             End = "147148|862|32|41.10|70.60",
         },
         [54195] = {
-            Quest = [=[A Beast with Brains|2|50|50|0|0|0]=],
+            Quest = [=[A Beast with Brains|2|50|50|0|50|0]=],
             Start = "147148|862|32|41.10|70.60",
             End = "147148|862|32|41.10|70.60",
         },
         [54196] = {
-            Quest = [=[Out of Options|2|50|50|0|0|0]=],
+            Quest = [=[Out of Options|2|50|50|0|50|0]=],
             Start = "147228|862|32|48.20|55.60",
             End = "147228|862|32|48.20|55.60",
         },
         [54197] = {
-            Quest = [=[Freedom for the Da'kani|2|50|50|0|0|0]=],
+            Quest = [=[Freedom for the Da'kani|2|50|50|0|50|0]=],
             Start = "147228|862|32|48.20|55.60",
             End = "147228|862|32|48.20|55.60",
         },
         [54198] = {
-            Quest = [=[Bittersweet Goodbyes|2|50|50|0|0|0]=],
+            Quest = [=[Bittersweet Goodbyes|2|50|50|0|50|0]=],
             Start = "147293|862|32|49.52|55.16",
         },
         [54199] = {
-            Quest = [=[The Needs of the Many|2|50|50|0|0|0]=],
+            Quest = [=[The Needs of the Many|2|50|50|0|50|0]=],
             Start = "147228|862|32|46.80|50.50",
         },
         [54200] = {
-            Quest = [=[Bring the Base|2|50|50|0|0|0]=],
+            Quest = [=[Bring the Base|2|50|50|0|50|0]=],
             Start = "147149|862|32|41.10|70.60",
             End = "147149|862|32|41.10|70.60",
         },
         [54201] = {
-            Quest = [=[Fit for Grong|2|50|50|0|0|0]=],
+            Quest = [=[Fit for Grong|2|50|50|0|50|0]=],
             Start = "147311|862|32|41.10|70.60",
             End = "147311|862|32|41.10|70.60",
         },
         [54202] = {
-            Quest = [=[Calibrate the Core|2|50|50|0|0|0]=],
+            Quest = [=[Calibrate the Core|2|50|50|0|50|0]=],
             Start = "147148|862|32|41.10|70.60",
             End = "147148|862|32|41.10|70.60",
         },
         [54203] = {
-            Quest = [=[The Embiggining|2|50|50|0|0|0]=],
+            Quest = [=[The Embiggining|2|50|50|0|50|0]=],
             Start = "147148|862|32|41.10|70.60",
             End = "147148|862|32|41.10|70.60",
         },
         [54204] = {
-            Quest = [=[Total Temple Destruction|2|50|50|0|0|0]=],
+            Quest = [=[Total Temple Destruction|2|50|50|0|50|0]=],
             Start = "147148|862|32|41.10|70.60",
             End = "147148|862|32|41.10|70.60",
         },
         [54205] = {
-            Quest = [=[A Nice Nap|2|50|50|0|0|0]=],
+            Quest = [=[A Nice Nap|2|50|50|0|50|0]=],
             Start = "147519|862|32|41.10|70.60",
             End = "147519|862|32|41.10|70.60",
         },
         [54206] = {
-            Quest = [=[The Sleeper Agent|2|50|50|0|0|0]=],
+            Quest = [=[The Sleeper Agent|2|50|50|0|50|0]=],
             Start = "147519|862|32|41.10|70.60",
             End = "147519|862|32|41.10|70.60",
         },
         [54207] = {
-            Quest = [=[Retaking the Outpost|1|50|50|0|0|0]=],
+            Quest = [=[Retaking the Outpost|1|50|50|0|95|0]=],
             Start = "147075|862|32|58.00|21.30",
             End = "147075|862|32|58.00|21.30",
         },
         [54208] = {
-            Quest = [=[Minesweeper|1|50|50|0|0|0]=],
+            Quest = [=[Minesweeper|1|50|50|0|95|0]=],
             Start = "147145|863|32|50.20|78.40",
         },
+        [54210] = {
+            Quest = [=[Chapter 4 A End|1|50|50|0|50|1700]=],
+        },
         [54211] = {
-            Quest = [=[Putting the Gob in Gob Squad|1|50|50|0|0|0]=],
+            Quest = [=[Putting the Gob in Gob Squad|1|50|50|0|95|0]=],
             Start = "147155|863|32|50.30|78.40",
             End = "147155|863|32|50.30|78.40",
         },
         [54212] = {
-            Quest = [=[Re-rebuilding the A.F.M.O.D.|1|50|50|0|0|0]=],
+            Quest = [=[Re-rebuilding the A.F.M.O.D.|1|50|50|0|95|0]=],
             Start = "147155|863|32|50.30|78.40",
             End = "147155|863|32|50.30|78.40",
         },
         [54213] = {
-            Quest = [=[It's Alive!|1|50|50|0|0|0]=],
+            Quest = [=[It's Alive!|1|50|50|0|95|0]=],
             Start = "147155|863|32|50.30|78.40",
             End = "147155|863|32|50.30|78.40",
         },
         [54224] = {
-            Quest = [=[The Battle of Zul'jan Ruins|1|50|50|0|0|0]=],
+            Quest = [=[The Battle of Zul'jan Ruins|1|50|50|0|95|0]=],
             Start = "146921|863|32|50.40|78.50",
         },
         [54225] = {
-            Quest = [=[Mission Report: The Great Seal|1|50|50|54231|0|0]=],
-            Start = "138706|1165|32|51.50|99.50",
-            End = "138706|1165|32|51.50|99.50",
-        },
-        [54226] = {
-            Quest = [=[Quest 54226|1|50|50|0|0|0]=],
+            Quest = [=[Mission Report: The Great Seal|1|50|50|54231|95|0]=],
             Start = "138706|1165|32|51.50|99.50",
             End = "138706|1165|32|51.50|99.50",
         },
         [54231] = {
-            Quest = [=[Outpost Upgrade: The Great Seal|1|50|50|0|0|0]=],
+            Quest = [=[Outpost Upgrade: The Great Seal|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
-        [54236] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
-        },
-        [54237] = {
-            Quest = [=[Togoth Cruelarm|2|50|50|0|0|0]=],
-        },
-        [54238] = {
-            Quest = [=[Quest 54238|1|50|50|0|0|0]=],
-            Start = "138704|1165|32|51.50|99.50",
-            End = "138704|1165|32|51.50|99.50",
-        },
         [54239] = {
-            Quest = [=[Mission Report: Zul'jan Ruins|1|50|50|54240|0|0]=],
+            Quest = [=[Mission Report: Zul'jan Ruins|1|50|50|54240|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [54240] = {
-            Quest = [=[Outpost Upgrade: Zul'jan Ruins|1|50|50|0|0|0]=],
+            Quest = [=[Outpost Upgrade: Zul'jan Ruins|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
-        [54243] = {
-            Quest = [=[Gobliteration|2|50|50|0|0|0]=],
-        },
         [54244] = {
-            Quest = [=[We Have Them Cornered|1|50|50|0|0|0]=],
+            Quest = [=[We Have Them Cornered|1|50|50|0|95|0]=],
             Start = "146921|863|32|39.30|78.20",
         },
-        [54245] = {
-            Quest = [=[Azerite Altercation|2|50|50|0|0|0]=],
-        },
-        [54246] = {
-            Quest = [=[Azerite Altercation|1|50|50|0|0|0]=],
-        },
         [54249] = {
-            Quest = [=[Zandalari Justice|1|50|50|0|0|0]=],
+            Quest = [=[Zandalari Justice|1|50|50|0|95|0]=],
             Start = "146921|863|32|30.90|51.87",
         },
-        [54251] = {
-            Quest = [=[The Ambassador|1|50|50|0|0|0]=],
-        },
-        [54253] = {
-            Quest = [=[Bombs Away|1|50|50|0|0|0]=],
-        },
-        [54254] = {
-            Quest = [=[Bombs Away|2|50|50|0|0|0]=],
-        },
-        [54257] = {
-            Quest = [=[Captain Greensails|1|50|50|0|0|0]=],
-        },
         [54258] = {
-            Quest = [=[Mission Report: Vulpera Hideaway|1|50|50|54260|0|0]=],
-            Start = "138704|1165|32|51.50|99.50",
-            End = "138704|1165|32|51.50|99.50",
-        },
-        [54259] = {
-            Quest = [=[Quest 54259|1|50|50|0|0|0]=],
+            Quest = [=[Mission Report: Vulpera Hideaway|1|50|50|54260|95|0]=],
             Start = "138704|1165|32|51.50|99.50",
             End = "138704|1165|32|51.50|99.50",
         },
         [54260] = {
-            Quest = [=[Outpost Upgrade: Vulpera Hideaway|1|50|50|0|0|0]=],
+            Quest = [=[Outpost Upgrade: Vulpera Hideaway|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.60",
             End = "135691|862|32|58.40|62.60",
         },
-        [54261] = {
-            Quest = [=[Quest 54261|2|50|50|0|0|0]=],
-            Start = "138704|1161|32|70.50|27.20",
-            End = "138704|1161|32|70.50|27.20",
-        },
         [54262] = {
-            Quest = [=[Mission Report: Brennadam|2|50|50|54263|0|0]=],
+            Quest = [=[Mission Report: Brennadam|2|50|50|54263|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [54263] = {
-            Quest = [=[Outpost Upgrade: Brennadam|2|50|50|0|0|0]=],
+            Quest = [=[Outpost Upgrade: Brennadam|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
         [54265] = {
-            Quest = [=[Orders from Azshara|2|50|50|54114|0|0]=],
+            Quest = [=[Orders from Azshara|2|50|50|54114|64|0]=],
             Start = "135793|862|32|71.40|30.20",
             End = "134345|862|32|71.40|30.20",
         },
-        [54266] = {
-            Quest = [=[Mortar Master Zapfritz|2|50|50|0|0|0]=],
-        },
-        [54267] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
-        },
-        [54268] = {
-            Quest = [=[Impulsive Propulsion|1|50|50|0|0|0]=],
-        },
         [54269] = {
-            Quest = [=[None Shall Escape|1|50|50|0|0|0]=],
+            Quest = [=[None Shall Escape|1|50|50|0|95|0]=],
             Start = "147075|863|32|30.80|51.80",
             End = "147075|863|32|30.80|51.80",
         },
         [54270] = {
-            Quest = [=[Breaking Mirrors|1|50|50|0|0|0]=],
+            Quest = [=[Breaking Mirrors|1|50|50|0|95|0]=],
             Start = "147075|863|32|30.80|51.80",
             End = "147075|863|32|30.80|51.80",
         },
         [54271] = {
-            Quest = [=[Telaamon's Purge|1|50|50|0|0|0]=],
+            Quest = [=[Telaamon's Purge|1|50|50|0|95|0]=],
             Start = "147233|863|32|31.20|46.80",
             End = "147233|863|32|31.20|46.80",
         },
-        [54272] = {
-            Quest = [=[Battle Bots|2|50|50|0|0|0]=],
-        },
-        [54273] = {
-            Quest = [=[Battle Bots|1|50|50|0|0|0]=],
-        },
         [54275] = {
-            Quest = [=[Parting Mists|1|50|50|0|0|0]=],
+            Quest = [=[Parting Mists|1|50|50|0|95|0]=],
             Start = "147233|863|32|31.20|46.80",
             End = "147233|863|32|31.20|46.80",
         },
         [54276] = {
-            Quest = [=[Trouble in Gnomeregan|1|50|50|54185|0|0]=],
+            Quest = [=[Trouble in Gnomeregan|1|50|50|54185|58|0]=],
             Start = "147641|1165|32|56.30|30.80",
             End = "147641|1165|32|56.30|30.80",
         },
         [54280] = {
-            Quest = [=[Fly Out to Meet Them|1|50|50|0|0|0]=],
+            Quest = [=[Fly Out to Meet Them|1|50|50|0|95|0]=],
             Start = "147075|863|32|31.35|31.95",
-        },
-        [54281] = {
-            Quest = [=[Bombing Ballistae|2|50|50|0|0|0]=],
         },
         [54282] = {
             Quest = [=[Battle of Dazar'alor|1|50|50|0|0|0]=],
             Start = "146921|1165|32|37.00|5.20",
         },
-        [54283] = {
-            Quest = [=[Quest 54283|2|50|50|0|0|0]=],
-            Start = "138704|1161|32|70.50|27.20",
-            End = "138704|1161|32|70.50|27.20",
-        },
         [54284] = {
-            Quest = [=[Mission Report: Castaway Point|2|50|50|54288|0|0]=],
+            Quest = [=[Mission Report: Castaway Point|2|50|50|54288|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
-        },
-        [54287] = {
-            Quest = [=[Naga Attack!|2|50|50|0|0|0]=],
         },
         [54288] = {
-            Quest = [=[Outpost Upgrade: Castaway Point|2|50|50|0|0|0]=],
+            Quest = [=[Outpost Upgrade: Castaway Point|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [54295] = {
-            Quest = [=[Artillery Master Goodwin|1|50|50|0|0|0]=],
-        },
         [54302] = {
-            Quest = [=[The Fall of Zuldazar|2|50|50|0|0|0]=],
+            Quest = [=[The Fall of Zuldazar|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
         [54303] = {
-            Quest = [=[The March to Nazmir|2|50|50|0|0|0]=],
+            Quest = [=[The March to Nazmir|2|50|50|0|50|0]=],
             Start = "147819|1161|32|39.10|77.10",
         },
-        [54304] = {
-            Quest = [=[Quest 54304|2|50|50|0|0|0]=],
-            Start = "138704|1161|32|70.50|27.20",
-            End = "138704|1161|32|70.50|27.20",
-        },
         [54306] = {
-            Quest = [=[Mission Report: Arom's Stand|2|50|50|54307|0|0]=],
+            Quest = [=[Mission Report: Arom's Stand|2|50|50|54307|50|0]=],
             Start = "138704|1161|32|70.50|27.20",
             End = "138704|1161|32|70.50|27.20",
         },
         [54307] = {
-            Quest = [=[Outpost Upgrade: Arom's Stand|2|50|50|0|0|0]=],
+            Quest = [=[Outpost Upgrade: Arom's Stand|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [54308] = {
-            Quest = [=[Mine Your Business|1|50|50|0|0|0]=],
-        },
         [54310] = {
-            Quest = [=[Repurposing Their Village|2|50|50|0|0|0]=],
+            Quest = [=[Repurposing Their Village|2|50|50|0|50|0]=],
             Start = "147842|863|32|30.90|29.50",
             End = "147842|863|32|30.90|29.50",
         },
         [54312] = {
-            Quest = [=[Fog of War|2|50|50|0|0|0]=],
+            Quest = [=[Fog of War|2|50|50|0|50|0]=],
             Start = "147844|863|32|33.30|45.90",
         },
-        [54328] = {
-            Quest = [=[Knight-Captain Joesiph|1|50|50|0|0|0]=],
-        },
         [54402] = {
-            Quest = [=[Shifting Gears|2|50|50|0|0|0]=],
+            Quest = [=[Shifting Gears|2|50|50|0|93|0]=],
             Start = "147939|84|32|54.60|18.40",
             End = "147939|84|32|54.60|18.40",
         },
-        [54403] = {
-            Quest = [=[Tidesage Clarissa|1|50|50|0|0|0]=],
-        },
         [54404] = {
-            Quest = [=[Dark Iron Machinations|2|50|50|0|0|0]=],
+            Quest = [=[Dark Iron Machinations|2|50|50|0|50|0]=],
             Start = "147843|863|32|30.90|29.50",
             End = "147843|863|32|30.90|29.50",
         },
         [54407] = {
-            Quest = [=[Lurking in the Swamp|2|50|50|0|0|0]=],
+            Quest = [=[Lurking in the Swamp|2|50|50|0|50|0]=],
             Start = "147842|863|32|33.60|47.70",
         },
         [54412] = {
-            Quest = [=[Zul'jan Deluge|2|50|50|0|0|0]=],
+            Quest = [=[Zul'jan Deluge|2|50|50|0|50|0]=],
             Start = "147842|863|32|35.70|68.10",
-        },
-        [54414] = {
-            Quest = [=[Gale's Unrest|1|50|50|0|0|0]=],
-        },
-        [54415] = {
-            Quest = [=[Vulpera for a Day|1|50|50|0|0|0]=],
         },
         [54416] = {
             Quest = [=[Warfront Preparations|1|50|50|0|0|0]=],
             Start = "146323|1333|32|51.70|21.60",
         },
         [54417] = {
-            Quest = [=[Showing Our Might|2|50|50|0|0|0]=],
+            Quest = [=[Showing Our Might|2|50|50|0|50|0]=],
             Start = "147842|863|32|44.20|78.80",
         },
         [54418] = {
-            Quest = [=[The Mech of Death|2|50|50|0|0|0]=],
+            Quest = [=[The Mech of Death|2|50|50|0|50|0]=],
             Start = "147844|863|32|44.20|78.60",
             End = "147844|863|32|44.20|78.60",
         },
         [54421] = {
-            Quest = [=[Taming their Beasts|2|50|50|0|0|0]=],
+            Quest = [=[Taming their Beasts|2|50|50|0|50|0]=],
             Start = "147843|863|32|44.20|78.60",
             End = "147843|863|32|44.20|78.60",
         },
@@ -29862,181 +25147,102 @@ function Nx.ModQuests:Data5()
             Quest = [=[A Shady Character|2|50|50|0|0|0]=],
         },
         [54433] = {
-            Quest = [=[Orders from Azshara|1|50|50|54118|0|0]=],
+            Quest = [=[Orders from Azshara|1|50|50|54118|64|0]=],
             Start = "134345|862|32|71.40|30.20",
             End = "134345|862|32|71.40|30.20",
         },
-        [54434] = {
-            Quest = [=[Voidmaster Evenshade|1|50|50|0|0|0]=],
-        },
         [54436] = {
-            Quest = [=[Wisp'd Into Shape|2|50|50|0|0|0]=],
+            Quest = [=[Wisp'd Into Shape|2|50|50|0|178|0]=],
             Start = "145770|1203|32|51.00|56.80",
             End = "145770|1203|32|51.00|56.80",
         },
-        [54437] = {
-            Quest = [=[Owynn Graddock|1|50|50|0|0|0]=],
-        },
         [54438] = {
-            Quest = [=[Crucible of Storms: Relics of Shadow|2|50|50|0|0|0]=],
+            Quest = [=[Crucible of Storms: Relics of Shadow|2|50|50|0|64|0]=],
             Start = "146902|1161|32|67.40|21.00",
             End = "146902|1161|32|67.40|21.00",
         },
         [54439] = {
-            Quest = [=[Crucible of Storms: Relics of Shadow|1|50|50|0|0|0]=],
+            Quest = [=[Crucible of Storms: Relics of Shadow|1|50|50|0|64|0]=],
             Start = "146335|1163|32|41.70|66.70",
             End = "133050|1163|32|41.70|66.70",
         },
         [54441] = {
-            Quest = [=[Taking the Blood Gate|2|50|50|0|0|0]=],
+            Quest = [=[Taking the Blood Gate|2|50|50|0|50|0]=],
             Start = "147842|863|32|50.40|84.10",
             End = "147842|863|32|50.40|84.10",
-        },
-        [54442] = {
-            Quest = [=[Beast Tamer Watkins|1|50|50|0|0|0]=],
         },
         [54447] = {
-            Quest = [=[A Shady Character|1|50|50|0|0|0]=],
-        },
-        [54448] = {
-            Quest = [=[Elemental Azerite|1|50|50|0|0|0]=],
-        },
-        [54449] = {
-            Quest = [=[Elemental Azerite|2|50|50|0|0|0]=],
-        },
-        [54453] = {
-            Quest = [=[Supplies from Magni||50|50|0|0|0]=],
-            Start = "130216|81|32|42.22|44.27",
+            Quest = [=[A Shady Character|1|50|50|0|163|0]=],
         },
         [54459] = {
-            Quest = [=[He Who Walks in the Light|2|50|50|0|0|0]=],
+            Quest = [=[He Who Walks in the Light|2|50|50|0|50|0]=],
             Start = "147842|863|32|50.40|84.10",
             End = "147842|863|32|50.40|84.10",
-        },
-        [54468] = {
-            Quest = [=[Nalaess Featherseeker|1|50|50|0|0|0]=],
-        },
-        [54471] = {
-            Quest = [=[Tend the Wounded|2|50|50|0|0|0]=],
-        },
-        [54472] = {
-            Quest = [=[Plowing the Field|1|50|50|0|0|0]=],
         },
         [54485] = {
             Quest = [=[Battle of Dazar'alor|2|50|50|0|0|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
-        [54488] = {
-            Quest = [=[Zul'aki the Headhunter|2|50|50|0|0|0]=],
-        },
         [54494] = {
-            Quest = [=[Expanding our Influence|1|50|50|0|0|0]=],
+            Quest = [=[Expanding our Influence|1|50|50|0|95|0]=],
             Start = "135447|862|32|58.00|62.60",
         },
         [54495] = {
-            Quest = [=[Expanding our Influence|2|50|50|0|0|0]=],
+            Quest = [=[Expanding our Influence|2|50|50|0|50|0]=],
             Start = "135446|1161|32|69.00|24.70",
         },
-        [54498] = {
-            Quest = [=[Stack On The Tank|2|50|50|0|0|0]=],
-        },
-        [54500] = {
-            Quest = [=[Untapped Potential|2|50|50|0|0|0]=],
-        },
-        [54502] = {
-            Quest = [=[It's Raining Mana|1|50|50|0|0|0]=],
-        },
-        [54503] = {
-            Quest = [=[This Gang of Mine|1|50|50|0|0|0]=],
-        },
-        [54505] = {
-            Quest = [=[Get On The Payload|1|50|50|0|0|0]=],
-        },
-        [54506] = {
-            Quest = [=[Fungal Infestation|1|50|50|0|0|0]=],
-        },
-        [54507] = {
-            Quest = [=[Fungal Infestation|2|50|50|0|0|0]=],
-        },
         [54510] = {
-            Quest = [=[Mischief Managed|2|50|50|0|0|0]=],
+            Quest = [=[Mischief Managed|2|50|50|0|50|0]=],
             Start = "146982|862|32|40.60|70.70",
             End = "146982|862|32|40.60|70.70",
         },
-        [54512] = {
-            Quest = [=[Cleansing Tide|2|50|50|0|0|0]=],
-        },
         [54518] = {
-            Quest = [=[Zero Zeppelins|2|50|50|0|0|0]=],
+            Quest = [=[Zero Zeppelins|2|50|50|0|50|0]=],
             Start = "145632|895|32|42.10|29.80",
         },
         [54519] = {
-            Quest = [=[Squad Goals|2|50|50|0|0|0]=],
+            Quest = [=[Squad Goals|2|50|50|0|50|0]=],
             Start = "148015|895|32|42.10|29.90",
             End = "148015|895|32|42.10|29.90",
         },
-        [54533] = {
-            Quest = [=[Barreling Through|2|50|50|0|0|0]=],
-        },
-        [54534] = {
-            Quest = [=[The Blightest Touch|1|50|50|0|0|0]=],
-        },
-        [54538] = {
-            Quest = [=[Skirmish at the Span|1|50|50|0|0|0]=],
-        },
-        [54539] = {
-            Quest = [=[Skirmish at the Span|2|50|50|0|0|0]=],
-        },
-        [54554] = {
-            Quest = [=[Wolfleader Skraug|2|50|50|0|0|0]=],
-        },
-        [54555] = {
-            Quest = [=[Siege O' Matic 9000|2|50|50|0|0|0]=],
-        },
         [54559] = {
-            Quest = [=[Free Plumeria!|2|50|50|0|0|0]=],
+            Quest = [=[Free Plumeria!|2|50|50|0|50|0]=],
             Start = "145632|895|32|41.50|27.10",
             End = "145632|895|32|41.50|27.10",
         },
-        [54574] = {
-            Quest = [=[Jin'tago|2|50|50|0|0|0]=],
-        },
         [54576] = {
-            Quest = [=[Gnomeregan's Finest||50|50|0|0|0]=],
+            Quest = [=[Gnomeregan's Finest||50|50|0|93|0]=],
             Start = "147943|469|32|41.80|31.70",
             End = "147943|469|32|41.80|31.70",
         },
         [54577] = {
-            Quest = [=[Shadowed Halls and Dusty Cogs||50|50|0|0|0]=],
+            Quest = [=[Shadowed Halls and Dusty Cogs||50|50|0|93|0]=],
             Start = "147943|469|32|41.80|31.70",
             End = "147943|469|32|41.80|31.70",
         },
         [54579] = {
-            Quest = [=[The Gnome Behind the Trogg||50|50|0|0|0]=],
+            Quest = [=[The Gnome Behind the Trogg||50|50|0|93|0]=],
             Start = "147952|114|32|55.30|18.90",
             End = "147952|114|32|55.30|18.90",
         },
         [54580] = {
-            Quest = [=[A Tundra Conundrum||50|50|0|0|0]=],
+            Quest = [=[A Tundra Conundrum||50|50|0|93|0]=],
             Start = "147943|469|32|41.80|31.70",
             End = "147943|469|32|41.80|31.70",
         },
         [54581] = {
-            Quest = [=[Now With More Mechanical Fowl||50|50|54582|0|0]=],
+            Quest = [=[Now With More Mechanical Fowl||50|50|54582|93|0]=],
             Start = "147952|114|32|55.30|18.90",
             End = "147952|114|32|55.30|18.90",
         },
         [54582] = {
-            Quest = [=[Smarter Than Your Average Trogg||50|50|0|0|0]=],
+            Quest = [=[Smarter Than Your Average Trogg||50|50|0|93|0]=],
             Start = "147950|114|32|55.30|18.90",
             End = "147952|114|32|55.30|18.90",
         },
-        [54609] = {
-            Quest = [=[Beastlord Drakara|2|50|50|0|0|0]=],
-        },
         [54610] = {
-            Quest = [=[Paragon of the Tortollan Seekers||50|50|0|0|0]=],
+            Quest = [=[Paragon of the Tortollan Seekers||50|50|0|183|0]=],
         },
         [54611] = {
             Quest = [=[Paragon of the Champions of Azeroth||50|50|0|0|0]=],
@@ -30065,231 +25271,132 @@ function Nx.ModQuests:Data5()
         [54632] = {
             Quest = [=[Paragon of the Zandalari Empire|1|50|50|0|0|0]=],
         },
-        [54636] = {
-            Quest = [=[Sandbinder Sodir|2|50|50|0|0|0]=],
-        },
-        [54638] = {
-            Quest = [=[Beat Up the Drums|2|50|50|0|0|0]=],
-        },
         [54639] = {
-            Quest = [=[A Signal in Storm Peaks||50|50|0|0|0]=],
+            Quest = [=[A Signal in Storm Peaks||50|50|0|93|0]=],
             Start = "147952|114|32|55.30|18.90",
             End = "147952|114|32|55.30|18.90",
         },
         [54640] = {
-            Quest = [=[Gnomercy!||50|50|0|0|0]=],
+            Quest = [=[Gnomercy!||50|50|0|93|0]=],
             Start = "147950|120|32|37.60|60.23",
         },
         [54641] = {
-            Quest = [=[For Gnomeregan!||50|50|0|0|0]=],
+            Quest = [=[For Gnomeregan!||50|50|0|93|0]=],
             Start = "149503|120|32|39.40|26.80",
         },
         [54642] = {
-            Quest = [=[G.E.A.R. Up||50|50|0|0|0]=],
+            Quest = [=[G.E.A.R. Up||50|50|0|93|0]=],
             Start = "149503|1375|32|50.00|12.90",
         },
-        [54643] = {
-            Quest = [=[Evezon the Eternal||50|50|0|0|0]=],
-        },
-        [54644] = {
-            Quest = [=[Azerite Transport||50|50|0|0|0]=],
-        },
-        [54645] = {
-            Quest = [=[Fury of the Earth|1|50|50|0|0|0]=],
-        },
-        [54646] = {
-            Quest = [=[Grand Marshal Fury|1|50|50|0|0|0]=],
-        },
-        [54647] = {
-            Quest = [=[Ale Intent|2|50|50|0|0|0]=],
-        },
-        [54649] = {
-            Quest = [=[Flames of War||50|50|0|0|0]=],
-        },
-        [54650] = {
-            Quest = [=[Muk'luk|2|50|50|0|0|0]=],
-        },
         [54652] = {
-            Quest = [=[The War Chest|1|50|50|0|0|0]=],
+            Quest = [=[The War Chest|1|50|50|0|178|0]=],
             Start = "148479|1332|32|51.40|56.20",
             End = "148479|1332|32|51.40|56.20",
         },
         [54654] = {
-            Quest = [=[An Explosive Situation|1|50|50|0|0|0]=],
+            Quest = [=[An Explosive Situation|1|50|50|0|178|0]=],
             Start = "148479|1332|32|51.40|56.20",
             End = "148479|1332|32|51.40|56.20",
         },
         [54655] = {
-            Quest = [=[Lumbering Along|1|50|50|0|0|0]=],
+            Quest = [=[Lumbering Along|1|50|50|0|178|0]=],
             Start = "148479|1332|32|51.40|56.20",
             End = "148479|1332|32|51.40|56.20",
         },
         [54656] = {
-            Quest = [=[Darkshore Recruits|1|50|50|0|0|0]=],
+            Quest = [=[Darkshore Recruits|1|50|50|0|178|0]=],
             Start = "148479|1332|32|51.40|56.20",
             End = "148479|1332|32|51.40|56.20",
         },
         [54657] = {
-            Quest = [=[Arms and Armor|1|50|50|0|0|0]=],
+            Quest = [=[Arms and Armor|1|50|50|0|178|0]=],
             Start = "148482|1332|32|51.80|58.00",
             End = "148482|1332|32|51.80|58.00",
         },
         [54658] = {
-            Quest = [=[The Altar of Storms|1|50|50|0|0|0]=],
+            Quest = [=[The Altar of Storms|1|50|50|0|178|0]=],
             Start = "148482|1332|32|51.80|58.00",
             End = "148482|1332|32|51.80|58.00",
         },
         [54659] = {
-            Quest = [=[An Alchemist for Everything|1|50|50|0|0|0]=],
+            Quest = [=[An Alchemist for Everything|1|50|50|0|178|0]=],
             Start = "148478|1332|32|52.00|59.00",
         },
         [54660] = {
-            Quest = [=[Throwing Blight|1|50|50|0|0|0]=],
+            Quest = [=[Throwing Blight|1|50|50|0|178|0]=],
             Start = "146590|1332|32|51.70|58.00",
         },
         [54661] = {
-            Quest = [=[Echolocation|1|50|50|0|0|0]=],
+            Quest = [=[Echolocation|1|50|50|0|178|0]=],
             Start = "145554|1203|32|49.60|35.00",
         },
-        [54662] = {
-            Quest = [=[Brought to Light|2|50|50|0|0|0]=],
-        },
-        [54663] = {
-            Quest = [=[Shadow Hunter Vol'tris|2|50|50|0|0|0]=],
-        },
-        [54664] = {
-            Quest = [=[Azerite Transport||50|50|0|0|0]=],
-        },
-        [54665] = {
-            Quest = [=[Duchess Fallensong|2|50|50|0|0|0]=],
-        },
-        [54666] = {
-            Quest = [=[Packmaster Swiftarrow|2|50|50|0|0|0]=],
-        },
-        [54671] = {
-            Quest = [=[Overgrown Ancient||50|50|0|0|0]=],
-        },
-        [54680] = {
-            Quest = [=[Plague Master Herbert|2|50|50|0|0|0]=],
-        },
-        [54681] = {
-            Quest = [=[Azerite Caravan|1|50|50|0|0|0]=],
-        },
         [54682] = {
-            Quest = [=[The Missing Blade|2|50|50|0|0|0]=],
+            Quest = [=[The Missing Blade|2|50|50|0|64|0]=],
             Start = "-316443|1346|32|27.00|54.00",
             End = "0|1346|32|27.00|54.00",
         },
         [54683] = {
-            Quest = [=[The Black Blade|1|50|50|0|0|0]=],
+            Quest = [=[The Black Blade|1|50|50|0|64|0]=],
             Start = "-316443|1346|32|27.00|54.00",
             End = "0|1346|32|27.00|54.00",
         },
-        [54684] = {
-            Quest = [=[Arcanist Quintril|2|50|50|0|0|0]=],
-        },
-        [54686] = {
-            Quest = [=[Medical Emergency|1|50|50|0|0|0]=],
-        },
-        [54688] = {
-            Quest = [=[Inquisitor Erik|1|50|50|0|0|0]=],
-        },
-        [54689] = {
-            Quest = [=[Lights Out|1|50|50|0|0|0]=],
-        },
-        [54690] = {
-            Quest = [=[Maddok the Sniper|1|50|50|0|0|0]=],
-        },
-        [54691] = {
-            Quest = [=[Brewmaster Lin|2|50|50|0|0|0]=],
-        },
-        [54692] = {
-            Quest = [=[Magister Crystalynn|1|50|50|0|0|0]=],
-        },
-        [54693] = {
-            Quest = [=[Pterror of the Horde|2|50|50|0|0|0]=],
-        },
-        [54694] = {
-            Quest = [=[Stormcaller Morka|2|50|50|0|0|0]=],
-        },
-        [54697] = {
-            Quest = [=[Lightforged Warframe|1|50|50|0|0|0]=],
-        },
-        [54699] = {
-            Quest = [=[Classic Gnomish Engineering|1|50|50|0|0|0]=],
-        },
-        [54700] = {
-            Quest = [=[Thomas Vandergrief||50|50|0|0|0]=],
-        },
         [54703] = {
-            Quest = [=[Express Delivery|2|50|50|0|0|0]=],
+            Quest = [=[Express Delivery|2|50|50|0|50|0]=],
             Start = "145580|895|32|36.20|29.80",
         },
-        [54707] = {
-            Quest = [=[Siegeotron|1|50|50|0|0|0]=],
-        },
-        [54711] = {
-            Quest = [=[Zillie Wunderwrench and Grizzwald|1|50|50|0|0|0]=],
-        },
         [54740] = {
-            Quest = [=[[DNT] REUSE ME|2|50|50|0|0|0]=],
+            Quest = [=[[DNT] REUSE ME|2|50|50|0|50|0]=],
         },
         [54754] = {
-            Quest = [=[For the Queen|1|50|50|0|0|0]=],
+            Quest = [=[For the Queen|1|50|50|0|156|0]=],
             Start = "146012|49|32|81.40|52.40",
             End = "0|49|32|81.40|52.40",
         },
         [54755] = {
-            Quest = [=[Not My Table|1|50|50|0|0|0]=],
+            Quest = [=[Not My Table|1|50|50|0|156|0]=],
         },
         [54759] = {
-            Quest = [=[When Spirits Whisper|1|50|50|54760|0|0]=],
+            Quest = [=[When Spirits Whisper|1|50|50|54760|93|0]=],
             Start = "149088|85|32|39.10|79.00",
         },
         [54760] = {
-            Quest = [=[The Spiritwalkers|1|50|50|0|0|0]=],
+            Quest = [=[The Spiritwalkers|1|50|50|0|93|0]=],
             Start = "36648|88|32|60.30|51.70",
             End = "36648|88|32|60.30|51.70",
         },
         [54761] = {
-            Quest = [=[Spirit Guide|1|50|50|0|0|0]=],
+            Quest = [=[Spirit Guide|1|50|50|0|93|0]=],
             Start = "149084|462|32|12.30|31.30",
             End = "149084|462|32|12.30|31.30",
         },
         [54762] = {
-            Quest = [=[A Small Retreat|1|50|50|0|0|0]=],
+            Quest = [=[A Small Retreat|1|50|50|0|93|0]=],
             Start = "149084|462|32|12.30|31.30",
             End = "149084|462|32|12.30|31.30",
         },
         [54763] = {
-            Quest = [=[Crossing Over|1|50|50|0|0|0]=],
+            Quest = [=[Crossing Over|1|50|50|0|93|0]=],
             Start = "149529|65|32|49.20|60.80",
             End = "149529|65|32|49.20|60.80",
         },
         [54764] = {
-            Quest = [=[Storm in Bloodhoof|1|50|50|0|0|0]=],
+            Quest = [=[Storm in Bloodhoof|1|50|50|0|93|0]=],
             Start = "149529|65|32|49.20|60.80",
             End = "149529|65|32|49.20|60.80",
         },
         [54765] = {
-            Quest = [=[Thank Your Guide|1|50|50|0|0|0]=],
+            Quest = [=[Thank Your Guide|1|50|50|0|93|0]=],
             Start = "36648|88|32|60.30|51.70",
             End = "36648|88|32|60.30|51.70",
         },
         [54766] = {
-            Quest = [=[Answer the Call|1|50|50|54765|0|0]=],
+            Quest = [=[Answer the Call|1|50|50|54765|93|0]=],
             Start = "149528|88|32|58.30|51.80",
         },
-        [54786] = {
-            Quest = [=[Stop the Shipments|2|50|50|0|0|0]=],
-        },
         [54787] = {
-            Quest = [=[Masking For a Friend|2|50|50|0|0|0]=],
+            Quest = [=[Masking For a Friend|2|50|50|0|50|0]=],
             Start = "145593|895|32|41.50|27.10",
             End = "145593|895|32|41.50|27.10",
-        },
-        [54839] = {
-            Quest = [=[Rightfully Ours|2|50|50|0|0|0]=],
         },
         [54843] = {
             Quest = [=[Remaining Threats|1|50|50|0|0|0]=],
@@ -30304,11 +25411,11 @@ function Nx.ModQuests:Data5()
             Start = "149412|62|32|46.40|35.00",
         },
         [54850] = {
-            Quest = [=[Operation: Troggageddon||50|50|0|0|0]=],
+            Quest = [=[Operation: Troggageddon||50|50|0|93|0]=],
             Start = "147950|120|32|56.12|51.42",
         },
         [54871] = {
-            Quest = [=[We Are Coming|2|50|50|0|0|0]=],
+            Quest = [=[We Are Coming|2|50|50|0|170|0]=],
             Start = "149612|1161|32|69.50|26.80",
         },
         [54875] = {
@@ -30324,58 +25431,55 @@ function Nx.ModQuests:Data5()
             Start = "149631|62|32|46.30|35.10",
         },
         [54913] = {
-            Quest = [=[Spark of Genius||50|50|0|0|0]=],
+            Quest = [=[Spark of Genius||50|50|0|54|0]=],
             Start = "152002|1161|32|72.80|14.00",
             End = "152002|1161|32|72.80|14.00",
         },
         [54915] = {
-            Quest = [=[Telemetry Online||50|50|0|0|0]=],
+            Quest = [=[Telemetry Online||50|50|0|54|0]=],
             Start = "149736|120|32|37.50|46.50",
             End = "149736|120|32|37.50|46.50",
         },
         [54916] = {
-            Quest = [=[The Huntsman's Creed||50|50|0|0|0]=],
+            Quest = [=[The Huntsman's Creed||50|50|0|54|0]=],
             Start = "149736|120|32|37.50|46.50",
             End = "149736|120|32|37.50|46.50",
         },
         [54917] = {
-            Quest = [=[Paid in Blood||50|50|0|0|0]=],
+            Quest = [=[Paid in Blood||50|50|0|54|0]=],
             Start = "149870|120|32|33.60|58.60",
         },
         [54918] = {
-            Quest = [=[Spark of Imagination||50|50|54919|0|0]=],
+            Quest = [=[Spark of Imagination||50|50|54919|54|0]=],
             Start = "150391|81|32|39.30|71.70",
         },
         [54919] = {
-            Quest = [=[Bonds of Thunder||50|50|0|0|0]=],
+            Quest = [=[Bonds of Thunder||50|50|0|54|0]=],
             Start = "151061|745|32|43.30|38.80",
             End = "151061|745|32|43.30|38.80",
         },
         [54920] = {
-            Quest = [=[Homeward Bound||50|50|0|0|0]=],
+            Quest = [=[Homeward Bound||50|50|0|54|0]=],
             Start = "151061|745|32|43.30|38.80",
             End = "151061|745|32|43.30|38.80",
         },
         [54930] = {
-            Quest = [=[Mechanical Liberation||50|50|0|0|0]=],
+            Quest = [=[Mechanical Liberation||50|50|0|10|0]=],
             Start = "145131|864|32|26.30|47.30",
             End = "145131|864|32|26.30|47.30",
         },
         [54938] = {
-            Quest = [=[A Brother's Help||50|50|0|0|0]=],
+            Quest = [=[A Brother's Help||50|50|0|91|0]=],
             Start = "130216|81|32|42.10|44.30",
             End = "130216|81|32|42.10|44.30",
         },
         [54939] = {
-            Quest = [=[Stubborn as a Bronzebeard||50|50|0|0|0]=],
+            Quest = [=[Stubborn as a Bronzebeard||50|50|0|91|0]=],
             Start = "149867|863|32|57.80|50.40",
         },
         [54940] = {
-            Quest = [=[Necessity is the MOTHER||50|50|0|0|0]=],
+            Quest = [=[Necessity is the MOTHER||50|50|0|91|0]=],
             Start = "149823|1381|32|47.70|16.29",
-        },
-        [54941] = {
-            Quest = [=[Scouting The Strand||50|50|0|0|0]=],
         },
         [54943] = {
             Quest = [=[The Dark Ranger's Pupil|1|50|50|54954|0|0]=],
@@ -30387,27 +25491,39 @@ function Nx.ModQuests:Data5()
             Quest = [=[More Mouths To Feed|2|50|50|0|0|0]=],
             Start = "150123|1355|32|35.00|49.00",
         },
+        [54954] = {
+            Quest = [=[The Missing Apprentice||50|50|0|0|0]=],
+        },
+        [54955] = {
+            Quest = [=[Scarlet Recon||50|50|0|0|0]=],
+        },
+        [54956] = {
+            Quest = [=[The Grasp of Hate||50|50|0|0|0]=],
+        },
+        [54957] = {
+            Quest = [=[A Memento Given||50|50|0|0|0]=],
+        },
         [54958] = {
-            Quest = [=[Ships in the Night|1|50|50|0|0|0]=],
+            Quest = [=[Ships in the Night|1|50|50|0|95|0]=],
             Start = "150309|895|32|87.30|49.60",
         },
         [54959] = {
-            Quest = [=[Under Lock and Keys|1|50|50|0|0|0]=],
+            Quest = [=[Under Lock and Keys|1|50|50|0|95|0]=],
             Start = "149842|895|32|85.80|45.80",
             End = "149842|895|32|85.80|45.80",
         },
         [54960] = {
-            Quest = [=[A Bitter Reunion|1|50|50|0|0|0]=],
+            Quest = [=[A Bitter Reunion|1|50|50|0|95|0]=],
             Start = "149842|895|32|85.80|45.80",
             End = "149842|895|32|85.80|45.80",
         },
         [54961] = {
-            Quest = [=[Righting Wrongs|1|50|50|0|0|0]=],
+            Quest = [=[Righting Wrongs|1|50|50|0|95|0]=],
             Start = "150433|1165|32|49.80|95.90",
             End = "150433|1165|32|49.80|95.90",
         },
         [54964] = {
-            Quest = [=[A One-Way Ticket to the Heart||50|50|0|0|0]=],
+            Quest = [=[A One-Way Ticket to the Heart||50|50|0|91|0]=],
             Start = "149823|1382|32|52.30|68.60",
         },
         [54969] = {
@@ -30425,78 +25541,73 @@ function Nx.ModQuests:Data5()
             End = "150101|1355|32|40.30|55.20",
         },
         [54976] = {
-            Quest = [=[The Shadow of Gilneas|2|50|50|0|0|0]=],
+            Quest = [=[The Shadow of Gilneas|2|50|50|0|93|0]=],
             Start = "150200|84|32|52.10|13.40",
             End = "150200|84|32|54.60|18.40",
         },
         [54977] = {
-            Quest = [=[Into Duskwood||50|50|0|0|0]=],
+            Quest = [=[Into Duskwood||50|50|0|93|0]=],
             Start = "151784|84|32|82.30|27.80",
         },
         [54978] = {
-            Quest = [=[Against Overwhelming Odds|2|50|50|0|0|0]=],
+            Quest = [=[Against Overwhelming Odds|2|50|50|0|182|0]=],
             Start = "135614|1161|32|70.40|27.00",
         },
         [54979] = {
-            Quest = [=[Against Overwhelming Odds|1|50|50|0|0|0]=],
+            Quest = [=[Against Overwhelming Odds|1|50|50|0|182|0]=],
             Start = "138708|1165|32|51.60|99.70",
         },
         [54980] = {
-            Quest = [=[Bane of the Nightbane||50|50|0|0|0]=],
+            Quest = [=[Bane of the Nightbane||50|50|0|93|0]=],
             Start = "151761|47|32|18.10|57.20",
             End = "151761|47|32|18.10|57.20",
         },
         [54981] = {
-            Quest = [=[Cry to the Moon||50|50|0|0|0]=],
+            Quest = [=[Cry to the Moon||50|50|0|93|0]=],
             Start = "151761|47|32|18.10|57.20",
             End = "151761|47|32|18.10|57.20",
         },
         [54982] = {
-            Quest = [=[The Spirit of the Hunter||50|50|0|0|0]=],
+            Quest = [=[The Spirit of the Hunter||50|50|0|93|0]=],
             Start = "151761|47|32|18.10|57.20",
             End = "151761|47|32|18.10|57.20",
         },
         [54983] = {
-            Quest = [=[Waking a Dreamer||50|50|0|0|0]=],
+            Quest = [=[Waking a Dreamer||50|50|0|93|0]=],
             Start = "151761|47|32|46.38|36.90",
         },
         [54984] = {
-            Quest = [=[Let Sleeping Wolves Lie||50|50|0|0|0]=],
+            Quest = [=[Let Sleeping Wolves Lie||50|50|0|93|0]=],
             Start = "150106|47|32|46.60|36.60",
         },
         [54986] = {
             Quest = [=[Vision of N'zoth Reward||50|50|0|0|0]=],
         },
         [54990] = {
-            Quest = [=[The New Guard||50|50|0|0|0]=],
+            Quest = [=[The New Guard||50|50|0|93|0]=],
             Start = "150115|47|32|46.30|37.00",
         },
-        [54995] = {
-            Quest = [=[A Savage Path Through Time||50|50|0|0|0]=],
-            Start = "144383|1161|32|74.11|14.19",
-            End = "144383|1161|32|74.11|14.19",
-        },
         [54996] = {
-            Quest = [=[Remembrance||50|50|0|0|0]=],
+            Quest = [=[Remembrance||50|50|0|15|0]=],
             Start = "149084|1|32|46.80|15.40",
         },
         [54997] = {
-            Quest = [=[Dead in the Water|1|50|50|0|0|0]=],
+            Quest = [=[Dead in the Water|1|50|50|0|95|0]=],
             Start = "149842|895|32|85.80|45.80",
             End = "149842|895|32|85.80|45.80",
         },
         [54999] = {
-            Quest = [=[Under False Colors|1|50|50|0|0|0]=],
+            Quest = [=[Under False Colors|1|50|50|0|95|0]=],
             Start = "150311|70|32|76.30|42.70",
             End = "150311|70|32|76.30|42.70",
         },
         [55028] = {
-            Quest = [=[It's Scrap Work...|2|50|50|0|0|0]=],
+            Quest = [=[It's Scrap Work...|2|50|50|0|10|0]=],
             Start = "136059|1161|32|77.40|14.20",
             End = "136059|1161|32|77.40|14.20",
         },
         [55031] = {
-            Quest = [=[It's Scrap Work...|1|50|50|0|0|0]=],
+            Quest = [=[It's Scrap Work...|1|50|50|0|10|0]=],
             Start = "131840|1165|32|45.17|40.57",
             End = "131840|1165|32|45.10|40.60",
         },
@@ -30505,54 +25616,57 @@ function Nx.ModQuests:Data5()
             Start = "150553|1355|32|48.40|52.50",
         },
         [55033] = {
-            Quest = [=[Ashes to Ashvane|2|50|50|0|0|0]=],
+            Quest = [=[Ashes to Ashvane|2|50|50|0|50|0]=],
             Start = "150796|895|32|80.10|75.00",
             End = "150796|895|32|80.10|75.00",
         },
         [55034] = {
-            Quest = [=[Under False Colors|1|50|50|0|0|0]=],
+            Quest = [=[Under False Colors|1|50|50|0|95|0]=],
             Start = "150311|70|32|76.30|42.70",
             End = "150311|70|32|76.30|42.70",
         },
         [55036] = {
             Quest = [=[A Terrible Place||50|50|55037|0|0]=],
         },
+        [55037] = {
+            Quest = [=[Hard At Work||50|50|0|0|0]=],
+        },
         [55044] = {
-            Quest = [=[Don't Shoot the Messenger|2|50|50|0|0|0]=],
+            Quest = [=[Don't Shoot the Messenger|2|50|50|0|50|0]=],
             Start = "135614|1161|32|69.43|27.20",
             End = "135614|1161|32|69.40|27.00",
         },
         [55045] = {
-            Quest = [=[My Brother's Keeper|2|50|50|0|0|0]=],
+            Quest = [=[My Brother's Keeper|2|50|50|0|50|0]=],
             Start = "150574|1161|32|69.40|27.00",
             End = "150574|1161|32|69.40|27.00",
         },
         [55047] = {
-            Quest = [=[Securing Warfang Hold|1|50|50|0|0|0]=],
+            Quest = [=[Securing Warfang Hold|1|50|50|0|95|0]=],
             Start = "146013|862|32|58.40|62.70",
             End = "146013|862|32|58.40|62.70",
         },
         [55048] = {
-            Quest = [=[Spy Games|1|50|50|0|0|0]=],
+            Quest = [=[Spy Games|1|50|50|0|95|0]=],
             Start = "150690|942|32|51.00|32.90",
             End = "150690|942|32|51.00|32.90",
         },
         [55049] = {
-            Quest = [=[Communication Breakdown|1|50|50|0|0|0]=],
+            Quest = [=[Communication Breakdown|1|50|50|0|95|0]=],
             Start = "150690|942|32|51.00|32.90",
             End = "150690|942|32|51.00|32.90",
         },
         [55050] = {
-            Quest = [=[Tickets, Please?|1|50|50|0|0|0]=],
+            Quest = [=[Tickets, Please?|1|50|50|0|95|0]=],
             Start = "150691|942|32|51.00|32.80",
         },
         [55051] = {
-            Quest = [=[A Display of Power|1|50|50|0|0|0]=],
+            Quest = [=[A Display of Power|1|50|50|0|95|0]=],
             Start = "150690|942|32|51.00|32.90",
             End = "150690|942|32|51.00|32.90",
         },
         [55052] = {
-            Quest = [=[Securing Warfang Hold|1|50|50|0|0|0]=],
+            Quest = [=[Securing Warfang Hold|1|50|50|0|95|0]=],
             Start = "135691|862|32|58.40|62.70",
             End = "135691|862|32|58.40|62.70",
         },
@@ -30565,22 +25679,22 @@ function Nx.ModQuests:Data5()
             Start = "150187|1355|32|36.70|93.50",
         },
         [55087] = {
-            Quest = [=[The Gathering Storm|2|50|50|0|0|0]=],
+            Quest = [=[The Gathering Storm|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
         [55088] = {
-            Quest = [=[Lost in the Field|2|50|50|0|0|0]=],
+            Quest = [=[Lost in the Field|2|50|50|0|50|0]=],
             Start = "150637|942|32|48.20|41.40",
             End = "150637|942|32|48.20|41.40",
         },
         [55089] = {
-            Quest = [=[Shaw's Shank Redemption|2|50|50|0|0|0]=],
+            Quest = [=[Shaw's Shank Redemption|2|50|50|0|50|0]=],
             Start = "150637|942|32|52.13|39.27",
             End = "150637|942|32|52.10|39.20",
         },
         [55090] = {
-            Quest = [=[A Gathering of Foes|2|50|50|0|0|0]=],
+            Quest = [=[A Gathering of Foes|2|50|50|0|50|0]=],
             Start = "150640|942|32|48.80|32.80",
         },
         [55092] = {
@@ -30600,21 +25714,21 @@ function Nx.ModQuests:Data5()
             Quest = [=[Creature Study: Zanj'ir Naga||50|50|0|0|0]=],
         },
         [55116] = {
-            Quest = [=[Getting a Clue|2|50|50|0|0|0]=],
+            Quest = [=[Getting a Clue|2|50|50|0|50|0]=],
             Start = "150796|895|32|80.10|75.00",
             End = "150796|895|32|80.10|75.00",
         },
         [55117] = {
-            Quest = [=[Correspondence Conundrum|2|50|50|0|0|0]=],
+            Quest = [=[Correspondence Conundrum|2|50|50|0|50|0]=],
             Start = "150796|895|32|80.10|75.00",
             End = "150796|895|32|80.10|75.00",
         },
         [55118] = {
-            Quest = [=[Loose Ends|2|50|50|0|0|0]=],
+            Quest = [=[Loose Ends|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.50|27.00",
         },
         [55119] = {
-            Quest = [=[Reporting In!|2|50|50|0|0|0]=],
+            Quest = [=[Reporting In!|2|50|50|0|50|0]=],
             Start = "150796|895|32|80.10|75.00",
             End = "150796|895|32|80.10|75.00",
         },
@@ -30623,15 +25737,12 @@ function Nx.ModQuests:Data5()
             Start = "-322533|1355|32|60.70|32.40",
         },
         [55124] = {
-            Quest = [=[Righting Wrongs|1|50|50|0|0|0]=],
+            Quest = [=[Righting Wrongs|1|50|50|0|95|0]=],
             Start = "150433|1165|32|49.80|95.90",
             End = "150433|1165|32|49.80|95.90",
         },
-        [55148] = {
-            Quest = [=[Reclamation Rig||45|0|0|0|0]=],
-        },
         [55171] = {
-            Quest = [=[Spy Versus Spy|2|50|50|0|0|0]=],
+            Quest = [=[Spy Versus Spy|2|50|50|0|50|0]=],
             Start = "135612|1161|32|69.40|27.00",
             End = "135612|1161|32|69.40|27.00",
         },
@@ -30640,40 +25751,39 @@ function Nx.ModQuests:Data5()
             Start = "151000|1355|32|49.01|67.35",
         },
         [55177] = {
-            Quest = [=[Tearing at the Seams|2|50|50|0|0|0]=],
+            Quest = [=[Tearing at the Seams|2|50|50|0|21|0]=],
+            Start = "145022|75|32|62.00|53.90",
         },
         [55179] = {
-            Quest = [=[Retaliation Coordination|2|50|50|0|0|0]=],
+            Quest = [=[Retaliation Coordination|2|50|50|0|50|0]=],
             Start = "150633|1161|32|45.30|62.60",
         },
         [55182] = {
-            Quest = [=[Reassembly Required|2|50|50|0|0|0]=],
+            Quest = [=[Reassembly Required|2|50|50|0|50|0]=],
             Start = "150637|942|32|48.20|41.40",
             End = "150637|942|32|48.20|41.40",
         },
         [55183] = {
-            Quest = [=[Seeking Higher Ground|2|50|50|0|0|0]=],
+            Quest = [=[Seeking Higher Ground|2|50|50|0|50|0]=],
             Start = "150637|942|32|48.20|41.40",
             End = "150637|942|32|48.20|41.40",
         },
         [55185] = {
-            Quest = [=[Listen Up!|2|50|50|0|0|0]=],
+            Quest = [=[Listen Up!|2|50|50|0|50|0]=],
             Start = "150637|942|32|52.13|39.27",
             End = "150637|942|32|52.10|39.20",
         },
         [55188] = {
-            Quest = [=[Tearing at the Seams|1|50|50|0|0|0]=],
+            Quest = [=[Tearing at the Seams|1|50|50|0|21|0]=],
+            Start = "145022|75|32|62.00|53.90",
         },
         [55195] = {
-            Quest = [=[Reverberation||50|50|0|0|0]=],
+            Quest = [=[Reverberation||50|50|0|54|0]=],
             Start = "29445|120|32|33.40|58.00",
         },
         [55214] = {
-            Quest = [=[Seam Stress||50|50|0|0|0]=],
+            Quest = [=[Seam Stress||50|50|0|21|0]=],
             Start = "151134|680|32|64.17|69.54",
-        },
-        [55215] = {
-            Quest = [=[The Cycle of Life||50|50|0|0|0]=],
         },
         [55224] = {
             Quest = [=[Rank 2 - Poen test||50|50|0|0|0]=],
@@ -30685,7 +25795,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[Drive the Enemy||50|50|0|0|0]=],
         },
         [55227] = {
-            Quest = [=[The Aeonian Artisan|2|50|50|0|0|0]=],
+            Quest = [=[The Aeonian Artisan|2|50|50|0|14|0]=],
             Start = "136063|1161|32|75.50|12.60",
             End = "136063|1161|32|75.50|12.60",
         },
@@ -30752,52 +25862,14 @@ function Nx.ModQuests:Data5()
             Start = "151286|862|32|68.10|41.70",
             End = "151286|862|32|68.10|41.70",
         },
-        [55264] = {
-            Quest = [=[Calligraphy|2|50|50|0|0|0]=],
-        },
-        [55300] = {
-            Quest = [=[The Cycle of Life||50|50|0|0|0]=],
-        },
-        [55301] = {
-            Quest = [=[The Cycle of Life||50|50|0|0|0]=],
-        },
-        [55302] = {
-            Quest = [=[The Cycle of Life||50|50|0|0|0]=],
-        },
-        [55303] = {
-            Quest = [=[The Cycle of Life||50|50|0|0|0]=],
-        },
-        [55304] = {
-            Quest = [=[The Cycle of Life||50|50|0|0|0]=],
-        },
-        [55340] = {
-            Quest = [=[Calligraphy|2|50|50|0|0|0]=],
-        },
-        [55341] = {
-            Quest = [=[Calligraphy|2|50|50|0|0|0]=],
-        },
-        [55342] = {
-            Quest = [=[Calligraphy|1|50|50|0|0|0]=],
-        },
-        [55343] = {
-            Quest = [=[Calligraphy|1|50|50|0|0|0]=],
-        },
-        [55344] = {
-            Quest = [=[Calligraphy|1|50|50|0|0|0]=],
-        },
         [55345] = {
             Quest = [=[The Dark Ranger's Pupil|1|50|50|55351|0|0]=],
         },
         [55346] = {
             Quest = [=[The Dark Ranger's Pupil|2|50|50|54954|0|0]=],
         },
-        [55348] = {
-            Quest = [=[Supplies from the Rustbolt Resistance||50|50|0|0|0]=],
-        },
-        [55350] = {
-            Quest = [=[Assault: Amathet Advance||50|50|0|0|0]=],
-            Start = "155102|1527|32|54.90|32.90",
-            End = "155102|1527|32|54.90|32.90",
+        [55351] = {
+            Quest = [=[The Missing Apprentice||50|50|0|0|850]=],
         },
         [55361] = {
             Quest = [=[The Lost Shaman|2|50|50|0|0|0]=],
@@ -30812,7 +25884,7 @@ function Nx.ModQuests:Data5()
             Start = "151741|1355|32|43.40|49.80",
         },
         [55374] = {
-            Quest = [=[A Disturbance Beneath the Earth||50|50|0|0|0]=],
+            Quest = [=[A Disturbance Beneath the Earth||50|50|0|91|0]=],
             Start = "152194|1473|32|48.10|72.20",
         },
         [55384] = {
@@ -30824,55 +25896,55 @@ function Nx.ModQuests:Data5()
             Start = "152108|1355|32|49.70|64.50",
         },
         [55390] = {
-            Quest = [=[In Darkness, I Dream||50|50|55392|0|0]=],
+            Quest = [=[In Darkness, I Dream||50|50|55392|91|0]=],
             Start = "152365|1473|32|52.50|69.90",
         },
         [55392] = {
-            Quest = [=[Enter the Dreamway||50|50|55394|0|0]=],
+            Quest = [=[Enter the Dreamway||50|50|55394|91|0]=],
             Start = "151682|641|32|51.60|57.20",
         },
         [55393] = {
-            Quest = [=[Null the Void||50|50|55465|0|0]=],
+            Quest = [=[Null the Void||50|50|55465|91|0]=],
             Start = "151693|1471|32|44.10|30.70",
             End = "151693|1471|32|44.10|30.70",
         },
         [55394] = {
-            Quest = [=[Shards of Emerald||50|50|55465|0|0]=],
+            Quest = [=[Shards of Emerald||50|50|55465|91|0]=],
             Start = "151693|1471|32|44.10|30.70",
             End = "151693|1471|32|44.10|30.70",
         },
         [55395] = {
-            Quest = [=[Don't Close Your Eyes||50|50|55465|0|0]=],
+            Quest = [=[Don't Close Your Eyes||50|50|55465|91|0]=],
             Start = "151704|1471|32|27.10|55.90",
         },
         [55396] = {
-            Quest = [=[The Stuff Dreams Are Made Of||50|50|55398|0|0]=],
+            Quest = [=[The Stuff Dreams Are Made Of||50|50|55398|91|0]=],
             Start = "151825|1475|32|46.50|39.70",
             End = "151825|1475|32|46.50|39.70",
         },
         [55397] = {
-            Quest = [=[Before I Wake||50|50|55396|0|0]=],
+            Quest = [=[Before I Wake||50|50|55396|91|0]=],
             Start = "151825|1475|32|46.50|39.70",
             End = "151825|1475|32|46.50|39.70",
         },
         [55398] = {
-            Quest = [=[The Long Awake||50|50|0|0|0]=],
+            Quest = [=[The Long Awake||50|50|0|91|0]=],
             Start = "151887|1475|32|46.50|39.70",
             End = "151887|1475|32|46.50|39.70",
         },
         [55400] = {
-            Quest = [=[Take My Hand||50|50|55407|0|0]=],
+            Quest = [=[Take My Hand||50|50|55407|91|0]=],
             Start = "151641|650|32|49.40|68.30",
         },
         [55407] = {
-            Quest = [=[Calming the Spine||50|50|0|0|0]=],
+            Quest = [=[Calming the Spine||50|50|0|91|0]=],
             Start = "151695|1472|32|27.00|45.90",
         },
         [55424] = {
             Quest = [=[Aspirant Elynna||50|50|0|0|0]=],
         },
         [55425] = {
-            Quest = [=[Dominating the Indomitable||50|50|0|0|0]=],
+            Quest = [=[Dominating the Indomitable||50|50|0|91|0]=],
             Start = "152385|1472|32|17.50|62.10",
         },
         [55426] = {
@@ -30883,7 +25955,7 @@ function Nx.ModQuests:Data5()
             Start = "151999|862|32|68.20|41.60",
         },
         [55465] = {
-            Quest = [=[We Must Go Deeper||50|50|55397|0|0]=],
+            Quest = [=[We Must Go Deeper||50|50|55397|91|0]=],
             Start = "151693|1471|32|44.10|30.70",
             End = "151693|1471|32|44.10|30.70",
         },
@@ -30934,7 +26006,7 @@ function Nx.ModQuests:Data5()
             Start = "152316|1355|32|79.88|38.89",
         },
         [55497] = {
-            Quest = [=[A Friendly Face||50|50|0|0|0]=],
+            Quest = [=[A Friendly Face||50|50|0|91|0]=],
             Start = "152385|1472|32|18.90|58.00",
         },
         [55500] = {
@@ -30962,26 +26034,26 @@ function Nx.ModQuests:Data5()
             Start = "151257|862|32|68.20|29.40",
         },
         [55516] = {
-            Quest = [=[Spark of Genius||50|50|0|0|0]=],
+            Quest = [=[Spark of Genius||50|50|0|54|0]=],
             Start = "152002|1161|32|72.80|14.00",
             End = "152002|1161|32|72.80|14.00",
         },
         [55519] = {
-            Quest = [=[A Fresh Trauma||50|50|55520|0|0]=],
+            Quest = [=[A Fresh Trauma||50|50|55520|91|0]=],
             Start = "152206|1473|32|50.00|59.20",
         },
         [55520] = {
-            Quest = [=[Healing Nordrassil||50|50|55521|0|0]=],
+            Quest = [=[Healing Nordrassil||50|50|55521|91|0]=],
             Start = "152095|198|32|62.00|24.90",
             End = "152095|198|32|62.00|24.90",
         },
         [55521] = {
-            Quest = [=[Do It the Azerite Way||50|50|0|0|0]=],
+            Quest = [=[Do It the Azerite Way||50|50|0|91|0]=],
             Start = "152095|198|32|62.00|24.90",
             End = "152095|198|32|62.00|24.90",
         },
         [55522] = {
-            Quest = [=[Return to the Heart|1|50|50|55519|0|0]=],
+            Quest = [=[Return to the Heart|1|50|50|55519|91|0]=],
             Start = "154465|1165|32|50.40|41.70",
             End = "154465|1165|32|50.40|41.70",
         },
@@ -31012,7 +26084,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[What Will It Mine?||50|50|0|0|0]=],
         },
         [55533] = {
-            Quest = [=[MOTHER Knows Best||50|50|0|0|0]=],
+            Quest = [=[MOTHER Knows Best||50|50|0|91|0]=],
             Start = "152206|1473|32|50.10|59.10",
             End = "152206|1473|32|50.10|59.10",
         },
@@ -31058,46 +26130,46 @@ function Nx.ModQuests:Data5()
             End = "153617|1355|32|74.20|40.20",
         },
         [55578] = {
-            Quest = [=[Tol Dagor: Jewel of the Tides|1|50|50|0|0|0]=],
+            Quest = [=[Tol Dagor: Jewel of the Tides|1|50|50|0|36|0]=],
             Start = "150893|895|32|46.40|23.50",
         },
         [55579] = {
-            Quest = [=[Cracking the Surface|1|50|50|0|0|0]=],
+            Quest = [=[Cracking the Surface|1|50|50|0|36|0]=],
             Start = "150898|942|32|60.70|58.50",
         },
         [55580] = {
-            Quest = [=[High Prospects|1|50|50|0|0|0]=],
+            Quest = [=[High Prospects|1|50|50|0|36|0]=],
             Start = "150896|896|32|34.10|35.50",
         },
         [55581] = {
-            Quest = [=[Sun-Speckled Dunes|2|50|50|0|0|0]=],
+            Quest = [=[Sun-Speckled Dunes|2|50|50|0|36|0]=],
             Start = "150895|864|32|44.20|38.00",
         },
         [55582] = {
-            Quest = [=[Atal'Dazar: Not All That Glitters...|2|50|50|0|0|0]=],
+            Quest = [=[Atal'Dazar: Not All That Glitters...|2|50|50|0|36|0]=],
             Start = "150894|862|32|43.20|64.30",
         },
         [55583] = {
-            Quest = [=[Out With the Old|2|50|50|0|0|0]=],
+            Quest = [=[Out With the Old|2|50|50|0|36|0]=],
             Start = "150897|863|32|61.40|37.20",
         },
         [55585] = {
-            Quest = [=[A Promising Beginning|2|50|50|0|0|0]=],
+            Quest = [=[A Promising Beginning|2|50|50|0|36|0]=],
             Start = "152489|942|32|60.70|58.50",
             End = "152489|942|32|60.70|58.50",
         },
         [55586] = {
-            Quest = [=[Polished Up|2|50|50|0|0|0]=],
+            Quest = [=[Polished Up|2|50|50|0|36|0]=],
             Start = "152497|896|32|34.10|35.50",
             End = "152497|896|32|34.10|35.50",
         },
         [55590] = {
-            Quest = [=[Setting Things Right|2|50|50|0|0|0]=],
+            Quest = [=[Setting Things Right|2|50|50|0|36|0]=],
             Start = "152495|895|32|46.40|23.50",
             End = "152495|895|32|46.40|23.50",
         },
         [55592] = {
-            Quest = [=[A Promising Beginning|1|50|50|0|0|0]=],
+            Quest = [=[A Promising Beginning|1|50|50|0|36|0]=],
             Start = "152490|863|32|61.40|37.20",
             End = "152490|863|32|61.40|37.20",
         },
@@ -31107,7 +26179,7 @@ function Nx.ModQuests:Data5()
             End = "150101|1355|32|40.30|55.20",
         },
         [55594] = {
-            Quest = [=[Polished Up|1|50|50|0|0|0]=],
+            Quest = [=[Polished Up|1|50|50|0|36|0]=],
             Start = "152493|864|32|44.20|38.00",
             End = "152493|864|32|44.20|38.00",
         },
@@ -31116,7 +26188,7 @@ function Nx.ModQuests:Data5()
             Start = "151000|1355|32|38.90|54.60",
         },
         [55596] = {
-            Quest = [=[Setting Things Right|1|50|50|0|0|0]=],
+            Quest = [=[Setting Things Right|1|50|50|0|36|0]=],
             Start = "152496|862|32|43.20|64.30",
             End = "152496|862|32|43.20|64.30",
         },
@@ -31148,7 +26220,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[What Will It Lure?||50|50|0|0|0]=],
         },
         [55618] = {
-            Quest = [=[The Heart Forge||50|50|57010|0|0]=],
+            Quest = [=[The Heart Forge||50|50|57010|91|0]=],
             Start = "152194|1473|32|48.10|72.40",
         },
         [55625] = {
@@ -31172,7 +26244,7 @@ function Nx.ModQuests:Data5()
             Start = "-325869|1355|32|59.50|42.00",
         },
         [55657] = {
-            Quest = [=[In the Shadow of Crimson Wings||50|50|0|0|0]=],
+            Quest = [=[In the Shadow of Crimson Wings||50|50|0|91|0]=],
             Start = "152720|241|32|36.00|50.50",
         },
         [55659] = {
@@ -31244,6 +26316,9 @@ function Nx.ModQuests:Data5()
             Start = "151635|1355|32|40.00|55.60",
             End = "151635|1355|32|40.00|55.60",
         },
+        [55722] = {
+            Quest = [=[Requisition: A Few Pearls||50|50|0|0|6800]=],
+        },
         [55723] = {
             Quest = [=[Requisition: A Few Carp||50|50|0|0|0]=],
             Start = "151352|1355|32|39.50|55.40",
@@ -31272,21 +26347,21 @@ function Nx.ModQuests:Data5()
             Start = "-326047|1355|32|45.00|22.10",
         },
         [55732] = {
-            Quest = [=[An Old Scar||50|50|55735|0|0]=],
+            Quest = [=[An Old Scar||50|50|55735|91|0]=],
             Start = "152206|1473|32|50.00|59.20",
         },
         [55735] = {
-            Quest = [=[Defending the Maelstrom||50|50|55737|0|0]=],
+            Quest = [=[Defending the Maelstrom||50|50|55737|91|0]=],
             Start = "152815|1474|32|33.70|54.60",
             End = "152815|1474|32|33.70|54.60",
         },
         [55737] = {
-            Quest = [=[At the Azerite Time||50|50|0|0|0]=],
+            Quest = [=[At the Azerite Time||50|50|0|91|0]=],
             Start = "152815|1474|32|33.70|54.60",
             End = "152815|1474|32|33.70|54.60",
         },
         [55739] = {
-            Quest = [=[Back to the Chamber|1|50|50|55732|0|0]=],
+            Quest = [=[Back to the Chamber|1|50|50|55732|91|0]=],
             Start = "154465|1165|32|50.40|41.70",
             End = "154465|1165|32|50.40|41.70",
         },
@@ -31300,7 +26375,7 @@ function Nx.ModQuests:Data5()
             Start = "153685|1355|32|60.80|30.90",
         },
         [55752] = {
-            Quest = [=[We Stand United||50|50|0|0|0]=],
+            Quest = [=[We Stand United||50|50|0|91|0]=],
             Start = "152206|1474|32|33.70|54.60",
             End = "152206|1474|32|33.70|54.60",
         },
@@ -31357,37 +26432,37 @@ function Nx.ModQuests:Data5()
             End = "0|1355|32|39.10|54.10",
         },
         [55778] = {
-            Quest = [=[Visions of Danger|1|50|50|0|0|0]=],
+            Quest = [=[Visions of Danger|1|50|50|0|95|0]=],
             Start = "151848|1355|32|48.50|62.10",
             End = "151848|1355|32|48.50|62.10",
         },
         [55779] = {
-            Quest = [=[Stay of Execution|1|50|50|0|0|0]=],
+            Quest = [=[Stay of Execution|1|50|50|0|95|0]=],
             Start = "152977|86|32|56.10|68.00",
             End = "152977|86|32|56.10|68.00",
         },
         [55780] = {
-            Quest = [=[Old Allies|1|50|50|0|0|0]=],
+            Quest = [=[Old Allies|1|50|50|0|95|0]=],
             Start = "151848|1355|32|48.50|62.10",
             End = "151848|1355|32|48.50|62.10",
         },
         [55781] = {
-            Quest = [=[Old Allies|1|50|50|0|0|0]=],
+            Quest = [=[Old Allies|1|50|50|0|95|0]=],
             Start = "151848|1355|32|48.50|62.10",
             End = "151848|1355|32|48.50|62.10",
         },
         [55782] = {
-            Quest = [=[Stay of Execution|1|50|50|0|0|0]=],
+            Quest = [=[Stay of Execution|1|50|50|0|95|0]=],
             Start = "152977|86|32|56.10|68.00",
             End = "152977|86|32|56.10|68.00",
         },
         [55783] = {
-            Quest = [=[Stay of Execution|2|50|50|0|0|0]=],
+            Quest = [=[Stay of Execution|2|50|50|0|50|0]=],
             Start = "107574|84|32|85.70|31.70",
             End = "107574|84|32|85.70|31.70",
         },
         [55784] = {
-            Quest = [=[Payment in Kind|2|50|50|55783|0|0]=],
+            Quest = [=[Payment in Kind|2|50|50|55783|50|0]=],
             Start = "150101|1355|32|40.20|55.20",
         },
         [55785] = {
@@ -31402,6 +26477,9 @@ function Nx.ModQuests:Data5()
         [55787] = {
             Quest = [=[Requisition: More Kelp Buds||50|50|0|0|0]=],
             Start = "151635|1355|32|40.10|55.60",
+        },
+        [55788] = {
+            Quest = [=[Requisition: More Pearls||50|50|0|0|6800]=],
         },
         [55789] = {
             Quest = [=[Requisition: More Carp||50|50|0|0|0]=],
@@ -31425,9 +26503,6 @@ function Nx.ModQuests:Data5()
         [55793] = {
             Quest = [=[Requisition: More Flotsam||50|50|0|0|0]=],
             Start = "153509|1355|32|37.90|55.60",
-        },
-        [55794] = {
-            Quest = [=[Reclamation Rig||45|0|0|0|0]=],
         },
         [55795] = {
             Quest = [=[Mountain On the Move|1|50|50|0|0|0]=],
@@ -31453,6 +26528,30 @@ function Nx.ModQuests:Data5()
         [55801] = {
             Quest = [=[Requisition: We Need It All||50|50|0|0|0]=],
             Start = "151618|1355|32|37.70|55.40",
+        },
+        [55802] = {
+            Quest = [=[Requisition: Lots of Seaweed||50|50|0|0|6800]=],
+        },
+        [55803] = {
+            Quest = [=[Requisition: Lots of Kelp Buds||50|50|0|0|6800]=],
+        },
+        [55804] = {
+            Quest = [=[Requisition: Lots of Pearls||50|50|0|0|6800]=],
+        },
+        [55805] = {
+            Quest = [=[Requisition: Lots of Carp||50|50|0|0|6800]=],
+        },
+        [55806] = {
+            Quest = [=[Requisition: Lots of Deepcoral Buds||50|50|0|0|6800]=],
+        },
+        [55807] = {
+            Quest = [=[Requisition: Lots of Spiral Leaf||50|50|0|0|6800]=],
+        },
+        [55808] = {
+            Quest = [=[Requisition: Lots of Cone Shells||50|50|0|0|6800]=],
+        },
+        [55809] = {
+            Quest = [=[Requisition: Lots of Flotsam||50|50|0|0|6800]=],
         },
         [55818] = {
             Quest = [=[Bounty: A Few Naga||50|0|0|0|0]=],
@@ -31486,6 +26585,9 @@ function Nx.ModQuests:Data5()
             Quest = [=[Bounty: A Few Fathom Rays||50|0|0|0|0]=],
             Start = "151772|1355|32|39.90|54.10",
         },
+        [55826] = {
+            Quest = [=[Bounty: A Few Elementals||50|50|0|0|6800]=],
+        },
         [55827] = {
             Quest = [=[Bounty: More Naga||50|0|0|0|0]=],
             Start = "152942|1355|32|40.00|55.40",
@@ -31518,6 +26620,9 @@ function Nx.ModQuests:Data5()
             Quest = [=[Bounty: More Fathom Rays||50|0|0|0|0]=],
             Start = "151772|1355|32|39.80|54.10",
         },
+        [55835] = {
+            Quest = [=[Bounty: More Elementals||50|50|0|0|6800]=],
+        },
         [55836] = {
             Quest = [=[Bounty: Elite Naga Forces||50|0|0|0|0]=],
             Start = "152942|1355|32|40.00|55.40",
@@ -31525,6 +26630,27 @@ function Nx.ModQuests:Data5()
         [55837] = {
             Quest = [=[Bounty: Dangerous Creatures||50|0|0|0|0]=],
             Start = "155941|1355|32|39.60|55.50",
+        },
+        [55838] = {
+            Quest = [=[Bounty: Lots of Hydras||50|50|0|0|6800]=],
+        },
+        [55839] = {
+            Quest = [=[Bounty: Lots of Coral Ancients||50|50|0|0|6800]=],
+        },
+        [55840] = {
+            Quest = [=[Bounty: Lots of Makrura||50|50|0|0|6800]=],
+        },
+        [55841] = {
+            Quest = [=[Bounty: Lots of Crabs||50|50|0|0|6800]=],
+        },
+        [55842] = {
+            Quest = [=[Bounty: Lots of Snapdragons||50|50|0|0|6800]=],
+        },
+        [55843] = {
+            Quest = [=[Bounty: Lots of Fathom Rays||50|50|0|0|6800]=],
+        },
+        [55844] = {
+            Quest = [=[Bounty: Lots of Elementals||50|50|0|0|6800]=],
         },
         [55845] = {
             Quest = [=[Plans of Attack|2|50|50|0|0|0]=],
@@ -31535,7 +26661,7 @@ function Nx.ModQuests:Data5()
             Start = "153147|1355|32|56.50|29.20",
         },
         [55851] = {
-            Quest = [=[Essential Empowerment||50|50|55533|0|0]=],
+            Quest = [=[Essential Empowerment||50|50|55533|91|0]=],
             Start = "154166|1355|32|40.00|55.20",
         },
         [55860] = {
@@ -31628,9 +26754,6 @@ function Nx.ModQuests:Data5()
             Quest = [=[To Soar Like a Ray|1|50|50|0|0|0]=],
             Start = "153321|1355|32|52.70|52.80",
         },
-        [55901] = {
-            Quest = [=[Rustbolt Rebellion||50|50|0|0|0]=],
-        },
         [55937] = {
             Quest = [=[Clearing Out the Cache|2|50|50|0|0|0]=],
             Start = "-326393|1355|32|46.00|51.90",
@@ -31639,9 +26762,6 @@ function Nx.ModQuests:Data5()
             Quest = [=[Sating Snapdragons|1|50|50|0|0|0]=],
             Start = "153936|1355|32|36.90|27.00",
             End = "153936|1355|32|36.90|27.00",
-        },
-        [55976] = {
-            Quest = [=[Supplies From the Waveblade Ankoan|2|50|50|0|0|0]=],
         },
         [55980] = {
             Quest = [=[Turn the Scale|1|50|50|0|0|0]=],
@@ -31707,7 +26827,7 @@ function Nx.ModQuests:Data5()
             End = "153936|1355|32|36.90|27.00",
         },
         [56042] = {
-            Quest = [=[Blingtron 7000||50|50|0|0|0]=],
+            Quest = [=[Blingtron 7000||50|50|0|10|0]=],
         },
         [56043] = {
             Quest = [=[Send the Fleet|2|50|50|0|0|0]=],
@@ -31737,11 +26857,6 @@ function Nx.ModQuests:Data5()
             Start = "150196|1355|32|41.90|80.60",
             End = "150196|1355|32|41.90|80.60",
         },
-        [56064] = {
-            Quest = [=[Assault: The Black Empire||50|50|0|0|0]=],
-            Start = "154444|1530|32|44.70|73.80",
-            End = "154444|1530|32|44.70|73.80",
-        },
         [56070] = {
             Quest = [=[Vengeance for the Venthyr||50|50|0|0|0]=],
         },
@@ -31760,6 +26875,7 @@ function Nx.ModQuests:Data5()
         },
         [56092] = {
             Quest = [=[Hivethief's Jelly Stash|2|50|50|0|0|0]=],
+            Start = "155745|942|32|62.50|26.30",
         },
         [56095] = {
             Quest = [=[Legacy of Nar'anan||50|50|56143|0|0]=],
@@ -31767,10 +26883,10 @@ function Nx.ModQuests:Data5()
             End = "154143|1355|32|66.40|47.30",
         },
         [56098] = {
-            Quest = [=[Defensive in Death|2|50|50|0|0|0]=],
+            Quest = [=[Defensive in Death|2|50|50|0|6|0]=],
         },
         [56103] = {
-            Quest = [=[Ounces of Osmenite|2|50|50|0|0|0]=],
+            Quest = [=[Ounces of Osmenite|2|50|50|0|115|0]=],
         },
         [56108] = {
             Quest = [=[Leaving the Hive|2|50|50|0|0|0]=],
@@ -31782,7 +26898,7 @@ function Nx.ModQuests:Data5()
             End = "154143|1355|32|66.40|47.30",
         },
         [56126] = {
-            Quest = [=[Seams to be a Problem|2|50|50|0|0|0]=],
+            Quest = [=[Seams to be a Problem|2|50|50|0|115|0]=],
         },
         [56128] = {
             Quest = [=[Drowning the Horde|2|50|50|0|0|0]=],
@@ -31791,24 +26907,15 @@ function Nx.ModQuests:Data5()
         [56129] = {
             Quest = [=[Heroic: Battle for Stromgarde||50|50|0|0|0]=],
         },
-        [56131] = {
-            Quest = [=[Security First||50|50|0|0|0]=],
-        },
         [56136] = {
-            Quest = [=[Heroic Warfront: The Battle for Stromgarde|2|50|50|0|0|0]=],
+            Quest = [=[Heroic Warfront: The Battle for Stromgarde|2|50|50|0|178|0]=],
             Start = "142721|1161|32|66.01|26.01",
             End = "142721|1161|32|66.01|26.01",
         },
         [56137] = {
-            Quest = [=[Heroic Warfront: The Battle for Stromgarde|1|50|50|0|0|0]=],
+            Quest = [=[Heroic Warfront: The Battle for Stromgarde|1|50|50|0|178|0]=],
             Start = "138949|1165|32|52.90|94.30",
             End = "138949|1165|32|52.90|94.30",
-        },
-        [56139] = {
-            Quest = [=[Junkyard Treasures||50|50|0|0|0]=],
-        },
-        [56141] = {
-            Quest = [=[Security First||50|50|0|0|0]=],
         },
         [56143] = {
             Quest = [=[The Fate of Professor Elryna||50|50|0|0|0]=],
@@ -31895,7 +27002,7 @@ function Nx.ModQuests:Data5()
             End = "151763|1355|32|37.70|55.30",
         },
         [56167] = {
-            Quest = [=[Investigating the Highlands||50|50|55657|0|0]=],
+            Quest = [=[Investigating the Highlands||50|50|55657|91|0]=],
             Start = "152365|1473|32|53.10|70.90",
         },
         [56176] = {
@@ -31909,27 +27016,27 @@ function Nx.ModQuests:Data5()
             End = "154208|1355|32|50.50|66.20",
         },
         [56185] = {
-            Quest = [=[Whispers of N'Zoth|2|50|50|56186|0|0]=],
+            Quest = [=[Whispers of N'Zoth|2|50|50|56186|91|0]=],
             Start = "155496|84|32|85.30|32.30",
         },
         [56186] = {
-            Quest = [=[Spies to the Left and Right||50|50|56187|0|0]=],
+            Quest = [=[Spies to the Left and Right||50|50|56187|91|0]=],
             Start = "152365|1473|32|52.40|68.90",
         },
         [56187] = {
-            Quest = [=[Black Winged Shadow||50|50|56188|0|0]=],
+            Quest = [=[Black Winged Shadow||50|50|56188|91|0]=],
             Start = "154500|433|32|54.50|72.50",
         },
         [56188] = {
-            Quest = [=[To the Catacombs!||50|50|56189|0|0]=],
+            Quest = [=[To the Catacombs!||50|50|56189|91|0]=],
             Start = "154874|13|32|47.80|68.80",
         },
         [56189] = {
-            Quest = [=[On the Trail of the Black Prince||50|50|0|0|0]=],
+            Quest = [=[On the Trail of the Black Prince||50|50|0|91|0]=],
             Start = "154870|42|32|47.00|69.20",
         },
         [56190] = {
-            Quest = [=[Save Ebonhorn||50|50|56504|0|0]=],
+            Quest = [=[Save Ebonhorn||50|50|56504|91|0]=],
             Start = "155191|46|32|69.40|16.60",
         },
         [56205] = {
@@ -31940,7 +27047,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[Heroic: Battle for Stromgarde||50|50|0|0|0]=],
         },
         [56209] = {
-            Quest = [=[The Halls of Origination||50|50|0|0|0]=],
+            Quest = [=[The Halls of Origination||50|50|0|59|0]=],
             Start = "154532|1527|32|69.80|52.10",
         },
         [56210] = {
@@ -31960,15 +27067,18 @@ function Nx.ModQuests:Data5()
         },
         [56216] = {
             Quest = [=[Last Heirloom|2|50|50|0|0|0]=],
+            Start = "149805|1355|32|66.40|47.30",
         },
         [56217] = {
             Quest = [=[Wild Tame|2|50|50|0|0|0]=],
         },
         [56218] = {
             Quest = [=[Beauty in the Deeps|2|50|50|0|0|0]=],
+            Start = "149803|1355|32|51.00|65.50",
         },
         [56219] = {
             Quest = [=[Tome of Tears|1|50|50|0|0|0]=],
+            Start = "151309|1355|32|52.70|52.80",
         },
         [56222] = {
             Quest = [=[WANTED: Lady Naz'jess|1|50|50|0|0|0]=],
@@ -32070,22 +27180,22 @@ function Nx.ModQuests:Data5()
             End = "0|1355|32|78.80|41.10",
         },
         [56260] = {
-            Quest = [=[Unlocking the Power|1|50|50|56401|0|0]=],
+            Quest = [=[Unlocking the Power|1|50|50|56401|91|0]=],
             Start = "154465|1165|32|50.40|41.70",
             End = "154465|1165|32|50.40|41.70",
         },
         [56261] = {
-            Quest = [=[Return to the Heart|2|50|50|55519|0|0]=],
+            Quest = [=[Return to the Heart|2|50|50|55519|91|0]=],
             Start = "154464|1161|32|74.80|15.20",
             End = "154464|1161|32|74.80|15.20",
         },
         [56262] = {
-            Quest = [=[Back to the Chamber|2|50|50|55732|0|0]=],
+            Quest = [=[Back to the Chamber|2|50|50|55732|91|0]=],
             Start = "154465|1161|32|74.80|15.20",
             End = "154465|1161|32|74.80|15.20",
         },
         [56263] = {
-            Quest = [=[Unlocking the Power|2|50|50|56401|0|0]=],
+            Quest = [=[Unlocking the Power|2|50|50|56401|91|0]=],
             Start = "154464|1161|32|74.80|15.20",
             End = "154464|1161|32|74.80|15.20",
         },
@@ -32103,18 +27213,13 @@ function Nx.ModQuests:Data5()
             Start = "153884|1355|32|25.50|26.40",
         },
         [56267] = {
-            Quest = [=[Whispers of N'Zoth|1|50|50|56186|0|0]=],
+            Quest = [=[Whispers of N'Zoth|1|50|50|56186|91|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [56304] = {
             Quest = [=[The High Life||50|50|56321|0|0]=],
             Start = "154574|1355|32|74.20|24.90",
-        },
-        [56308] = {
-            Quest = [=[Assault: Aqir Unearthed||50|50|0|0|0]=],
-            Start = "159544|1527|32|40.10|21.30",
-            End = "159544|1527|32|40.10|21.30",
         },
         [56309] = {
             Quest = [=[City of Drowned Friends|2|50|50|56311|0|0]=],
@@ -32162,21 +27267,21 @@ function Nx.ModQuests:Data5()
             End = "150101|1355|32|40.20|55.20",
         },
         [56346] = {
-            Quest = [=[Ancient Technology|2|50|50|56347|0|0]=],
+            Quest = [=[Ancient Technology|2|50|50|56347|135|0]=],
             Start = "-327596|1355|32|38.10|36.90",
         },
         [56347] = {
-            Quest = [=[An Abyssal Opportunity|2|50|50|56348|0|0]=],
+            Quest = [=[An Abyssal Opportunity|2|50|50|56348|135|0]=],
             Start = "154257|1355|32|37.90|52.90",
             End = "154257|1355|32|37.90|52.90",
         },
         [56348] = {
-            Quest = [=[The Eternal Palace: We Can Make It Stronger...|2|50|50|56349|0|0]=],
+            Quest = [=[The Eternal Palace: We Can Make It Stronger...|2|50|50|56349|135|0]=],
             Start = "154257|1355|32|37.90|52.90",
             End = "154257|1355|32|37.90|52.90",
         },
         [56349] = {
-            Quest = [=[The Eternal Palace: Pushing the Limits|2|50|50|0|0|0]=],
+            Quest = [=[The Eternal Palace: Pushing the Limits|2|50|50|0|135|0]=],
             Start = "154257|1355|32|37.90|52.90",
             End = "154257|1355|32|37.90|52.90",
         },
@@ -32186,22 +27291,22 @@ function Nx.ModQuests:Data5()
             End = "150101|1355|32|40.20|55.20",
         },
         [56351] = {
-            Quest = [=[The Eternal Palace: Pushing the Limits|1|50|50|0|0|0]=],
+            Quest = [=[The Eternal Palace: Pushing the Limits|1|50|50|0|135|0]=],
             Start = "154408|1355|32|49.30|61.80",
             End = "154408|1355|32|49.30|61.80",
         },
         [56352] = {
-            Quest = [=[The Eternal Palace: We Can Make It Stronger...|1|50|50|56351|0|0]=],
+            Quest = [=[The Eternal Palace: We Can Make It Stronger...|1|50|50|56351|135|0]=],
             Start = "154408|1355|32|49.30|61.80",
             End = "154408|1355|32|49.30|61.80",
         },
         [56353] = {
-            Quest = [=[An Abyssal Opportunity|1|50|50|56352|0|0]=],
+            Quest = [=[An Abyssal Opportunity|1|50|50|56352|135|0]=],
             Start = "154408|1355|32|49.30|61.80",
             End = "154408|1355|32|49.30|61.80",
         },
         [56354] = {
-            Quest = [=[Ancient Technology|1|50|50|56353|0|0]=],
+            Quest = [=[Ancient Technology|1|50|50|56353|135|0]=],
             Start = "-327596|1355|32|38.10|36.90",
         },
         [56356] = {
@@ -32217,21 +27322,21 @@ function Nx.ModQuests:Data5()
             Start = "154075|1355|32|66.80|29.20",
         },
         [56374] = {
-            Quest = [=[A Titanic Problem||50|50|0|0|0]=],
+            Quest = [=[A Titanic Problem||50|50|0|59|0]=],
             Start = "152206|1473|32|50.10|59.10",
             End = "152206|1473|32|50.10|59.10",
         },
         [56375] = {
-            Quest = [=[To Ramkahen||50|50|0|0|0]=],
+            Quest = [=[To Ramkahen||50|50|0|59|0]=],
             Start = "154533|1542|32|47.00|44.60",
         },
         [56376] = {
-            Quest = [=[Surfacing Threats||50|50|56376|0|0]=],
+            Quest = [=[Surfacing Threats||50|50|56376|59|0]=],
             Start = "155095|1527|32|54.90|32.70",
             End = "155095|1527|32|54.90|32.70",
         },
         [56377] = {
-            Quest = [=[Forging Onward||50|50|0|0|0]=],
+            Quest = [=[Forging Onward||50|50|0|59|0]=],
             Start = "0|1527|32|54.90|33.10",
         },
         [56378] = {
@@ -32242,38 +27347,32 @@ function Nx.ModQuests:Data5()
             Quest = [=[The Missing Crew|1|50|50|0|0|0]=],
             Start = "135690|862|32|58.40|62.90",
         },
-        [56393] = {
-            Quest = [=[Gnomefeaster||50|50|0|0|0]=],
-        },
-        [56394] = {
-            Quest = [=[Sputtertube||50|50|0|0|0]=],
-        },
-        [56395] = {
-            Quest = [=[Goldenbot XD||50|50|0|0|0]=],
-        },
-        [56396] = {
-            Quest = [=[Creakclank||50|50|0|0|0]=],
-        },
-        [56397] = {
-            Quest = [=[CK-9 Micro-Oppression Unit||50|50|0|0|0]=],
-        },
-        [56398] = {
-            Quest = [=[Unit 35||50|50|0|0|0]=],
-        },
-        [56399] = {
-            Quest = [=[Unit 6||50|50|0|0|0]=],
-        },
-        [56400] = {
-            Quest = [=[Unit 17||50|50|0|0|0]=],
-        },
         [56401] = {
-            Quest = [=[A Bolt from the Blue||50|50|0|0|0]=],
+            Quest = [=[A Bolt from the Blue||50|50|0|91|0]=],
             Start = "152365|1473|32|53.10|70.90",
         },
         [56402] = {
             Quest = [=[Wastewander Coins||50|50|0|0|0]=],
             Start = "159560|1527|32|39.90|45.20",
             End = "159560|1527|32|39.90|45.20",
+        },
+        [56406] = {
+            Quest = [=[Activate Water Object||50|50|0|0|0]=],
+        },
+        [56409] = {
+            Quest = [=[Activate Water Object #2||50|50|0|0|0]=],
+        },
+        [56411] = {
+            Quest = [=[Activate Fire Object||50|50|0|0|0]=],
+        },
+        [56412] = {
+            Quest = [=[Activate Earth Object||50|50|0|0|0]=],
+        },
+        [56415] = {
+            Quest = [=[Activate Fire Object #2||50|50|0|0|0]=],
+        },
+        [56416] = {
+            Quest = [=[Activate Earth Object||50|50|0|0|0]=],
         },
         [56422] = {
             Quest = [=[On Ghostly Wings||50|50|0|0|0]=],
@@ -32284,13 +27383,13 @@ function Nx.ModQuests:Data5()
             Start = "150196|1355|32|38.56|76.13",
         },
         [56430] = {
-            Quest = [=[Defensive in Death|1|50|50|0|0|0]=],
+            Quest = [=[Defensive in Death|1|50|50|0|6|0]=],
         },
         [56431] = {
-            Quest = [=[Ounces of Osmenite|1|50|50|0|0|0]=],
+            Quest = [=[Ounces of Osmenite|1|50|50|0|115|0]=],
         },
         [56432] = {
-            Quest = [=[Seams to be a Problem|1|50|50|0|0|0]=],
+            Quest = [=[Seams to be a Problem|1|50|50|0|115|0]=],
         },
         [56433] = {
             Quest = [=[Drowning the Alliance|1|50|50|0|0|0]=],
@@ -32316,12 +27415,15 @@ function Nx.ModQuests:Data5()
         },
         [56450] = {
             Quest = [=[Eel Jelly|2|50|50|0|0|0]=],
+            Start = "154915|1355|32|51.70|75.00",
         },
         [56451] = {
             Quest = [=[Mottled Hydra Scale|2|50|50|0|0|0]=],
+            Start = "154916|1355|32|29.60|49.60",
         },
         [56452] = {
             Quest = [=[Strange Organ|2|50|50|0|0|0]=],
+            Start = "154915|1355|32|51.70|75.00",
         },
         [56453] = {
             Quest = [=[Overgrown Stone|2|50|50|0|0|0]=],
@@ -32355,6 +27457,7 @@ function Nx.ModQuests:Data5()
         },
         [56463] = {
             Quest = [=[Mottled Hydra Scale|1|50|50|0|0|0]=],
+            Start = "154916|1355|32|29.60|49.60",
         },
         [56464] = {
             Quest = [=[Strange Organ|1|50|50|0|0|0]=],
@@ -32369,39 +27472,41 @@ function Nx.ModQuests:Data5()
             Quest = [=[Frenzy Fang|1|50|50|0|0|0]=],
         },
         [56472] = {
-            Quest = [=[The Uldum Accord||50|50|0|0|0]=],
+            Quest = [=[The Uldum Accord||50|50|0|59|0]=],
             Start = "155095|1527|32|54.90|32.70",
             End = "155095|1527|32|54.90|32.70",
         },
         [56473] = {
             Quest = [=[Envenomed Spider Fang|2|50|50|0|0|0]=],
+            Start = "155745|942|32|62.50|26.30",
         },
         [56474] = {
             Quest = [=[Hivekiller Stinger|2|50|50|0|0|0]=],
+            Start = "155745|942|32|62.50|26.30",
         },
         [56475] = {
             Quest = [=[Spiral Yeti Horn|2|50|50|0|0|0]=],
         },
         [56489] = {
-            Quest = [=[Restless Dead|2|50|50|56491|0|0]=],
+            Quest = [=[Restless Dead|2|50|50|56491|58|0]=],
             Start = "147645|1161|32|50.30|46.90",
             End = "147645|1161|32|50.30|46.90",
         },
         [56490] = {
-            Quest = [=[Restless Dead|1|50|50|56491|0|0]=],
+            Quest = [=[Restless Dead|1|50|50|56491|58|0]=],
             Start = "147641|1165|32|56.30|30.80",
             End = "147641|1165|32|56.30|30.80",
         },
         [56491] = {
-            Quest = [=[Tiny Terrors of Stratholme||50|50|0|0|0]=],
+            Quest = [=[Tiny Terrors of Stratholme||50|50|0|58|0]=],
             Start = "150987|23|32|43.20|20.00",
         },
         [56492] = {
-            Quest = [=[Pet Battle Challenge: Stratholme|2|50|50|0|0|0]=],
+            Quest = [=[Pet Battle Challenge: Stratholme|2|50|50|0|58|0]=],
             Start = "150987|23|32|43.10|19.90",
         },
         [56494] = {
-            Quest = [=[The Eve of Battle|2|50|50|0|0|0]=],
+            Quest = [=[The Eve of Battle|2|50|50|0|50|0]=],
             Start = "135614|1161|32|70.50|27.00",
         },
         [56495] = {
@@ -32414,53 +27519,54 @@ function Nx.ModQuests:Data5()
             Start = "155789|1165|32|50.20|96.00",
         },
         [56499] = {
-            Quest = [=[Storming the Battlefields|2|50|50|0|0|0]=],
+            Quest = [=[Storming the Battlefields|2|50|50|0|26|0]=],
             Start = "143560|1161|32|56.40|25.80",
         },
         [56500] = {
-            Quest = [=[Storming the Battlefields|1|50|50|0|0|0]=],
+            Quest = [=[Storming the Battlefields|1|50|50|0|26|0]=],
             Start = "143555|875|32|51.60|58.20",
         },
         [56504] = {
-            Quest = [=[Wrathion's Journal||50|50|0|0|0]=],
+            Quest = [=[Wrathion's Journal||50|50|0|91|0]=],
             Start = "151964|1473|32|46.30|67.20",
         },
         [56533] = {
-            Quest = [=[Worldvein Rumors|2|50|50|0|0|0]=],
+            Quest = [=[Worldvein Rumors|2|50|50|0|98|0]=],
+            Start = "123000|1163|32|44.60|95.40",
         },
         [56534] = {
-            Quest = [=[Worldvein Rumors|1|50|50|0|0|0]=],
+            Quest = [=[Worldvein Rumors|1|50|50|0|98|0]=],
         },
         [56536] = {
-            Quest = [=[It's Never Easy||50|50|0|0|0]=],
+            Quest = [=[It's Never Easy||50|50|0|59|0]=],
             Start = "152206|1473|32|50.10|59.10",
             End = "152206|1473|32|50.10|59.10",
         },
         [56537] = {
-            Quest = [=[The Mysterious Sigil||50|50|0|0|0]=],
+            Quest = [=[The Mysterious Sigil||50|50|0|59|0]=],
             Start = "155336|379|32|59.60|39.10",
         },
         [56538] = {
-            Quest = [=[Clans of the Mogu||50|50|0|0|0]=],
+            Quest = [=[Clans of the Mogu||50|50|0|59|0]=],
             Start = "156003|1530|32|83.70|27.10",
             End = "156003|1530|32|83.70|27.10",
         },
         [56539] = {
-            Quest = [=[Finding the Rajani||50|50|0|0|0]=],
+            Quest = [=[Finding the Rajani||50|50|0|59|0]=],
             Start = "156003|1530|32|83.70|27.10",
             End = "156003|1530|32|83.70|27.10",
         },
         [56540] = {
-            Quest = [=[Proof of Tenacity||50|50|0|0|0]=],
+            Quest = [=[Proof of Tenacity||50|50|0|59|0]=],
             Start = "154444|1530|32|44.70|73.90",
         },
         [56541] = {
-            Quest = [=[The Engine of Nalak'sha||50|50|0|0|0]=],
+            Quest = [=[The Engine of Nalak'sha||50|50|0|59|0]=],
             Start = "154418|1530|32|45.30|74.30",
             End = "154418|1530|32|45.30|74.30",
         },
         [56542] = {
-            Quest = [=[Restored Hope||50|50|0|0|0]=],
+            Quest = [=[Restored Hope||50|50|0|59|0]=],
             Start = "154418|1530|32|45.30|74.30",
             End = "154418|1530|32|45.30|74.30",
         },
@@ -32478,17 +27584,17 @@ function Nx.ModQuests:Data5()
             Start = "-329805|1355|32|32.80|39.50",
         },
         [56562] = {
-            Quest = [=[The Problem with Shrinkage|2|50|50|0|0|0]=],
+            Quest = [=[The Problem with Shrinkage|2|50|50|0|150|0]=],
         },
         [56563] = {
-            Quest = [=[The Problem with Shrinkage|1|50|50|0|0|0]=],
+            Quest = [=[The Problem with Shrinkage|1|50|50|0|150|0]=],
             Start = "169772|1565|32|51.32|33.98",
         },
         [56565] = {
-            Quest = [=[Hanging by a Thread|2|50|50|0|0|0]=],
+            Quest = [=[Hanging by a Thread|2|50|50|0|150|0]=],
         },
         [56566] = {
-            Quest = [=[Hanging by a Thread|1|50|50|0|0|0]=],
+            Quest = [=[Hanging by a Thread|1|50|50|0|150|0]=],
         },
         [56574] = {
             Quest = [=[Reflections in Amber||50|50|0|0|0]=],
@@ -32572,7 +27678,7 @@ function Nx.ModQuests:Data5()
             End = "143536|862|32|51.50|58.10",
         },
         [56719] = {
-            Quest = [=[This Ain't Mine|2|50|50|0|0|0]=],
+            Quest = [=[This Ain't Mine|2|50|50|0|50|0]=],
             Start = "155784|1|32|54.00|42.60",
         },
         [56739] = {
@@ -32585,14 +27691,16 @@ function Nx.ModQuests:Data5()
             End = "153617|1355|32|74.20|40.20",
         },
         [56771] = {
-            Quest = [=[Time-Lost Warriors||50|50|0|0|0]=],
+            Quest = [=[Time-Lost Warriors||50|50|0|59|0]=],
             Start = "154532|1530|32|83.10|27.31",
         },
         [56777] = {
             Quest = [=[A Gift From The Clan|2|50|50|0|0|0]=],
+            Start = "149804|1355|32|39.40|53.60",
         },
         [56778] = {
             Quest = [=[A Glint in the Darkness|2|50|50|0|0|0]=],
+            Start = "153623|1355|32|36.30|30.10",
         },
         [56779] = {
             Quest = [=[A Valorous Reward|2|50|50|0|0|0]=],
@@ -32605,21 +27713,26 @@ function Nx.ModQuests:Data5()
         },
         [56782] = {
             Quest = [=[The Speaker's Gift|2|50|50|0|0|0]=],
+            Start = "149805|1355|32|39.40|53.60",
         },
         [56783] = {
             Quest = [=[The Lambent Lockbox|2|50|50|0|0|0]=],
+            Start = "151626|1355|32|39.40|53.50",
         },
         [56784] = {
             Quest = [=[Helpful Provisions|2|50|50|0|0|0]=],
         },
         [56785] = {
             Quest = [=[The Mystic Chest|2|50|50|0|0|0]=],
+            Start = "152238|1499|32|54.20|20.80",
         },
         [56786] = {
             Quest = [=[Naga Treasure|2|50|50|0|0|0]=],
+            Start = "152084|1355|32|39.10|54.30",
         },
         [56787] = {
             Quest = [=[Additional Supplies|2|50|50|0|0|0]=],
+            Start = "149803|1355|32|39.40|53.60",
         },
         [56788] = {
             Quest = [=[Reclaimed Treasure|2|50|50|0|0|0]=],
@@ -32629,9 +27742,11 @@ function Nx.ModQuests:Data5()
         },
         [56790] = {
             Quest = [=[Treasure To Find|2|50|50|0|0|0]=],
+            Start = "154238|1355|32|31.20|37.50",
         },
         [56791] = {
             Quest = [=[Mysterious Treasure|2|50|50|0|0|0]=],
+            Start = "152084|1355|32|39.10|54.30",
         },
         [56803] = {
             Quest = [=[Just A Friend|1|50|50|0|0|0]=],
@@ -32642,6 +27757,7 @@ function Nx.ModQuests:Data5()
         },
         [56805] = {
             Quest = [=[That's What Friends Are For|1|50|50|0|0|0]=],
+            Start = "152787|1355|32|56.00|18.40",
         },
         [56806] = {
             Quest = [=[Friends Through Eternity|1|50|50|0|0|0]=],
@@ -32651,6 +27767,7 @@ function Nx.ModQuests:Data5()
         },
         [56808] = {
             Quest = [=[We're Going To Be Friends|1|50|50|0|0|0]=],
+            Start = "149902|1355|32|50.00|65.20",
         },
         [56809] = {
             Quest = [=[Super Friends|1|50|50|0|0|0]=],
@@ -32681,14 +27798,20 @@ function Nx.ModQuests:Data5()
         },
         [56817] = {
             Quest = [=[Thank You For Being A Friend|1|50|50|0|0|0]=],
-        },
-        [56830] = {
-            Quest = [=[Summons from the Deep|2|44|44|0|0|0]=],
-            Start = "0|1355|32|48.50|40.40",
+            Start = "152066|1355|32|64.20|52.00",
         },
         [56833] = {
             Quest = [=[Leaders of the Horde|1|50|50|0|0|0]=],
             Start = "156423|1534|32|48.50|70.80",
+        },
+        [56836] = {
+            Quest = [=[The Eternal Palace: Master's Call||50|50|0|0|8500]=],
+        },
+        [56837] = {
+            Quest = [=[The Eternal Palace: Master's Call||50|50|0|0|8500]=],
+        },
+        [56838] = {
+            Quest = [=[The Eternal Palace: Master's Call||50|50|0|0|8500]=],
         },
         [56889] = {
             Quest = [=[Wounded Wastewanderers||50|50|0|0|0]=],
@@ -32705,6 +27828,7 @@ function Nx.ModQuests:Data5()
         },
         [56971] = {
             Quest = [=[Eel Filet|1|50|50|0|0|0]=],
+            Start = "151741|1355|32|43.40|49.80",
         },
         [56972] = {
             Quest = [=[Fathom Ray Wing|1|50|50|0|0|0]=],
@@ -32714,17 +27838,17 @@ function Nx.ModQuests:Data5()
             Quest = [=[Giant Crab Leg|1|50|50|0|0|0]=],
         },
         [56979] = {
-            Quest = [=[Saving the Siege|2|50|50|0|0|0]=],
+            Quest = [=[Saving the Siege|2|50|50|0|50|0]=],
             Start = "155784|1535|32|41.50|56.00",
             End = "155784|1535|32|41.70|56.20",
         },
         [56980] = {
-            Quest = [=[Already Among Us|2|50|50|0|0|0]=],
+            Quest = [=[Already Among Us|2|50|50|0|50|0]=],
             Start = "155784|1535|32|41.50|56.00",
             End = "155784|1535|32|41.70|56.20",
         },
         [56981] = {
-            Quest = [=[Strategic Deployment|2|50|50|0|0|0]=],
+            Quest = [=[Strategic Deployment|2|50|50|0|50|0]=],
             Start = "155784|1535|32|41.50|56.00",
             End = "155784|1535|32|41.70|56.20",
         },
@@ -32739,7 +27863,7 @@ function Nx.ModQuests:Data5()
             End = "155785|1535|32|36.00|64.00",
         },
         [57002] = {
-            Quest = [=[Old Soldier|2|50|50|0|0|0]=],
+            Quest = [=[Old Soldier|2|50|50|0|50|0]=],
             Start = "155785|1535|32|34.63|60.15",
             End = "155785|1535|32|36.00|64.00",
         },
@@ -32761,57 +27885,52 @@ function Nx.ModQuests:Data5()
             Start = "153509|1355|32|37.80|55.80",
             End = "153509|1355|32|37.80|55.80",
         },
-        [57008] = {
-            Quest = [=[Assault: The Warring Clans||50|50|0|0|0]=],
-            Start = "154444|1530|32|44.70|73.80",
-            End = "154444|1530|32|44.70|73.80",
-        },
         [57010] = {
-            Quest = [=[Harnessing the Power||50|50|0|0|0]=],
+            Quest = [=[Harnessing the Power||50|50|0|91|0]=],
             Start = "152194|1473|32|48.00|72.20",
         },
         [57022] = {
             Quest = [=[Assault: Amathet Advance||50|50|0|0|0]=],
         },
         [57043] = {
-            Quest = [=[Old Friends, New Opportunities|1|50|50|0|0|0]=],
+            Quest = [=[Old Friends, New Opportunities|1|50|50|0|93|0]=],
             Start = "156358|85|32|38.00|80.20",
         },
         [57045] = {
-            Quest = [=[A Special Delivery|1|50|50|0|0|0]=],
+            Quest = [=[A Special Delivery|1|50|50|0|93|0]=],
             Start = "156396|210|32|34.60|28.50",
             End = "156396|210|32|34.60|28.50",
         },
         [57047] = {
-            Quest = [=[A Simple Experiment|1|50|50|0|0|0]=],
+            Quest = [=[A Simple Experiment|1|50|50|0|93|0]=],
             Start = "156520|1532|32|53.50|61.90",
         },
         [57048] = {
-            Quest = [=[Shopping For Parts|1|50|50|0|0|0]=],
+            Quest = [=[Shopping For Parts|1|50|50|0|93|0]=],
             Start = "156520|1532|32|52.99|58.59",
         },
         [57051] = {
-            Quest = [=[Debt Collection!|1|50|50|0|0|0]=],
+            Quest = [=[Debt Collection!|1|50|50|0|93|0]=],
             Start = "156542|1532|32|56.00|78.20",
             End = "156542|1532|32|56.00|78.20",
         },
         [57052] = {
-            Quest = [=[I've Got What You Need|1|50|50|0|0|0]=],
+            Quest = [=[I've Got What You Need|1|50|50|0|93|0]=],
             Start = "156542|1532|32|56.00|78.20",
             End = "156542|1532|32|56.00|78.20",
         },
         [57053] = {
-            Quest = [=[Blunt Force Testing|1|50|50|0|0|0]=],
+            Quest = [=[Blunt Force Testing|1|50|50|0|93|0]=],
             Start = "156520|1532|32|58.74|60.85",
             End = "156520|1532|32|58.70|60.80",
         },
         [57058] = {
-            Quest = [=[Fun With Landmines|1|50|50|0|0|0]=],
+            Quest = [=[Fun With Landmines|1|50|50|0|93|0]=],
             Start = "156520|1532|32|58.73|60.84",
             End = "156520|1532|32|58.70|60.80",
         },
         [57059] = {
-            Quest = [=[Let's Rumble!|1|50|50|0|0|0]=],
+            Quest = [=[Let's Rumble!|1|50|50|0|93|0]=],
             Start = "156520|1532|32|52.09|59.36",
             End = "156520|1532|32|52.00|59.30",
         },
@@ -32853,22 +27972,22 @@ function Nx.ModQuests:Data5()
             Start = "156937|379|32|55.40|91.10",
         },
         [57077] = {
-            Quest = [=[Buyers Wanted!|1|50|50|0|0|0]=],
+            Quest = [=[Buyers Wanted!|1|50|50|0|93|0]=],
             Start = "156520|1532|32|52.08|59.35",
             End = "156520|1532|32|52.00|59.30",
         },
         [57078] = {
-            Quest = [=[The VIP List|1|50|50|0|0|0]=],
+            Quest = [=[The VIP List|1|50|50|0|93|0]=],
             Start = "156396|210|32|34.60|28.50",
             End = "156396|210|32|34.60|28.50",
         },
         [57079] = {
-            Quest = [=[Beat The Crapopolis Outta Him!|1|50|50|0|0|0]=],
+            Quest = [=[Beat The Crapopolis Outta Him!|1|50|50|0|93|0]=],
             Start = "156396|210|32|34.60|28.50",
             End = "156396|210|32|34.60|28.50",
         },
         [57080] = {
-            Quest = [=[A Fitting Reward|1|50|50|0|0|0]=],
+            Quest = [=[A Fitting Reward|1|50|50|0|93|0]=],
             Start = "157491|1531|32|47.80|50.50",
         },
         [57086] = {
@@ -32951,53 +28070,50 @@ function Nx.ModQuests:Data5()
         [57156] = {
             Quest = [=[Blinding the Eye|1|50|50|0|0|0]=],
         },
-        [57157] = {
-            Quest = [=[Assault: The Black Empire||50|50|0|0|0]=],
-            Start = "155095|1527|32|54.90|32.70",
-            End = "155095|1527|32|54.90|32.70",
-        },
         [57198] = {
             Quest = [=[Sense of Obligation|1|50|50|0|0|0]=],
             Start = "141961|1165|32|51.50|99.40",
         },
         [57220] = {
-            Quest = [=[Power Protocol Initiation||50|50|57221|0|0]=],
+            Quest = [=[Power Protocol Initiation||50|50|57221|59|0]=],
             Start = "152206|1473|32|50.10|59.10",
             End = "152206|1473|32|50.10|59.10",
         },
         [57221] = {
-            Quest = [=[Re-Origination||50|50|57222|0|0]=],
+            Quest = [=[Re-Origination||50|50|57222|59|0]=],
             Start = "152206|1473|32|50.10|59.10",
             End = "152206|1473|32|50.10|59.10",
         },
         [57222] = {
-            Quest = [=[Investigating the Halls||50|50|57290|0|0]=],
+            Quest = [=[Investigating the Halls||50|50|57290|59|0]=],
             Start = "154532|1527|32|68.96|52.74",
         },
         [57246] = {
             Quest = [=[Eel Filet|2|50|50|0|0|0]=],
+            Start = "151741|1355|32|43.40|49.80",
         },
         [57247] = {
             Quest = [=[Fathom Ray Wing|2|50|50|0|0|0]=],
+            Start = "149904|1355|32|50.20|64.80",
         },
         [57248] = {
             Quest = [=[Giant Crab Leg|2|50|50|0|0|0]=],
         },
         [57274] = {
-            Quest = [=[Quartermaster's Bounty||50|50|0|0|0]=],
+            Quest = [=[Quartermaster's Bounty||50|50|0|139|0]=],
             Start = "143555|875|32|51.60|58.20",
             End = "143555|875|32|51.60|58.20",
         },
         [57275] = {
-            Quest = [=[Something in Your Mind||50|50|0|0|0]=],
+            Quest = [=[Something in Your Mind||50|50|0|135|0]=],
         },
         [57276] = {
-            Quest = [=[Maintaining Focus|1|50|50|57462|0|0]=],
+            Quest = [=[Maintaining Focus|1|50|50|57462|135|0]=],
             Start = "155496|1473|32|46.10|63.90",
             End = "155496|1473|32|46.10|63.90",
         },
         [57290] = {
-            Quest = [=[Beginning the Descent||50|50|0|0|0]=],
+            Quest = [=[Beginning the Descent||50|50|0|23|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
@@ -33005,14 +28121,8 @@ function Nx.ModQuests:Data5()
             Quest = [=[Sail With the Tide|2|50|50|0|0|0]=],
             Start = "150633|1161|32|69.33|27.14",
         },
-        [57353] = {
-            Quest = [=[Deepcoil Cleansing||45|45|0|0|0]=],
-        },
-        [57354] = {
-            Quest = [=[Overdue||45|45|0|0|0]=],
-        },
         [57362] = {
-            Quest = [=[Deeper Into the Darkness||50|50|57373|0|0]=],
+            Quest = [=[Deeper Into the Darkness||50|50|57373|59|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
@@ -33023,12 +28133,12 @@ function Nx.ModQuests:Data5()
             Quest = [=[Assault: Aqir Unearthed||50|50|0|0|0]=],
         },
         [57373] = {
-            Quest = [=[Descending Into Madness||50|50|58634|0|0]=],
+            Quest = [=[Descending Into Madness||50|50|58634|59|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57374] = {
-            Quest = [=[Into the Darkest Depths||50|50|0|0|0]=],
+            Quest = [=[Into the Darkest Depths||50|50|0|59|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
@@ -33040,87 +28150,87 @@ function Nx.ModQuests:Data5()
             Quest = [=[A Hand Offered|1|50|50|0|0|0]=],
         },
         [57378] = {
-            Quest = [=[Remnants of a Shattered World||50|50|0|0|0]=],
+            Quest = [=[Remnants of a Shattered World||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57391] = {
-            Quest = [=[Reconstructing "The Curse of Stone"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "The Curse of Stone"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57392] = {
-            Quest = [=[Reconstructing "The Curse of Stone"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "The Curse of Stone"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57393] = {
-            Quest = [=[Stepping Through the Darkness||50|50|0|0|0]=],
+            Quest = [=[Stepping Through the Darkness||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57394] = {
-            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57395] = {
-            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57396] = {
-            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57397] = {
-            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57398] = {
-            Quest = [=[Walking in the Darkness||50|50|0|0|0]=],
+            Quest = [=[Walking in the Darkness||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57399] = {
-            Quest = [=[Reconstructing "The Final Truth"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "The Final Truth"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57400] = {
-            Quest = [=[Reconstructing "The Final Truth"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "The Final Truth"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57401] = {
-            Quest = [=[Reconstructing "The Final Truth"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "The Final Truth"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57402] = {
-            Quest = [=[Reconstructing "The Curse of Stone"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "The Curse of Stone"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57403] = {
-            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|0|0]=],
+            Quest = [=[Reconstructing "Fear and Flesh"||50|50|0|174|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
         [57462] = {
-            Quest = [=[Dream Catcher||50|50|0|0|0]=],
+            Quest = [=[Dream Catcher||50|50|0|135|0]=],
             Start = "155496|1473|32|46.10|63.90",
             End = "155496|1473|32|46.10|63.90",
         },
         [57464] = {
-            Quest = [=[Maintaining Focus|2|50|50|57462|0|0]=],
+            Quest = [=[Maintaining Focus|2|50|50|57462|135|0]=],
             Start = "155496|1473|32|46.10|63.90",
             End = "155496|1473|32|46.10|63.90",
         },
         [57524] = {
-            Quest = [=[Accessing the Archives||50|50|0|0|0]=],
+            Quest = [=[Accessing the Archives||50|50|0|59|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
@@ -33128,7 +28238,8 @@ function Nx.ModQuests:Data5()
             Quest = [=[Unbeelievable Quality|2|50|50|0|0|0]=],
         },
         [57686] = {
-            Quest = [=[The Eternal Traveler||50|50|0|0|0]=],
+            Quest = [=[The Eternal Traveler||50|50|0|4|0]=],
+            Start = "158615|1699|32|38.40|37.00",
         },
         [57718] = {
             Quest = [=[Bound in Stone||50|50|0|0|0]=],
@@ -33143,9 +28254,6 @@ function Nx.ModQuests:Data5()
         [57721] = {
             Quest = [=[Spoils of War||50|50|0|0|0]=],
             Start = "154677|1530|32|43.90|71.70",
-        },
-        [57728] = {
-            Quest = [=[Assault: The Endless Swarm||50|50|0|0|0]=],
         },
         [57737] = {
             Quest = [=[Ramkahen Rescue||50|50|0|0|0]=],
@@ -33187,12 +28295,12 @@ function Nx.ModQuests:Data5()
             End = "159682|1527|32|24.50|55.20",
         },
         [57959] = {
-            Quest = [=[Heroic Warfront: The Battle for Darkshore|1|50|50|0|0|0]=],
+            Quest = [=[Heroic Warfront: The Battle for Darkshore|1|50|50|0|178|0]=],
             Start = "138949|1165|32|52.90|94.30",
             End = "138949|1165|32|52.90|94.30",
         },
         [57960] = {
-            Quest = [=[Heroic Warfront: The Battle for Darkshore|2|50|50|0|0|0]=],
+            Quest = [=[Heroic Warfront: The Battle for Darkshore|2|50|50|0|178|0]=],
             Start = "142721|1161|32|66.00|26.00",
             End = "142721|1161|32|66.00|26.00",
         },
@@ -33215,10 +28323,10 @@ function Nx.ModQuests:Data5()
             Start = "159682|1527|32|24.40|55.20",
         },
         [57973] = {
-            Quest = [=[Heroic: Battle for Darkshore|2|50|50|0|0|0]=],
+            Quest = [=[Heroic: Battle for Darkshore|2|50|50|0|178|0]=],
         },
         [57974] = {
-            Quest = [=[Heroic: Battle for Darkshore|1|50|50|0|0|0]=],
+            Quest = [=[Heroic: Battle for Darkshore|1|50|50|0|178|0]=],
         },
         [57990] = {
             Quest = [=[Obelisk of the Sun||50|50|0|0|0]=],
@@ -33241,27 +28349,27 @@ function Nx.ModQuests:Data5()
             End = "161738|1527|32|55.60|35.30",
         },
         [58151] = {
-            Quest = [=[Minions of N'Zoth||50|50|0|0|0]=],
+            Quest = [=[Minions of N'Zoth||50|50|0|174|0]=],
             Start = "160252|1527|32|56.60|31.70",
             End = "160252|1527|32|56.60|31.70",
         },
         [58155] = {
-            Quest = [=[A Hand in the Dark||50|50|0|0|0]=],
+            Quest = [=[A Hand in the Dark||50|50|0|174|0]=],
             Start = "160252|1527|32|56.60|31.70",
             End = "160252|1527|32|56.60|31.70",
         },
         [58156] = {
-            Quest = [=[Vanquishing the Darkness||50|50|0|0|0]=],
+            Quest = [=[Vanquishing the Darkness||50|50|0|174|0]=],
             Start = "160252|1527|32|56.60|31.70",
             End = "160252|1527|32|56.60|31.70",
         },
         [58167] = {
-            Quest = [=[Preventative Measures||50|50|0|0|0]=],
+            Quest = [=[Preventative Measures||50|50|0|174|0]=],
             Start = "160252|1527|32|56.60|31.70",
             End = "160252|1527|32|56.60|31.70",
         },
         [58168] = {
-            Quest = [=[A Dark, Glaring Reality||50|50|0|0|0]=],
+            Quest = [=[A Dark, Glaring Reality||50|50|0|174|0]=],
             Start = "160252|1527|32|56.60|31.70",
             End = "160252|1527|32|56.60|31.70",
         },
@@ -33326,7 +28434,7 @@ function Nx.ModQuests:Data5()
             End = "155099|1527|32|54.60|32.80",
         },
         [58279] = {
-            Quest = [=[Quartermaster's Bounty||50|50|0|0|0]=],
+            Quest = [=[Quartermaster's Bounty||50|50|0|139|0]=],
             Start = "143555|875|32|51.60|58.20",
             End = "143555|875|32|51.60|58.20",
         },
@@ -33386,19 +28494,19 @@ function Nx.ModQuests:Data5()
             End = "160957|1527|32|54.60|34.00",
         },
         [58297] = {
-            Quest = [=[Faceless Mask of the Daredevil||50|50|0|0|0]=],
+            Quest = [=[Faceless Mask of the Daredevil||50|50|0|174|0]=],
         },
         [58314] = {
-            Quest = [=[Faceless Mask of the Burned Bridge||50|50|0|0|0]=],
+            Quest = [=[Faceless Mask of the Burned Bridge||50|50|0|174|0]=],
         },
         [58316] = {
-            Quest = [=[Faceless Mask of the Dark Imagination||50|50|0|0|0]=],
+            Quest = [=[Faceless Mask of the Dark Imagination||50|50|0|174|0]=],
         },
         [58317] = {
-            Quest = [=[Faceless Mask of the Pained||50|50|0|0|0]=],
+            Quest = [=[Faceless Mask of the Pained||50|50|0|174|0]=],
         },
         [58318] = {
-            Quest = [=[Faceless Mask of the Long Night||50|50|0|0|0]=],
+            Quest = [=[Faceless Mask of the Long Night||50|50|0|174|0]=],
         },
         [58321] = {
             Quest = [=[Uncommon Core||50|50|0|0|0]=],
@@ -33430,31 +28538,31 @@ function Nx.ModQuests:Data5()
             End = "154444|1530|32|44.70|73.80",
         },
         [58435] = {
-            Quest = [=[Heritage of the Vulpera||50|50|0|0|0]=],
+            Quest = [=[Heritage of the Vulpera||50|50|0|176|0]=],
             Start = "124108|864|32|56.80|49.80",
         },
         [58436] = {
-            Quest = [=[Heritage of the Mechagnome||50|50|0|0|0]=],
+            Quest = [=[Heritage of the Mechagnome||50|50|0|112|0]=],
             Start = "158145|1462|32|73.00|33.40",
             End = "158145|1462|32|73.00|33.40",
         },
         [58455] = {
-            Quest = [=[Shadowy Showdown|2|50|50|58457|0|0]=],
+            Quest = [=[Shadowy Showdown|2|50|50|58457|58|0]=],
             Start = "147645|1161|32|50.30|46.90",
             End = "147645|1161|32|50.30|46.90",
         },
         [58456] = {
-            Quest = [=[Shadowy Showdown|1|50|50|58457|0|0]=],
+            Quest = [=[Shadowy Showdown|1|50|50|58457|58|0]=],
             Start = "147641|1165|32|56.30|30.80",
             End = "147641|1165|32|56.30|30.80",
         },
         [58457] = {
-            Quest = [=[Shadows of Blackrock||50|50|0|0|0]=],
+            Quest = [=[Shadows of Blackrock||50|50|0|58|0]=],
             Start = "161782|35|32|33.10|23.10",
             End = "161782|35|32|33.10|23.10",
         },
         [58458] = {
-            Quest = [=[Pet Battle Challenge: Blackrock Depths|2|50|50|0|0|0]=],
+            Quest = [=[Pet Battle Challenge: Blackrock Depths|2|50|50|0|58|0]=],
             Start = "161782|35|32|33.10|23.10",
             End = "161782|35|32|33.10|23.10",
         },
@@ -33548,32 +28656,29 @@ function Nx.ModQuests:Data5()
             Quest = [=[Plunder the Plunderers||50|50|0|0|0]=],
             Start = "161405|1530|32|37.70|79.30",
         },
-        [58490] = {
-            Quest = [=[Deadly Reminder||50|50|0|0|0]=],
-        },
         [58496] = {
-            Quest = [=[An Unwelcome Advisor|2|50|50|0|0|0]=],
+            Quest = [=[An Unwelcome Advisor|2|50|50|0|59|0]=],
             Start = "-369893|1161|32|68.10|22.40",
         },
         [58498] = {
-            Quest = [=[Return of the Warrior King|2|50|50|0|0|0]=],
+            Quest = [=[Return of the Warrior King|2|50|50|0|59|0]=],
             Start = "154532|84|32|85.20|32.50",
         },
         [58502] = {
-            Quest = [=[Where the Heart Is|2|50|50|0|0|0]=],
+            Quest = [=[Where the Heart Is|2|50|50|0|59|0]=],
             Start = "154532|84|32|87.46|35.49",
         },
         [58506] = {
-            Quest = [=[Network Diagnostics||50|50|0|0|0]=],
+            Quest = [=[Network Diagnostics||50|50|0|59|0]=],
             Start = "152206|1473|32|50.10|59.10",
             End = "152206|1473|32|50.10|59.10",
         },
         [58582] = {
-            Quest = [=[Return of the Black Prince|1|50|50|0|0|0]=],
+            Quest = [=[Return of the Black Prince|1|50|50|0|59|0]=],
             Start = "-369894|875|32|58.50|62.60",
         },
         [58583] = {
-            Quest = [=[Where the Heart Is|1|50|50|0|0|0]=],
+            Quest = [=[Where the Heart Is|1|50|50|0|59|0]=],
             Start = "161458|1163|32|55.90|30.30",
         },
         [58595] = {
@@ -33586,22 +28691,22 @@ function Nx.ModQuests:Data5()
             Start = "161738|1527|32|27.90|63.30",
         },
         [58615] = {
-            Quest = [=[Whispers in the Dark||50|50|0|0|0]=],
+            Quest = [=[Whispers in the Dark||50|50|0|59|0]=],
             Start = "161805|1473|32|50.10|59.10",
             End = "161805|1473|32|50.10|59.10",
         },
         [58631] = {
-            Quest = [=[Into Dreams||50|50|0|0|0]=],
+            Quest = [=[Into Dreams||50|50|0|59|0]=],
             Start = "152206|1473|32|50.10|59.10",
             End = "152206|1473|32|50.10|59.10",
         },
         [58632] = {
-            Quest = [=[Ny'alotha, the Waking City: The Corruptor's End||50|50|0|0|0]=],
+            Quest = [=[Ny'alotha, the Waking City: The Corruptor's End||50|50|0|59|0]=],
             Start = "152206|1473|32|50.10|59.10",
             End = "152206|1473|32|50.10|59.10",
         },
         [58634] = {
-            Quest = [=[Opening the Gateway||50|50|57374|0|0]=],
+            Quest = [=[Opening the Gateway||50|50|57374|59|0]=],
             Start = "155496|1473|32|46.10|64.00",
             End = "155496|1473|32|46.10|64.00",
         },
@@ -33666,10 +28771,10 @@ function Nx.ModQuests:Data5()
             Start = "162178|84|32|53.20|15.00",
         },
         [58707] = {
-            Quest = [=[Sorting Through Visions||50|50|0|0|0]=],
+            Quest = [=[Sorting Through Visions||50|50|0|174|0]=],
         },
         [58737] = {
-            Quest = [=[Magni's Findings||50|50|0|0|0]=],
+            Quest = [=[Magni's Findings||50|50|0|59|0]=],
             Start = "152206|1473|32|50.10|59.10",
             End = "152206|1473|32|50.10|59.10",
         },
@@ -33923,12 +29028,10 @@ function Nx.ModQuests:Data5()
         },
         [58887] = {
             Quest = [=[Alpaca It In||50|50|0|0|0]=],
+            Start = "162765|1527|32|15.00|62.00",
         },
         [58904] = {
             Quest = [=[Shards of Corruption||50|50|0|0|0]=],
-        },
-        [58991] = {
-            Quest = [=[Curious Corruption||50|50|0|0|0]=],
         },
         [59000] = {
             Quest = [=[Elements of Corruption||50|50|0|0|0]=],
@@ -33981,169 +29084,145 @@ function Nx.ModQuests:Data5()
         [59086] = {
             Quest = [=[Manor of Minions||50|0|0|0|0]=],
         },
-        [59340] = {
-            Quest = [=[Gallath's Bell||48|48|0|0|0]=],
-        },
-        [59344] = {
-            Quest = [=[Renavyth's Medallion||48|48|0|0|0]=],
-        },
-        [59345] = {
-            Quest = [=[Phantoriax's Warsword||48|48|0|0|0]=],
-        },
-        [59346] = {
-            Quest = [=[Indri's Flute||48|48|0|0|0]=],
-        },
         [59731] = {
             Quest = [=[An Expected Guest||50|50|0|0|0]=],
             Start = "160262|1701|32|44.50|39.10",
             End = "160262|1701|32|44.50|39.10",
         },
         [59751] = {
-            Quest = [=[Through the Shattered Sky||50|50|0|0|0]=],
+            Quest = [=[Through the Shattered Sky||50|50|0|164|0]=],
             Start = "169076|1360|32|50.71|54.63",
         },
         [59752] = {
-            Quest = [=[A Fractured Blade||50|50|0|0|0]=],
+            Quest = [=[A Fractured Blade||50|50|0|164|0]=],
             Start = "165918|1648|32|19.20|57.00",
         },
         [59753] = {
-            Quest = [=[Ruiner's End||50|50|0|0|0]=],
+            Quest = [=[Ruiner's End||50|50|0|164|0]=],
             Start = "170624|1648|32|22.70|51.90",
         },
         [59754] = {
-            Quest = [=[On Blackened Wings||50|50|0|0|0]=],
+            Quest = [=[On Blackened Wings||50|50|0|164|0]=],
             Start = "166980|1648|32|22.30|32.94",
         },
         [59755] = {
-            Quest = [=[A Flight from Darkness||50|50|0|0|0]=],
+            Quest = [=[A Flight from Darkness||50|50|0|164|0]=],
             Start = "166980|1648|32|23.13|31.75",
         },
         [59756] = {
-            Quest = [=[A Moment's Respite||50|50|0|0|0]=],
+            Quest = [=[A Moment's Respite||50|50|0|164|0]=],
             Start = "166980|1648|32|24.46|36.23",
         },
         [59757] = {
-            Quest = [=[Field Seance||50|50|0|0|0]=],
+            Quest = [=[Field Seance||50|50|0|164|0]=],
             Start = "165918|1648|32|24.54|36.04",
         },
         [59758] = {
-            Quest = [=[Speaking to the Dead||50|50|0|0|0]=],
+            Quest = [=[Speaking to the Dead||50|50|0|164|0]=],
             Start = "166723|1648|32|24.54|36.04",
         },
         [59759] = {
-            Quest = [=[The Lion's Cage||50|50|0|0|0]=],
+            Quest = [=[The Lion's Cage||50|50|0|164|0]=],
             Start = "166980|1648|32|24.46|36.23",
         },
         [59760] = {
-            Quest = [=[The Afflictor's Key||50|50|0|0|0]=],
+            Quest = [=[The Afflictor's Key||50|50|0|164|0]=],
             Start = "167833|1648|32|25.00|13.30",
         },
         [59761] = {
-            Quest = [=[An Undeserved Fate||50|50|0|0|0]=],
+            Quest = [=[An Undeserved Fate||50|50|0|164|0]=],
             Start = "167833|1648|32|25.00|13.30",
         },
         [59762] = {
-            Quest = [=[By and Down the River||50|50|0|0|0]=],
+            Quest = [=[By and Down the River||50|50|0|164|0]=],
             Start = "166980|1648|32|24.28|37.05",
         },
         [59765] = {
-            Quest = [=[Wounds Beyond Flesh||50|50|0|0|0]=],
+            Quest = [=[Wounds Beyond Flesh||50|50|0|164|0]=],
             Start = "166981|1648|32|29.60|43.60",
         },
         [59766] = {
-            Quest = [=[A Good Axe||50|50|0|0|0]=],
+            Quest = [=[A Good Axe||50|50|0|164|0]=],
             Start = "167827|1648|32|29.60|43.60",
         },
         [59767] = {
-            Quest = [=[The Path to Salvation||50|50|0|0|0]=],
+            Quest = [=[The Path to Salvation||50|50|0|164|0]=],
             Start = "166980|1648|32|29.47|44.02",
         },
         [59770] = {
-            Quest = [=[Stand as One||50|50|0|0|0]=],
+            Quest = [=[Stand as One||50|50|0|164|0]=],
             Start = "167833|1648|32|42.48|42.19",
         },
         [59772] = {
-            Quest = [=[Research Ruination||50|50|0|0|0]=],
+            Quest = [=[Research Ruination||50|50|0|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
-        [59775] = {
-            Quest = [=[Help Indigo find Penthia||48|48|0|0|0]=],
-        },
         [59776] = {
-            Quest = [=[From the Mouths of Madness||50|50|0|0|0]=],
+            Quest = [=[From the Mouths of Madness||50|50|0|164|0]=],
             Start = "167833|1648|32|25.00|13.40",
         },
-        [59777] = {
-            Quest = [=[Help Calix find Amethia||48|48|0|0|0]=],
-        },
-        [59778] = {
-            Quest = [=[Help Sawn find Varrik||48|48|0|0|0]=],
-        },
-        [59779] = {
-            Quest = [=[Help Moriaz find Buttons||48|48|0|0|0]=],
-        },
         [59782] = {
-            Quest = [=[The Deathspeaker's Devout||50|50|0|0|0]=],
+            Quest = [=[The Deathspeaker's Devout||50|50|0|68|0]=],
             Start = "168880|118|32|66.00|21.90",
             End = "168880|118|32|66.00|21.90",
         },
         [59783] = {
-            Quest = [=[Cultist Captors||50|50|0|0|0]=],
+            Quest = [=[Cultist Captors||50|50|0|68|0]=],
             Start = "168880|118|32|66.00|21.90",
             End = "168880|118|32|66.00|21.90",
         },
         [59838] = {
-            Quest = [=[Scourge War Machines||50|50|0|0|0]=],
+            Quest = [=[Scourge War Machines||50|50|0|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [59839] = {
-            Quest = [=[WARNING: This is Only a Test!||50|50|0|0|0]=],
+            Quest = [=[WARNING: This is Only a Test!||50|50|0|68|0]=],
             Start = "172905|118|32|66.00|22.40",
         },
         [59840] = {
             Quest = [=[Divine Gratitude||50|50|0|0|0]=],
         },
         [59847] = {
-            Quest = [=[Defending the Rampart||50|50|0|0|0]=],
+            Quest = [=[Defending the Rampart||50|50|0|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [59851] = {
-            Quest = [=[Frozen Solid||50|50|0|0|0]=],
+            Quest = [=[Frozen Solid||50|50|0|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [59863] = {
-            Quest = [=[Combat Nullifier 07-X||50|0|0|0|0]=],
+            Quest = [=[Combat Nullifier 07-X||50|0|0|68|0]=],
             Start = "173124|118|32|73.10|35.60",
         },
         [59876] = {
-            Quest = [=[Field Reports|2|50|50|60759|0|0]=],
+            Quest = [=[Field Reports|2|50|50|60759|68|0]=],
             Start = "166383|84|32|65.70|77.10",
             End = "166383|84|32|65.70|77.10",
         },
         [59877] = {
-            Quest = [=[A Message from Icecrown|2|50|50|60169|0|0]=],
+            Quest = [=[A Message from Icecrown|2|50|50|60169|68|0]=],
             Start = "166383|84|32|65.70|77.10",
             End = "166383|84|32|65.70|77.10",
         },
         [59878] = {
-            Quest = [=[Too Many Whelps||50|50|0|0|0]=],
+            Quest = [=[Too Many Whelps||50|50|0|68|0]=],
             Start = "167045|118|32|71.00|21.90",
             End = "167045|118|32|71.00|21.90",
         },
         [59907] = {
-            Quest = [=[Mawsworn Menace||50|50|0|0|0]=],
+            Quest = [=[Mawsworn Menace||50|50|0|164|0]=],
             Start = "166723|1648|32|19.20|57.00",
         },
         [59914] = {
-            Quest = [=[Fear to Tread||50|50|0|0|0]=],
+            Quest = [=[Fear to Tread||50|50|0|164|0]=],
             Start = "165918|1648|32|21.50|41.96",
         },
         [59915] = {
-            Quest = [=[Soul in Hand||50|50|0|0|0]=],
+            Quest = [=[Soul in Hand||50|50|0|164|0]=],
             Start = "166723|1648|32|24.54|36.04",
         },
         [59925] = {
@@ -34153,17 +29232,17 @@ function Nx.ModQuests:Data5()
             Quest = [=[Wide Worlds of Catalysts||50|50|0|0|0]=],
         },
         [60003] = {
-            Quest = [=[A Valiant Effort|2|50|50|0|0|0]=],
+            Quest = [=[A Valiant Effort|2|50|50|0|68|0]=],
             Start = "168123|118|32|71.00|22.00",
             End = "168123|118|32|71.00|22.00",
         },
         [60004] = {
-            Quest = [=[A Valiant Effort|1|50|50|0|0|0]=],
+            Quest = [=[A Valiant Effort|1|50|50|0|68|0]=],
             Start = "168123|118|32|71.00|22.00",
             End = "168123|118|32|71.00|22.00",
         },
         [60057] = {
-            Quest = [=[Necrotic Wake: A Paragon's Plight||50|50|0|0|0]=],
+            Quest = [=[Necrotic Wake: A Paragon's Plight||50|50|0|77|0]=],
             Start = "167584|1533|32|40.90|55.30",
         },
         [60092] = {
@@ -34197,18 +29276,18 @@ function Nx.ModQuests:Data5()
             Quest = [=[The Winding Halls||50|0|0|0|0]=],
         },
         [60113] = {
-            Quest = [=[An Urgent Request|2|50|50|60116|0|0]=],
+            Quest = [=[An Urgent Request|2|50|50|60116|68|0]=],
         },
         [60115] = {
-            Quest = [=[An Urgent Request|1|50|50|0|0|0]=],
+            Quest = [=[An Urgent Request|1|50|50|0|68|0]=],
         },
         [60116] = {
-            Quest = [=[Cause for Distraction|2|50|50|60117|0|0]=],
+            Quest = [=[Cause for Distraction|2|50|50|60117|68|0]=],
             Start = "167329|84|32|39.40|64.10",
             End = "167329|84|32|39.40|64.10",
         },
         [60117] = {
-            Quest = [=[Return of the Crusade|2|50|50|59876|0|0]=],
+            Quest = [=[Return of the Crusade|2|50|50|59876|68|0]=],
             Start = "167329|84|32|39.40|64.10",
             End = "167329|84|32|39.40|64.10",
         },
@@ -34250,7 +29329,7 @@ function Nx.ModQuests:Data5()
             Start = "167424|1671|32|50.64|62.22",
         },
         [60169] = {
-            Quest = [=[Securing the Area||50|50|0|0|0]=],
+            Quest = [=[Securing the Area||50|50|0|68|0]=],
             Start = "167045|118|32|71.00|22.00",
             End = "167045|118|32|71.00|22.00",
         },
@@ -34284,17 +29363,8 @@ function Nx.ModQuests:Data5()
             Quest = [=[The Call of the Hunt||50|50|0|0|0]=],
             Start = "171992|1565|32|36.20|69.60",
         },
-        [60337] = {
-            Quest = [=[Pupa Trooper||50|50|0|0|0]=],
-        },
-        [60475] = {
-            Quest = [=[We'll Workshop It||50|50|0|0|0]=],
-        },
-        [60476] = {
-            Quest = [=[Spriggan Size Me!||50|50|0|0|0]=],
-        },
         [60545] = {
-            Quest = [=[Shadowlands: A Chilling Summons|2|50|50|0|0|0]=],
+            Quest = [=[Shadowlands: A Chilling Summons|2|50|50|0|164|0]=],
             Start = "176554|84|32|56.23|17.31",
             Objectives = {
                 [1] = {
@@ -34305,14 +29375,11 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
-        [60573] = {
-            Quest = [=[Meatball's Revenge||48|48|0|0|0]=],
-        },
         [60643] = {
             Quest = [=[[OLD NOT USED]||50|50|0|0|0]=],
         },
         [60644] = {
-            Quest = [=[Draw Out the Darkness||50|50|0|0|0]=],
+            Quest = [=[Draw Out the Darkness||50|50|0|164|0]=],
             Start = "167827|1648|32|29.55|43.93",
         },
         [60645] = {
@@ -34322,17 +29389,17 @@ function Nx.ModQuests:Data5()
             Quest = [=[Champion: Meatball||50|50|0|0|0]=],
         },
         [60669] = {
-            Quest = [=[Cause for Distraction|1|50|50|60670|0|0]=],
+            Quest = [=[Cause for Distraction|1|50|50|60670|68|0]=],
             Start = "169928|85|32|49.20|73.70",
             End = "169928|85|32|49.20|73.70",
         },
         [60670] = {
-            Quest = [=[Return of the Crusade|1|50|50|60725|0|0]=],
+            Quest = [=[Return of the Crusade|1|50|50|60725|68|0]=],
             Start = "169928|85|32|49.20|73.70",
             End = "169928|85|32|49.20|73.70",
         },
         [60725] = {
-            Quest = [=[Field Reports|1|50|50|60759|0|0]=],
+            Quest = [=[Field Reports|1|50|50|60759|68|0]=],
             Start = "169878|85|32|52.90|77.30",
             End = "169878|85|32|52.90|77.30",
         },
@@ -34340,87 +29407,77 @@ function Nx.ModQuests:Data5()
             Quest = [=[[OLD NOT USED]||50|50|0|0|0]=],
         },
         [60727] = {
-            Quest = [=[A Message from Icecrown|1|50|50|60169|0|0]=],
+            Quest = [=[A Message from Icecrown|1|50|50|60169|68|0]=],
             Start = "169878|85|32|52.90|77.20",
         },
         [60759] = {
-            Quest = [=[Damned Intruders|1|50|50|60761|0|0]=],
+            Quest = [=[Damned Intruders|1|50|50|60761|68|0]=],
             Start = "170084|10|32|49.50|59.40",
         },
         [60761] = {
-            Quest = [=[Return of the Scourge|1|50|50|0|0|0]=],
+            Quest = [=[Return of the Scourge|1|50|50|0|68|0]=],
             Start = "170084|10|32|49.40|59.30",
         },
         [60766] = {
-            Quest = [=[Damned Intruders|2|50|50|60767|0|0]=],
+            Quest = [=[Damned Intruders|2|50|50|60767|68|0]=],
             Start = "166184|47|32|73.50|47.20",
             End = "166184|47|32|73.50|47.20",
         },
         [60767] = {
-            Quest = [=[Return of the Scourge|2|50|50|0|0|0]=],
+            Quest = [=[Return of the Scourge|2|50|50|0|68|0]=],
             Start = "166184|47|32|73.50|47.20",
             End = "166184|47|32|73.50|47.20",
         },
         [60827] = {
-            Quest = [=[Advancing the Effort||50|50|0|0|0]=],
+            Quest = [=[Advancing the Effort||50|50|0|68|0]=],
             Start = "168123|118|32|71.00|22.00",
             End = "168123|118|32|71.00|22.00",
         },
         [60828] = {
-            Quest = [=[A New Foothold||50|50|0|0|0]=],
+            Quest = [=[A New Foothold||50|50|0|68|0]=],
             Start = "168123|118|32|71.00|22.00",
             End = "168123|118|32|71.00|22.00",
         },
         [60841] = {
-            Quest = [=[Evacuation Effort||50|50|0|0|0]=],
+            Quest = [=[Evacuation Effort||50|50|0|68|0]=],
             Start = "167045|118|32|71.00|21.90",
             End = "167045|118|32|71.00|21.90",
         },
         [60843] = {
-            Quest = [=[Cult Couture||50|50|60861|0|0]=],
+            Quest = [=[Cult Couture||50|50|60861|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [60861] = {
-            Quest = [=[Secrets in Shadows||50|50|62225|0|0]=],
+            Quest = [=[Secrets in Shadows||50|50|62225|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [60867] = {
-            Quest = [=[A Message from Above||50|50|60932|0|0]=],
+            Quest = [=[A Message from Above||50|50|60932|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [60869] = {
-            Quest = [=[With Hope in Hand|1|50|50|0|0|0]=],
+            Quest = [=[With Hope in Hand|1|50|50|0|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [60871] = {
-            Quest = [=[With Hope in Hand|2|50|50|0|0|0]=],
+            Quest = [=[With Hope in Hand|2|50|50|0|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [60932] = {
-            Quest = [=[Only Shadows Remain||50|50|0|0|0]=],
+            Quest = [=[Only Shadows Remain||50|50|0|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
-        [61097] = {
-            Quest = [=[Supplies from The Ascended||48|48|0|0|0]=],
-            Start = "160470|1533|32|52.20|47.00",
-            End = "160470|1533|32|52.20|47.00",
-        },
-        [61098] = {
-            Quest = [=[Supplies from The Wild Hunt||45|45|0|0|0]=],
-            Start = "158556|1565|32|48.40|50.40",
-            End = "158556|1565|32|48.40|50.40",
-        },
         [61112] = {
-            Quest = [=[A Hunger for Flesh|2|50|50|0|0|0]=],
+            Quest = [=[A Hunger for Flesh|2|50|50|0|68|0]=],
         },
         [61114] = {
-            Quest = [=[A Hunger for Flesh|1|50|50|0|0|0]=],
+            Quest = [=[A Hunger for Flesh|1|50|50|0|68|0]=],
         },
         [61217] = {
             Quest = [=[Champion: Thela Soulsipper||50|50|0|0|0]=],
@@ -34439,24 +29496,7 @@ function Nx.ModQuests:Data5()
         },
         [61223] = {
             Quest = [=[Champion: Ayeleth the Deprived||50|50|0|0|0]=],
-        },
-        [61228] = {
-            Quest = [=[Dug's Missing Shovel||48|48|0|0|0]=],
-        },
-        [61234] = {
-            Quest = [=[Stonehuck's Sinstone||48|48|0|0|0]=],
-        },
-        [61243] = {
-            Quest = [=[Thela's Memory Stone||48|48|0|0|0]=],
-        },
-        [61248] = {
-            Quest = [=[Kaletar's Freedom||48|48|0|0|0]=],
-        },
-        [61259] = {
-            Quest = [=[Ayeleth's Hunger||48|48|0|0|0]=],
-        },
-        [61262] = {
-            Quest = [=[Nerith's Vengeance||48|48|0|0|0]=],
+            Start = "171918|1778|32|70.00|55.80",
         },
         [61313] = {
             Quest = [=[Champion: Kythekios||50|50|0|0|0]=],
@@ -34479,9 +29519,6 @@ function Nx.ModQuests:Data5()
         [61321] = {
             Quest = [=[Champion: Ispiron||50|50|0|0|0]=],
         },
-        [61322] = {
-            Quest = [=[Kythekios' Memory Stone||48|48|0|0|0]=],
-        },
         [61326] = {
             Quest = [=[[[Deprecated]]||50|50|0|0|0]=],
         },
@@ -34494,23 +29531,9 @@ function Nx.ModQuests:Data5()
         [61329] = {
             Quest = [=[[[Deprecated]]||50|50|0|0|0]=],
         },
-        [61330] = {
-            Quest = [=[Teliah's Stolen Spear||48|48|0|0|0]=],
-        },
-        [61340] = {
-            Quest = [=[Telethakas' Revenge||48|48|0|0|0]=],
-        },
-        [61347] = {
-            Quest = [=[Molako's Freedom||48|48|0|0|0]=],
-        },
-        [61348] = {
-            Quest = [=[Hala's Sword||48|48|0|0|0]=],
-        },
-        [61395] = {
-            Quest = [=[Spare Parts||48|48|0|0|0]=],
-        },
         [61421] = {
             Quest = [=[Champion: Blisswing||50|50|0|0|0]=],
+            Start = "172275|1778|32|70.00|55.80",
         },
         [61422] = {
             Quest = [=[Champion: Duskleaf||50|50|0|0|0]=],
@@ -34529,38 +29552,13 @@ function Nx.ModQuests:Data5()
             Quest = [=[Champion: Yira'lya||50|50|0|0|0]=],
             Start = "172243|1776|32|62.90|46.90",
         },
-        [61427] = {
-            Quest = [=[Blisswing's Rescue||48|48|0|0|0]=],
-        },
-        [61428] = {
-            Quest = [=[Duskleaf's Revenge||48|48|0|0|0]=],
-        },
-        [61429] = {
-            Quest = [=[Karynmwylyann's Roots||48|48|0|0|0]=],
-        },
-        [61430] = {
-            Quest = [=[Chalkyth's Saber||48|48|0|0|0]=],
-        },
-        [61431] = {
-            Quest = [=[Lloth'wellyn's Breakthrough||48|48|0|0|0]=],
-        },
-        [61440] = {
-            Quest = [=[Enchanting: Boundless Basket||50|50|0|0|0]=],
-            Start = "0|1565|32|48.30|51.30",
-            End = "0|1565|32|48.30|51.30",
-        },
         [61486] = {
-            Quest = [=[The Banshee's Champion|2|50|50|0|0|0]=],
+            Quest = [=[The Banshee's Champion|2|50|50|0|68|0]=],
             Start = "172510|84|32|65.55|77.00",
         },
         [61488] = {
-            Quest = [=[The Banshee's Champion|1|50|50|0|0|0]=],
+            Quest = [=[The Banshee's Champion|1|50|50|0|68|0]=],
             Start = "172514|85|32|53.00|77.00",
-        },
-        [61608] = {
-            Quest = [=[Enchanting: Unbreakable Crystal||50|50|0|0|0]=],
-            Start = "0|1536|32|50.30|53.20",
-            End = "0|1536|32|50.30|53.20",
         },
         [61715] = {
             Quest = [=[Request of the Highlord||50|50|61716|0|0]=],
@@ -34571,10 +29569,10 @@ function Nx.ModQuests:Data5()
             Start = "173384|1670|32|40.29|68.70",
         },
         [61736] = {
-            Quest = [=[Stolen Away||50|50|0|0|0]=],
+            Quest = [=[Stolen Away||50|50|0|164|0]=],
         },
         [61737] = {
-            Quest = [=[Stolen Away||50|50|0|0|0]=],
+            Quest = [=[Stolen Away||50|50|0|164|0]=],
         },
         [61871] = {
             Quest = [=[To Current Matters|1|50|50|0|0|0]=],
@@ -34587,7 +29585,7 @@ function Nx.ModQuests:Data5()
             End = "136907|1021|32|50.10|53.60",
         },
         [61874] = {
-            Quest = [=[Shadowlands: A Chilling Summons|1|50|50|0|0|0]=],
+            Quest = [=[Shadowlands: A Chilling Summons|1|50|50|0|164|0]=],
             Start = "176554|85|32|40.79|80.07",
             Objectives = {
                 [1] = {
@@ -34600,6 +29598,7 @@ function Nx.ModQuests:Data5()
         },
         [61957] = {
             Quest = [=[Champion: Ashraka||50|50|0|0|0]=],
+            Start = "173395|1778|32|70.00|55.80",
         },
         [61958] = {
             Quest = [=[Champion: Gorgelimb||50|50|0|0|0]=],
@@ -34609,20 +29608,19 @@ function Nx.ModQuests:Data5()
         },
         [61960] = {
             Quest = [=[Champion: Xertora||50|50|0|0|0]=],
+            Start = "173401|1776|32|62.90|46.90",
         },
         [61961] = {
             Quest = [=[Champion: Rattlebag||50|50|0|0|0]=],
         },
         [61962] = {
             Quest = [=[Champion: Velkein||50|50|0|0|0]=],
+            Start = "173400|1776|32|62.90|46.90",
         },
         [62000] = {
             Quest = [=[Choosing Your Purpose||50|50|0|0|0]=],
             Start = "159478|1670|32|38.80|70.00",
             End = "159478|1670|32|38.80|70.00",
-        },
-        [62051] = {
-            Quest = [=[Gormling Toss: Spirit Glen||48|48|0|0|0]=],
         },
         [62072] = {
             Quest = [=[Familiar Faces||50|0|0|0|0]=],
@@ -34679,7 +29677,7 @@ function Nx.ModQuests:Data5()
             Quest = [=[Professions - Reuse||50|50|0|0|0]=],
         },
         [62157] = {
-            Quest = [=[Scouting from a Safe Distance||50|50|60827|0|0]=],
+            Quest = [=[Scouting from a Safe Distance||50|50|60827|68|0]=],
             Start = "168123|118|32|71.00|22.00",
             End = "168123|118|32|71.00|22.00",
         },
@@ -34689,12 +29687,12 @@ function Nx.ModQuests:Data5()
             End = "159478|1670|32|38.80|70.00",
         },
         [62162] = {
-            Quest = [=[A Message from the Justicar|2|50|50|60828|0|0]=],
+            Quest = [=[A Message from the Justicar|2|50|50|60828|68|0]=],
             Start = "166383|84|32|65.70|77.10",
             End = "166383|84|32|65.70|77.10",
         },
         [62163] = {
-            Quest = [=[A Message from the Justicar|1|50|50|60828|0|0]=],
+            Quest = [=[A Message from the Justicar|1|50|50|60828|68|0]=],
             Start = "169878|85|32|52.90|77.30",
             End = "169878|85|32|52.90|77.30",
         },
@@ -34705,31 +29703,16 @@ function Nx.ModQuests:Data5()
             Quest = [=[Tal-Inara's Call||50|50|0|0|0]=],
         },
         [62185] = {
-            Quest = [=[Fighting for Attention||50|50|60861|0|0]=],
+            Quest = [=[Fighting for Attention||50|50|60861|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [62225] = {
-            Quest = [=[Bursting the Bubble||50|50|60867|0|0]=],
+            Quest = [=[Bursting the Bubble||50|50|60867|68|0]=],
             Start = "-357758|118|32|61.40|63.80",
         },
-        [62226] = {
-            Quest = [=[Talethi's Desire||48|48|0|0|0]=],
-        },
-        [62227] = {
-            Quest = [=[Xertora's Construct||48|48|0|0|0]=],
-        },
-        [62229] = {
-            Quest = [=[Ashraka's Intelligence||48|48|0|0|0]=],
-        },
-        [62231] = {
-            Quest = [=[Velkein's Blade||48|48|0|0|0]=],
-        },
-        [62236] = {
-            Quest = [=[Rattlebag's Lost Armor||48|48|0|0|0]=],
-        },
         [62262] = {
-            Quest = [=[Fungal Feeding||50|50|0|0|0]=],
+            Quest = [=[Fungal Feeding||50|50|0|68|0]=],
             Start = "167572|118|32|71.60|21.00",
         },
         [62275] = {
@@ -34753,17 +29736,17 @@ function Nx.ModQuests:Data5()
             End = "159478|1670|32|38.80|70.00",
         },
         [62292] = {
-            Quest = [=[Pitch Black Scourgestones||50|50|0|0|0]=],
+            Quest = [=[Pitch Black Scourgestones||50|50|0|68|0]=],
             Start = "169718|118|32|71.00|21.60",
             End = "169718|118|32|71.00|21.60",
         },
         [62293] = {
-            Quest = [=[Darkened Scourgestones||50|50|0|0|0]=],
+            Quest = [=[Darkened Scourgestones||50|50|0|68|0]=],
             Start = "169718|118|32|71.00|21.60",
             End = "169718|118|32|71.00|21.60",
         },
         [62295] = {
-            Quest = [=[Cleaning Out the Vault||50|0|0|0|0]=],
+            Quest = [=[Cleaning Out the Vault||50|0|0|68|0]=],
             Start = "173869|118|32|42.80|29.90",
         },
         [62301] = {
@@ -34818,25 +29801,25 @@ function Nx.ModQuests:Data5()
             Quest = [=[Shadowlands (50-59) E||50|50|0|0|0]=],
         },
         [62365] = {
-            Quest = [=[Careful Creations||50|50|0|0|0]=],
+            Quest = [=[Careful Creations||50|50|0|68|0]=],
             Start = "173997|118|32|35.30|66.30",
             End = "173997|118|32|35.30|66.30",
         },
         [62371] = {
-            Quest = [=[Tirna Scithe: A Warning Silence||50|50|0|0|0]=],
+            Quest = [=[Tirna Scithe: A Warning Silence||50|50|0|77|0]=],
             Start = "168032|1565|32|48.30|50.50",
         },
         [62401] = {
-            Quest = [=[Strange Scourgestones||50|50|0|0|0]=],
+            Quest = [=[Strange Scourgestones||50|50|0|68|0]=],
             Start = "169718|118|32|71.00|21.60",
             End = "169718|118|32|71.00|21.60",
         },
         [62473] = {
-            Quest = [=[What's Old is New||50|50|0|0|0]=],
+            Quest = [=[What's Old is New||50|50|0|68|0]=],
             Start = "167577|118|32|72.08|20.72",
         },
         [62484] = {
-            Quest = [=[Werk In Progress||50|50|0|0|0]=],
+            Quest = [=[Werk In Progress||50|50|0|68|0]=],
             Start = "173997|118|32|35.30|66.30",
             End = "173997|118|32|35.30|66.30",
         },
@@ -34861,20 +29844,20 @@ function Nx.ModQuests:Data5()
             End = "160262|1701|32|44.60|39.00",
         },
         [62553] = {
-            Quest = [=[Delaying Their Efforts||50|50|0|0|0]=],
+            Quest = [=[Delaying Their Efforts||50|50|0|68|0]=],
             Start = "167045|118|32|71.00|21.90",
             End = "167045|118|32|71.00|21.90",
         },
         [62584] = {
-            Quest = [=[Frontline Resupply||50|50|0|0|0]=],
+            Quest = [=[Frontline Resupply||50|50|0|68|0]=],
             Start = "170467|118|32|44.90|44.70",
             End = "170467|118|32|44.90|44.70",
         },
         [62594] = {
-            Quest = [=[The Safety of Others|2|50|0|0|0|0]=],
+            Quest = [=[The Safety of Others|2|50|0|0|68|0]=],
         },
         [62595] = {
-            Quest = [=[The Safety of Others|1|50|0|0|0|0]=],
+            Quest = [=[The Safety of Others|1|50|0|0|68|0]=],
         },
         [62644] = {
             Quest = [=[LFGDungeons - SL - Normal Random - 1st||50|50|0|0|0]=],
@@ -34948,9 +29931,6 @@ function Nx.ModQuests:Data5()
         [62801] = {
             Quest = [=[The Call of Fate||50|50|0|0|0]=],
         },
-        [62993] = {
-            Quest = [=[The Riddle of Death||48|48|0|0|0]=],
-        },
         [62999] = {
             Quest = [=[Champion: Croman||50|50|0|0|0]=],
         },
@@ -34990,31 +29970,25 @@ function Nx.ModQuests:Data5()
             End = "159478|1670|32|38.80|69.90",
         },
         [63494] = {
-            Quest = [=[The Anvil-Thane's Designs||50|50|0|0|0]=],
+            Quest = [=[The Anvil-Thane's Designs||50|50|0|65|0]=],
             Start = "144154|1186|32|57.20|31.90",
             End = "144154|1186|32|57.20|31.90",
         },
         [63498] = {
-            Quest = [=[Brawl or Brew||50|50|0|0|0]=],
+            Quest = [=[Brawl or Brew||50|50|0|65|0]=],
             Start = "176828|1186|32|51.70|33.10",
         },
         [63501] = {
-            Quest = [=[It's Called Borrowing||50|50|63502|0|0]=],
+            Quest = [=[It's Called Borrowing||50|50|63502|65|0]=],
         },
         [63502] = {
-            Quest = [=[Weapons o' the Dark Iron||50|50|65563|0|0]=],
+            Quest = [=[Weapons o' the Dark Iron||50|50|65563|65|0]=],
             Start = "144154|1186|32|57.20|31.90",
             End = "144154|1186|32|57.20|31.90",
         },
         [63771] = {
             Quest = [=[Fate's Reminder||50|50|0|0|0]=],
-        },
-        [63823] = {
-            Quest = [=[Night Fae Assault||50|50|0|0|0]=],
-            Start = "178828|1543|32|22.40|43.30",
-        },
-        [63987] = {
-            Quest = [=[Ve'lor's Lost Parcel||48|48|0|0|0]=],
+            Start = "164173|1670|32|19.60|50.20",
         },
         [64168] = {
             Quest = [=[Champion: Spore of Marasmius||50|50|0|0|0]=],
@@ -35039,30 +30013,6 @@ function Nx.ModQuests:Data5()
         },
         [64175] = {
             Quest = [=[Champion: Lassik Spinebender||50|50|0|0|0]=],
-        },
-        [64184] = {
-            Quest = [=[Missing Friend||48|48|0|0|0]=],
-        },
-        [64185] = {
-            Quest = [=[Assist Ella With ?||48|48|0|0|0]=],
-        },
-        [64186] = {
-            Quest = [=[ELGU - 007's Missing Power Core||48|48|0|0|0]=],
-        },
-        [64187] = {
-            Quest = [=[Kiaranyka's Search||48|48|0|0|0]=],
-        },
-        [64188] = {
-            Quest = [=[Ryuja's Supplies||48|48|0|0|0]=],
-        },
-        [64189] = {
-            Quest = [=[Kinessa's Support||48|48|0|0|0]=],
-        },
-        [64190] = {
-            Quest = [=[Steadyhands' Platter||48|48|0|0|0]=],
-        },
-        [64191] = {
-            Quest = [=[Lassik's Gear||48|48|0|0|0]=],
         },
         [64210] = {
             Quest = [=[The Box of Many Things||50|50|64216|0|0]=],
@@ -35114,12 +30064,12 @@ function Nx.ModQuests:Data5()
             Start = "181328|1911|32|35.50|46.90",
         },
         [65563] = {
-            Quest = [=[Delivery for Kasea||50|50|65564|0|0]=],
+            Quest = [=[Delivery for Kasea||50|50|65564|65|0]=],
             Start = "144154|1186|32|57.20|31.90",
             End = "144154|1186|32|57.20|31.90",
         },
         [65564] = {
-            Quest = [=[Good Fiery Boy||50|50|0|0|0]=],
+            Quest = [=[Good Fiery Boy||50|50|0|65|0]=],
             Start = "144119|1186|32|47.70|47.00",
         },
         [65625] = {
@@ -35205,426 +30155,417 @@ function Nx.ModQuests:Data5()
             End = "185851|2070|32|61.90|67.80",
         },
         [72405] = {
-            Quest = [=[An Unlikely Informant|2|50|50|0|0|0]=],
+            Quest = [=[An Unlikely Informant|2|50|50|0|93|0]=],
             Start = "198884|84|32|87.50|30.80",
             End = "198896|0|32|0.00|0.00",
         },
         [72408] = {
-            Quest = [=[A Window to the Past|2|50|50|0|0|0]=],
+            Quest = [=[A Window to the Past|2|50|50|0|93|0]=],
             Start = "198896|37|32|44.30|66.20",
             End = "198883|0|32|0.00|0.00",
         },
         [72409] = {
-            Quest = [=[Rotten Old Memories|2|50|50|0|0|0]=],
+            Quest = [=[Rotten Old Memories|2|50|50|0|93|0]=],
             Start = "198883|37|32|44.30|66.00",
             End = "9563|0|32|0.00|0.00",
         },
         [72424] = {
-            Quest = [=[Looking for Something Specific|2|50|50|0|0|0]=],
+            Quest = [=[Looking for Something Specific|2|50|50|0|93|0]=],
             Start = "9563|36|32|72.80|64.80",
             End = "198896|0|32|0.00|0.00",
         },
         [72426] = {
-            Quest = [=[The New Clessington Estate|2|50|50|0|0|0]=],
+            Quest = [=[The New Clessington Estate|2|50|50|0|93|0]=],
             Start = "198896|37|32|44.30|66.20",
             End = "198896|37|32|44.30|66.20",
         },
         [72430] = {
-            Quest = [=[Misdeeds in Moonbrook|2|50|50|0|0|0]=],
+            Quest = [=[Misdeeds in Moonbrook|2|50|50|0|93|0]=],
             Start = "198883|47|32|18.30|55.00",
         },
         [72431] = {
-            Quest = [=[A Hungry Heritage|2|50|50|0|0|0]=],
+            Quest = [=[A Hungry Heritage|2|50|50|0|93|0]=],
             Start = "198923|52|32|46.70|67.00",
         },
         [72432] = {
-            Quest = [=[Supply Only the Finest Goons|2|50|50|0|0|0]=],
+            Quest = [=[Supply Only the Finest Goons|2|50|50|0|93|0]=],
             Start = "198922|52|32|46.70|66.70",
             End = "198922|52|32|46.70|66.70",
         },
         [72445] = {
-            Quest = [=[To Northshire|2|50|50|0|0|0]=],
+            Quest = [=[To Northshire|2|50|50|0|93|0]=],
             Start = "198924|52|32|46.70|66.70",
             End = "198924|52|32|46.70|66.70",
         },
         [72446] = {
-            Quest = [=[What's Their Problem?|2|50|50|0|0|0]=],
+            Quest = [=[What's Their Problem?|2|50|50|0|93|0]=],
             Start = "198990|425|32|27.70|66.70",
         },
         [72449] = {
-            Quest = [=[Knock It Off!|2|50|50|0|0|0]=],
+            Quest = [=[Knock It Off!|2|50|50|0|93|0]=],
             Start = "198983|425|32|27.90|66.70",
         },
         [72450] = {
-            Quest = [=[The Clessington Will|2|50|50|0|0|0]=],
+            Quest = [=[The Clessington Will|2|50|50|0|93|0]=],
             Start = "198984|425|32|28.00|67.20",
         },
         [72451] = {
-            Quest = [=[Will to Survive|2|50|50|0|0|0]=],
+            Quest = [=[Will to Survive|2|50|50|0|93|0]=],
             Start = "198983|425|32|36.50|51.10",
         },
         [72452] = {
-            Quest = [=[Go with Honor, Friend|2|50|50|0|0|0]=],
+            Quest = [=[Go with Honor, Friend|2|50|50|0|93|0]=],
             Start = "198983|425|32|36.70|51.10",
         },
         [72453] = {
-            Quest = [=[Betrayal of the Brotherhood|2|50|50|0|0|0]=],
+            Quest = [=[Betrayal of the Brotherhood|2|50|50|0|93|0]=],
             Start = "199598|55|32|59.50|59.70",
         },
         [72462] = {
-            Quest = [=[A People in Need of Healing|1|50|50|72464|0|0]=],
+            Quest = [=[A People in Need of Healing|1|50|50|72464|93|0]=],
             Start = "3144|85|32|49.20|72.30",
         },
         [72463] = {
-            Quest = [=[Galgar's Cactus Apple Surprise...|1|50|50|72475|0|0]=],
+            Quest = [=[Galgar's Cactus Apple Surprise...|1|50|50|72475|93|0]=],
             Start = "200760|461|32|50.00|60.00",
         },
         [72464] = {
-            Quest = [=[The Kosh'harg|1|50|50|0|0|0]=],
+            Quest = [=[The Kosh'harg|1|50|50|0|93|0]=],
             Start = "200244|85|32|54.40|78.60",
         },
         [72465] = {
-            Quest = [=[The Blessing of the Land|1|50|50|0|0|0]=],
+            Quest = [=[The Blessing of the Land|1|50|50|0|93|0]=],
             Start = "199148|1|32|52.20|43.00",
             End = "199148|1|32|52.20|43.00",
         },
         [72466] = {
-            Quest = [=[The Spirit of Thunder Ridge|1|50|50|0|0|0]=],
+            Quest = [=[The Spirit of Thunder Ridge|1|50|50|0|93|0]=],
             Start = "199165|1|32|40.60|26.80",
         },
         [72467] = {
-            Quest = [=[The Blessing of the Clan|1|50|50|0|0|0]=],
+            Quest = [=[The Blessing of the Clan|1|50|50|0|93|0]=],
             Start = "199148|1|32|52.20|43.00",
             End = "199148|1|32|52.20|43.00",
         },
         [72474] = {
-            Quest = [=[Tracking a Killer|1|50|50|72475|0|0]=],
+            Quest = [=[Tracking a Killer|1|50|50|72475|93|0]=],
             Start = "10176|461|32|45.20|68.40",
             End = "10176|461|32|45.20|68.40",
         },
         [72475] = {
-            Quest = [=[Cornering Gor'krosh|1|50|50|0|0|0]=],
+            Quest = [=[Cornering Gor'krosh|1|50|50|0|93|0]=],
             Start = "10176|461|32|45.20|68.40",
             End = "10176|461|32|45.20|68.40",
         },
         [72476] = {
-            Quest = [=[The Blessing of the Ancestors|1|50|50|0|0|0]=],
+            Quest = [=[The Blessing of the Ancestors|1|50|50|0|93|0]=],
             Start = "199148|1|32|52.20|43.00",
             End = "199148|1|32|52.20|43.00",
         },
         [72477] = {
-            Quest = [=[Orcish Groceries|1|50|50|0|0|0]=],
+            Quest = [=[Orcish Groceries|1|50|50|0|93|0]=],
             Start = "199383|1|32|50.70|42.70",
             End = "199383|1|32|50.70|42.70",
         },
         [72478] = {
-            Quest = [=[Honor and Glory|1|50|50|0|0|0]=],
+            Quest = [=[Honor and Glory|1|50|50|0|93|0]=],
             Start = "199148|1|32|52.20|43.00",
             End = "199148|1|32|52.20|43.00",
         },
         [72479] = {
-            Quest = [=[Aka'magosh|1|50|50|0|0|0]=],
+            Quest = [=[Aka'magosh|1|50|50|0|93|0]=],
             Start = "200437|1|32|52.30|43.40",
         },
         [72644] = {
-            Quest = [=[An Urgent Matter|2|50|50|72405|0|0]=],
+            Quest = [=[An Urgent Matter|2|50|50|72405|93|0]=],
+            Start = "199340|84|32|54.60|20.00",
         },
         [72854] = {
-            Quest = [=[Our Enemies Abound|1|50|50|0|0|0]=],
+            Quest = [=[Our Enemies Abound|1|50|50|0|93|0]=],
             Start = "186091|2070|32|63.80|68.20",
         },
         [72855] = {
-            Quest = [=[To the Sepulcher||50|50|0|0|0]=],
+            Quest = [=[To the Sepulcher||50|50|0|93|0]=],
             Start = "199761|2070|32|61.20|82.60",
         },
         [72856] = {
-            Quest = [=[Nothing Like the Classic||50|50|0|0|0]=],
+            Quest = [=[Nothing Like the Classic||50|50|0|93|0]=],
             Start = "199767|21|32|45.50|41.90",
             End = "199767|21|32|45.50|41.90",
         },
         [72857] = {
-            Quest = [=[Boom Weed||50|50|0|0|0]=],
+            Quest = [=[Boom Weed||50|50|0|93|0]=],
             Start = "199767|21|32|45.50|41.90",
             End = "199767|21|32|45.50|41.90",
         },
         [72858] = {
-            Quest = [=[Acid Beats Paper||50|50|0|0|0]=],
+            Quest = [=[Acid Beats Paper||50|50|0|93|0]=],
             Start = "199768|21|32|45.40|42.00",
         },
         [72859] = {
-            Quest = [=[A Proper Disguise||50|50|0|0|0]=],
+            Quest = [=[A Proper Disguise||50|50|0|93|0]=],
             Start = "199793|21|32|45.60|41.60",
         },
         [72860] = {
-            Quest = [=[Fear is Our Weapon||50|50|0|0|0]=],
+            Quest = [=[Fear is Our Weapon||50|50|0|93|0]=],
             Start = "199792|21|32|45.40|41.60",
             End = "199792|21|32|45.40|41.60",
         },
         [72861] = {
-            Quest = [=[The Scarlet Spy||50|50|0|0|0]=],
+            Quest = [=[The Scarlet Spy||50|50|0|93|0]=],
             Start = "199792|21|32|45.40|41.60",
             End = "199792|21|32|45.40|41.60",
         },
         [72862] = {
-            Quest = [=[Among Us||50|50|0|0|0]=],
+            Quest = [=[Among Us||50|50|0|93|0]=],
             Start = "199806|21|32|64.00|33.50",
         },
         [72863] = {
-            Quest = [=[The Flight of the Banshee||50|50|0|0|0]=],
+            Quest = [=[The Flight of the Banshee||50|50|0|93|0]=],
             Start = "199879|21|32|70.40|18.20",
         },
         [72864] = {
-            Quest = [=[Death to the Living||50|50|0|0|0]=],
+            Quest = [=[Death to the Living||50|50|0|93|0]=],
             Start = "199885|21|32|70.20|18.10",
         },
         [72865] = {
-            Quest = [=[This is the Hour of the Forsaken||50|50|0|0|0]=],
+            Quest = [=[This is the Hour of the Forsaken||50|50|0|93|0]=],
             Start = "199893|21|32|66.20|31.00",
         },
         [72866] = {
-            Quest = [=[Return to Lordaeron||50|50|0|0|0]=],
+            Quest = [=[Return to Lordaeron||50|50|0|93|0]=],
             Start = "199893|21|32|65.62|23.79",
         },
         [72867] = {
-            Quest = [=[I Am Forsaken||50|50|0|0|0]=],
+            Quest = [=[I Am Forsaken||50|50|0|93|0]=],
             Start = "199922|2070|32|61.80|69.40",
         },
         [73703] = {
-            Quest = [=[A Summon to Orgrimmar|1|50|50|72462|0|0]=],
+            Quest = [=[A Summon to Orgrimmar|1|50|50|72462|93|0]=],
+            Start = "3144|85|32|49.20|72.30",
         },
         [74374] = {
-            Quest = [=[An Important Heirloom|1|50|50|0|0|0]=],
+            Quest = [=[An Important Heirloom|1|50|50|0|93|0]=],
             Start = "199383|1|32|50.70|42.70",
             End = "199383|1|32|50.70|42.70",
         },
-        [74378] = {
-            Quest = [=[The Storm's Fury||45|45|0|0|0]=],
-        },
         [74415] = {
-            Quest = [=[A Worthy Offering|1|50|50|0|0|0]=],
+            Quest = [=[A Worthy Offering|1|50|50|0|93|0]=],
             Start = "201361|1|32|50.80|42.60",
         },
         [74581] = {
-            Quest = [=[The Long Knives|1|50|50|72474|0|0]=],
+            Quest = [=[The Long Knives|1|50|50|72474|93|0]=],
             Start = "199151|1|32|52.30|42.90",
         },
-        [75265] = {
-            Quest = [=[An Urgent Matter|2|50|50|72405|0|0]=],
-            Start = "199340|84|32|54.60|20.00",
-            End = "198884|0|32|0.00|0.00",
-        },
         [75519] = {
-            Quest = [=[The Long Hunt|1|50|50|0|0|0]=],
+            Quest = [=[The Long Hunt|1|50|50|0|93|0]=],
             Start = "204250|18|32|63.00|68.40",
         },
         [75890] = {
-            Quest = [=[The Clarion Call|2|50|50|75891|0|0]=],
+            Quest = [=[The Clarion Call|2|50|50|75891|93|0]=],
             Start = "-405958|84|32|52.40|14.20",
             End = "207353|0|32|0.00|0.00",
         },
         [75891] = {
-            Quest = [=[Ancient Curses|2|50|50|76194|0|0]=],
+            Quest = [=[Ancient Curses|2|50|50|76194|93|0]=],
             Start = "207353|84|32|52.30|4.70",
         },
         [76194] = {
-            Quest = [=[A Grim Portent|2|50|50|0|0|0]=],
+            Quest = [=[A Grim Portent|2|50|50|0|93|0]=],
             Start = "202702|77|32|54.00|79.40",
             End = "202702|77|32|54.00|79.40",
         },
         [76195] = {
-            Quest = [=[Countering Corruption|2|50|50|0|0|0]=],
+            Quest = [=[Countering Corruption|2|50|50|0|93|0]=],
             Start = "202700|77|32|54.00|79.40",
             End = "202700|77|32|54.00|79.40",
         },
         [76196] = {
-            Quest = [=[Mercy or Misery|2|50|50|0|0|0]=],
+            Quest = [=[Mercy or Misery|2|50|50|0|93|0]=],
             Start = "202701|77|32|54.00|79.40",
             End = "202701|77|32|54.00|79.40",
         },
         [76197] = {
-            Quest = [=[A Glimpse of Terror|2|50|50|0|0|0]=],
+            Quest = [=[A Glimpse of Terror|2|50|50|0|93|0]=],
             Start = "202702|77|32|38.06|53.67",
         },
         [76203] = {
-            Quest = [=[Stepping into the Shadows|2|50|50|0|0|0]=],
+            Quest = [=[Stepping into the Shadows|2|50|50|0|93|0]=],
             Start = "202702|77|32|36.15|57.89",
         },
         [76205] = {
-            Quest = [=[Balancing the Scales|2|50|50|0|0|0]=],
+            Quest = [=[Balancing the Scales|2|50|50|0|93|0]=],
             Start = "202702|77|32|36.71|51.59",
             End = "202702|77|32|36.70|51.60",
         },
         [76206] = {
-            Quest = [=[Heart of the Issue|2|50|50|0|0|0]=],
+            Quest = [=[Heart of the Issue|2|50|50|0|93|0]=],
             Start = "202700|77|32|36.68|51.65",
             End = "202700|77|32|36.70|51.60",
         },
         [76207] = {
-            Quest = [=[Wardens' Wrath|2|50|50|0|0|0]=],
+            Quest = [=[Wardens' Wrath|2|50|50|0|93|0]=],
             Start = "202701|77|32|37.92|46.25",
         },
         [76212] = {
-            Quest = [=[A Mark For A Protector|2|50|50|0|0|0]=],
+            Quest = [=[A Mark For A Protector|2|50|50|0|93|0]=],
             Start = "208151|77|32|35.90|58.80",
         },
         [76213] = {
-            Quest = [=[Honor of the Goddess|2|50|50|0|0|0]=],
+            Quest = [=[Honor of the Goddess|2|50|50|0|93|0]=],
             Start = "209140|84|32|52.70|4.20",
         },
-        [76377] = {
-            Quest = [=[Quest 76377||45|45|0|0|0]=],
-        },
         [76530] = {
-            Quest = [=[Unliving Summons|1|50|50|0|0|0]=],
+            Quest = [=[Unliving Summons|1|50|50|0|93|0]=],
             Start = "186091|2070|32|63.75|68.16",
         },
         [77869] = {
-            Quest = [=[Return to the Echo Isles||50|50|0|0|0]=],
+            Quest = [=[Return to the Echo Isles||50|50|0|93|0]=],
             Start = "213791|85|32|32.69|64.65",
         },
         [77871] = {
-            Quest = [=[De Old Loa||50|50|0|0|0]=],
+            Quest = [=[De Old Loa||50|50|0|93|0]=],
             Start = "210092|463|32|61.40|65.40",
         },
         [77874] = {
-            Quest = [=[De Loa of de Past||50|50|0|0|0]=],
+            Quest = [=[De Loa of de Past||50|50|0|93|0]=],
             Start = "214839|463|32|59.10|65.60",
         },
         [77877] = {
-            Quest = [=[One with the Loa||50|50|0|0|0]=],
+            Quest = [=[One with the Loa||50|50|0|93|0]=],
             Start = "222666|50|32|65.10|47.70",
         },
         [77879] = {
-            Quest = [=[Stalking the Stalker||50|50|0|0|0]=],
+            Quest = [=[Stalking the Stalker||50|50|0|93|0]=],
             Start = "210238|50|32|84.80|40.20",
         },
         [77880] = {
-            Quest = [=[Looking for Lukou||50|50|0|0|0]=],
+            Quest = [=[Looking for Lukou||50|50|0|93|0]=],
             Start = "210091|50|32|63.50|41.30",
         },
         [77881] = {
-            Quest = [=[There is Another||50|50|0|0|0]=],
+            Quest = [=[There is Another||50|50|0|93|0]=],
             Start = "209891|50|32|81.80|48.10",
         },
         [77882] = {
-            Quest = [=[Stolen but Not Forgotten||50|50|0|0|0]=],
+            Quest = [=[Stolen but Not Forgotten||50|50|0|93|0]=],
             Start = "210091|50|32|70.62|49.03",
             End = "210091|50|32|70.60|49.00",
         },
         [77894] = {
-            Quest = [=[Heart of Lukou||50|50|0|0|0]=],
+            Quest = [=[Heart of Lukou||50|50|0|93|0]=],
             Start = "210091|50|32|70.62|49.03",
             End = "210091|50|32|70.60|49.00",
         },
         [77898] = {
-            Quest = [=[Honor and Tribute||50|50|0|0|0]=],
+            Quest = [=[Honor and Tribute||50|50|0|93|0]=],
             Start = "210091|50|32|70.62|49.03",
             End = "210091|50|32|70.60|49.00",
         },
         [77899] = {
-            Quest = [=[The Rush'kah||50|50|0|0|0]=],
+            Quest = [=[The Rush'kah||50|50|0|93|0]=],
             Start = "210086|463|32|59.10|65.90",
         },
         [77900] = {
-            Quest = [=[The Loa Trials||50|50|0|0|0]=],
+            Quest = [=[The Loa Trials||50|50|0|93|0]=],
             Start = "223215|463|32|60.10|62.40",
         },
         [77901] = {
-            Quest = [=[Retraining the Trainees||50|50|0|0|0]=],
+            Quest = [=[Retraining the Trainees||50|50|0|93|0]=],
             Start = "210260|463|32|59.00|66.30",
         },
         [77902] = {
-            Quest = [=[Ritual Recovery||50|50|0|0|0]=],
+            Quest = [=[Ritual Recovery||50|50|0|93|0]=],
             Start = "205981|463|32|58.40|66.20",
         },
         [77903] = {
-            Quest = [=[De Power of Death||50|50|0|0|0]=],
+            Quest = [=[De Power of Death||50|50|0|93|0]=],
             Start = "212784|463|32|58.50|65.50",
             End = "212784|463|32|58.50|65.50",
         },
         [77905] = {
-            Quest = [=[Avatar of Mueh'zala||50|50|0|0|0]=],
+            Quest = [=[Avatar of Mueh'zala||50|50|0|93|0]=],
             Start = "213638|463|32|58.50|65.50",
             End = "213638|463|32|58.50|65.50",
         },
         [77906] = {
-            Quest = [=[De Darkspear Loa||50|50|0|0|0]=],
+            Quest = [=[De Darkspear Loa||50|50|0|93|0]=],
             Start = "212782|463|32|58.50|65.50",
             End = "212782|463|32|58.50|65.50",
         },
         [78068] = {
-            Quest = [=[An Artificer's Appeal||50|50|0|0|0]=],
+            Quest = [=[An Artificer's Appeal||50|50|0|93|0]=],
             Start = "-415303|84|32|53.00|15.50",
         },
         [78069] = {
-            Quest = [=[Reviving Tradition||50|50|0|0|0]=],
+            Quest = [=[Reviving Tradition||50|50|0|93|0]=],
             Start = "210340|103|32|54.80|79.80",
             End = "210340|103|32|54.80|79.80",
         },
         [78070] = {
-            Quest = [=[Pressing Deadlines||50|50|0|0|0]=],
+            Quest = [=[Pressing Deadlines||50|50|0|93|0]=],
             Start = "210340|103|32|54.80|79.80",
             End = "210340|103|32|54.80|79.80",
         },
         [78071] = {
-            Quest = [=[Rush Order||50|50|0|0|0]=],
+            Quest = [=[Rush Order||50|50|0|93|0]=],
             Start = "208494|111|32|39.00|46.90",
         },
         [78072] = {
-            Quest = [=[An Old Wound||50|50|0|0|0]=],
+            Quest = [=[An Old Wound||50|50|0|93|0]=],
             Start = "208496|111|32|37.90|46.90",
         },
         [78073] = {
-            Quest = [=[Lingering Scars||50|50|0|0|0]=],
+            Quest = [=[Lingering Scars||50|50|0|93|0]=],
             Start = "210578|108|32|37.50|64.30",
         },
         [78074] = {
-            Quest = [=[To See Clearly||50|50|0|0|0]=],
+            Quest = [=[To See Clearly||50|50|0|93|0]=],
             Start = "210581|108|32|41.60|61.60",
         },
         [78075] = {
-            Quest = [=[Moving Past||50|50|0|0|0]=],
+            Quest = [=[Moving Past||50|50|0|93|0]=],
             Start = "210569|111|32|39.10|46.30",
         },
         [78076] = {
-            Quest = [=[Emergency Efforts||50|50|0|0|0]=],
+            Quest = [=[Emergency Efforts||50|50|0|93|0]=],
             Start = "210563|103|32|54.00|76.60",
         },
         [78077] = {
-            Quest = [=[Beneath the Skin||50|50|0|0|0]=],
+            Quest = [=[Beneath the Skin||50|50|0|93|0]=],
             Start = "210391|106|32|51.90|75.50",
         },
         [78078] = {
-            Quest = [=[Assessing the Enemy||50|50|0|0|0]=],
+            Quest = [=[Assessing the Enemy||50|50|0|93|0]=],
             Start = "210588|106|32|51.90|75.70",
         },
         [78079] = {
-            Quest = [=[Excision||50|50|0|0|0]=],
+            Quest = [=[Excision||50|50|0|93|0]=],
             Start = "210390|106|32|52.00|75.60",
         },
         [78080] = {
-            Quest = [=[At the Source||50|50|0|0|0]=],
+            Quest = [=[At the Source||50|50|0|93|0]=],
             Start = "210598|106|32|42.20|36.60",
         },
         [78081] = {
-            Quest = [=[Pain Recedes||50|50|0|0|0]=],
+            Quest = [=[Pain Recedes||50|50|0|93|0]=],
             Start = "210605|106|32|41.50|33.00",
         },
         [78082] = {
-            Quest = [=[A Burden Shared||50|50|0|0|0]=],
+            Quest = [=[A Burden Shared||50|50|0|93|0]=],
             Start = "214021|103|32|54.70|80.70",
         },
         [78083] = {
-            Quest = [=[Our Path Forward||50|50|0|0|0]=],
+            Quest = [=[Our Path Forward||50|50|0|93|0]=],
             Start = "212387|103|32|64.40|87.30",
         },
         [78875] = {
-            Quest = [=[The Unkillable||50|50|0|0|0]=],
+            Quest = [=[The Unkillable||50|50|0|93|0]=],
             Start = "210091|50|32|70.62|49.03",
             End = "210091|50|32|70.60|49.00",
         },
         [82771] = {
-            Quest = [=[Heritage of the Earthen||50|50|0|0|0]=],
+            Quest = [=[Heritage of the Earthen||50|50|0|78|0]=],
             Start = "224790|2339|32|29.00|59.60",
         },
         [82975] = {
@@ -35645,93 +30586,95 @@ function Nx.ModQuests:Data5()
             End = "213664|371|32|42.50|27.30",
         },
         [84442] = {
-            Quest = [=[Invitation to the Spirit Festival|2|50|0|0|0|0]=],
+            Quest = [=[Invitation to the Spirit Festival|2|50|0|0|93|0]=],
             Start = "126332|84|32|52.20|13.70",
         },
         [84444] = {
-            Quest = [=[Invitation to the Spirit Festival|1|50|0|0|0|0]=],
+            Quest = [=[Invitation to the Spirit Festival|1|50|0|0|93|0]=],
+            Start = "229257|84|32|68.20|16.20",
         },
         [84451] = {
-            Quest = [=[The Wanderers|2|50|0|0|0|0]=],
+            Quest = [=[The Wanderers|2|50|0|0|93|0]=],
             Start = "229257|84|32|68.20|16.20",
         },
         [84452] = {
-            Quest = [=[The Wanderers|1|50|0|0|0|0]=],
+            Quest = [=[The Wanderers|1|50|0|0|93|0]=],
             Start = "229338|85|32|70.50|39.00",
         },
         [84453] = {
-            Quest = [=[To Dai-Lo Farmstead||50|0|0|0|0]=],
+            Quest = [=[To Dai-Lo Farmstead||50|0|0|93|0]=],
             Start = "229347|2366|32|50.60|20.10",
         },
         [84454] = {
-            Quest = [=[Tide of Virmen||50|0|0|0|0]=],
+            Quest = [=[Tide of Virmen||50|0|0|93|0]=],
             Start = "229357|2366|32|69.70|67.60",
             End = "229357|2366|32|69.70|67.60",
         },
         [84455] = {
-            Quest = [=[Big Bertha||50|0|0|0|0]=],
+            Quest = [=[Big Bertha||50|0|0|93|0]=],
             Start = "229358|2366|32|69.80|67.50",
         },
         [84456] = {
-            Quest = [=[To Morning Breeze|2|50|0|0|0|0]=],
+            Quest = [=[To Morning Breeze|2|50|0|0|93|0]=],
             Start = "229349|2366|32|50.40|20.10",
         },
         [84457] = {
-            Quest = [=[To Morning Breeze|1|50|0|0|0|0]=],
+            Quest = [=[To Morning Breeze|1|50|0|0|93|0]=],
             Start = "229348|2366|32|50.30|20.00",
         },
         [84458] = {
-            Quest = [=[Devil's in the Details||50|0|0|0|0]=],
+            Quest = [=[Devil's in the Details||50|0|0|93|0]=],
             Start = "229380|2366|32|30.10|41.50",
         },
         [84459] = {
-            Quest = [=[Scamps Ain't It!||50|0|0|0|0]=],
+            Quest = [=[Scamps Ain't It!||50|0|0|93|0]=],
             Start = "229381|2366|32|30.10|41.70",
         },
         [84460] = {
-            Quest = [=[Red Hand or Herring?||50|0|0|0|0]=],
+            Quest = [=[Red Hand or Herring?||50|0|0|93|0]=],
+            Start = "230417|2366|32|28.40|42.60",
         },
         [84461] = {
-            Quest = [=[It's Not a Spirit Festival Without Spirits||50|0|0|0|0]=],
+            Quest = [=[It's Not a Spirit Festival Without Spirits||50|0|0|93|0]=],
             Start = "229535|2366|32|22.40|33.80",
         },
         [84462] = {
-            Quest = [=[Patterns in Static||50|0|0|0|0]=],
+            Quest = [=[Patterns in Static||50|0|0|93|0]=],
             Start = "229412|2366|32|51.50|46.30",
         },
         [84463] = {
-            Quest = [=[Codependency||50|0|0|0|0]=],
+            Quest = [=[Codependency||50|0|0|93|0]=],
             Start = "229271|2366|32|50.90|76.90",
         },
         [84464] = {
-            Quest = [=[Lost My Spark||50|0|0|0|0]=],
+            Quest = [=[Lost My Spark||50|0|0|93|0]=],
             Start = "229413|2366|32|39.70|63.50",
         },
         [84465] = {
-            Quest = [=[Of Water and Blood||50|0|0|0|0]=],
+            Quest = [=[Of Water and Blood||50|0|0|93|0]=],
             Start = "229413|2366|32|39.50|57.10",
         },
         [84466] = {
-            Quest = [=[Thousands of Years Ago...||50|0|0|0|0]=],
+            Quest = [=[Thousands of Years Ago...||50|0|0|93|0]=],
             Start = "229465|2366|32|21.90|56.40",
             End = "229465|2366|32|21.90|56.40",
         },
         [84467] = {
-            Quest = [=[This Was Home||50|0|0|0|0]=],
+            Quest = [=[This Was Home||50|0|0|93|0]=],
             Start = "229476|2366|32|52.30|19.20",
             End = "229476|2366|32|52.30|19.20",
         },
         [84468] = {
-            Quest = [=[Brew You One Better||50|0|0|0|0]=],
+            Quest = [=[Brew You One Better||50|0|0|93|0]=],
             Start = "229357|2366|32|69.70|67.60",
             End = "229357|2366|32|69.70|67.60",
         },
         [88803] = {
-            Quest = [=[Timely Assistance||50|50|0|0|0]=],
+            Quest = [=[Timely Assistance||50|50|0|174|0]=],
             Start = "238337|2403|32|51.90|82.70",
         },
         [90885] = {
-            Quest = [=[My Beautiful Pumpkins||45|45|0|0|0]=],
+            Quest = [=[My Beautiful Pumpkins||45|45|0|148|0]=],
             Start = "244729|2451|32|56.44|59.55",
             End = "0|2451|32|56.34|59.56",
             Objectives = {
@@ -35741,7 +30684,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [90886] = {
-            Quest = [=[Best Laid Plans of Kobolds and Ogres||45|45|0|0|0]=],
+            Quest = [=[Best Laid Plans of Kobolds and Ogres||45|45|0|148|0]=],
             Start = "244656|2451|32|56.44|59.55",
             End = "0|2451|32|56.34|59.56",
             Objectives = {
@@ -35751,7 +30694,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [90887] = {
-            Quest = [=[Farmer's Nemesis||45|45|0|0|0]=],
+            Quest = [=[Farmer's Nemesis||45|45|0|148|0]=],
             Start = "244655|2451|32|56.44|59.55",
             End = "244655|2451|32|56.34|59.56",
             Objectives = {
@@ -35761,12 +30704,12 @@ function Nx.ModQuests:Data5()
             },
         },
         [90888] = {
-            Quest = [=[Saving Stromgarde Keep||45|45|0|0|0]=],
+            Quest = [=[Saving Stromgarde Keep||45|45|0|148|0]=],
             Start = "244655|2451|32|56.44|59.71",
             End = "244655|2451|32|19.46|57.43",
         },
         [90893] = {
-            Quest = [=[Repelling the Siege||45|45|0|0|0]=],
+            Quest = [=[Repelling the Siege||45|45|0|148|0]=],
             Start = "244657|2451|32|19.46|57.43",
             End = "0|2451|32|24.64|37.08",
             Objectives = {
@@ -35776,7 +30719,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [90895] = {
-            Quest = [=[Catapult Bombardment||45|45|0|0|0]=],
+            Quest = [=[Catapult Bombardment||45|45|0|148|0]=],
             Start = "244658|2451|32|19.46|57.43",
             End = "0|2451|32|24.64|37.08",
             Objectives = {
@@ -35786,7 +30729,7 @@ function Nx.ModQuests:Data5()
             },
         },
         [90896] = {
-            Quest = [=[One Last Ogre||45|45|0|0|0]=],
+            Quest = [=[One Last Ogre||45|45|0|148|0]=],
             Start = "244666|2451|32|24.64|37.08",
             End = "244666|2451|32|24.59|37.06",
             Objectives = {
@@ -35796,54 +30739,54 @@ function Nx.ModQuests:Data5()
             },
         },
         [91614] = {
-            Quest = [=[Focusing the Energies||45|0|0|0|0]=],
+            Quest = [=[Focusing the Energies||45|0|0|76|0]=],
             Start = "103832|747|32|44.90|50.00",
             End = "103832|747|32|44.90|50.00",
         },
         [91615] = {
-            Quest = [=[A Thirst For Blood||45|0|0|0|0]=],
+            Quest = [=[A Thirst For Blood||45|0|0|67|0]=],
             Start = "93491|648|32|63.10|69.40",
             End = "93491|648|32|63.10|69.40",
         },
         [91616] = {
-            Quest = [=[Required Reagents||45|0|0|0|0]=],
+            Quest = [=[Required Reagents||45|0|0|96|0]=],
             Start = "108455|739|32|46.40|34.80",
             End = "108455|739|32|46.40|34.80",
         },
         [91618] = {
-            Quest = [=[A Few Things First||45|0|46074|0|0]=],
+            Quest = [=[A Few Things First||45|0|46074|126|0]=],
             Start = "92183|627|32|44.40|28.80",
         },
         [91619] = {
-            Quest = [=[Blood of Sargeras||45|0|0|0|0]=],
+            Quest = [=[Blood of Sargeras||45|0|0|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90250|24|32|52.30|78.10",
         },
         [91621] = {
-            Quest = [=[A Taste For Blood||45|0|0|0|0]=],
+            Quest = [=[A Taste For Blood||45|0|0|147|0]=],
             Start = "42470|207|32|56.90|14.20",
             End = "42470|207|32|56.90|14.20",
         },
         [92030] = {
-            Quest = [=[A New Tradition|2|50|0|0|0|0]=],
+            Quest = [=[A New Tradition|2|50|0|0|93|0]=],
             Start = "229476|2366|32|52.30|19.20",
             End = "229476|2366|32|52.30|19.20",
         },
         [94464] = {
-            Quest = [=[Heritage of the Haranir||50|0|0|0|0]=],
+            Quest = [=[Heritage of the Haranir||50|0|0|90|0]=],
         },
         [94847] = {
-            Quest = [=[Preparations Underway||45|0|46071|0|0]=],
+            Quest = [=[Preparations Underway||45|0|46071|126|0]=],
             Start = "90250|24|32|52.30|78.10",
             End = "90250|24|32|52.30|78.10",
         },
         [94850] = {
-            Quest = [=[If You Build It||45|0|0|0|0]=],
+            Quest = [=[If You Build It||45|0|0|124|0]=],
             Start = "119166|717|32|35.30|38.50",
             End = "119166|717|32|35.30|38.50",
         },
         [94932] = {
-            Quest = [=[Bindings of the Windlord||45|0|43560|0|0]=],
+            Quest = [=[Bindings of the Windlord||45|0|43560|54|0]=],
             Start = "92218|634|32|40.80|80.80",
             End = "92218|634|32|40.80|80.80",
         },
