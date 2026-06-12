@@ -2067,7 +2067,10 @@ function Nx.Quest.List:Update()
         dailyStr = dailyStr .. "|r  " .. L["Daily reset:"] .. " |cffffffff" .. Nx.Util_GetTimeElapsedStr (GetQuestResetTime())
     end
 
-    self.Win:SetTitle (format (L["Quests:"] .. " |cffffffff%d/%d|r  %s", i, MAX_QUESTS, dailyStr))
+    -- Live log cap (retail holds more than the legacy MAX_QUESTS=25); API on
+    -- the 12.0 engine, fall back to MAX_QUESTS/25 where it's missing.
+    local maxQ = (C_QuestLog and C_QuestLog.GetMaxNumQuests and C_QuestLog.GetMaxNumQuests()) or MAX_QUESTS or 25
+    self.Win:SetTitle (format (L["Quests:"] .. " |cffffffff%d/%d|r  %s", i, maxQ, dailyStr))
 
     -- List
 
