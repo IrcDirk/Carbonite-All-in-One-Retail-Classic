@@ -319,7 +319,14 @@ end
 -- @param zone  The map ID to display
 --
 function Nx.Map:SetMapByID(zone)
-    -- Only update if world map is not visible and has zoom data
+    -- Only push the id into Blizzard's WorldMapFrame when it's actually shown
+    -- AND its zoom data exists. Carbonite normally keeps WorldMapFrame hidden
+    -- and reads the hovered zone from Nx.Map.MouseIsOverMap (see
+    -- GetCurrentMapAreaID), so we must NOT call SetMapID for our own hidden
+    -- map: that taints WorldMapFrame's data providers (WorldQuestDataProvider
+    -- -> AcquirePin -> SetPassThroughButtons gets ADDON_ACTION_BLOCKED when a
+    -- world quest later refreshes). zoomLevels is nil while hidden post-12.0.5,
+    -- so this stays a no-op for the Carbonite map -- exactly what we want.
     if not WorldMapFrame:IsShown() and WorldMapFrame.ScrollContainer.zoomLevels then
         -- Translate continent IDs for non-MoP Classic clients
         if Nx.OldMapIDs then
@@ -4945,7 +4952,7 @@ function Nx.Map:UpdateWorld()
         return
     end
 
-    local texturesIDs = C_Map and C_Map.GetMapArtLayerTextures and C_Map.GetMapArtLayerTextures(GetMapArtLayerTexturesMapId, 1)
+    local texturesIDs = Nx.Map:GetArtLayerTextures(GetMapArtLayerTexturesMapId, 1)
     if not texturesIDs then
         return  -- API not available
     end
@@ -5239,8 +5246,8 @@ function Nx.Map:Update (elapsed)
             self.InstLevelSet = -1
         end
 
-        local layerIndex = WorldMapFrame:GetCanvasContainer():GetCurrentLayerIndex();
-        local layers = C_Map.GetMapArtLayers(mapId)
+        local layerIndex = Nx.Map:GetCurrentLayerIndexSafe();
+        local layers = Nx.Map:GetArtLayers(mapId)
 
         self.PlyrX = x + plZX * layers[layerIndex].layerWidth / 25600
         self.PlyrY = y + plZY * layers[layerIndex].layerHeight / 25600 + (lvl - 1) * layers[layerIndex].layerHeight / 256
@@ -8055,6 +8062,39 @@ end
 --------
 -- Update map zone tiles (4 x 3 or custom TileX x TileY blocks)
 
+-- The 12.0.5 hotfix wrapped both map-art APIs one extra level deeper:
+--   GetMapArtLayers(id)        was { [i]=layerInfo }      now { [1]={ [i]=layerInfo } }
+--   GetMapArtLayerTextures(..) was { texID, texID, ... }  now { [1]={ texID, ... } }
+-- Reading layers[1].layerWidth then yields nil -> ceil(nil/nil) errors inside
+-- the pcall'd draw pass -> tiles silently stop rendering (the default
+-- "unexplored" art shows). These normalize the return to the old flat shape.
+function Nx.Map:GetArtLayers (id)
+    local L = id and C_Map and C_Map.GetMapArtLayers and C_Map.GetMapArtLayers (id)
+    if L and L[1] and L[1].layerWidth == nil and type (L[1][1]) == "table" then
+        L = L[1]
+    end
+    return L
+end
+
+function Nx.Map:GetArtLayerTextures (id, layer)
+    local T = id and C_Map and C_Map.GetMapArtLayerTextures and C_Map.GetMapArtLayerTextures (id, layer)
+    if T and type (T[1]) == "table" then
+        T = T[1]
+    end
+    return T
+end
+
+-- Safe current-layer index. canvas:GetCurrentLayerIndex() ERRORS when the
+-- canvas has no zoomLevels (it's only populated after the Blizzard map has
+-- been shown, which Carbonite never does post-12.0.5). Fall back to layer 1.
+function Nx.Map:GetCurrentLayerIndexSafe ()
+    local cc = WorldMapFrame and WorldMapFrame.GetCanvasContainer and WorldMapFrame:GetCanvasContainer ()
+    if cc and cc.GetCurrentLayerIndex and cc.zoomLevels then
+        return cc:GetCurrentLayerIndex () or 1
+    end
+    return 1
+end
+
 function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
     local zname, zx, zy, zw, zh = self:GetWorldZoneInfo (cont, zone)
     if not zx then
@@ -8079,7 +8119,7 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
         end
     else
         -- Get actual tile dimensions from layer info if available
-        local layers = C_Map.GetMapArtLayers(zone)
+        local layers = Nx.Map:GetArtLayers(zone)
         if layers and layers[1] then
             local layerInfo = layers[1]
             tilex = ceil(layerInfo.layerWidth / layerInfo.tileWidth)
@@ -8279,7 +8319,7 @@ local function GetCachedLayerInfo(mapId)
         return cached
     end
 
-    local layers = C_Map.GetMapArtLayers(mapId)
+    local layers = Nx.Map:GetArtLayers(mapId)
     if not layers or not layers[1] then
         return nil
     end
@@ -11333,9 +11373,9 @@ function Nx.Map:UpdateInstanceMap()
 
         local n = 4;
 
-        local layerIndex = WorldMapFrame:GetCanvasContainer():GetCurrentLayerIndex();
-        local textures = C_Map.GetMapArtLayerTextures(mapId, layerIndex)
-        local layers = C_Map.GetMapArtLayers(mapId)
+        local layerIndex = Nx.Map:GetCurrentLayerIndexSafe();
+        local textures = Nx.Map:GetArtLayerTextures(mapId, layerIndex)
+        local layers = Nx.Map:GetArtLayers(mapId)
 
         local lx = ceil(layers[layerIndex].layerWidth / layers[layerIndex].tileHeight)
         local ly = ceil(layers[layerIndex].layerHeight / layers[layerIndex].tileHeight)
@@ -11965,7 +12005,11 @@ end
 
 function Nx.Map:GetCurrentMapAreaID()
     local displayableMapID = MapUtil.GetDisplayableMapForPlayer()
-    local mapID = Nx.Map.MouseOver and WorldMapFrame:GetMapID() or displayableMapID
+    -- Use the zone Carbonite resolved under the cursor (set in
+    -- CheckWorldHotspotsType) rather than WorldMapFrame:GetMapID(). Reading the
+    -- Blizzard frame would force us to SetMapID into it from insecure code,
+    -- which taints its data providers (SetPassThroughButtons block on WQ pins).
+    local mapID = Nx.Map.MouseOver and Nx.Map.MouseIsOverMap or displayableMapID
 
     local _, instanceType = GetInstanceInfo()
     if (instanceType ~= nil and instanceType ~= "none") then mapID = displayableMapID end
@@ -15173,46 +15217,62 @@ function Nx.Map.MoveWorldMap()
     if not mapInfo.name then
         return
     end
-    local layers = C_Map.GetMapArtLayers(curId)
-    local layerInfo = layers[1]
-    local rows, cols = math.ceil(layerInfo.layerHeight / layerInfo.tileHeight), math.ceil(layerInfo.layerWidth / layerInfo.tileWidth)
+    local layers = Nx.Map:GetArtLayers(curId)
+    local layerInfo = layers and layers[1]
+    if not layerInfo then
+        return
+    end
+    local rows = math.ceil(layerInfo.layerHeight / layerInfo.tileHeight)
+    local cols = math.ceil(layerInfo.layerWidth / layerInfo.tileWidth)
+    local numtiles = rows * cols
 
     if not Nx.Map.WMDF then
         Nx.Map.WMDF = CreateFrame("Frame", "WMDF")
         Nx.Map.WMDF:SetFrameStrata("BACKGROUND")
         Nx.Map.WMDT = {}
         Nx.Map.EJMB = {}
-        for i = 1,cols do
-            for j = 1, rows do
-                local index = (j - 1) * cols + i
-                Nx.Map.WMDT[index] = Nx.Map.WMDF:CreateTexture("WMDT" .. index)
-            end
-        end
-        Nx.Map.WMDT[1]:SetPoint("TOPLEFT")
-        Nx.Map.WMDT[2]:SetPoint("TOPLEFT","WMDT1","TOPRIGHT")
-        Nx.Map.WMDT[3]:SetPoint("TOPLEFT","WMDT2","TOPRIGHT")
-        Nx.Map.WMDT[4]:SetPoint("TOPLEFT","WMDT3","TOPRIGHT")
-        Nx.Map.WMDT[5]:SetPoint("TOPLEFT","WMDT1","BOTTOMLEFT")
-        Nx.Map.WMDT[6]:SetPoint("TOPLEFT","WMDT5","TOPRIGHT")
-        Nx.Map.WMDT[7]:SetPoint("TOPLEFT","WMDT6","TOPRIGHT")
-        Nx.Map.WMDT[8]:SetPoint("TOPLEFT","WMDT7","TOPRIGHT")
-        Nx.Map.WMDT[9]:SetPoint("TOPLEFT","WMDT5","BOTTOMLEFT")
-        Nx.Map.WMDT[10]:SetPoint("TOPLEFT","WMDT9","TOPRIGHT")
-        Nx.Map.WMDT[11]:SetPoint("TOPLEFT","WMDT10","TOPRIGHT")
-        Nx.Map.WMDT[12]:SetPoint("TOPLEFT","WMDT11","TOPRIGHT")
     end
+
+    -- Blizzard's 12.0.5 hotfix switched GetMapArtLayers/Textures to a finer
+    -- tiling (e.g. 15x10 = 150 tiles instead of 4x3 = 12) and made
+    -- GetMapArtLayerTextures return a NESTED { [1] = { texIDs } } on retail.
+    -- The old code hard-coded a 12-tile 4x3 grid (manual anchors, 1..12 loop,
+    -- /3.9 /2.6) and read textures[i] flat, so every tile got SetTexture(nil)
+    -- -> the default "unexplored" art. Build the grid from cols/rows and
+    -- rebuild whenever the tile count changes.
+    if Nx.Map.WMDTCount ~= numtiles then
+        for i = #Nx.Map.WMDT, 1, -1 do
+            Nx.Map.WMDT[i]:Hide()
+            Nx.Map.WMDT[i] = nil
+        end
+        for i = 1, numtiles do
+            Nx.Map.WMDT[i] = Nx.Map.WMDF:CreateTexture("WMDT" .. i)
+        end
+        Nx.Map.WMDTCount = numtiles
+    end
+
     Nx.Map.WMDF:SetParent(Nx.Map:GetMap(1).Frm)
     Nx.Map.WMDF:SetFrameLevel(20)
     Nx.Map.WMDF:SetWidth(Nx.Map:GetMap(1).MapW)
     Nx.Map.WMDF:SetHeight(Nx.Map:GetMap(1).MapH)
     Nx.Map.WMDF:Show()
 
-    local textures = C_Map.GetMapArtLayerTextures(curId,1)
+    local textures = Nx.Map:GetArtLayerTextures(curId, 1)
 
-    for i=1, 12 do
-        Nx.Map.WMDT[i]:SetWidth(Nx.Map.WMDF:GetWidth() / 3.9)
-        Nx.Map.WMDT[i]:SetHeight(Nx.Map.WMDF:GetHeight() / 2.6)
-        Nx.Map.WMDT[i]:SetTexture(textures[i])
+    local tileW = Nx.Map.WMDF:GetWidth() / cols
+    local tileH = Nx.Map.WMDF:GetHeight() / rows
+    for j = 1, rows do
+        for i = 1, cols do
+            local index = (j - 1) * cols + i
+            local t = Nx.Map.WMDT[index]
+            if t then
+                t:ClearAllPoints()
+                t:SetPoint("TOPLEFT", Nx.Map.WMDF, "TOPLEFT", (i - 1) * tileW, -(j - 1) * tileH)
+                t:SetWidth(tileW)
+                t:SetHeight(tileH)
+                t:SetTexture(textures and textures[index])
+            end
+        end
     end
     Nx.Map.WMDF:SetAllPoints()
     NXWorldMapUnitPositionFrame:SetParent(Nx.Map.WMDF)

@@ -46,7 +46,11 @@ end
 function MapIDs:GetCurrentMapAreaID()
     local displayable = self:GetDisplayableMapForPlayer()
     local NxMap = nxMap()
-    local mapID = (NxMap and NxMap.MouseOver and _G.WorldMapFrame and _G.WorldMapFrame:GetMapID())
+    -- Use Carbonite's resolved hovered zone (MouseIsOverMap), not
+    -- WorldMapFrame:GetMapID(). Reading the Blizzard frame would require
+    -- SetMapID'ing into it from insecure code, tainting its data providers
+    -- (SetPassThroughButtons block on world-quest pins).
+    local mapID = (NxMap and NxMap.MouseOver and NxMap.MouseIsOverMap)
         or displayable
 
     -- Instance maps always use the displayable one because
