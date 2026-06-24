@@ -28,13 +28,36 @@ local GetQuestObjectiveInfo = _G.GetQuestObjectiveInfo or _G.GetQuestObjectiveIn
 local InCombatLockdown = _G.InCombatLockdown or _G.InCombatLockdown
 
 -- Promoted from NxQuest.lua's file-local compat shim.
-local GetQuestTagInfoCompat = Nx.Quest.GetQuestTagInfoCompat
+local GetQuestTagInfoCompat = Nx.Quest.GetQuestTagInfoCompat or function()
+    return nil
+end
 
 -- File-local alias for the shared world-quest map. NxQuest.lua creates
 -- Nx.Quest.worldquestdb and aliases it; this module reads from the same
 -- table but the alias didn't survive the extraction, leaving line 745's
 -- `worldquestdb[questID]` indexing a nil global on retail flight maps.
-local worldquestdb = Nx.Quest.worldquestdb
+local worldquestdb = Nx.Quest.worldquestdb or {}
+Nx.Quest.worldquestdb = worldquestdb
+
+local function GetCatalogQuestTitle(questID, fallback, questLogIndex)
+    if Nx.Quest.GetCatalogQuestTitle then
+        return Nx.Quest:GetCatalogQuestTitle(questID, fallback, questLogIndex)
+    end
+
+    if fallback and fallback ~= "" then
+        return fallback
+    end
+
+    local catalog = Nx.GetQuestCatalog and Nx:GetQuestCatalog() or Nx.Quest.Catalog
+    local title = catalog and catalog.GetQuestTitle and catalog:GetQuestTitle(questID)
+    if title and title ~= "" then
+        return title
+    end
+
+    return questID and ("Quest " .. questID) or "Quest"
+end
+
+local GetObjectIconTextureCoords = _G.C_Minimap and _G.C_Minimap.GetObjectIconTextureCoords
 
 -------------------------------------------------------------------------------
 -- Update map icons (called by map)
@@ -93,7 +116,10 @@ function Nx.Quest:UpdateIcons (map)
 
         if cur then
             Quest:CalcDistances (cur.Index, cur.Index)
-            Quest:TrackOnMap (cur.QId, tid % 100, cur.QI > 0 or cur.Party, true, true)
+            local liveQID = Quest.ResolveCatalogQuestID
+                and Quest:ResolveCatalogQuestID(cur.QId, cur.QI)
+                or cur.QId
+            Quest:TrackOnMap (liveQID, tid % 100, cur.QI > 0 or cur.Party, true, true)
 
 --            Nx.prt ("UpIcons target %s %s", typ or "nil", tid or "nil")
         end
@@ -252,18 +278,17 @@ function Nx.Quest:UpdateIcons (map)
 
     for trackId, trackMode in pairs (tracking) do
 
-        local cur = Quest.IdToCurQ[trackId]
+        local cur = Quest.IdToCurQ and Quest.IdToCurQ[trackId]
         local quest = cur and cur.Q or Nx.Quests[trackId]
         if not cur and not quest then
             -- tracking entry exists but quest data is gone, skip
         else
             local isSuperTracked = false
             if activeQID > 0 and cur then
-                if cur.QId == activeQID then
-                    isSuperTracked = true
-                elseif cur.QI and cur.QI > 0
-                       and C_QuestLog and C_QuestLog.GetQuestIDForLogIndex
-                       and C_QuestLog.GetQuestIDForLogIndex(cur.QI) == activeQID then
+                local liveQID = Quest.ResolveCatalogQuestID
+                    and Quest:ResolveCatalogQuestID(cur.QId, cur.QI)
+                    or cur.QId
+                if liveQID == activeQID then
                     isSuperTracked = true
                 end
             end
@@ -289,39 +314,20 @@ function Nx.Quest:UpdateIcons (map)
                         -- sites below still use the pool-stamp
                         -- GetIconStatic path until they're ported.
                         local wx, wy = map:GetWorldPos (mapId, x, y)
-                        -- Tint the available-quest "!": holiday/event quests
-                        -- (category in Nx.QuestCategoryHoliday) get GREEN,
-                        -- daily/weekly (Nx.QuestFreq) get BLUE. Holiday wins
-                        -- when a daily is also part of an event. nil = default
-                        -- white. Tables are absent until the metadata data
-                        -- files load, so both lookups are guarded.
-                        local exVC
-                        local qCat = Quest:UnpackCategory (quest["Quest"])
-                        if qCat and Nx.QuestCategoryHoliday and Nx.QuestCategoryHoliday[qCat] then
-                            exVC = {.4, 1, .4, 1}          -- holiday/event: green
-                        elseif Nx.QuestFreq and Nx.QuestFreq[trackId] then
-                            exVC = {.45, .7, 1, 1}         -- daily/weekly: blue
-                        end
                         if Nx.Quest.AddPOI then
                             local tip = format (L["%s\nStart: %s (%.1f %.1f)"], qname, startName, x, y)
                             Nx.Quest:AddPOI(wx, wy, {
-                                tip         = tip,
-                                tex         = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconExclaim",
-                                NXType      = 9000,
-                                NXData      = cur,
-                                mapID       = mapId,
-                                vertexColor = exVC,
+                                tip      = tip,
+                                tex      = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconExclaim",
+                                NXType   = 9000,
+                                NXData   = cur,
+                                mapID    = mapId,
                             })
                         else
                             local f = map:GetIconStatic (4)
                             if map:ClipFrameByMapType (f, wx, wy, navscale, navscale, 0) then
                                 f.NxTip = format (L["%s\nStart: %s (%.1f %.1f)"], qname, startName, x, y)
                                 f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconExclaim")
-                                if exVC then
-                                    f.texture:SetVertexColor (exVC[1], exVC[2], exVC[3], exVC[4])
-                                else
-                                    f.texture:SetVertexColor (1, 1, 1, 1)
-                                end
                             end
                         end
                     end
@@ -658,17 +664,29 @@ function Nx.Quest:UpdateIcons (map)
     -- BONUS TASKS and WORLD QUESTS icons
     local taskIconIndex = 1
     local activeWQ = {}
-    if Map.UpdateMapID ~= 9000 then
+    if C_TaskQuest and C_TaskQuest.GetQuestsOnMap and Map.UpdateMapID ~= 9000 then
         -- Refresh cache on map change
         if Nx.Map.mapChange then
-            taskInfoCache = C_TaskQuest.GetQuestsOnMap(Map.UpdateMapID)
+            local fresh = C_TaskQuest.GetQuestsOnMap(Map.UpdateMapID)
+            if fresh and #fresh > 0 then
+                taskInfoCache = fresh
+            end
         end
         local taskInfo = taskInfoCache
         if taskInfo and Nx.db.char.Map.ShowWorldQuest then
             for i = 1, #taskInfo do
                 local info = taskInfo[i]
                 local questID = taskInfo[i].questID
-                local title, faction = C_TaskQuest.GetQuestInfoByQuestID(questID)
+                local title, faction
+                if C_TaskQuest.GetQuestInfoByQuestID then
+                    title, faction = C_TaskQuest.GetQuestInfoByQuestID(questID)
+                    if type(title) == "table" then
+                        local questInfo = title
+                        title = questInfo.title or questInfo.questName
+                        faction = questInfo.factionID or questInfo.factionId or questInfo.faction
+                    end
+                end
+                title = GetCatalogQuestTitle(questID, title)
 
                 -- Fetch the quest tag information using the new API function
                 local questTagInfo = GetQuestTagInfoCompat(questID)
@@ -864,29 +882,56 @@ function Nx.Quest:UpdateIcons (map)
                             if not taskInfo[i].inProgress then
                                 f.questID = taskInfo[i].questID
                                 f.NxTip = L["|cffffd100Daily Task:\n"] .. title:gsub("Daily Objective: ", "") .. objTxt .. "\n" .. GREEN_FONT_COLOR:GenerateHexColorMarkup() .. GRANTS_FOLLOWER_XP
-                                f.texture:SetTexture("Interface\\Minimap\\ObjectIconsAtlas")
                                 if not map:ClipFrameZ(f, x, y, 22, 22, 0, true) then
                                     f:Hide()
                                 else
-                                f.texture:SetTexCoord(C_Minimap.GetObjectIconTextureCoords(4713))
-                                f:SetScript("OnMouseDown", function(self, button)
-                                    map:SetTargetAtStr(string.format("%s, %s", x, y))
-                                    if not InCombatLockdown() then
-                                        if not ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
-                                            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                                            if ZygorGuidesViewer and ZygorGuidesViewer.WorldQuests then
-                                                ZygorGuidesViewer.WorldQuests:SuggestWorldQuestGuideFromMap(nil, self.questID, "force", self.mapID)
+                                    local left, right, top, bottom
+                                    if GetObjectIconTextureCoords then
+                                        left, right, top, bottom = GetObjectIconTextureCoords(4713)
+                                    end
+
+                                    if left and right and top and bottom then
+                                        f.texture:SetTexture("Interface\\Minimap\\ObjectIconsAtlas")
+                                        f.texture:SetTexCoord(left, right, top, bottom)
+                                        f.texture:Show()
+                                    elseif f.texture.SetAtlas then
+                                        f.texture:SetAtlas("Bonus-Objective-Star")
+                                        f.texture:Show()
+                                    else
+                                        f:Hide()
+                                    end
+
+                                    f:SetScript("OnMouseDown", function(self, button)
+                                        map:SetTargetAtStr(string.format("%s, %s", x, y))
+                                        if not InCombatLockdown() then
+                                            if not ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
+                                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                                                if ZygorGuidesViewer and ZygorGuidesViewer.WorldQuests then
+                                                    ZygorGuidesViewer.WorldQuests:SuggestWorldQuestGuideFromMap(nil, self.questID, "force", self.mapID)
+                                                end
                                             end
                                         end
-                                    end
-                                end)
+                                    end)
                                 end -- Close hideOutside else block
                             end
                         else
                             f.NxTip = L["|cffffd100Bonus Task:\n"] .. title:gsub("Bonus Objective: ", "") .. objTxt
-                            f.texture:SetTexture("Interface\\Minimap\\ObjectIconsAtlas")
                             if map:ClipFrameZ(f, x, y, 22, 22, 0, true) then
-                                f.texture:SetTexCoord(C_Minimap.GetObjectIconTextureCoords(4734))
+                                local left, right, top, bottom
+                                if GetObjectIconTextureCoords then
+                                    left, right, top, bottom = GetObjectIconTextureCoords(4734)
+                                end
+
+                                if left and right and top and bottom then
+                                    f.texture:SetTexture("Interface\\Minimap\\ObjectIconsAtlas")
+                                    f.texture:SetTexCoord(left, right, top, bottom)
+                                    f.texture:Show()
+                                elseif f.texture.SetAtlas then
+                                    f.texture:SetAtlas("Bonus-Objective-Star")
+                                    f.texture:Show()
+                                else
+                                    f:Hide()
+                                end
                             else
                                 f:Hide()
                             end
