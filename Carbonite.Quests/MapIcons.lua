@@ -259,13 +259,7 @@ function Nx.Quest:UpdateIcons (map)
 
     -- Draw
 
-    -- Fall back to a valid graphic when the saved MapWatchAreaGfx isn't a key
-    -- of ChoicesQAreaTex (the keys are "SolidTexture"/"HGrad", but the default
-    -- and older saved profiles use "Solid" -> nil). nil areaTex is masked by
-    -- Nx.Quest:AddArea (colour path), but the legacy GetIconStatic branch
-    -- needs a non-nil texture, so keep one available.
     local areaTex = Nx.Opts.ChoicesQAreaTex[Nx.qdb.profile.Quest.MapWatchAreaGfx]
-        or Nx.Opts.ChoicesQAreaTex.SolidTexture
 
     local colorPerQ = Nx.qdb.profile.Quest.MapWatchColorPerQ
     local colMax = Nx.qdb.profile.Quest.MapWatchColorCnt
