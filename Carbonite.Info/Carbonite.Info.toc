@@ -1,4 +1,4 @@
-## Interface: 11508, 20505, 30403, 40402, 50504
+## Interface: 11508, 20506, 30403, 40402, 50504
 ## Title: Carbonite Info @project-version@
 ## Version: @project-version@
 ## Author: No One

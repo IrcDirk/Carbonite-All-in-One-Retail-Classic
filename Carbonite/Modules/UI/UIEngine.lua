@@ -3236,7 +3236,14 @@ end
 
 function Nx.Window:OnMinBut (but, id, click)
     self:SetMinimize (but:GetPressed())
-    self.SaveData["Minimized"] = but:GetPressed()
+    -- SetLayoutMode no-ops in combat with Map.Compatibility on; re-sync the
+    -- button to the layout that actually applied, or the stuck press corrupts
+    -- the next minimize/restore cycle (issue #536).
+    local isMin = self.LayoutMode == "Min"
+    if but:GetPressed() ~= isMin then
+        but:SetPressed (isMin)
+    end
+    self.SaveData["Minimized"] = isMin
 end
 
 function Nx.Window:ToggleMinimize()
@@ -3253,12 +3260,22 @@ function Nx.Window:SetMinimize (minOn)
 
         if minOn then
 
-            self.LayoutModeNormal = self.LayoutMode
+            -- Never capture "Min" as the mode to restore to: a re-minimize
+            -- while already minimized (combat-desynced button, double event)
+            -- would otherwise pin every future restore at the hardcoded min
+            -- position (issue #536).
+            if self.LayoutMode ~= "Min" then
+                self.LayoutModeNormal = self.LayoutMode
+            end
             self:SetLayoutMode ("Min")
             self:Notify ("SizeMin")
 
         else
-            self:SetLayoutMode (self.LayoutModeNormal)
+            local mode = self.LayoutModeNormal
+            if mode == "Min" then
+                mode = ""
+            end
+            self:SetLayoutMode (mode)
             self:Notify ("SizeNorm")
         end
     end

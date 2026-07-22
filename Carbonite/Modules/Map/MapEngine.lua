@@ -2646,9 +2646,11 @@ function Nx.Map:MinimapUpdate()
     local mm = self.MMFrm
     local lOpts = self.LOpts
 
-    -- Get appropriate scale set based on zone type
+    -- Get appropriate scale set based on zone type. Use the PLAYER's zone:
+    -- UpdateMapID follows the cursor over the map, and cursor-driven city
+    -- state made the docked minimap flip scale sets / collapse (#538).
     local scales = self.MMScales
-    local info = self.MapWorldInfo[Nx.Map.UpdateMapID]
+    local info = self.MapWorldInfo[Nx.Map:GetPlayerMapAreaID()]
     if not info then
         info = {}
     end
@@ -2699,11 +2701,12 @@ function Nx.Map:MinimapUpdate()
     local indoorChange = self.Indoors ~= indoors
     self.Indoors = indoors
 
-    -- Check for bugged areas
+    -- Check for bugged areas (player zone, not hovered zone)
     local bugged = false
     local bugtest = GetSubZoneText()
+    local plyrZone = Nx.Map:GetPlayerMapAreaID()
     for _, zonetest in ipairs(Nx.BuggedAreas) do
-        if Nx.Map:GetCurrentMapAreaID() == zonetest and not indoors then
+        if plyrZone == zonetest and not indoors then
             bugged = true
         end
     end
@@ -2840,11 +2843,15 @@ function Nx.Map:MinimapUpdateEnd()
     local mm = self.MMFrm
     local mmfull = self.LOpts.NXMMFull
 
-    local info = self:GetWorldZone(Nx.Map:GetCurrentMapAreaID())
+    -- Player zone, not hovered zone: with the cursor over a city on the map,
+    -- the hover-based id made info.City true and collapsed the docked
+    -- minimap to scale .02 (#538).
+    local plyrZone = Nx.Map:GetPlayerMapAreaID()
+    local info = self:GetWorldZone(plyrZone)
     local _, class = UnitClass("player")
 
     -- Check if we should hide minimap
-    if (self:IsInstanceMap(Nx.Map.UpdateMapID) or self:IsBattleGroundMap(Nx.Map.UpdateMapID)) and self.CurOpts.NXInstanceMaps then
+    if (self:IsInstanceMap(plyrZone) or self:IsBattleGroundMap(plyrZone)) and self.CurOpts.NXInstanceMaps then
         -- Keep minimap visible in instances with instance maps enabled
     else
         -- Hide conditions: maximized, very small scale, in instance map, in city, or in garrison
@@ -5252,8 +5259,15 @@ function Nx.Map:Update (elapsed)
         local layerIndex = Nx.Map:GetCurrentLayerIndexSafe();
         local layers = Nx.Map:GetArtLayers(mapId)
 
-        self.PlyrX = x + plZX * layers[layerIndex].layerWidth / 25600
-        self.PlyrY = y + plZY * layers[layerIndex].layerHeight / 25600 + (lvl - 1) * layers[layerIndex].layerHeight / 256
+        -- Post-12.0.5 GetMapArtLayers can return {} / no entry for this map.
+        -- This runs inside the per-frame Update BEFORE UpdateWorldMap; an
+        -- unguarded index here aborts the whole render pass every frame
+        -- (blank map, #538).
+        local layerInfo = layers and (layers[layerIndex] or layers[1])
+        if layerInfo then
+            self.PlyrX = x + plZX * layerInfo.layerWidth / 25600
+            self.PlyrY = y + plZY * layerInfo.layerHeight / 25600 + (lvl - 1) * layerInfo.layerHeight / 256
+        end
 --        self.InstanceLevel = GetCurrentMapDungeonLevel()
 
         self.PlyrSpeed = 0
@@ -10847,6 +10861,87 @@ function Nx.Map:IconOnMouseUp(button)
 end
 
 ---
+-- Append a POI widget set to Carbonite's tooltip as plain text lines.
+--
+-- Deliberately NOT GameTooltip_AddWidgetSet: that registers the tooltip as a
+-- widget-set container in the shared UIWidgetManager from our (tainted)
+-- execution. The next time Blizzard's own GameTooltip registers for the same
+-- set (hovering the matching AreaPOI on the world map), ProcessAllWidgets
+-- walks every registered container in one pass — hitting our tainted entry
+-- taints the whole pass, widget text reads start returning secret values, and
+-- Blizzard's TextWithState Setup dies on SetWidth/GetHeight (issues #540/541).
+-- Read-only C_UIWidgetManager queries build no container, so nothing leaks.
+--
+-- Secret values can still surface under taint, so every read/format runs
+-- inside pcall — a widget that can't be rendered is skipped, never fatal.
+--
+local TooltipWidgetGetters        -- widgetType -> C_UIWidgetManager getter
+local TooltipWidgetBarType        -- vis type id rendered as "text value/max"
+local function TooltipWidgetLine (widgetType, widgetID)
+    if not TooltipWidgetGetters then
+        TooltipWidgetGetters = {}
+        local vt = Enum and Enum.UIWidgetVisualizationType
+        local wm = C_UIWidgetManager
+        if vt and wm then
+            TooltipWidgetGetters[vt.TextWithState or -1] = wm.GetTextWithStateWidgetVisualizationInfo
+            TooltipWidgetGetters[vt.TextWithSubtext or -2] = wm.GetTextWithSubtextWidgetVisualizationInfo
+            TooltipWidgetGetters[vt.IconAndText or -3] = wm.GetIconAndTextWidgetVisualizationInfo
+            TooltipWidgetGetters[vt.StatusBar or -4] = wm.GetStatusBarWidgetVisualizationInfo
+            TooltipWidgetBarType = vt.StatusBar
+        end
+    end
+    local getter = widgetType and TooltipWidgetGetters[widgetType]
+    if not getter then return end
+    local ok, info = pcall (getter, widgetID)
+    if not ok or type (info) ~= "table" then return end
+    local line
+    if widgetType == TooltipWidgetBarType then
+        -- "Text 3/10" when the bar carries values; bare text otherwise
+        local okf, s = pcall (function()
+            if info.text and info.text ~= "" then
+                if info.barValue then
+                    return format ("%s %s/%s", info.text, info.barValue, info.barMax)
+                end
+                return info.text
+            elseif info.barValue then
+                return format ("%s/%s", info.barValue, info.barMax)
+            end
+        end)
+        if okf then line = s end
+    else
+        local okf, s = pcall (function()
+            local t = info.text
+            if t and t ~= "" then
+                if info.subText and info.subText ~= "" then
+                    return t .. "\n" .. info.subText
+                end
+                return t
+            end
+        end)
+        if okf then line = s end
+    end
+    return line
+end
+
+function Nx.Map:AddTooltipWidgetText (tip, widgetSetID)
+    if not (widgetSetID and C_UIWidgetManager and C_UIWidgetManager.GetAllWidgetsBySetID) then
+        return
+    end
+    local ok, widgets = pcall (C_UIWidgetManager.GetAllWidgetsBySetID, widgetSetID)
+    if not ok or type (widgets) ~= "table" then
+        return
+    end
+    -- orderIndex can be secret under taint; an unsortable list is shown as-is
+    pcall (sort, widgets, function (a, b) return (a.orderIndex or 0) < (b.orderIndex or 0) end)
+    for _, w in ipairs (widgets) do
+        local line = TooltipWidgetLine (w.widgetType, w.widgetID)
+        if line then
+            pcall (GameTooltip_AddNormalLine, tip, line)
+        end
+    end
+end
+
+---
 -- Handle mouse entering an icon
 -- Shows tooltip and handles addon integration
 -- @param motion  Motion flag
@@ -11042,8 +11137,8 @@ function Nx.Map:IconOnEnter(motion)
                     end
                 end
 
-                if hasWidgetSet and GameTooltip_AddWidgetSet then
-                    GameTooltip_AddWidgetSet(Nx.TooltipText, poiInfo.tooltipWidgetSet, poiInfo.addPaddingAboveTooltipWidgets and 10)
+                if hasWidgetSet then
+                    Nx.Map:AddTooltipWidgetText(Nx.TooltipText, poiInfo.tooltipWidgetSet)
                 end
 
                 -- Add Quest Hub related quests if this is a Quest Hub POI
@@ -11146,8 +11241,8 @@ function Nx.Map:IconOnUpdateTooltip()
                         end
                     end
 
-                    if hasWidgetSet and GameTooltip_AddWidgetSet then
-                        GameTooltip_AddWidgetSet(Nx.TooltipText, poiInfo.tooltipWidgetSet, poiInfo.addPaddingAboveTooltipWidgets and 10)
+                    if hasWidgetSet then
+                        Nx.Map:AddTooltipWidgetText(Nx.TooltipText, poiInfo.tooltipWidgetSet)
                     end
 
                     -- Add Quest Hub related quests if this is a Quest Hub POI
@@ -11380,10 +11475,14 @@ function Nx.Map:UpdateInstanceMap()
         local textures = Nx.Map:GetArtLayerTextures(mapId, layerIndex)
         local layers = Nx.Map:GetArtLayers(mapId)
 
-        local lx = ceil(layers[layerIndex].layerWidth / layers[layerIndex].tileHeight)
-        local ly = ceil(layers[layerIndex].layerHeight / layers[layerIndex].tileHeight)
+        -- Same post-12.0.5 shape hazard as in Update: no art layers for the
+        -- map means ceil(nil/nil) here, killing the per-frame render (#538).
+        -- Skip only the tile pass; the player-arrow block below must still run.
+        local layerInfo = layers and (layers[layerIndex] or layers[1])
+        local lx = layerInfo and ceil(layerInfo.layerWidth / layerInfo.tileHeight)
+        local ly = layerInfo and ceil(layerInfo.layerHeight / layerInfo.tileHeight)
 
-        if info then
+        if info and layerInfo then
         --for n = 1, #info, 3 do
             local imgI = 1
 
@@ -12004,6 +12103,21 @@ end
 
 function Nx.Map:SetToCurrentZone()
     Nx.Map:SetMapByID(MapUtil.GetDisplayableMapForPlayer())
+end
+
+---
+-- The player's own zone id, never the hovered one. Minimap dock/visibility
+-- decisions (city hide, instance checks, bugged zones) must track where the
+-- PLAYER is; GetCurrentMapAreaID follows the cursor while it's over the map,
+-- which made the docked minimap collapse whenever a city was hovered (#538).
+--
+function Nx.Map:GetPlayerMapAreaID()
+    local mapID = MapUtil.GetDisplayableMapForPlayer()
+    if Nx.OldMapIDs then
+        if mapID == 1414 then mapID = 12 end
+        if mapID == 1415 then mapID = 13 end
+    end
+    return mapID
 end
 
 function Nx.Map:GetCurrentMapAreaID()

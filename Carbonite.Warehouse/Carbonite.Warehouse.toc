@@ -1,4 +1,4 @@
-## Interface: 50504, 11508, 20505, 120000, 120001
+## Interface: 50504, 11508, 20506, 120007, 120100
 ## Title: Carbonite Warehouse @project-version@
 ## Version: @project-version@
 ## Author: No One

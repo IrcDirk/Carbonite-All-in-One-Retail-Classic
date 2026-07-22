@@ -1,4 +1,4 @@
-## Interface: 20505
+## Interface: 20506
 ## Notes: Wowhead Data dump for GatherMate2
 ## Title: Carbonite GatherMate2Data - TBC Classic @project-version@
 ## Version: @project-version@

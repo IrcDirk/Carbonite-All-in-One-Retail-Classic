@@ -1,4 +1,4 @@
-## Interface: 120000
+## Interface: 120007, 120100
 ## Notes: Wowhead Data dump for GatherMate2
 ## Title: Carbonite GatherMate2Data - Retail @project-version@
 ## Version: @project-version@

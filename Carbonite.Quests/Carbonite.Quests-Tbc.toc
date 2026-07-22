@@ -1,4 +1,4 @@
-## Interface: 20505
+## Interface: 20506
 ## Title: Carbonite Quest - TBC Classic @project-version@
 ## Version: @project-version@
 ## Author: No One
