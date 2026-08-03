@@ -2809,6 +2809,7 @@ function Nx.Window:ResetLayout()
         end
 
         self.LayoutMode = false
+        data["MinUserPlaced"] = nil
         self:SetLayoutMode()
 --        self.Frm:SetScale (1)
     end
@@ -2934,12 +2935,30 @@ function Nx.Window:SetLayoutMode (mode)
 --        Nx.prt ("Setting win max")
     end
 
+    -- Until the user deliberately moves the minimized window, keep its anchor
+    -- synchronized with the normal window. This also migrates legacy MinX/MinY
+    -- values that were generated from the old hardcoded screen location.
+    if mode == "Min" and oldMode ~= "Min" and not data["MinUserPlaced"] then
+        local atPt, _, relPt, minX, minY = f:GetPoint()
+        if atPt and minX and minY and (not relPt or atPt == relPt) then
+            self:SetLayoutData (mode, minX, -minY, 125, 28,
+                data[(oldMode or "").."L"], atPt, f:GetScale())
+        end
+    end
+
     local x = data[mode.."X"]
 
     if not x then
 
         if mode == "Min" then
-            self:SetLayoutData (mode, sw * .9, sh * .4, 1, 1)    -- Hardcoded for quest watch
+            -- Defensive fallback for a frame that temporarily has no anchor.
+            local atPt, _, relPt, minX, minY = f:GetPoint()
+            if atPt and minX and minY and (not relPt or atPt == relPt) then
+                self:SetLayoutData (mode, minX, -minY, 125, 28,
+                    data[(oldMode or "").."L"], atPt, f:GetScale())
+            else
+                self:SetLayoutData (mode, sw * .9, sh * .4, 125, 28)
+            end
         else
 --            Nx.prt ("SetLayoutMode %s '%s' missing!", self.Name, mode)
             self:SetLayoutData (mode, sw * .4, sh * .4, sw * .2, sh * .2)
@@ -3466,6 +3485,12 @@ function Nx.Window:OnMouseUp (button)
         end
 
         win:RecordLayoutData()
+
+        -- From this point forward the minimized position is an intentional,
+        -- user-owned layout and should no longer follow the normal anchor.
+        if win.LayoutMode == "Min" then
+            win.SaveData["MinUserPlaced"] = true
+        end
     end
 
     ResetCursor()
