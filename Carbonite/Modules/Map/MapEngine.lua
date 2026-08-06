@@ -4377,15 +4377,48 @@ local POI_EMPTY = setmetatable({}, {
 -- POI cache to reduce API calls during zoom/scroll (refreshes every 0.5 seconds or on map change)
 local POI_Cache = {
     mapID = nil,
+    instanceContext = nil,
     time = 0,
     data = nil,
     refreshInterval = 0.5,  -- Refresh every 0.5 seconds
 }
 
+-- Instance maps are an isolation boundary for static map content. Carbonite's
+-- curated instance table can lag behind newly-added delves and scenarios, so
+-- runtime detection also uses Blizzard's current instance state and UI-map
+-- metadata.
+local UI_MAP_TYPE_DUNGEON = _G.Enum and _G.Enum.UIMapType
+    and _G.Enum.UIMapType.Dungeon or 4
+local UI_MAP_TYPE_MICRO = _G.Enum and _G.Enum.UIMapType
+    and _G.Enum.UIMapType.Micro or 5
+
+local function IsDungeonLikeMapType(mapType)
+    return mapType == UI_MAP_TYPE_DUNGEON or mapType == UI_MAP_TYPE_MICRO
+end
+
+local function GetSafeMapInfo(mapID)
+    if not mapID or mapID <= 0 or not (_G.C_Map and _G.C_Map.GetMapInfo) then
+        return nil
+    end
+
+    local ok, info = pcall(_G.C_Map.GetMapInfo, mapID)
+    return ok and info or nil
+end
+
+local function GetSafeMapGroupID(mapID)
+    if not mapID or mapID <= 0 or not (_G.C_Map and _G.C_Map.GetMapGroupID) then
+        return nil
+    end
+
+    local ok, groupID = pcall(_G.C_Map.GetMapGroupID, mapID)
+    return ok and groupID or nil
+end
+
 -- Per-frame cached values (set at start of Update)
 local FrameCache = {
     time = 0,
     isInstance = false,
+    isInstanceContext = false,
     isBG = false,
     mapId = 0,
     dungeonLevel = 0,
@@ -5072,6 +5105,7 @@ function Nx.Map:Update (elapsed)
 
         -- Clear POI cache on map change (POI_Cache is accessed via local reference)
         POI_Cache.mapID = nil
+        POI_Cache.instanceContext = nil
         POI_Cache.data = nil
         POI_Cache.time = 0
 
@@ -5082,12 +5116,55 @@ function Nx.Map:Update (elapsed)
     Nx.Map.UpdateMapID = rid
     local inBG = self:IsBattleGroundMap (rid)
 
-    -- Cache instance/BG checks for use throughout the frame
+    -- Cache instance/BG checks for use throughout the frame. The runtime
+    -- context catches new delves/scenarios that are not yet present in the
+    -- curated Carbonite instance table.
     local isInstance = self:IsInstanceMap(rid)
+    local isInstanceContext = self:IsInstanceDisplayContext(rid)
+    local instanceContextChanged = FrameCache.isInstanceContext ~= isInstanceContext
+
     FrameCache.isInstance = isInstance
+    FrameCache.isInstanceContext = isInstanceContext
     FrameCache.isBG = inBG
     FrameCache.mapId = rid
     FrameCache.dungeonLevel = Nx.Map.DungeonLevel
+
+    if instanceContextChanged then
+        -- The visible map ID can remain on the outdoor zone for one or more
+        -- frames after IsInInstance() changes. Invalidate every persistent
+        -- static-icon source at the boundary so that outdoor data cannot be
+        -- projected onto the instance canvas during that interval.
+        POI_Cache.mapID = nil
+        POI_Cache.instanceContext = nil
+        POI_Cache.data = nil
+        POI_Cache.time = 0
+
+        local wqFrms = self.IconWQFrms
+        for n = 1, wqFrms.Used or 0 do
+            if wqFrms[n] then
+                wqFrms[n]:Hide()
+            end
+        end
+        wqFrms.Next = 1
+
+        if self.InstanceMapRelevanceCache then
+            wipe(self.InstanceMapRelevanceCache)
+        end
+
+        if Nx.Quest then
+            Nx.Quest._iconDirty = true
+            if Nx.Quest.ClearTaskInfoCache then
+                Nx.Quest:ClearTaskInfoCache()
+            end
+            if Nx.Quest.ClearQuestOfferCache then
+                Nx.Quest:ClearQuestOfferCache()
+            end
+        end
+
+        if Nx.Notes and Nx.Notes.BustIntegrationCache then
+            Nx.Notes:BustIntegrationCache("all")
+        end
+    end
 
     if Nx.InBG and Nx.InBG ~= rid then    -- Left or changed BG?
 
@@ -5612,10 +5689,15 @@ function Nx.Map:Update (elapsed)
         local zPOIs
         local now = GetTime()
         local isZoomingOrScrolling = self.StepTime ~= 0 or self.Scrolling
-        local cacheValid = POI_Cache.mapID == rid and POI_Cache.data and (now - POI_Cache.time) < POI_Cache.refreshInterval
+        local cacheValid = POI_Cache.mapID == rid
+            and POI_Cache.instanceContext == isInstanceContext
+            and POI_Cache.data
+            and (now - POI_Cache.time) < POI_Cache.refreshInterval
 
         -- Use cached POI data during zoom/scroll to reduce stutter, or if cache is still valid
-        if isZoomingOrScrolling and POI_Cache.data and POI_Cache.mapID == rid then
+        if isZoomingOrScrolling and POI_Cache.data
+            and POI_Cache.mapID == rid
+            and POI_Cache.instanceContext == isInstanceContext then
             zPOIs = POI_Cache.data
         elseif cacheValid then
             zPOIs = POI_Cache.data
@@ -5869,6 +5951,7 @@ function Nx.Map:Update (elapsed)
 
             -- Cache the POI data
             POI_Cache.mapID = rid
+            POI_Cache.instanceContext = isInstanceContext
             POI_Cache.time = now
             POI_Cache.data = zPOIs
 
@@ -5879,6 +5962,13 @@ function Nx.Map:Update (elapsed)
                 end
                 profileSection = now2
             end
+        end
+
+        -- During the transition frame the player may already be inside an
+        -- instance while Carbonite still exposes the preceding outdoor map
+        -- ID. Never render that outdoor POI snapshot on the instance canvas.
+        if isInstanceContext and not self:IsMapRelevantToInstance(rid, rid) then
+            zPOIs = POI_EMPTY
         end
 
         for i, zPOI in ipairs(zPOIs) do
@@ -12398,6 +12488,152 @@ end
 --------
 --
 
+-- Returns true when the map should be treated as an isolated instance
+-- surface. Runtime state is part of the decision so a new dungeon, raid,
+-- delve, or scenario is protected even before Carbonite's static map data is
+-- updated for it.
+local function ComputeInstanceDisplayContext(map, mapID)
+    local mapInfo = GetSafeMapInfo(mapID)
+    if mapInfo and IsDungeonLikeMapType(mapInfo.mapType) then
+        return true
+    end
+
+    if map:IsInstanceMap(mapID) or map:IsBattleGroundMap(mapID) then
+        return true
+    end
+
+    local inInstance = false
+    if _G.IsInInstance then
+        local ok, value = pcall(_G.IsInInstance)
+        inInstance = ok and value or false
+    elseif _G.GetInstanceInfo then
+        local ok, _, instanceType = pcall(_G.GetInstanceInfo)
+        inInstance = ok and instanceType and instanceType ~= "none" or false
+    end
+
+    return inInstance
+end
+
+function Nx.Map:IsInstanceDisplayContext(mapID)
+    mapID = tonumber(mapID)
+    if not mapID or mapID <= 0 or mapID == 9000 then
+        return false
+    end
+
+    -- MapEngine increments Tick before each update. Cache only within that
+    -- tick so the renderer's per-pin relevance checks do not repeat map and
+    -- instance API calls, while the next frame can still detect a boundary
+    -- change even when the map ID itself has not changed yet.
+    if self.Tick ~= nil
+        and self._instanceContextTick == self.Tick
+        and self._instanceContextMapID == mapID
+        and self._instanceContextValue ~= nil then
+        return self._instanceContextValue
+    end
+
+    local value = ComputeInstanceDisplayContext(self, mapID)
+    if self.Tick ~= nil then
+        self._instanceContextTick = self.Tick
+        self._instanceContextMapID = mapID
+        self._instanceContextValue = value
+    end
+    return value
+end
+
+local function GetInstanceReferenceMapID(map, viewMapID)
+    if map.Tick ~= nil
+        and map._instanceReferenceTick == map.Tick
+        and map._instanceReferenceViewMapID == viewMapID then
+        return map._instanceReferenceMapID
+    end
+
+    local referenceMapID = viewMapID
+    local inInstance = false
+    if _G.IsInInstance then
+        local ok, value = pcall(_G.IsInInstance)
+        inInstance = ok and value or false
+    end
+    if inInstance and _G.C_Map and _G.C_Map.GetBestMapForUnit then
+        local ok, playerMapID = pcall(_G.C_Map.GetBestMapForUnit, "player")
+        if ok and playerMapID then
+            referenceMapID = playerMapID
+        end
+    end
+
+    if map.Tick ~= nil then
+        map._instanceReferenceTick = map.Tick
+        map._instanceReferenceViewMapID = viewMapID
+        map._instanceReferenceMapID = referenceMapID
+    end
+    return referenceMapID
+end
+
+-- Returns whether a static source map belongs to the instance currently being
+-- displayed. Outdoor parent zones are deliberately rejected; only the current
+-- player map, maps in the same Blizzard map group, and related dungeon/micro
+-- floors may cross the isolation boundary.
+function Nx.Map:IsMapRelevantToInstance(sourceMapID, viewMapID)
+    sourceMapID = tonumber(sourceMapID)
+    viewMapID = tonumber(viewMapID)
+        or tonumber(self.UpdateMapID)
+        or tonumber(self.MapId)
+
+    if not self:IsInstanceDisplayContext(viewMapID) then
+        return true
+    end
+    if not sourceMapID or sourceMapID <= 0 then
+        return false
+    end
+
+    local referenceMapID = GetInstanceReferenceMapID(self, viewMapID)
+
+    if sourceMapID == referenceMapID then
+        return true
+    end
+
+    self.InstanceMapRelevanceCache = self.InstanceMapRelevanceCache or {}
+    local cacheKey = tostring(referenceMapID or 0) .. ":" .. tostring(sourceMapID)
+    local cached = self.InstanceMapRelevanceCache[cacheKey]
+    if cached ~= nil then
+        return cached
+    end
+
+    local relevant = false
+    local sourceGroupID = GetSafeMapGroupID(sourceMapID)
+    local referenceGroupID = GetSafeMapGroupID(referenceMapID)
+    if sourceGroupID and referenceGroupID and sourceGroupID == referenceGroupID then
+        relevant = true
+    else
+        local sourceInfo = GetSafeMapInfo(sourceMapID)
+        local referenceInfo = GetSafeMapInfo(referenceMapID)
+        if sourceInfo and referenceInfo
+            and IsDungeonLikeMapType(sourceInfo.mapType)
+            and IsDungeonLikeMapType(referenceInfo.mapType) then
+            local function HasDungeonAncestor(mapInfo, wantedMapID)
+                local seen = 0
+                while mapInfo and mapInfo.parentMapID and mapInfo.parentMapID > 0
+                    and seen < 16 do
+                    if mapInfo.parentMapID == wantedMapID then
+                        return true
+                    end
+                    mapInfo = GetSafeMapInfo(mapInfo.parentMapID)
+                    if not mapInfo or not IsDungeonLikeMapType(mapInfo.mapType) then
+                        break
+                    end
+                    seen = seen + 1
+                end
+                return false
+            end
+
+            relevant = HasDungeonAncestor(sourceInfo, referenceMapID)
+                or HasDungeonAncestor(referenceInfo, sourceMapID)
+        end
+    end
+
+    self.InstanceMapRelevanceCache[cacheKey] = relevant
+    return relevant
+end
+
 function Nx.Map:IsInstanceMap (mapId)
     if (Nx.Map:GetCurrentMapAreaID(true) == 20) then return false end
     local winfo = Nx.Map:GetMap(1).MapWorldInfo
@@ -13314,7 +13550,10 @@ function Nx.MapAddIconPoint (iconType, mapName, x, y, texture, level)
 
     if mapId then
         local wx, wy = map:GetWorldPos (mapId, x, y)
-        map:AddIconPt (iconType, wx, wy, level, nil, texture)
+        local icon = map:AddIconPt (iconType, wx, wy, level, nil, texture)
+        if icon then
+            icon.mapID, icon.MapId = mapId, mapId
+        end
     end
 end
 
@@ -13360,11 +13599,13 @@ function Nx.MapAddIcon (name, mapId, x, y, level, tip, texture, tx1, ty1, tx2, t
     end
     if tx1 then
         local icon = map:AddIconPt("!CUSTOM",wx, wy, level, "FF0000", texture, tx1, ty1, tx2, ty2)
+        icon.mapID, icon.MapId = mapId, mapId
         if tip then
             map:SetIconTip(icon,tip)
         end
     else
         local icon = map:AddIconPt("!CUSTOM",wx, wy, level, "FF0000", texture)
+        icon.mapID, icon.MapId = mapId, mapId
         if tip then
             map:SetIconTip(icon,tip)
         end

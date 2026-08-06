@@ -2501,6 +2501,10 @@ function Nx.Window:Lock (lock, fullLockout)
         self.ButClose:Update()
     end
 
+    -- Locking can show the close/lock control. Reapply the minimized contract
+    -- so registered windows still expose only their restore switch.
+    self:ApplyMinimizedFrameVisibility()
+
     if fullLockout then
         self.FullLock = lock
     end
@@ -2809,6 +2813,8 @@ function Nx.Window:ResetLayout()
         end
 
         self.LayoutMode = false
+        data["MinUserPlaced"] = nil
+        data["IndependentMinimizePositions"] = nil
         self:SetLayoutMode()
 --        self.Frm:SetScale (1)
     end
@@ -2840,6 +2846,265 @@ end
 
 function Nx.Window:GetLayoutMode()
     return self.LayoutMode
+end
+
+---------------------------------------------------------------------------------------
+-- Copy only the screen anchor shared by normal and minimized layouts
+---------------------------------------------------------------------------------------
+
+function Nx.Window:CopyLayoutPosition (sourceMode, targetMode)
+
+    sourceMode = sourceMode or ""
+    targetMode = targetMode or ""
+
+    local data = self.SaveData
+    local x = data[sourceMode.."X"]
+    local y = data[sourceMode.."Y"]
+
+    if x == nil or y == nil then
+        return
+    end
+
+    data[targetMode.."A"] = data[sourceMode.."A"]
+    data[targetMode.."X"] = x
+    data[targetMode.."Y"] = y
+    data[targetMode.."S"] = data[sourceMode.."S"]
+end
+
+local LayoutAnchorFactors = {
+    TOPLEFT = { 0, 1 },
+    TOP = { .5, 1 },
+    TOPRIGHT = { 1, 1 },
+    LEFT = { 0, .5 },
+    CENTER = { .5, .5 },
+    RIGHT = { 1, .5 },
+    BOTTOMLEFT = { 0, 0 },
+    BOTTOM = { .5, 0 },
+    BOTTOMRIGHT = { 1, 0 },
+}
+
+---------------------------------------------------------------------------------------
+-- Keep a saved window layout inside the current screen bounds
+---------------------------------------------------------------------------------------
+
+function Nx.Window:ClampLayoutPositionToScreen (mode, frameW, frameH)
+
+    mode = mode or ""
+
+    local data = self.SaveData
+    local x = data[mode.."X"]
+    local y = data[mode.."Y"]
+    local w = frameW or data[mode.."W"]
+    local h = frameH or data[mode.."H"]
+    local scale = data[mode.."S"] or 1
+
+    if type (x) ~= "number" or type (y) ~= "number"
+        or type (w) ~= "number" or type (h) ~= "number"
+        or type (scale) ~= "number" or scale <= 0
+        or x ~= x or y ~= y or w ~= w or h ~= h or scale ~= scale then
+        return false
+    end
+
+    w = math.abs (w)
+    h = math.abs (h)
+    if w <= 0 or h <= 0 then
+        return false
+    end
+
+    local sw = GetScreenWidth()
+    local sh = GetScreenHeight()
+    if type (sw) ~= "number" or type (sh) ~= "number" or sw <= 0 or sh <= 0 then
+        return false
+    end
+
+    local aPt = data[mode.."A"] or "TOPLEFT"
+    local factors = LayoutAnchorFactors[aPt]
+    if not factors then
+        aPt = "TOPLEFT"
+        factors = LayoutAnchorFactors.TOPLEFT
+        data[mode.."A"] = nil
+    end
+
+    local xFactor = factors[1]
+    local yFactor = factors[2]
+    local scaledW = w * scale
+    local scaledH = h * scale
+
+    -- Saved offsets are in the frame's scaled coordinate system. Convert the
+    -- selected anchor into a screen rectangle, move that rectangle on-screen,
+    -- then convert only the required correction back to saved offsets.
+    local anchorX = sw * xFactor + x * scale
+    local anchorY = sh * yFactor - y * scale
+    local left = anchorX - scaledW * xFactor
+    local bottom = anchorY - scaledH * yFactor
+
+    local targetLeft
+    if scaledW <= sw then
+        targetLeft = math.max (0, math.min (left, sw - scaledW))
+    else
+        targetLeft = 0
+    end
+
+    local targetBottom
+    if scaledH <= sh then
+        targetBottom = math.max (0, math.min (bottom, sh - scaledH))
+    else
+        -- Oversized layouts keep their title edge visible at the top.
+        targetBottom = sh - scaledH
+    end
+
+    local dx = targetLeft - left
+    local dy = targetBottom - bottom
+    if math.abs (dx) < .01 and math.abs (dy) < .01 then
+        return false
+    end
+
+    data[mode.."X"] = x + dx / scale
+    data[mode.."Y"] = y - dy / scale
+    return true
+end
+
+---------------------------------------------------------------------------------------
+-- Select shared or independent normal/minimized window anchors
+---------------------------------------------------------------------------------------
+
+function Nx.Window:CaptureIndependentMinimizePositions()
+
+    local data = self.SaveData
+    data["IndependentMinimizePositions"] = {
+        Normal = {
+            A = data["A"],
+            X = data["X"],
+            Y = data["Y"],
+            S = data["S"],
+        },
+        Min = {
+            A = data["MinA"],
+            X = data["MinX"],
+            Y = data["MinY"],
+            S = data["MinS"],
+        },
+    }
+end
+
+function Nx.Window:RestoreIndependentMinimizePositions()
+
+    local data = self.SaveData
+    local positions = data["IndependentMinimizePositions"]
+    if not positions then
+        return
+    end
+
+    local normal = positions.Normal or {}
+    data["A"] = normal.A
+    data["X"] = normal.X
+    data["Y"] = normal.Y
+    data["S"] = normal.S
+
+    local minimized = positions.Min or {}
+    data["MinA"] = minimized.A
+    data["MinX"] = minimized.X
+    data["MinY"] = minimized.Y
+    data["MinS"] = minimized.S
+end
+
+function Nx.Window:SetShareMinimizePosition (enabled)
+
+    enabled = enabled == true
+    self.ShareMinimizePosition = enabled
+    self.KeepMinimizePositionsOnScreen = true
+
+    local data = self.SaveData
+    if not data then
+        return
+    end
+
+    local wasEnabled = data["ShareMinimizePositionActive"] == true
+    local mode = self.LayoutMode
+
+    if enabled then
+        -- Keep the independent anchors intact so disabling this option really
+        -- returns to the user's last separate full/minimized positions.
+        if not wasEnabled then
+            self:CaptureIndependentMinimizePositions()
+        end
+        data["ShareMinimizePositionActive"] = true
+
+        -- The currently displayed layout becomes authoritative when sharing is
+        -- enabled. RecordLayoutData mirrors it to the other layout immediately.
+        data["MinUserPlaced"] = nil
+
+        if mode == "" or mode == "Min" then
+            self:RecordLayoutData()
+        end
+    else
+        if wasEnabled then
+            self:RestoreIndependentMinimizePositions()
+        end
+        data["ShareMinimizePositionActive"] = nil
+
+        -- Opt out of the legacy first-minimize migration that would otherwise
+        -- replace the independently saved MinX/MinY position.
+        data["MinUserPlaced"] = true
+
+        -- Apply the restored anchor immediately when the option changes while
+        -- the window is open. Avoid recording the shared position over the
+        -- restored data during this same-layout refresh.
+        local compatibility = Nx.db and Nx.db.profile and Nx.db.profile.Map
+            and Nx.db.profile.Map.Compatibility
+        if wasEnabled and (mode == "" or mode == "Min")
+            and not (InCombatLockdown() and compatibility) then
+            self.LayoutMode = false
+            self:SetLayoutMode (mode)
+        end
+    end
+end
+
+---------------------------------------------------------------------------------------
+-- Register and update controls hidden by the minimized layout
+---------------------------------------------------------------------------------------
+
+function Nx.Window:SetMinimizedHideFrames (frames)
+    self.MinimizedHideFrames = frames
+    self:ApplyMinimizedFrameVisibility()
+end
+
+function Nx.Window:ApplyMinimizedFrameVisibility()
+
+    local frames = self.MinimizedHideFrames
+    if not frames then
+        return
+    end
+
+    if self.LayoutMode == "Min" then
+
+        local visibility = self.MinimizedFrameVisibility
+        if not visibility then
+            visibility = {}
+            self.MinimizedFrameVisibility = visibility
+
+            for _, frame in ipairs (frames) do
+                visibility[frame] = frame:IsShown() and true or false
+            end
+        end
+
+        for _, frame in ipairs (frames) do
+            frame:Hide()
+        end
+
+    elseif self.MinimizedFrameVisibility then
+
+        local visibility = self.MinimizedFrameVisibility
+        self.MinimizedFrameVisibility = nil
+
+        for _, frame in ipairs (frames) do
+            if visibility[frame] then
+                frame:Show()
+            else
+                frame:Hide()
+            end
+        end
+    end
 end
 
 ---------------------------------------------------------------------------------------
@@ -2934,12 +3199,44 @@ function Nx.Window:SetLayoutMode (mode)
 --        Nx.prt ("Setting win max")
     end
 
+    -- The quest watch uses one screen anchor in both layouts. RecordLayoutData
+    -- also mirrors this position immediately after a drag, so reloading while
+    -- minimized cannot resurrect an older normal-layout position.
+    if self.ShareMinimizePosition then
+        local sourceMode = oldMode or ""
+
+        if mode == "Min" and sourceMode ~= "Min" then
+            self:CopyLayoutPosition (sourceMode, "Min")
+        elseif sourceMode == "Min" and mode ~= "Min" then
+            self:CopyLayoutPosition ("Min", mode)
+        end
+
+        -- Retire the Phase 30.6 independent-minimized-position marker.
+        data["MinUserPlaced"] = nil
+
+    -- Other Carbonite windows retain their existing independent minimized
+    -- placement behavior.
+    elseif mode == "Min" and oldMode ~= "Min" and not data["MinUserPlaced"] then
+        local atPt, _, relPt, minX, minY = f:GetPoint()
+        if atPt and minX and minY and (not relPt or atPt == relPt) then
+            self:SetLayoutData (mode, minX, -minY, 125, 28,
+                data[(oldMode or "").."L"], atPt, f:GetScale())
+        end
+    end
+
     local x = data[mode.."X"]
 
     if not x then
 
         if mode == "Min" then
-            self:SetLayoutData (mode, sw * .9, sh * .4, 1, 1)    -- Hardcoded for quest watch
+            -- Defensive fallback for a frame that temporarily has no anchor.
+            local atPt, _, relPt, minX, minY = f:GetPoint()
+            if atPt and minX and minY and (not relPt or atPt == relPt) then
+                self:SetLayoutData (mode, minX, -minY, 125, 28,
+                    data[(oldMode or "").."L"], atPt, f:GetScale())
+            else
+                self:SetLayoutData (mode, sw * .9, sh * .4, 125, 28)
+            end
         else
 --            Nx.prt ("SetLayoutMode %s '%s' missing!", self.Name, mode)
             self:SetLayoutData (mode, sw * .4, sh * .4, sw * .2, sh * .2)
@@ -2986,20 +3283,49 @@ function Nx.Window:SetLayoutMode (mode)
         self:SetLayoutData (mode, x, y, w, h, false, data[mode.."A"], data[mode.."S"])
     end
 
-    local aPt = data[mode.."A"] or "TOPLEFT"
+    if self.KeepMinimizePositionsOnScreen and (mode == "" or mode == "Min") then
+        local clampW
+        local clampH
 
-    if aPt == "TOPLEFT" then
-        if data[mode.."X"] > sw - 20 then
-            data[mode.."X"] = sw - 20
---            Nx.prt ("Fix %s x", self.Name)
+        -- In shared mode the smaller minimized strip must be placed where the
+        -- full watch can also open. This prevents a valid strip position near
+        -- an edge from turning into an unreachable full window on restore.
+        if self.ShareMinimizePosition then
+            clampW = data["W"]
+            clampH = data["H"]
+            if type (clampW) ~= "number" or clampW <= 0 then
+                clampW = data[mode.."W"]
+            end
+            if type (clampH) ~= "number" or clampH <= 0 then
+                clampH = data[mode.."H"]
+            end
+        end
+
+        self:ClampLayoutPositionToScreen (mode, clampW, clampH)
+
+        -- A repaired shared anchor remains one anchor. Do not leave the other
+        -- layout holding the stale off-screen coordinates that were repaired.
+        if self.ShareMinimizePosition then
+            self:CopyLayoutPosition (mode, mode == "Min" and "" or "Min")
+        end
+    else
+        local aPt = data[mode.."A"] or "TOPLEFT"
+
+        if aPt == "TOPLEFT" then
+            if data[mode.."X"] > sw - 20 then
+                data[mode.."X"] = sw - 20
+--                Nx.prt ("Fix %s x", self.Name)
+            end
+        end
+        if aPt == "TOPRIGHT" or aPt == "RIGHT" or aPt == "BOTTOMRIGHT" then
+            if data[mode.."X"] > 20 then
+                data[mode.."X"] = 20
+--                Nx.prt ("Fix %s x", self.Name)
+            end
         end
     end
-    if aPt == "TOPRIGHT" or aPt == "RIGHT" or aPt == "BOTTOMRIGHT" then
-        if data[mode.."X"] > 20 then
-            data[mode.."X"] = 20
---            Nx.prt ("Fix %s x", self.Name)
-        end
-    end
+
+    local aPt = data[mode.."A"] or "TOPLEFT"
 
 --    prt ("Y "..data[mode.."Y"])
 --    prt ("%s H %f", self.Name, data[mode.."H"])
@@ -3028,6 +3354,7 @@ function Nx.Window:SetLayoutMode (mode)
     end
 
     self:Adjust()
+    self:ApplyMinimizedFrameVisibility()
 end
 
 ---------------------------------------------------------------------------------------
@@ -3173,7 +3500,38 @@ function Nx.Window:RecordLayoutData()
             end
         end
 
-        self:SetLayoutData (self.LayoutMode, x, y, f:GetWidth(), f:GetHeight(), false, atPt, scale)
+        local mode = self.LayoutMode
+        self:SetLayoutData (mode, x, y, f:GetWidth(), f:GetHeight(), false, atPt, scale)
+
+        if self.KeepMinimizePositionsOnScreen and (mode == "" or mode == "Min") then
+            local clampW
+            local clampH
+
+            if self.ShareMinimizePosition then
+                clampW = data["W"]
+                clampH = data["H"]
+                if type (clampW) ~= "number" or clampW <= 0 then
+                    clampW = data[mode.."W"]
+                end
+                if type (clampH) ~= "number" or clampH <= 0 then
+                    clampH = data[mode.."H"]
+                end
+            end
+
+            if self:ClampLayoutPositionToScreen (mode, clampW, clampH) then
+                f:ClearAllPoints()
+                f:SetPoint (data[mode.."A"] or "TOPLEFT",
+                    data[mode.."X"], -data[mode.."Y"])
+            end
+        end
+
+        -- The watch window has one user-owned location. Mirror a drag at once
+        -- so the matching layout is correct even if the UI reloads before the
+        -- user toggles minimize/restore again.
+        if self.ShareMinimizePosition and (mode == "" or mode == "Min") then
+            self:CopyLayoutPosition (mode, mode == "Min" and "" or "Min")
+            self.SaveData["MinUserPlaced"] = nil
+        end
     end
 end
 
@@ -3466,6 +3824,12 @@ function Nx.Window:OnMouseUp (button)
         end
 
         win:RecordLayoutData()
+
+        -- Windows that do not opt into a shared normal/minimized anchor retain
+        -- their existing independently placed minimized layout.
+        if win.LayoutMode == "Min" and not win.ShareMinimizePosition then
+            win.SaveData["MinUserPlaced"] = true
+        end
     end
 
     ResetCursor()

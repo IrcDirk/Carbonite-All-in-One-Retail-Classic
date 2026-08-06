@@ -72,6 +72,32 @@ local function _normaliseSenderName(name)
     return name
 end
 
+-- Build a locale-safe pattern for Blizzard's "player not found" system
+-- message. Escape the translated text before restoring the %s capture so
+-- punctuation in any locale cannot alter the Lua pattern.
+local function _buildPlayerNotFoundPattern()
+    local template = ERR_CHAT_PLAYER_NOT_FOUND_S
+    if type(template) ~= "string" or template == "" then
+        return nil
+    end
+
+    local marker = "\1"
+    local replaced
+    template, replaced = template:gsub("%%1%$s", marker, 1)
+    if replaced == 0 then
+        template, replaced = template:gsub("%%s", marker, 1)
+    end
+    if replaced == 0 then
+        return nil
+    end
+
+    template = template:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
+    template = template:gsub(marker, "(.+)", 1)
+    return "^" .. template .. "$"
+end
+
+local PLAYER_NOT_FOUND_PATTERN = _buildPlayerNotFoundPattern()
+
 ---------------------------------------------------------------------------------------
 -- Relocation note
 ---------------------------------------------------------------------------------------
@@ -150,6 +176,9 @@ function Nx.Com:Init()
     self.MemberNames = {}    -- Names in current party or raid
 
     self.Friends = {}        -- Online friends list
+    self.UnavailablePals = {} -- Carbonite whisper targets rejected by server
+    self.PendingWhisperTargets = {} -- Recent Carbonite addon whispers by name
+    self.HandledWhisperErrors = {}  -- Short-lived filter/event correlation
 
     -- Zone channel info
     self.ZPInfo = {}         -- Zone player info (positions of non-pals)
@@ -396,44 +425,142 @@ end
 function Nx.Com:OnFriendguild_update()
     local self = Nx.Com
 
-    -- Build set of online guild members
+    local unavailable = self.UnavailablePals or {}
+    local pending = self.PendingWhisperTargets or {}
+    local handled = self.HandledWhisperErrors or {}
+    local seenNames = {}
+
+    self.UnavailablePals = unavailable
+    self.PendingWhisperTargets = pending
+    self.HandledWhisperErrors = handled
+
+    -- Build normalized sets of all guild members and online guild members.
+    -- Friends who are also guild members must never receive a duplicate direct
+    -- whisper: the GUILD distribution already covers them, including the case
+    -- where one roster temporarily reports a different online state.
+    local guildNames = {}
     local gNames = {}
     local gNum = GetNumGuildMembers()
 
     for n = 1, gNum do
         local name, _, _, _, _, _, _, _, online = GetGuildRosterInfo(n)
-        if online then
-            gNames[name] = true
+        name = _normaliseSenderName(name)
+
+        if name then
+            guildNames[name] = true
+            seenNames[name] = true
+
+            if online then
+                gNames[name] = true
+            else
+                -- A confirmed offline observation ends the quarantine. A later
+                -- offline-to-online roster transition can safely enable sends.
+                unavailable[name] = nil
+            end
         end
     end
 
-    -- Build friends list (excluding guild members)
+    -- Build the connected character-friends list, excluding every guild member
+    -- and every recipient rejected by the server during this online session.
     self.Friends = {}
     local i = 1
 
     for n = 1, C_FriendList.GetNumFriends() do
         local finfo = C_FriendList.GetFriendInfoByIndex(n)
-        local name = finfo.name
-        local con = finfo.connected
+        if finfo then
+            local name = _normaliseSenderName(finfo.name)
+            local connected = finfo.connected
 
-        -- Canonicalise to "Name-Realm" (strips localiser tag, adds
-        -- realm slug if missing).
-        name = _normaliseSenderName(name)
+            if name then
+                seenNames[name] = true
 
-        if con then
-            if not gNames[name] then
-                self.Friends[i] = name
-                i = i + 1
+                if not connected then
+                    unavailable[name] = nil
+                elseif not guildNames[name] and not unavailable[name] then
+                    self.Friends[i] = name
+                    i = i + 1
+                end
             end
         end
     end
 
     -- Mark friends in guild names table
-    for k, v in ipairs(self.Friends) do
-        gNames[v] = false
+    for _, name in ipairs(self.Friends) do
+        gNames[name] = false
+    end
+
+    -- Forget quarantine/correlation entries for players no longer present in
+    -- either social roster, and bound the recent-send tables by age.
+    local now = GetTime()
+    for name in pairs(unavailable) do
+        if not seenNames[name] then
+            unavailable[name] = nil
+        end
+    end
+    for name, sentAt in pairs(pending) do
+        if not sentAt or now - sentAt > 10 then
+            pending[name] = nil
+        end
+    end
+    for name, handledAt in pairs(handled) do
+        if not handledAt or now - handledAt > 2 then
+            handled[name] = nil
+        end
     end
 
     self.PalNames = gNames
+end
+
+--- Handle a Blizzard "player not found" message caused by a recent Carbonite
+-- addon whisper. Returns true only when the message belongs to Carbonite, so a
+-- chat filter can suppress the protocol error without hiding a player's normal
+-- whisper errors.
+-- @param message Localized CHAT_MSG_SYSTEM message
+-- @return true when Carbonite caused and handled the error
+function Nx.Com:HandleUnavailableWhisper(message)
+    if type(message) ~= "string" or not PLAYER_NOT_FOUND_PATTERN then
+        return false
+    end
+
+    local rawName = strmatch(message, PLAYER_NOT_FOUND_PATTERN)
+    local name = _normaliseSenderName(rawName)
+    if not name then
+        return false
+    end
+
+    local now = GetTime()
+    local pending = self.PendingWhisperTargets or {}
+    local handled = self.HandledWhisperErrors or {}
+    local sentAt = pending[name]
+    local handledAt = handled[name]
+
+    self.PendingWhisperTargets = pending
+    self.HandledWhisperErrors = handled
+
+    if not (sentAt and now - sentAt <= 10)
+            and not (handledAt and now - handledAt <= 2) then
+        return false
+    end
+
+    pending[name] = nil
+    handled[name] = now
+    self.UnavailablePals = self.UnavailablePals or {}
+    self.UnavailablePals[name] = true
+
+    -- Remove the rejected recipient from every live social cache. Iterate in
+    -- reverse so duplicate/corrupt entries are all removed safely.
+    for index = #self.Friends, 1, -1 do
+        if self.Friends[index] == name then
+            tremove(self.Friends, index)
+            if self.PosSendNext and index <= self.PosSendNext then
+                self.PosSendNext = self.PosSendNext - 1
+            end
+        end
+    end
+
+    self.PalNames[name] = nil
+    self.PalsInfo[name] = nil
+    return true
 end
 
 ---------------------------------------------------------------------------------------
@@ -508,25 +635,12 @@ function Nx.Com:OnChat_msg_channel(event, arg1, arg2, arg3, arg4, arg5, arg6, ar
 
     -- Handle system messages for player not found
     if event == "CHAT_MSG_SYSTEM" then
-        local message = arg1
-
-        local NOT_FOUND = ERR_CHAT_PLAYER_NOT_FOUND_S:gsub("%%s", "(.-)")
-        local name = strmatch(message, NOT_FOUND)
-
-        if name then
-            name = _normaliseSenderName(name)
-
-            -- Remove from friends list
-            for k, v in ipairs(self.Friends) do
-                if name == v then
-                    tremove(self.Friends, k)
-                end
-            end
-        end
+        self:HandleUnavailableWhisper(arg1)
+        return
     end
 
     -- Process messages from our channels
-    if strsub(arg9, 1, 3) == self.Name then
+    if type(arg9) == "string" and strsub(arg9, 1, 3) == self.Name then
         -- Canonicalise sender before the self-skip below. On RU /
         -- other localised classic clients arg2 arrives as
         -- "Name-Realm (RU)" and previously slipped past the
@@ -1101,7 +1215,7 @@ function Nx.Com:Send(chanId, msg, plName)
         if chanId == "g" then
             -- Addon guild channel
             if IsInGuild() then
-                Nx:SendCommMessage(self.Name, msg, "GUILD", plName)
+                Nx:SendCommMessage(self.Name, msg, "GUILD")
             end
 
         elseif chanId == "p" then
@@ -1114,7 +1228,14 @@ function Nx.Com:Send(chanId, msg, plName)
 
         elseif chanId == "W" then
             -- Addon whisper
-            Nx:SendCommMessage(self.Name, msg, "WHISPER", plName)
+            local name = _normaliseSenderName(plName)
+            if not name or (self.UnavailablePals and self.UnavailablePals[name]) then
+                return
+            end
+
+            self.PendingWhisperTargets = self.PendingWhisperTargets or {}
+            self.PendingWhisperTargets[name] = GetTime()
+            Nx:SendCommMessage(self.Name, msg, "WHISPER", name)
 
         elseif chanId == "P" then
             -- Party chat channel
@@ -1520,7 +1641,7 @@ function Nx.Com:OnUpdate(elapsed)
                 if self.PosSendNext == -1 then
                     -- Send to guild
                     if bit.band(self.SendPMask, 2) > 0 then
-                        self:Send("g", msg, self.PlyrName)
+                        self:Send("g", msg)
                     end
 
                 elseif self.PosSendNext == 0 then

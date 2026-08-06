@@ -84,6 +84,87 @@ local GetAbandonQuestItems = C_QuestLog.GetAbandonQuestItems or GetAbandonQuestI
 -- Classic uses GetQuestLogTitle directly, Retail uses C_QuestLog.GetInfo
 -------------------------------------------------------------------------------
 
+-- Return Carbonite's legacy tri-state completion value:
+--   1    complete / ready to turn in
+--  -1    failed
+--   nil  active and incomplete
+--
+-- Retail can briefly report IsFailed while the final objective and the quest
+-- completion state are being committed. Blizzard's own quest utility treats
+-- ReadyForTurnIn as a completed active quest, so it must have the same
+-- precedence here. Checking IsFailed first (or ignoring ReadyForTurnIn) makes
+-- the watch and quest-list rows flash red "Failed" immediately before they
+-- become complete.
+local QUEST_FAILURE_CONFIRM_DELAY = 0.75
+local questFailureFirstSeen = {}
+local questFailureRefreshPending = {}
+
+local function ScheduleQuestFailureRefresh(questID)
+    if questFailureRefreshPending[questID]
+            or not C_Timer or not C_Timer.After then
+        return false
+    end
+
+    questFailureRefreshPending[questID] = true
+    C_Timer.After(QUEST_FAILURE_CONFIRM_DELAY, function()
+        questFailureRefreshPending[questID] = nil
+
+        -- The quest may have been turned in or removed during the confirmation
+        -- window. Do not rebuild or retain debounce state for a dead log entry.
+        if C_QuestLog and C_QuestLog.GetLogIndexForQuestID
+                and not C_QuestLog.GetLogIndexForQuestID(questID) then
+            questFailureFirstSeen[questID] = nil
+            return
+        end
+
+        local quest = Nx and Nx.Quest
+        if quest and quest.RecordQuests then
+            quest:RecordQuests(1)
+        end
+        if quest and quest.Watch and quest.Watch.Update then
+            quest.Watch:Update()
+        end
+        if quest and quest.List and quest.List.Opened and quest.List.Update then
+            quest.List:Update()
+        end
+    end)
+    return true
+end
+
+local function GetQuestCompletionState(questID)
+    if not questID or questID <= 0 or not C_QuestLog then
+        return nil
+    end
+
+    if C_QuestLog.IsComplete and C_QuestLog.IsComplete(questID) then
+        questFailureFirstSeen[questID] = nil
+        return 1
+    end
+
+    if C_QuestLog.ReadyForTurnIn and C_QuestLog.ReadyForTurnIn(questID) then
+        questFailureFirstSeen[questID] = nil
+        return 1
+    end
+
+    if C_QuestLog.IsFailed and C_QuestLog.IsFailed(questID) then
+        local now = GetTime()
+        local firstSeen = questFailureFirstSeen[questID]
+        if not firstSeen then
+            questFailureFirstSeen[questID] = now
+            if ScheduleQuestFailureRefresh(questID) then
+                return nil
+            end
+        elseif now - firstSeen < QUEST_FAILURE_CONFIRM_DELAY then
+            return nil
+        end
+
+        return -1
+    end
+
+    questFailureFirstSeen[questID] = nil
+    return nil
+end
+
 -- Check if we need to create shims (Retail doesn't have GetQuestLogTitle natively)
 if C_QuestLog and C_QuestLog.GetInfo then
     -- Retail: Create shim that wraps C_QuestLog.GetInfo with GetQuestLogTitle signature.
@@ -107,7 +188,7 @@ if C_QuestLog and C_QuestLog.GetInfo then
                 liveID = id
             end
         end
-        local isComplete = C_QuestLog.IsComplete(liveID) and 1 or (C_QuestLog.IsFailed(liveID) and -1 or nil)
+        local isComplete = GetQuestCompletionState(liveID)
         return q.title, q.level, q.suggestedGroup, q.isHeader, q.isCollapsed, isComplete, q.frequency, liveID, q.startEvent, q.questID, q.isOnMap, q.hasLocalPOI, q.isTask, q.isBounty, q.isStory, q.isHidden, q.isScaling
     end
 
@@ -177,6 +258,7 @@ end
 -- modules can call it; file-local alias below keeps existing
 -- NxQuest sites unchanged.
 Nx.Quest = Nx.Quest or {}
+Nx.Quest.GetQuestCompletionState = GetQuestCompletionState
 function Nx.Quest.GetQuestTagInfoCompat(questID)
     if not questID then return nil end
     if C_QuestLog and C_QuestLog.GetQuestTagInfo then
@@ -500,6 +582,7 @@ Nx.Quest.defaults = {
             RefreshTimer = 500,                         -- Refresh delay (ms)
             RemoveComplete = false,                     -- Remove completed
             ScenTrack = true,                           -- Track scenarios
+            ShareMinimizePosition = true,               -- Share full/minimized position
             ShowClose = false,                          -- Show close button
             ShowDist = true,                            -- Show distance
             ShowPerColor = false,                       -- Color by progress

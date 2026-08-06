@@ -119,19 +119,34 @@ end
 
 -- Convenience wrapper so call sites can read like the legacy
 -- "stamp this icon" code without sprouting nil-checks.
+local function IsQuestPinRelevant(opts)
+    local mapID = opts and opts.mapID
+    local map = Nx.Map
+    if map and map.IsMapRelevantToInstance then
+        return map:IsMapRelevantToInstance(
+            mapID,
+            map.UpdateMapID or map.RMapId or map.MapId
+        )
+    end
+    return true
+end
+
 function Nx.Quest:AddPOI(wx, wy, opts)
+    if not IsQuestPinRelevant(opts) then return nil end
     local p = provider()
     if not p then return nil end
     return p:Add("POI", wx, wy, opts)
 end
 
 function Nx.Quest:AddArea(wx, wy, opts)
+    if not IsQuestPinRelevant(opts) then return nil end
     local p = provider()
     if not p then return nil end
     return p:Add("Area", wx, wy, opts)
 end
 
 function Nx.Quest:AddArrow(wx, wy, opts)
+    if not IsQuestPinRelevant(opts) then return nil end
     local p = provider()
     if not p then return nil end
     return p:Add("Arrow", wx, wy, opts)

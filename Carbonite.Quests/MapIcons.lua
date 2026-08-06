@@ -57,31 +57,82 @@ local function GetCatalogQuestTitle(questID, fallback, questLogIndex)
     return questID and ("Quest " .. questID) or "Quest"
 end
 
+local function IsInstanceIconContext(mapID)
+    return Nx.Map and Nx.Map.IsInstanceDisplayContext
+        and Nx.Map:IsInstanceDisplayContext(mapID) or false
+end
+
+local function IsQuestMapRelevant(mapID, viewMapID)
+    if not mapID then
+        return false
+    end
+    if Nx.Map and Nx.Map.IsMapRelevantToInstance then
+        return Nx.Map:IsMapRelevantToInstance(mapID, viewMapID)
+    end
+    return true
+end
+
 local GetObjectIconTextureCoords = _G.C_Minimap and _G.C_Minimap.GetObjectIconTextureCoords
 
 -------------------------------------------------------------------------------
 -- Update map icons (called by map)
 -------------------------------------------------------------------------------
 
--- Cache for World Quest task info (refreshes every second, retail only)
-local taskInfoCache = nil
+-- Cache for world-quest task info (refreshes every second, retail only).
+-- The cache is bound to the map that produced it. A same-map grace period
+-- absorbs Blizzard's occasional transient empty refresh without ever
+-- retaining outdoor tasks across a map or instance boundary.
+local TASK_CACHE_EMPTY_GRACE = 2
+local taskInfoCache = {
+    mapID = nil,
+    data = nil,
+    lastGood = 0,
+}
+
+local function ClearTaskInfoCache()
+    taskInfoCache.mapID = nil
+    taskInfoCache.data = nil
+    taskInfoCache.lastGood = 0
+end
+
+function Nx.Quest:ClearTaskInfoCache()
+    ClearTaskInfoCache()
+end
+
+local function RefreshTaskInfoCache(mapID, forceMapBoundary)
+    if not mapID or mapID == 9000
+        or IsInstanceIconContext(mapID)
+        or not (C_TaskQuest and C_TaskQuest.GetQuestsOnMap) then
+        ClearTaskInfoCache()
+        return nil
+    end
+
+    if taskInfoCache.mapID ~= mapID then
+        taskInfoCache.mapID = mapID
+        taskInfoCache.data = nil
+        taskInfoCache.lastGood = 0
+        forceMapBoundary = true
+    end
+
+    local fresh = C_TaskQuest.GetQuestsOnMap(mapID)
+    local now = GetTime()
+    if fresh and #fresh > 0 then
+        taskInfoCache.data = fresh
+        taskInfoCache.lastGood = now
+    elseif forceMapBoundary
+        or taskInfoCache.lastGood == 0
+        or now - taskInfoCache.lastGood > TASK_CACHE_EMPTY_GRACE then
+        taskInfoCache.data = nil
+    end
+
+    return taskInfoCache.data
+end
+
 local taskInfoCacheTimer = nil
 if C_TaskQuest and C_TaskQuest.GetQuestsOnMap then
     taskInfoCacheTimer = C_Timer.NewTicker(1, function()
         if Nx.Map and Nx.Map.UpdateMapID then
-            -- Preserve the prior good cache when the API returns a nil
-            -- or empty list. C_TaskQuest.GetQuestsOnMap occasionally
-            -- replies empty mid-refresh on retail; clobbering the
-            -- cache then left the next UpdateIcons pass with nothing
-            -- to stamp, so ResetIcons/HideExtraIcons hid every WQ /
-            -- bonus-task icon for that frame. The next ticker tick
-            -- repopulated the cache and the icons came back -- visible
-            -- as a once-per-second blink of every retail world-quest
-            -- pin on the map.
-            local fresh = C_TaskQuest.GetQuestsOnMap(Nx.Map.UpdateMapID)
-            if fresh and #fresh > 0 then
-                taskInfoCache = fresh
-            end
+            RefreshTaskInfoCache(Nx.Map.UpdateMapID, false)
         end
     end)
 end
@@ -93,6 +144,8 @@ function Nx.Quest:UpdateIcons (map)
     local Nx = Nx
     local Quest = Nx.Quest
     local Map = Nx.Map
+    local viewMapID = Map.UpdateMapID or map.MapId
+    local instanceIconContext = IsInstanceIconContext(viewMapID)
     local qLocColors = Quest.QLocColors
     local ptSz = 4 * map.ScaleDraw
 
@@ -143,7 +196,7 @@ function Nx.Quest:UpdateIcons (map)
     local tickBucket = math.floor((map.Tick or 0) / 10)
     local fp = (map.MapId or 0) .. "|" .. activeQID .. "|"
             .. (hoverCur and hoverCur.QId or 0) .. "|" .. hoverObjI
-            .. "|" .. tickBucket
+            .. "|" .. tickBucket .. "|" .. (instanceIconContext and 1 or 0)
     -- The dirty-check now guards only the heavy per-quest walk
     -- (Pin/Layer-backed POIs). The BONUS TASKS / WORLD QUESTS block
     -- below uses the legacy direct-stamp pool (IconWQFrms), which the
@@ -188,7 +241,7 @@ function Nx.Quest:UpdateIcons (map)
             local endName, zone, x, y = Quest:GetSEPos (obj)
             local mapId = zone
 
-            if mapId then
+            if mapId and IsQuestMapRelevant(mapId, viewMapID) then
 
                 local wx, wy = map:GetWorldPos (mapId, x, y)
                 if Nx.Quest.AddPOI then
@@ -304,7 +357,7 @@ function Nx.Quest:UpdateIcons (map)
                     local startName, zone, x, y = Quest:GetSEPos (quest["Start"])
                     local mapId = zone
 
-                    if mapId then
+                    if mapId and IsQuestMapRelevant(mapId, viewMapID) then
                         -- Quest-start POI is the first site ported to
                         -- the Pin/Layer-backed Carbonite.Quests
                         -- provider. The renderer reads pin.NXType +
@@ -344,7 +397,8 @@ function Nx.Quest:UpdateIcons (map)
                 local endName, zone, x, y = Quest:GetSEPos (obj)
                 local mapId = zone
 
-                if mapId and (not cur or not cur.CompleteMerge) then
+                if mapId and IsQuestMapRelevant(mapId, viewMapID)
+                    and (not cur or not cur.CompleteMerge) then
 
                     local wx, wy = map:GetWorldPos (mapId, x, y)
                     if Nx.Quest.AddPOI then
@@ -408,7 +462,8 @@ function Nx.Quest:UpdateIcons (map)
 
                     local objName, objZone, typ = Nx.Quest:UnpackObjectiveNew (obj)
 
-                    if objZone and objZone ~= 9000 then
+                    if objZone and objZone ~= 9000
+                        and IsQuestMapRelevant(objZone, viewMapID) then
 
                         local mapId = objZone
 
@@ -493,7 +548,7 @@ function Nx.Quest:UpdateIcons (map)
                                                 tex         = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconAreaArrows",
                                                 NXType      = 9000 + n,
                                                 NXData      = cur,
-                                                mapID       = pmap,
+                                                mapID       = mapId,
                                                 vertexColor = avc,
                                             })
                                         else
@@ -541,6 +596,9 @@ function Nx.Quest:UpdateIcons (map)
                                     -- next to the real POI.
                                     if not poiMap or poiMap == 0 then
                                         -- skip
+                                    elseif not IsQuestMapRelevant(pmap, viewMapID) then
+                                        -- The POI belongs to an outdoor or unrelated
+                                        -- map and must not cross an instance boundary.
                                     elseif poiTyp == 32 then
                                         -- Point objective POI
                                         local px, py = Nx.Quest:UnpackLocPtOff (loc1)
@@ -664,15 +722,9 @@ function Nx.Quest:UpdateIcons (map)
     -- BONUS TASKS and WORLD QUESTS icons
     local taskIconIndex = 1
     local activeWQ = {}
-    if C_TaskQuest and C_TaskQuest.GetQuestsOnMap and Map.UpdateMapID ~= 9000 then
-        -- Refresh cache on map change
-        if Nx.Map.mapChange then
-            local fresh = C_TaskQuest.GetQuestsOnMap(Map.UpdateMapID)
-            if fresh and #fresh > 0 then
-                taskInfoCache = fresh
-            end
-        end
-        local taskInfo = taskInfoCache
+    if C_TaskQuest and C_TaskQuest.GetQuestsOnMap
+        and viewMapID ~= 9000 and not instanceIconContext then
+        local taskInfo = RefreshTaskInfoCache(viewMapID, Nx.Map.mapChange)
         if taskInfo and Nx.db.char.Map.ShowWorldQuest then
             for i = 1, #taskInfo do
                 local info = taskInfo[i]

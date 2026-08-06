@@ -27,6 +27,7 @@ local CHAT_EVENTS = {
     "CHAT_MSG_CHANNEL_JOIN",
     "CHAT_MSG_CHANNEL_LEAVE",
     "CHAT_MSG_CHANNEL_NOTICE",
+    "CHAT_MSG_SYSTEM",
 }
 
 local function matchesPrefix(channelName)
@@ -39,6 +40,11 @@ end
 
 local function filter(self_, event, message, sender, _, _, _, _, _, _, channelName)
     if not ChannelSpamFilter.enabled then return false end
+    if event == "CHAT_MSG_SYSTEM" then
+        local com = _G.Nx and _G.Nx.Com
+        return com and com.HandleUnavailableWhisper
+            and com:HandleUnavailableWhisper(message) or false
+    end
     if matchesPrefix(channelName) then return true end           -- suppress
     return false
 end

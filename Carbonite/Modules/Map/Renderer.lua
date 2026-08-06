@@ -77,6 +77,21 @@ local function isHiddenByDockMM(mmSX1, mmSY1, mmSX2, mmSY2,
     return sx >= mmSX1 and sx <= mmSX2 and sy >= mmSY1 and sy <= mmSY2
 end
 
+-- Persistent provider pins can outlive a zone transition by one render pass.
+-- When the player is in an instance, reject static pins whose recorded source
+-- map does not belong to the active dungeon/raid/delve map family. Dynamic
+-- pins without source-map metadata retain their existing behavior.
+local function isPinMapRelevant(map, pin)
+    local sourceMapID = pin.mapID or pin.MapId
+    if sourceMapID and map.IsMapRelevantToInstance then
+        return map:IsMapRelevantToInstance(
+            sourceMapID,
+            map.UpdateMapID or map.MapId
+        )
+    end
+    return true
+end
+
 -- Decide per-class Enabled state for this frame (legacy parity:
 -- guide vs non-guide gate, atScale gate, instance-map override).
 local function computeEnabled(cls, layer, drawNonGuide, map)
@@ -111,7 +126,9 @@ local function renderZP(map, layer, cls, frameLvl)
     for i = 1, #layer.pins do
         local pin = layer.pins[i]
         local pinLevel = pin.level
-        if (not pinLevel and dungeonLevel == 0) or pinLevel == dungeonLevel then
+        if isPinMapRelevant(map, pin)
+            and ((not pinLevel and dungeonLevel == 0)
+                or pinLevel == dungeonLevel) then
             local f = map:GetIconStatic(frameLvl)
             if clip(map, f, pin.x, pin.y, w, h, 0) then
                 f.NxTip = pin.tip
@@ -193,8 +210,9 @@ local function renderWP(map, layer, cls, frameLvl, wpScale, wpMin)
     for i = 1, #layer.pins do
         local pin = layer.pins[i]
         local iconX, iconY = pin.x, pin.y
-        if rawSize or (iconX >= visMinX and iconX <= visMaxX
-            and iconY >= visMinY and iconY <= visMaxY) then
+        if isPinMapRelevant(map, pin)
+            and (rawSize or (iconX >= visMinX and iconX <= visMaxX
+                and iconY >= visMinY and iconY <= visMaxY)) then
             local pinLevel = pin.level
             local levelOK = (not pinLevel and dungeonLevel == 0)
                 or pinLevel == dungeonLevel
@@ -317,7 +335,7 @@ local function renderLINE(map, layer, cls)
         local pin = layer.pins[i]
         local x1, y1 = pin.x,  pin.y
         local x2, y2 = pin.x2, pin.y2
-        if x1 and y1 and x2 and y2 then
+        if isPinMapRelevant(map, pin) and x1 and y1 and x2 and y2 then
             local sx1, sy1, in1 = worldToFramePixel(map, x1, y1)
             local sx2, sy2, in2 = worldToFramePixel(map, x2, y2)
             -- Cheap cull: skip when both endpoints sit outside. Lines
@@ -358,7 +376,9 @@ local function renderZR(map, layer, cls, frameLvl)
     for i = 1, #layer.pins do
         local pin = layer.pins[i]
         local pinLevel = pin.level
-        if (not pinLevel and dungeonLevel == 0) or pinLevel == dungeonLevel then
+        if isPinMapRelevant(map, pin)
+            and ((not pinLevel and dungeonLevel == 0)
+                or pinLevel == dungeonLevel) then
             local f = map:GetIconStatic(frameLvl)
             f.NxTip = pin.tip
             f.NxPin = pin

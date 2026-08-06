@@ -233,6 +233,7 @@ function Nx.Notes:Questie(mapId)
             or (icon.data and (icon.data.IconScale or 1) < 0.85)
         local layer = isManual and "!QUE_T" or "!QUE"
         local qnote = map:AddIconPt(layer, wx, wy, nil, "FFFFFF", texture)
+        qnote.mapID, qnote.MapId = mapId, mapId
         map:SetIconUserData(qnote, icon)
         local tip = buildQuestieTip(icon.data)
         if tip then map:SetIconTip(qnote, tip) end

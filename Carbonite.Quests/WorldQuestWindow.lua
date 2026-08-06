@@ -642,13 +642,24 @@ Nx.Quest.QuestOfferCache = nil
 Nx.Quest.QuestOfferCacheMapID = nil
 Nx.Quest.QuestOfferCacheTime = 0
 
+function Nx.Quest:ClearQuestOfferCache()
+    self.QuestOfferCache = nil
+    self.QuestOfferCacheMapID = nil
+    self.QuestOfferCacheTime = 0
+end
+
+local function IsInstanceQuestIconContext(mapID)
+    return Nx.Map and Nx.Map.IsInstanceDisplayContext
+        and Nx.Map:IsInstanceDisplayContext(mapID) or false
+end
+
 ---
 -- Get all quest offers for a map
 -- @param mapID  The map ID to get quest offers for
 -- @return       Table of quest offers {questID = questInfo, ...}
 --
 function Nx.Quest:GetQuestOffersForMap(mapID)
-    if not mapID then
+    if not mapID or IsInstanceQuestIconContext(mapID) then
         return {}
     end
 
@@ -813,6 +824,10 @@ function Nx.Quest:UpdateQuestOfferIcons(map)
     if not mapID then
         return
     end
+    if IsInstanceQuestIconContext(mapID) then
+        self:ClearQuestOfferCache()
+        return
+    end
 
     local questOffers = self:GetQuestOffersForMap(mapID)
 
@@ -882,4 +897,3 @@ function Nx.Quest:InitQuestOfferOptions()
         end
     end
 end
-

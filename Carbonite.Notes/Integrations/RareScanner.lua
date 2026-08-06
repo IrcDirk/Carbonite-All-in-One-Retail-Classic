@@ -313,6 +313,7 @@ function Nx.Notes:RareScanner(mapId)
     for _, e in ipairs(entries) do
         local wx, wy = Nx.Map:GetWorldPos(mapId, e.nx * 100, e.ny * 100)
         local rsnote = map:AddIconPt("!RSR", wx, wy, nil, e.color or "FFFFFF", e.tex)
+        rsnote.mapID, rsnote.MapId = mapId, mapId
         local tip
         if e.isGroupRep then
             -- Plain-text fallback tooltip listing the group's

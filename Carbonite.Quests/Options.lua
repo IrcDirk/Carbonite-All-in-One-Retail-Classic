@@ -844,6 +844,26 @@ function Nx.Quest:GetOptionsConfig()
                                 Nx.Window:SetAttribute("NxQuestWatch","L",Nx.qdb.profile.QuestWatch.Lock)
                             end,
                         },
+                        qwsharedanchor = {
+                            order = 3.5,
+                            type = "toggle",
+                            width = "full",
+                            name = L["Share Full and Minimized Watch Position"],
+                            desc = L["When enabled, the full and minimized quest watch use one screen position. Disable to save a separate position for each state."],
+                            get = function()
+                                return Nx.qdb.profile.QuestWatch.ShareMinimizePosition
+                            end,
+                            set = function(_, value)
+                                local enabled = value == true
+                                Nx.qdb.profile.QuestWatch.ShareMinimizePosition = enabled
+
+                                local watch = Nx.Quest and Nx.Quest.Watch
+                                local win = watch and watch.Win
+                                if win and win.SetShareMinimizePosition then
+                                    win:SetShareMinimizePosition (enabled)
+                                end
+                            end,
+                        },
                         qwgrowup = {
                             order = 4,
                             type = "toggle",
