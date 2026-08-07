@@ -176,6 +176,7 @@ function Nx.Notes:RXP(mapId)
         -- outlined text is the visual identifier; the icon frame
         -- keeps a 24x24 mouse-hit area for the tooltip.
         local pin = map:AddIconPt("!RXP", wx, wy, nil, "00000000", nil)
+        pin.mapID, pin.MapId = mapId, mapId
         pin.label   = ic.label
         pin.labelR  = cr
         pin.labelG  = cg

@@ -1965,11 +1965,13 @@ function Nx.Map.Guide:UpdateCustomIcons()
         end
         if b.tx1 then
             local icon = map:AddIconPt("!CUSTOM",b.x, b.y, b.Level, nil, b.texture, b.tx1, b.ty1, b.tx2, b.ty2)
+            icon.mapID, icon.MapId = map.MapId, map.MapId
             if b.tip then
                 map:SetIconTip(icon,b.tip)
             end
         else
             local icon = map:AddIconPt("!CUSTOM",b.x, b.y, b.Level, nil, b.texture)
+            icon.mapID, icon.MapId = map.MapId, map.MapId
             if b.tip then
                 map:SetIconTip(icon,b.tip)
             end

@@ -45,15 +45,11 @@ function Nx:InitEvents()
     Com:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE", "OnChatEvent")
     Com:RegisterEvent("CHAT_MSG_CHANNEL_LEAVE", "OnChatEvent")
     Com:RegisterEvent("CHAT_MSG_CHANNEL", "OnChat_msg_channel")
+    Com:RegisterEvent("CHAT_MSG_SYSTEM", "OnChat_msg_channel")
 
     -- SOCIAL_QUEUE_UPDATE: Available from Legion+ (group finder social queues)
     if Nx.LegionMaps then
         Com:RegisterEvent("SOCIAL_QUEUE_UPDATE", "OnFriendguild_update")
-    end
-
-    -- CHAT_MSG_SYSTEM: Classic/older versions only (handled differently in retail)
-    if not Nx.BFAMaps then
-        Com:RegisterEvent("CHAT_MSG_SYSTEM", "OnChat_msg_channel")
     end
 
     ---------------------------------------------------------------------------

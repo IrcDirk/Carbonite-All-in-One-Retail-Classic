@@ -1,6 +1,6 @@
 -- Carbonite.Quests | TrackerHider
 -- Hides Blizzard's quest tracker frames (ObjectiveTrackerFrame,
--- WatchFrame, QuestWatchFrame) when the user has the Carbonite
+-- WatchFrame, QuestWatchFrame, QuestTimerFrame) when the user has the Carbonite
 -- tracker enabled. Also owns the EditMode hooks that suspend
 -- hiding while the user is editing layouts, and the larger
 -- ToggleQuestLog overrides that route Blizzard panel state through
@@ -25,6 +25,7 @@ local NX_TRACKER_FRAMES = {
     "ObjectiveTrackerFrame", -- Retail / modern
     "WatchFrame",            -- Classic / MoP Classic / Anniversary
     "QuestWatchFrame",       -- Fallback (some UI variants)
+    "QuestTimerFrame",       -- Anniversary / Classic timed quests
 }
 
 local function NxTracker_IsProtectedAndLockedDown(frame)
@@ -140,7 +141,23 @@ function Nx.Quest:TrackerHider_SetVisible(frame, key, visible)
         if frame.EnableMouse then
             frame:EnableMouse(orig and orig.mouseEnabled ~= false or true)
         end
-        frame:Show()
+
+        -- Blizzard_QuestTimer owns whether QuestTimerFrame is shown: its
+        -- Update method shows the frame only while GetQuestTimers() returns at
+        -- least one active timer. Force-showing it here would leave an empty
+        -- timer panel when the Carbonite hide option is disabled. Refresh the
+        -- Blizzard state after restoring the frame instead.
+        if key == "QuestTimerFrame" then
+            if type(frame.Update) == "function" then
+                frame:Update()
+            elseif frame.numTimers and frame.numTimers > 0 then
+                frame:Show()
+            else
+                frame:Hide()
+            end
+        else
+            frame:Show()
+        end
         return
     end
 

@@ -141,14 +141,19 @@ function Nx.Notes:UpdateIcons()
 
         if typ == "N" then
             local icon, mapId, x, y, level = self:ParseItemNote(data)
-            icon = self:GetIconFile(icon)
-            local wx, wy = Map:GetWorldPos(mapId, x, y)
+            local relevant = not Map.IsMapRelevantToInstance
+                or Map:IsMapRelevantToInstance(mapId, map.MapId)
+            if relevant then
+                icon = self:GetIconFile(icon)
+                local wx, wy = Map:GetWorldPos(mapId, x, y)
 
-            local pin = map:AddIconPt("!Fav2", wx, wy, level, nil, icon)
-            map:SetIconTip(pin, L["Note"] .. ": " .. name)
-            map:SetIconFavData(pin, self.CurFav, self.CurItemI)
+                local pin = map:AddIconPt("!Fav2", wx, wy, level, nil, icon)
+                pin.mapID, pin.MapId = mapId, mapId
+                map:SetIconTip(pin, L["Note"] .. ": " .. name)
+                map:SetIconFavData(pin, self.CurFav, self.CurItemI)
 
-            map:SetIconTypeAlpha("!Fav2", abs((GetTime() * 100 % 100 - 50) / 50))
+                map:SetIconTypeAlpha("!Fav2", abs((GetTime() * 100 % 100 - 50) / 50))
+            end
         end
     else
         map:ClearIconType("!Fav2")

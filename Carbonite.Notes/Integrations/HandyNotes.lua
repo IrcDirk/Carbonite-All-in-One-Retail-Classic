@@ -152,6 +152,7 @@ function Nx.Notes:HandyNotes(mapId)
             else
                 handynote = map:AddIconPt("!HANDY", wx, wy, level2, "FFFFFF", texture)
             end
+            handynote.mapID, handynote.MapId = mapId, mapId
             for i = 1, 10 do
                 local text = _G[tooltipName .. "TextLeft" .. i]
                 if text and text:IsShown() then

@@ -70,6 +70,11 @@ function Nx.Quest.Watch:Open()
 
     win:InitLayoutData (nil, -.80, -.35, -.2, -.1)
 
+    -- The user can treat the two layouts as one movable window or retain the
+    -- legacy independent full/minimized positions. Apply this after the normal
+    -- default is initialized so a first-time user's independent backup is valid.
+    win:SetShareMinimizePosition (Nx.qdb.profile.QuestWatch.ShareMinimizePosition)
+
     win:CreateButtons (Nx.qdb.profile.QuestWatch.ShowClose, nil, true)
 
     win:SetUser (self, self.OnWin)
@@ -261,6 +266,28 @@ function Nx.Quest.Watch:Open()
     menu:AddItem (0, "")
     menu:AddItem (0, L["Abandon"], self.Menu_OnAbandon, self)
 
+    -- A minimized watch is only its title strip and minimize/restore switch.
+    -- Preserve each control's prior shown state so restore also respects the
+    -- optional close button and any controls hidden before minimization.
+    local minimizedHideFrames = {
+        list.Frm,
+        self.ButMenu.Frm,
+        self.ButPri.Frm,
+        self.ButShowOnMap.Frm,
+        self.ButATarget.Frm,
+        self.ButQGivers.Frm,
+        self.ButShowParty.Frm,
+    }
+
+    if win.ButClose then
+        tinsert (minimizedHideFrames, win.ButClose.Frm)
+    end
+    if win.ButMaxer then
+        tinsert (minimizedHideFrames, win.ButMaxer.Frm)
+    end
+
+    win:SetMinimizedHideFrames (minimizedHideFrames)
+
     self.FirstUpdate = true
     self.FlashColor = 0
 
@@ -286,6 +313,10 @@ end
 -------------------------------------------------------------------------------
 
 function Nx.Quest.Watch:OnWin (typ)
+    if self.Win:GetLayoutMode() == "Min" then
+        self.FirstUpdate = true
+        self.Win:SetTitle ("")
+    end
     self:Update()
 end
 
@@ -1199,12 +1230,21 @@ function Nx.Quest.Watch:UpdateList()
                             -- cur.IsAutoComplete even when the quest is still
                             -- pending server-side (e.g. user closed the
                             -- completion dialog because bags were full).
-                            -- Re-check the live API when the cached flag is
-                            -- false so the "?" button stays visible.
+                            -- Re-check live completion and auto-complete state
+                            -- so stale transition flags cannot drive the row.
                             if qId and qId > 0 and C_QuestLog then
-                                if not isComplete and C_QuestLog.IsComplete
-                                        and C_QuestLog.IsComplete(qId) then
-                                    isComplete = true
+                                local liveCompletion = Quest.GetQuestCompletionState
+                                    and Quest.GetQuestCompletionState(qId)
+
+                                -- Never let a stale/transient failure replace
+                                -- an already confirmed completion. If the live
+                                -- state is now merely active, clear a cached
+                                -- failure so the row cannot flash red while
+                                -- Blizzard finishes the completion transition.
+                                if liveCompletion == 1 then
+                                    isComplete = 1
+                                elseif isComplete ~= 1 then
+                                    isComplete = liveCompletion
                                 end
                                 if not isAC and GetQuestLogIndexByID then
                                     local logIdx = GetQuestLogIndexByID(qId)
@@ -2141,4 +2181,3 @@ function Nx.Quest:UpdateGiverIconMenu()
         curI = curI + 1
     end
 end
-
