@@ -211,9 +211,28 @@ function Nx.Quest.List:Open()
             end
         end)
     end
+    -- Scenario progress is separate from the quest log. Delves use the
+    -- scenario system too, so UNIT_QUEST_LOG_CHANGED is not enough to keep
+    -- the Carbonite watch current. Gate the registrations by API presence to
+    -- keep Classic clients that do not expose scenarios on the safe path.
+    local hasScenarioAPI = (C_ScenarioInfo and C_ScenarioInfo.GetScenarioInfo)
+        or (C_Scenario and C_Scenario.GetInfo)
+    if hasScenarioAPI then
+        CarboniteQuest:RegisterEvent ("PLAYER_ENTERING_WORLD", "OnQuestUpdate")
+        CarboniteQuest:RegisterEvent ("SCENARIO_UPDATE", "OnQuestUpdate")
+        CarboniteQuest:RegisterEvent ("SCENARIO_CRITERIA_UPDATE", "OnQuestUpdate")
+        CarboniteQuest:RegisterEvent ("SCENARIO_BONUS_VISIBILITY_UPDATE", "OnQuestUpdate")
+        CarboniteQuest:RegisterEvent ("SCENARIO_BONUS_OBJECTIVE_COMPLETE", "OnQuestUpdate")
+        CarboniteQuest:RegisterEvent ("SCENARIO_COMPLETED", "OnQuestUpdate")
+        CarboniteQuest:RegisterEvent ("SCENARIO_CRITERIA_SHOW_STATE_UPDATE", "OnQuestUpdate")
+
+        -- Retail Delves can publish their active state independently of the
+        -- normal SCENARIO_UPDATE event (including after /reload in a Delve).
+        if Nx.isRetail and C_DelvesUI then
+            CarboniteQuest:RegisterEvent ("ACTIVE_DELVE_DATA_UPDATE", "OnQuestUpdate")
+        end
+    end
     --CarboniteQuest:RegisterEvent ("QUEST_WATCH_UPDATE", "OnQuestUpdate")
-    --CarboniteQuest:RegisterEvent ("SCENARIO_UPDATE", "OnQuestUpdate")
-    --CarboniteQuest:RegisterEvent ("SCENARIO_CRITERIA_UPDATE", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("WORLD_STATE_TIMER_START", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("WORLD_STATE_TIMER_STOP", "OnQuestUpdate")
     --CarboniteQuest:RegisterEvent ("QUEST_POI_UPDATE", "OnQuestUpdate")

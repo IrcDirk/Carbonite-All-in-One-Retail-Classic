@@ -1042,6 +1042,57 @@ local pmsg_elapsed = 0
 local pmsg_lasttime
 local pmsg_ttl = 9999
 
+-------------------------------------------------------------------------------
+-- Return one canonical objective-progress string for party synchronization.
+--
+-- Modern clients can put the numeric progress at the start of objective.text,
+-- while older clients commonly put it at the end. Carbonite's party protocol
+-- also carries the numeric values separately. Strip matching edge tokens before
+-- appending the protocol values so repeated send/receive passes cannot turn
+-- "1/1 Objective" into "1/1 Objective: 1/1".
+-------------------------------------------------------------------------------
+
+function Nx.Quest:NormalizeObjectiveProgressText (text, count, required)
+    if type (text) ~= "string" then
+        text = "?"
+    end
+
+    count = tonumber (count)
+    required = tonumber (required)
+
+    text = string.match (text, "^%s*(.-)%s*$") or text
+
+    if not count or not required or required <= 0 then
+        return text ~= "" and text or "?"
+    end
+
+    local token = tostring (count) .. "%s*/%s*" .. tostring (required)
+    local previous
+
+    repeat
+        previous = text
+
+        -- Count-first forms: "1/1 Objective", "(1/1) Objective", etc.
+        text = string.gsub (text, "^%s*" .. token .. "%s*:?%s*", "", 1)
+        text = string.gsub (text, "^%s*%(" .. token .. "%)%s*:?%s*", "", 1)
+        text = string.gsub (text, "^%s*%[" .. token .. "%]%s*:?%s*", "", 1)
+
+        -- Count-last forms: "Objective: 1/1", "Objective (1/1)", etc.
+        text = string.gsub (text, "%s*:%s*" .. token .. "%s*$", "", 1)
+        text = string.gsub (text, "%s*%(" .. token .. "%)%s*$", "", 1)
+        text = string.gsub (text, "%s*%[" .. token .. "%]%s*$", "", 1)
+        text = string.gsub (text, "%s+" .. token .. "%s*$", "", 1)
+
+        text = string.match (text, "^%s*(.-)%s*$") or text
+    until text == previous
+
+    if text == "" then
+        text = "?"
+    end
+
+    return format ("%s: %d/%d", text, count, required)
+end
+
 function Nx.Quest:OnPartyMsg (plName, msg)
 
     if Nx.qdb and Nx.qdb.profile and not Nx.qdb.profile.Quest.PartyShare then
@@ -1101,6 +1152,8 @@ function Nx.Quest:OnPartyMsg (plName, msg)
                     local o = off + 6 + (i - 1) * 4
                     local cnt = tonumber (strsub (msg, o, o + 1), 16) or 0
                     local total = tonumber (strsub (msg, o + 2, o + 3), 16) or 0
+
+                    desc = self:NormalizeObjectiveProgressText (desc, cnt, total)
 
                     q[i] = cnt
                     q[i + 100] = total
@@ -1183,12 +1236,12 @@ function Nx.Quest:PartyBuildSendData()
 
             for n = 1, cur.LBCnt do
 
-                local _, _, cnt, total = strfind (cur[n], "(%d+)/(%d+)")
-                cnt = tonumber (cnt or 0)
-                total = tonumber (total or 0)
+                local _, _, parsedCnt, parsedTotal = strfind (cur[n] or "", "(%d+)%s*/%s*(%d+)")
+                local _, _, _, liveCnt, liveTotal = self:GetQuestObjectiveInfo (qId, n, false)
+                local cnt = tonumber (liveCnt) or tonumber (parsedCnt) or 0
+                local total = tonumber (liveTotal) or tonumber (parsedTotal) or 0
 
-                local desc, done = self:CalcDesc (qId, n, cnt, total)
-                cur[n] = desc
+                local desc, done = self:CalcDesc (qId, n, cnt, total, cur[n])
 
                 if cnt and total then
                     if cnt > 200 then
