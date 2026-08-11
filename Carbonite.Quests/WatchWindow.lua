@@ -719,6 +719,247 @@ local function WatchList_ScanTip(bounty)
 end
 
 -------------------------------------------------------------------------------
+-- Scenario compatibility and rendering
+-------------------------------------------------------------------------------
+
+-- C_ScenarioInfo is the current structured API. Keep the tuple-returning
+-- C_Scenario path as a fallback for supported Classic clients and older
+-- branches that have not exposed the structured functions yet.
+local function WatchList_GetScenarioInfo()
+    if C_ScenarioInfo and C_ScenarioInfo.GetScenarioInfo then
+        local info = C_ScenarioInfo.GetScenarioInfo()
+        if info then
+            return info
+        end
+    end
+
+    if C_Scenario and C_Scenario.GetInfo then
+        local name, currentStage, numStages, flags, isComplete = C_Scenario.GetInfo()
+        if name then
+            return {
+                name = name,
+                currentStage = currentStage or 0,
+                numStages = numStages or 0,
+                flags = flags or 0,
+                isComplete = isComplete or false,
+            }
+        end
+    end
+end
+
+local function WatchList_GetScenarioStepInfo(stepID)
+    if C_ScenarioInfo and C_ScenarioInfo.GetScenarioStepInfo then
+        local info = C_ScenarioInfo.GetScenarioStepInfo(stepID)
+        if info then
+            return info
+        end
+    end
+
+    if C_Scenario and C_Scenario.GetStepInfo then
+        local title, description, numCriteria, stepFailed, isBonusStep,
+            isForCurrentStepOnly, shouldShowBonusObjective, _, _,
+            weightedProgress, rewardQuestID, widgetSetID, returnedStepID =
+            C_Scenario.GetStepInfo(stepID)
+        if title then
+            return {
+                title = title,
+                description = description or "",
+                numCriteria = numCriteria or 0,
+                stepFailed = stepFailed or false,
+                isBonusStep = isBonusStep or false,
+                isForCurrentStepOnly = isForCurrentStepOnly or false,
+                shouldShowBonusObjective = shouldShowBonusObjective or false,
+                weightedProgress = weightedProgress,
+                rewardQuestID = rewardQuestID or 0,
+                widgetSetID = widgetSetID,
+                stepID = returnedStepID or stepID,
+            }
+        end
+    end
+end
+
+local function WatchList_GetScenarioCriteriaInfo(criteriaIndex, stepID)
+    if C_ScenarioInfo then
+        local info
+        if stepID and C_ScenarioInfo.GetCriteriaInfoByStep then
+            info = C_ScenarioInfo.GetCriteriaInfoByStep(stepID, criteriaIndex)
+        elseif C_ScenarioInfo.GetCriteriaInfo then
+            info = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
+        end
+        if info then
+            return info
+        end
+    end
+
+    if C_Scenario then
+        local getter
+        if stepID and C_Scenario.GetCriteriaInfoByStep then
+            getter = function()
+                return C_Scenario.GetCriteriaInfoByStep(stepID, criteriaIndex)
+            end
+        elseif C_Scenario.GetCriteriaInfo then
+            getter = function()
+                return C_Scenario.GetCriteriaInfo(criteriaIndex)
+            end
+        end
+
+        if getter then
+            local description, criteriaType, completed, quantity, totalQuantity,
+                flags, assetID, quantityString, criteriaID, duration, elapsed,
+                failed, isWeightedProgress, isFormatted = getter()
+            if description then
+                return {
+                    description = description,
+                    criteriaType = criteriaType or 0,
+                    completed = completed or false,
+                    quantity = quantity or 0,
+                    totalQuantity = totalQuantity or 0,
+                    flags = flags or 0,
+                    assetID = assetID or 0,
+                    quantityString = quantityString or "",
+                    criteriaID = criteriaID or 0,
+                    duration = duration or 0,
+                    elapsed = elapsed or 0,
+                    failed = failed or false,
+                    isWeightedProgress = isWeightedProgress or false,
+                    isFormatted = isFormatted or false,
+                }
+            end
+        end
+    end
+end
+
+local function WatchList_FormatScenarioCriteria(info)
+    local description = info.description or ""
+
+    if info.isFormatted then
+        return description
+    end
+
+    if info.isWeightedProgress then
+        local quantityString = info.quantityString
+        if quantityString and quantityString ~= "" then
+            return format("%s %s", quantityString, description)
+        end
+    end
+
+    local quantity = info.quantity or 0
+    local totalQuantity = info.totalQuantity or 0
+    if totalQuantity > 0 then
+        return format("%d/%d %s", quantity, totalQuantity, description)
+    end
+
+    return description
+end
+
+local function WatchList_AddScenarioCriteria(list, info)
+    local text = WatchList_FormatScenarioCriteria(info)
+    local status
+    if info.completed then
+        status = L["Complete"] or "Complete"
+    elseif info.failed then
+        status = FAILED or "Failed"
+    end
+
+    if status then
+        text = format("%s |cffff0000[|cffffffff%s|cffff0000]", text, status)
+    end
+
+    list:ItemAdd(0)
+    list:ItemSetOffset(16, -1)
+    list:ItemSet(2, "|cffffffff" .. text)
+    list:ItemSetButton("QuestWatch", false)
+
+    local duration = info.duration or 0
+    local elapsed = info.elapsed or 0
+    if duration > 0 and elapsed <= duration and not info.completed and not info.failed then
+        list:ItemAdd(0)
+        list:ItemSetOffset(16, -1)
+        list:ItemSet(2, format("|cffffffff%s: %s",
+            L["Time Left"] or "Time Left",
+            Nx.Util_GetTimeElapsedMinSecStr(duration - elapsed)))
+    end
+end
+
+local function WatchList_AddScenario(list)
+    local scenarioInfo = WatchList_GetScenarioInfo()
+    if not scenarioInfo or not scenarioInfo.name or (scenarioInfo.numStages or 0) <= 0 then
+        return false
+    end
+
+    local currentStage = scenarioInfo.currentStage or 0
+    local numStages = scenarioInfo.numStages or 0
+    local scenarioComplete = scenarioInfo.isComplete or currentStage > numStages
+    local stepInfo = WatchList_GetScenarioStepInfo()
+
+    list:ItemAdd(0)
+    list:ItemSet(2, format("|cffff8888%s%s", L["Scenario: "] or "Scenario: ", scenarioInfo.name))
+    if stepInfo and stepInfo.description and stepInfo.description ~= "" then
+        list:ItemSetButtonTip(stepInfo.description)
+    end
+    list:ItemSetButton("QuestWatch", false)
+
+    local stageText
+    if scenarioComplete then
+        stageText = format(" |cffff0000[|cffffffff%s|cffff0000]", L["Complete"] or "Complete")
+    elseif currentStage > 0 then
+        stageText = format(" |cffff0000%s[|cffffffff%d|cffff0000/|cffffffff%d|cffff0000]",
+            L["Stage "] or "Stage ", currentStage, numStages)
+        if stepInfo and stepInfo.title and stepInfo.title ~= "" then
+            stageText = stageText .. ": |cff00ff00" .. stepInfo.title
+        end
+    end
+
+    if stageText then
+        list:ItemAdd(0)
+        list:ItemSet(2, stageText)
+    end
+
+    local shouldShowCriteria = true
+    if C_Scenario and C_Scenario.ShouldShowCriteria then
+        shouldShowCriteria = C_Scenario.ShouldShowCriteria()
+    end
+
+    if shouldShowCriteria and not scenarioComplete and stepInfo then
+        for criteriaIndex = 1, stepInfo.numCriteria or 0 do
+            local criteriaInfo = WatchList_GetScenarioCriteriaInfo(criteriaIndex)
+            if criteriaInfo then
+                WatchList_AddScenarioCriteria(list, criteriaInfo)
+            end
+        end
+    end
+
+    -- Bonus step enumeration remains on C_Scenario in current clients. Render
+    -- each visible step independently so a Delve with more than one bonus
+    -- objective does not collapse them into a single mismatched row.
+    if C_Scenario and C_Scenario.GetBonusSteps then
+        local bonusSteps = C_Scenario.GetBonusSteps() or {}
+        for _, stepID in ipairs(bonusSteps) do
+            local bonusInfo = WatchList_GetScenarioStepInfo(stepID)
+            if bonusInfo then
+                local bonusTitle = bonusInfo.title
+                if not bonusTitle or bonusTitle == "" then
+                    bonusTitle = BONUS_OBJECTIVE or "Bonus Objective"
+                end
+
+                list:ItemAdd(0)
+                list:ItemSet(2, format(" |cffff0000%s: |cff00ff00%s",
+                    BONUS_OBJECTIVE or "Bonus Objective", bonusTitle))
+
+                for criteriaIndex = 1, bonusInfo.numCriteria or 0 do
+                    local criteriaInfo = WatchList_GetScenarioCriteriaInfo(criteriaIndex, stepID)
+                    if criteriaInfo then
+                        WatchList_AddScenarioCriteria(list, criteriaInfo)
+                    end
+                end
+            end
+        end
+    end
+
+    return true
+end
+
+-------------------------------------------------------------------------------
 -- Update watch list
 -------------------------------------------------------------------------------
 
@@ -938,75 +1179,9 @@ function Nx.Quest.Watch:UpdateList()
                       end
                     end
                 end
-                --[[if Nx.qdb.profile.QuestWatch.ScenTrack then
-                    local name, currentStage, numStages = C_Scenario.GetInfo()
-                    if (currentStage > 0) then
-                        local stageName, stageDescription, numCriteria = C_Scenario.GetStepInfo()
-                        list:ItemAdd(0)
-                        list:ItemSet(2,format("|cffff8888" ..L["Scenario: "] .."%s",name))
-                        list:ItemSetButtonTip(stageDescription)
-                        list:ItemSetButton("QuestWatch",false)
-                        if (currentStage <= numStages) then
-                            s = format(" |cffff0000" ..L["Stage "] .."[|cffffffff%d|cffff0000/|cffffffff%d|cffff0000]:|cff00ff00%s", currentStage, numStages,stageName)
-                        else
-                            s = " |cffff0000[|cffffffff" ..L["Complete"] .."|cffff0000]"
-                        end
-                        list:ItemAdd(0)
-                        list:ItemSet(2,s)
-                        for criteria = 1, numCriteria do
-                            local text, _, finished, quantity, totalquantity = C_Scenario.GetCriteriaInfo(criteria)
-                            if finished then
-                                s = format("|cffffffff%d/%d %s |cffff0000[|cffffffff" ..L["Complete"] .."|cffff0000]", quantity, totalquantity, text)
-                            else
-                                s = format("|cffffffff%d/%d %s", quantity, totalquantity, text and text or "")
-                            end
-                            list:ItemAdd(0)
-                            list:ItemSetOffset (16, -1)
-                            list:ItemSet(2,s)
-                            list:ItemSetButton("QuestWatch",false)
-                        end
-                        local bonusSteps = C_Scenario.GetBonusSteps() or {}
-                        if #bonusSteps >= 1 then
-                            local title, task, _, completed = C_Scenario.GetStepInfo(bonusSteps[1])
-                            local tasktexts = { "Bonus |cff00ff00" }
-                            task:gsub('%S+%s*', function(word)
-                                if (#tasktexts[#tasktexts] + #word) < (Nx.qdb.profile.QuestWatch.OMaxLen + 10) then
-                                    tasktexts[#tasktexts] = tasktexts[#tasktexts] .. word
-                                else
-                                    tasktexts[#tasktexts+1] = " |cff00ff00" .. word
-                                end
-                            end)
-                            tasktexts[1] = " |cffff0000" .. tasktexts[1]
-                            if completed then
-                                tasktexts[#tasktexts] = tasktexts[#tasktexts] .. " |cffff0000[|cffffffff" ..L["Complete"] .."|cffff0000]"
-                            end
-                            for i = 1, #tasktexts do
-                                list:ItemAdd(0)
-                                list:ItemSet(2, tasktexts[i])
-                            end
-                            for criteria = 1, #bonusSteps do
-                                local index = bonusSteps[criteria]
-                                local task, criteriatype, completed, quantity, totalquantity, flags, assetid, quantitystring, criteriaid, duration, elapsed, failed, weighted = C_Scenario.GetCriteriaInfoByStep(index,1)
-                                if completed then
-                                    task = format("|cffffffff%d/%d %s |cffff0000[|cffffffff" ..L["Complete"] .."|cffff0000]",quantity, totalquantity, task)
-                                elseif failed then
-                                    task = format("|cffffffff%d/%d %s |cffff0000[|cffffffff" .. L["Failed"] .. "|cffff0000]",quantity, totalquantity, task)
-                                else
-                                    task = format("|cffffffff%d/%d %s",quantity, totalquantity, task)
-                                end
-                                list:ItemAdd(0)
-                                list:ItemSetOffset (16, -1)
-                                list:ItemSet(2,task)
-                                list:ItemSetButton("QuestWatch",false)
-                                if (duration > 0 and elapsed <= duration and not (completed or failed)) then
-                                    list:ItemAdd(0)
-                                    list:ItemSetOffset(16,-1)
-                                    list:ItemSet(2, L["Time Left"] .. ": " .. Nx.Util_GetTimeElapsedMinSecStr(duration - elapsed))
-                                end
-                            end
-                        end
-                    end
-                end]]--
+                if qwProfile.ScenTrack then
+                    WatchList_AddScenario(list)
+                end
                 local tasks = {}
                 -- World quests / bonus tasks feed. The 12.0 engine is unified
                 -- across flavors, but some C_TaskQuest functions are disabled

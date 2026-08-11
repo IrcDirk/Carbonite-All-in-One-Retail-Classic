@@ -16,7 +16,6 @@ local bit_band   = bit.band
 local bit_lshift = bit.lshift
 local strfind    = strfind  or string.find
 local strsub     = strsub   or string.sub
-local strmatch   = strmatch or string.match
 local format     = format   or string.format
 local gsub       = gsub     or string.gsub
 local tinsert    = tinsert  or table.insert
@@ -1118,31 +1117,33 @@ function Nx.Quest:QuestQueryTimer()
     end
 end
 
-function Nx.Quest:CalcDesc (qId, objI, cnt, total)
+function Nx.Quest:CalcDesc (qId, objI, cnt, total, fallbackDesc)
 
-    local odesc = Nx.Quest:GetQuestObjectiveInfo(qId, objI, false);
-    local desc, _, _ = strmatch (odesc or "", "(.+): (%d+)/(%d+)")
-
-    if not desc then
-        desc = odesc or "?"
-    end
+    local odesc, _, objectiveDone, liveCnt, liveTotal = Nx.Quest:GetQuestObjectiveInfo (qId, objI, false)
+    cnt = tonumber (liveCnt) or tonumber (cnt) or 0
+    total = tonumber (liveTotal) or tonumber (total) or 0
+    local desc = self:NormalizeObjectiveProgressText (odesc or fallbackDesc, cnt, total)
 
 --    Nx.prt("%s, %s, %s, %s, %s", qId, objI, desc, cnt, total)
 
     if total == 0 then
-        return desc, cnt == 1
+        return desc, objectiveDone or cnt == 1
     else
-        return format ("%s: %d/%d", desc, cnt, total), cnt >= total
+        return desc, objectiveDone or cnt >= total
     end
 end
 
 function Nx.Quest:GetQuestObjectiveInfo(qId, objI, qText)
+    if not C_QuestLog or not C_QuestLog.GetQuestObjectives then
+        return
+    end
+
     local obj = C_QuestLog.GetQuestObjectives(qId)
 
     obj = (obj and obj[objI]) or nil
 
     if obj then
-        return obj.text, obj.type, obj.finished
+        return obj.text, obj.type, obj.finished, obj.numFulfilled, obj.numRequired
     end
 
     return
