@@ -601,14 +601,16 @@ Nx.Quest.defaults = {
         -- World quest list options
         WQList = {
             showgear = true,                            -- Show gear rewards
-            showap = true,                              -- Show artifact power
-            showorder = true,                           -- Show order resources
+            showap = true,                              -- Show power rewards
+            showorder = true,                           -- Show currency/material/reputation rewards
             showgold = true,                            -- Show gold rewards
             showother = true,                           -- Show other rewards
             showpvp = true,                             -- Show PVP rewards
             showbounty = false,                         -- Bounty only
-            sortmode = 1,                               -- Sort mode
+            sortmode = 3,                               -- Sort by zone initially
             zoneonly = false,                           -- Current zone only
+            reactivated = false,                        -- One-time hidden migration
+            layoutVersion = 0,                          -- Movable/resizable layout migration
             -- Faction filters
             showfaronis = true,
             showdreamweaver = true,

@@ -32,6 +32,153 @@ local GetQuestObjectiveInfo       = GetQuestObjectiveInfo
 -- Promoted from NxQuest.lua.
 local GetQuestTagInfoCompat = Nx.Quest.GetQuestTagInfoCompat
 
+-- QUEST_ACCEPTED can arrive while Blizzard is still re-indexing the quest
+-- log. Keep the previous watched set authoritative for a short, bounded
+-- window so a transient scan cannot publish a collection that silently drops
+-- an older watched quest.
+local ACCEPT_REFRESH_GUARD_SECONDS = 5
+local ACCEPT_REFRESH_GUARD_ATTEMPTS = 10
+
+-------------------------------------------------------------------------------
+-- Quest-log snapshot validation
+-------------------------------------------------------------------------------
+
+function Nx.Quest:BeginAcceptedQuestRefresh (questId)
+    local guard = self.AcceptRefreshGuard
+    if not guard then
+        guard = {
+            AcceptedQuestIds = {},
+            WatchedQuestIds = {},
+            Attempts = 0,
+        }
+        self.AcceptRefreshGuard = guard
+    end
+
+    local now = GetTime()
+    guard.Expires = now + ACCEPT_REFRESH_GUARD_SECONDS
+    guard.Attempts = 0
+
+    local removed = self.RecentlyRemovedQuestIds
+    if removed then
+        for removedQuestId, expires in pairs (removed) do
+            if expires <= now then
+                removed[removedQuestId] = nil
+            end
+        end
+    end
+
+    for _, cur in ipairs (self.CurQ or {}) do
+        local qId = cur.QId
+        if cur.QI and cur.QI > 0 and not cur.Party
+                and qId and qId > 0
+                and (not removed or not removed[qId] or removed[qId] <= now)
+                and self:GetQuest (qId) == "W" then
+            guard.WatchedQuestIds[qId] = true
+        end
+    end
+
+    if questId and questId > 0 then
+        guard.AcceptedQuestIds[questId] = true
+    end
+end
+
+function Nx.Quest:NoteQuestLogRemoval (questId)
+    if not questId or questId <= 0 then
+        return
+    end
+
+    local removed = self.RecentlyRemovedQuestIds
+    if not removed then
+        removed = {}
+        self.RecentlyRemovedQuestIds = removed
+    end
+    removed[questId] = GetTime() + ACCEPT_REFRESH_GUARD_SECONDS
+
+    local guard = self.AcceptRefreshGuard
+    if guard then
+        guard.WatchedQuestIds[questId] = nil
+        guard.AcceptedQuestIds[questId] = nil
+    end
+end
+
+function Nx.Quest:GetValidatedQuestLogCount()
+    local qcnt = GetNumQuestLogEntries()
+    if type (qcnt) ~= "number" or qcnt < 0 then
+        return
+    end
+
+    local seenQuestIds = {}
+    for qn = 1, qcnt do
+        local title, level, _, isHeader, _, _, _, questId = GetQuestLogTitle (qn)
+        if title == nil or type (level) ~= "number" or level < 0 then
+            return
+        end
+
+        if not isHeader then
+            if type (questId) ~= "number" or questId <= 0 or seenQuestIds[questId] then
+                return
+            end
+            seenQuestIds[questId] = true
+        end
+    end
+
+    local guard = self.AcceptRefreshGuard
+    if not guard then
+        return qcnt
+    end
+
+    local now = GetTime()
+    local removed = self.RecentlyRemovedQuestIds
+    local missingQuestId
+
+    for questId in pairs (guard.AcceptedQuestIds) do
+        local removalExpires = removed and removed[questId]
+        local completed = C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted
+            and C_QuestLog.IsQuestFlaggedCompleted (questId)
+
+        if not seenQuestIds[questId] and not completed
+                and not (removalExpires and removalExpires > now) then
+            missingQuestId = questId
+            break
+        end
+    end
+
+    for questId in pairs (guard.WatchedQuestIds) do
+        if missingQuestId then
+            break
+        end
+
+        local removalExpires = removed and removed[questId]
+        local completed = C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted
+            and C_QuestLog.IsQuestFlaggedCompleted (questId)
+
+        if seenQuestIds[questId] or completed or (removalExpires and removalExpires > now) then
+            if completed or (removalExpires and removalExpires > now) then
+                guard.WatchedQuestIds[questId] = nil
+            end
+        else
+            missingQuestId = questId
+            break
+        end
+    end
+
+    if missingQuestId then
+        guard.Attempts = guard.Attempts + 1
+        if guard.Attempts <= ACCEPT_REFRESH_GUARD_ATTEMPTS and now < guard.Expires then
+            Nx.prtD ("Quest log snapshot deferred; watched quest %s is temporarily missing", missingQuestId)
+            return
+        end
+
+        -- Bound recovery attempts. A matching QUEST_REMOVED / QUEST_TURNED_IN
+        -- normally releases the guard; this fallback prevents a malformed
+        -- third-party event sequence from blocking all future quest updates.
+        Nx.prtD ("Quest log snapshot guard expired for watched quest %s", missingQuestId)
+    end
+
+    self.AcceptRefreshGuard = nil
+    return qcnt
+end
+
 -------------------------------------------------------------------------------
 -- Do Blizzard select quest
 -------------------------------------------------------------------------------
@@ -150,33 +297,33 @@ end
 function Nx.Quest:RecordQuests(worldcheck)
 --    Nx.prt ("Record Quests")
     local self = Nx.Quest
-    local qcnt = GetNumQuestLogEntries()
-    for qn = 1, qcnt do    -- Test all quests
-
-        local title, level = GetQuestLogTitle (qn)
-        if level < 0 then        -- If a -1 then data not updated. QuestGuru causes this to happen when zoning
-            return
-        end
+    local qcnt = self:GetValidatedQuestLogCount()
+    if not qcnt then
+        return false
     end
 --    local tm = GetTime()
     self:ScanBlizzQuestDataZone()            -- Capture current zone
     if worldcheck == nil then
         self:ScanBlizzQuestData()                -- Triggers RecordQuestsLog() after done
     end
-    self:RecordQuestsLog()
+    return self:RecordQuestsLog (qcnt)
 
 --    Nx.prt ("%f secs", GetTime() - tm)
 end
 
 -------------------------------------------------------------------------------
 
-function Nx.Quest:RecordQuestsLog()
+function Nx.Quest:RecordQuestsLog (validatedQuestCount)
 
-    local qcnt = GetNumQuestLogEntries()
+    local qcnt = validatedQuestCount or self:GetValidatedQuestLogCount()
+    if not qcnt then
+        return false
+    end
 
     local opts = self.GOpts
-    local curq = self.CurQ
-    if not curq then return end
+    local previousCurq = self.CurQ
+    if not previousCurq then return false end
+    local curq = previousCurq
     local oldSel = GetQuestLogSelection()
 
 --    Nx.prt ("RecordQuestsLog %s, %s", qcnt, #curq)
@@ -184,7 +331,6 @@ function Nx.Quest:RecordQuestsLog()
     local lastChanged
 
     local qIds = {}
-    self.QIds = qIds
 
     --
 
@@ -318,30 +464,23 @@ function Nx.Quest:RecordQuestsLog()
         partySend = true
     end
 
-    -- Remove real blizz quests
+    -- Build the replacement collection away from self.CurQ. A quest-log event
+    -- can therefore never expose a half-cleared list to the watch window.
 
     local fakeq = {}
-
-    local n = 1
-    while curq[n] do
-
-        local cur = curq[n]
-        if not cur.Goto or cur.Party then
---            Nx.prt ("RecordQuests RemoveQ %s - %s", cur.Title, cur.QI)
-            table.remove (curq, n)
-        else
+    curq = {}
+    for _, cur in ipairs (previousCurq) do
+        if cur.Goto and not cur.Party then
+            tinsert (curq, cur)
             fakeq[cur.Q] = cur
-            n = n + 1
         end
     end
 
     -- Add blizz quests
 
-    self.RealQ = {}
+    local realQ = {}
 
     local header = "?"
-
-    self.RealQEntries = qcnt
 
     local index = #curq + 1
 
@@ -521,7 +660,7 @@ function Nx.Quest:RecordQuestsLog()
 
 --            Nx.prt ("%s %x", title, mask)
 
-                self.RealQ[title] = cur            -- For diff
+                realQ[title] = cur            -- For diff
 
             -- Calc total number in quest chain
 
@@ -671,6 +810,14 @@ function Nx.Quest:RecordQuestsLog()
 
     --
 
+    -- Publish only after the candidate is complete. Watch state itself lives
+    -- in the character database keyed by questID, so replacing CurQ cannot
+    -- alter which quests the user chose to watch.
+    self.CurQ = curq
+    self.QIds = qIds
+    self.RealQ = realQ
+    self.RealQEntries = qcnt
+
     if lastChanged then
         self.QLastChanged = self:FindCurFromOld (lastChanged)
     end
@@ -685,8 +832,16 @@ function Nx.Quest:RecordQuestsLog()
         self:PartyStartSend()
     end
 
+    -- Bypass the ordinary display throttle for this completed snapshot. The
+    -- prior implementation could render an early/incomplete pass and then
+    -- suppress the corrected pass because it landed inside RefreshTimer.
+    if self.Watch then
+        self.Watch.ForceListRefresh = true
+    end
+
 --    local map = Nx.Map:GetMap (1)
     self.Map.Guide:UpdateMapIcons()
+    return true
 end
 
 -------------------------------------------------------------------------------
