@@ -11394,7 +11394,7 @@ function Nx.Map:IconOnLeave(motion)
                     if isGroup then
                         local gt = rspin.groupTooltip
                         if gt and gt.IsShown and gt:IsShown() then
-                            if MouseIsOver(gt) then stillThere = true end
+                            if Nx.Util_IsMouseOver(gt) then stillThere = true end
                             -- RS attaches a child entity-tooltip on
                             -- gt.tooltip when the user hovers a cell in
                             -- the popup; honour the same protection RS's
@@ -11408,11 +11408,11 @@ function Nx.Map:IconOnLeave(motion)
                         -- rspin.tooltip (LibQTip frame). It's recreated on
                         -- each OnMouseEnter so we can't capture it once.
                         local tt = rspin.tooltip
-                        if tt and tt.IsShown and tt:IsShown() and MouseIsOver(tt) then
+                        if tt and tt.IsShown and tt:IsShown() and Nx.Util_IsMouseOver(tt) then
                             stillThere = true
                         end
                     end
-                    if not stillThere and icon and icon.IsShown and icon:IsShown() and MouseIsOver(icon) then
+                    if not stillThere and icon and icon.IsShown and icon:IsShown() and Nx.Util_IsMouseOver(icon) then
                         stillThere = true
                     end
                     if stillThere then

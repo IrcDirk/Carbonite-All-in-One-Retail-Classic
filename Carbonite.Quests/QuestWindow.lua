@@ -1577,17 +1577,35 @@ end
 -- On quest updates
 -------------------------------------------------------------------------------
 
+local QUEST_ACCEPT_REFRESH_DELAY = 0.25
+local QUEST_REFRESH_RETRY_DELAY = 0.5
+local QUEST_REFRESH_RETRY_EVENT = "CARBONITE_QUEST_REFRESH_RETRY"
+
+local function QueueAcceptedQuest (Quest, questId)
+    if not questId or questId <= 0 then
+        return false
+    end
+
+    for _, queuedQuestId in ipairs (Quest.AcceptPool) do
+        if queuedQuestId == questId then
+            return false
+        end
+    end
+
+    tinsert (Quest.AcceptPool, questId)
+    return true
+end
+
 local QuestListRefreshTimer
 function Nx.Quest.List:Refresh(event)
     if QuestListRefreshTimer then
         QuestListRefreshTimer:Cancel()
+        QuestListRefreshTimer = nil
     end
 
     local func = function ()
+        QuestListRefreshTimer = nil
         Nx.prtD("Nx.Quest.List:Refresh")
-        if QuestListRefreshTimer then
-            QuestListRefreshTimer:Cancel()
-        end
 
         local isInst = IsInInstance()
         -- Update Emmissaries
@@ -1598,7 +1616,6 @@ function Nx.Quest.List:Refresh(event)
         end
 
         Nx.Quest.List:LogUpdate()
-        Nx.Quest:RecordQuests(1)
     end
 
     --Nx.Quest.List:LogUpdate()
@@ -1613,11 +1630,19 @@ function Nx.Quest.List:Refresh(event)
         end)
     end]]--
 
+    local delay
     if event == "QUEST_ACCEPTED" then
-        func()
+        delay = QUEST_ACCEPT_REFRESH_DELAY
+    elseif event == QUEST_REFRESH_RETRY_EVENT then
+        delay = QUEST_REFRESH_RETRY_DELAY
     else
-        QuestListRefreshTimer = C_Timer.NewTimer(IsInInstance() and 2 or 1, func)
+        delay = IsInInstance() and 2 or 1
     end
+
+    -- Always coalesce through one timer. QUEST_ACCEPTED used to run an
+    -- immediate rebuild and then queue two more overlapping rebuilds, which
+    -- made a transient quest-log index state visible to the watch window.
+    QuestListRefreshTimer = C_Timer.NewTimer(delay, func)
 end
 
 function CarboniteQuest:OnQuestUpdate (event, ...)
@@ -1633,13 +1658,18 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
         -- that FinishQuest deferred (see comment there for the reason
         -- the GetQuestReward post-hook can't be trusted on its own).
         local turnedQID = arg1
+        local removedQID = turnedQID
         local pend = Quest._pendingTurnIn
         if pend and (GetTime() - (pend.t or 0)) < 30 then
             local commitID = (turnedQID and turnedQID > 0) and turnedQID or pend.id
             Quest:SetQuest (commitID, "C", time())
+            removedQID = commitID
             Quest._pendingTurnIn = nil
         elseif turnedQID and turnedQID > 0 then
             Quest:SetQuest (turnedQID, "C", time())
+        end
+        if Quest.NoteQuestLogRemoval then
+            Quest:NoteQuestLogRemoval (removedQID)
         end
         Nx.Quest.List:Refresh(event)
     elseif event == "SUPER_TRACKING_CHANGED" then
@@ -1698,32 +1728,29 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 CloseQuest();
             end
         end]]--
-        -- Get the questID - handle different API versions
-        -- Classic: arg1 = questLogIndex (small number 1-25)
-        -- Retail: arg1 = questID directly (large number)
+        -- Get the stable questID from the client-specific event payload.
+        -- Retail 12.x sends questID as arg1. Classic families send
+        -- questLogIndex as arg1 and questID as arg2; only resolve the index as
+        -- a fallback for older branches that omit arg2.
         local questId
         if Nx.isRetail then
-            -- Retail: arg1 is the questID directly
             questId = arg1
         else
-            -- Classic versions: arg1 is quest log index, need to get questID from it
-            if arg1 and arg1 > 0 then
+            questId = arg2
+            if (not questId or questId <= 0) and arg1 and arg1 > 0 then
                 questId = Nx.Quest:GetQuestID(arg1)
             end
         end
 
         if questId and questId > 0 then
-            -- Add to AcceptPool so it gets watched during Refresh
-            -- Check if not already in the pool (QUEST_DETAIL may have added it)
-            local found = false
-            for _, qn in ipairs(Quest.AcceptPool) do
-                if qn == questId then
-                    found = true
-                    break
-                end
+            -- Snapshot existing watches before Blizzard re-indexes the log.
+            -- The validated rebuild will not publish until these questIDs are
+            -- present again (or an authoritative removal event releases one).
+            if Quest.BeginAcceptedQuestRefresh then
+                Quest:BeginAcceptedQuestRefresh (questId)
             end
-            if not found then
-                table.insert(Quest.AcceptPool, questId)
+
+            if QueueAcceptedQuest (Quest, questId) then
                 Nx.prtD("QUEST_ACCEPTED added to pool: %s", questId)
             end
             -- Synthesize Carbonite quest data from Blizzard's API so the
@@ -1758,14 +1785,15 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             end)
         end
 
-        Nx.Quest:RecordQuests()
-        --Nx.Quest.List:Refresh(event)
-        Nx.Quest.List:Refresh()
+        Nx.Quest.List:Refresh(event)
 
         --for bag = 0, NUM_BAG_SLOTS do for slot = 1, GetContainerNumSlots(bag) do local itemLink = GetContainerItemLink(bag,slot); itemString = strfind(itemLink, "|H(.+)|h"); print(itemLink:gsub('\124','\124\124')); end end
         --Nx.Quest:RecordQuests()
     elseif event == "QUEST_REMOVED" then
         local questId = arg1
+        if Quest.NoteQuestLogRemoval then
+            Quest:NoteQuestLogRemoval (questId)
+        end
         if QuestUtils_IsQuestWorldQuest and QuestUtils_IsQuestWorldQuest(questId) then
             if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
                 -- QUEST_REMOVED fires mid-combat all the time (WQ done
@@ -1842,8 +1870,9 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 CloseQuest();
             end
 --            Quest.AcceptQId = GetQuestID()
-            table.insert(Quest.AcceptPool, GetQuestID())
-            Nx.prtD ("QUEST_DETAIL %s", GetQuestID())
+            local detailQuestId = GetQuestID()
+            QueueAcceptedQuest (Quest, detailQuestId)
+            Nx.prtD ("QUEST_DETAIL %s", detailQuestId)
             Nx.Quest.List:Refresh(event)
         --end
     elseif event == "QUEST_LOG_UPDATE" or event == "UNIT_QUEST_LOG_CHANGED" or event == "WORLD_QUEST_COMPLETED_BY_SPELL" then
@@ -2004,7 +2033,11 @@ function Nx.Quest.List:LogUpdate()
             Quest:TellPartyOfChanges()
         end
     end
-    Quest:RecordQuests(0)
+    if not Quest:RecordQuests(0) then
+        Quest:RestoreExpandQuests()
+        self:Refresh (QUEST_REFRESH_RETRY_EVENT)
+        return false
+    end
 
     if self.LoggingIn then
         QWatchLogin = Nx:ScheduleTimer(Quest.WatchAtLogin,.7,Quest)
@@ -2044,6 +2077,7 @@ function Nx.Quest.List:LogUpdate()
     self:Update()
     Quest.Watch:Update()
     Quest.WQList:Update()
+    return true
 end
 
 -------------------------------------------------------------------------------
