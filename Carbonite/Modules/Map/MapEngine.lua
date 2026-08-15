@@ -42,6 +42,19 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 -- Extended tooltip library for enhanced tooltips
 local ExtToolTip = LibStub('LibQTip-1.0RS')
 
+-- Carbonite replaces ToggleWorldMap, so opening or closing Blizzard's map can
+-- originate in addon code. Enter Blizzard's map lifecycle through a secure
+-- call; otherwise its OnShow/OnHide provider refresh creates tainted reusable
+-- pins before the player ever hovers them.
+local securecallfunction = _G.securecallfunction
+local function CallBlizzardMapSecurely(api, ...)
+    if securecallfunction then
+        securecallfunction(api, ...)
+    else
+        api(...)
+    end
+end
+
 -------------------------------------------------------------------------------
 -- Relocation note
 -------------------------------------------------------------------------------
@@ -322,15 +335,22 @@ end
 -- @param zone  The map ID to display
 --
 function Nx.Map:SetMapByID(zone)
-    -- Only push the id into Blizzard's WorldMapFrame when it's actually shown
-    -- AND its zoom data exists. Carbonite normally keeps WorldMapFrame hidden
-    -- and reads the hovered zone from Nx.Map.MouseIsOverMap (see
-    -- GetCurrentMapAreaID), so we must NOT call SetMapID for our own hidden
-    -- map: that taints WorldMapFrame's data providers (WorldQuestDataProvider
-    -- -> AcquirePin -> SetPassThroughButtons gets ADDON_ACTION_BLOCKED when a
-    -- world quest later refreshes). zoomLevels is nil while hidden post-12.0.5,
-    -- so this stays a no-op for the Carbonite map -- exactly what we want.
-    if not WorldMapFrame:IsShown() and WorldMapFrame.ScrollContainer.zoomLevels then
+    -- Retail C_Map queries no longer depend on WorldMapFrame's selected map.
+    -- Never drive that Blizzard frame from Carbonite: SetMapID refreshes all
+    -- of its providers synchronously in our execution context. Reused AreaPOI
+    -- pins then taint GameTooltip's secret widget dimensions, while quest pins
+    -- can reach the protected SetPassThroughButtons call.
+    if Nx.isRetail then
+        return
+    end
+
+    -- Preserve the prior hidden-frame priming behavior on Classic branches,
+    -- where legacy map selection still depends on it and secret widget values
+    -- are not exposed. The Retail return above is the strict taint boundary.
+    if WorldMapFrame
+        and not WorldMapFrame:IsShown()
+        and WorldMapFrame.ScrollContainer
+        and WorldMapFrame.ScrollContainer.zoomLevels then
         -- Translate continent IDs for non-MoP Classic clients
         if Nx.OldMapIDs then
             if zone == 12 then zone = 1414 end      -- Kalimdor
@@ -1835,7 +1855,7 @@ function Nx.Map:OnWin(typ)
     elseif typ == "SizeMax" then
         -- Maximized
         if WorldMapFrame:IsShown() then
-            HideUIPanel(WorldMapFrame)
+            CallBlizzardMapSecurely(HideUIPanel, WorldMapFrame)
         end
         tinsert(UISpecialFrames, self:GetWinName())
         self:AttachWorldMap()
@@ -3633,13 +3653,9 @@ end
 Nx.Map.WMFOnShow = true
 
 -- Hook WorldMapFrame OnShow to intercept and potentially redirect to Carbonite map
--- NOTE: the HideUIPanel redirect below writes WorldMapFrame's shown state
--- from insecure code, tainting it until /reload. Secure code reads it back
--- in ActionBarController (UpdateMicroButtons -> QuestLogMicroButton), which
--- can block OverrideActionBar:Show() on vehicle transitions in combat.
--- Unavoidable while we redirect the Blizzard map; the per-login variant of
--- this taint (SetupPipeline's old ShowUIPanel/HideUIPanel priming) has been
--- removed, so this only bites in sessions where the Blizzard map was opened.
+-- The redirect enters HideUIPanel through CallBlizzardMapSecurely so reusable
+-- MapCanvas pins and Blizzard's panel state are not written from Carbonite's
+-- execution context.
 WorldMapFrame:HookScript("OnShow", function()
     -- Fix for ElvUI constant WorldMapFrame Show and Hide
     if ElvUI then
@@ -3665,13 +3681,13 @@ WorldMapFrame:HookScript("OnShow", function()
             if DugisGuideViewer then
                 local isGuideMode, isEssentialMode, isOffMode = DugisGuideViewer.GetPluginMode()
                 if not isOffMode and GPSArrowIcon and not GPSArrowIcon:IsShown() then
-                    HideUIPanel(WorldMapFrame)
+                    CallBlizzardMapSecurely(HideUIPanel, WorldMapFrame)
                     return
                 end
             end
 
             -- Redirect to Carbonite map
-            HideUIPanel(WorldMapFrame)
+            CallBlizzardMapSecurely(HideUIPanel, WorldMapFrame)
             Nx.Map:ToggleSize()
         end
     end
@@ -3739,7 +3755,7 @@ end
 function Nx.Map:BlizzToggleWorldMap()
     if WorldMapFrame:IsShown() then
         if not InCombatLockdown() then
-            HideUIPanel(WorldMapFrame)
+            CallBlizzardMapSecurely(HideUIPanel, WorldMapFrame)
         else
             WorldMapFrame:Hide()
         end
@@ -3749,7 +3765,10 @@ function Nx.Map:BlizzToggleWorldMap()
         local map = self:GetMap(1)
         map:DetachWorldMap()
         if not InCombatLockdown() then
-            WorldMapFrame:HandleUserActionToggleSelf()
+            CallBlizzardMapSecurely(
+                WorldMapFrame.HandleUserActionToggleSelf,
+                WorldMapFrame
+            )
         end
     end
 end
@@ -10757,7 +10776,7 @@ function Nx.Map:IconOnMouseDown(button)
                                     -- trips protected SetPassThroughButtons
                                     -- in combat).
                                     Nx.SuperTrackSafe(function()
-                                        C_SuperTrack.SetSuperTrackedQuestID(0)
+                                        Nx.SetSuperTrackedQuestIDSafe(0)
                                         if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
                                     end)
                                 end)
@@ -10800,12 +10819,12 @@ function Nx.Map:IconOnMouseDown(button)
                                         if C_SuperTrack.SetSuperTrackedUserWaypoint
                                            and C_SuperTrack.IsSuperTrackingUserWaypoint
                                            and C_SuperTrack.IsSuperTrackingUserWaypoint() then
-                                            C_SuperTrack.SetSuperTrackedUserWaypoint(false)
+                                            Nx.SetSuperTrackedUserWaypointSafe(false)
                                         end
                                         if C_SuperTrack.ClearAllSuperTracked then
-                                            C_SuperTrack.ClearAllSuperTracked()
+                                            Nx.ClearAllSuperTrackedSafe()
                                         end
-                                        C_SuperTrack.SetSuperTrackedQuestID(_live)
+                                        Nx.SetSuperTrackedQuestIDSafe(_live)
                                         if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
                                     end)
                                 end)
