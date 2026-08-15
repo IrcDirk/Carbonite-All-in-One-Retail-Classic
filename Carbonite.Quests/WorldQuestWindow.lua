@@ -9,16 +9,22 @@ if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 Nx.Quest.WQList = Nx.Quest.WQList or {}
 
+local C_CurrencyInfo = _G.C_CurrencyInfo
 local C_Item = _G.C_Item
+local C_MajorFactions = _G.C_MajorFactions
 local C_Map = _G.C_Map
 local C_QuestLog = _G.C_QuestLog
+local C_QuestInfoSystem = _G.C_QuestInfoSystem
 local C_Reputation = _G.C_Reputation
 local C_TaskQuest = _G.C_TaskQuest
 local C_Timer = _G.C_Timer
+local C_TooltipComparison = _G.C_TooltipComparison
+local C_TooltipInfo = _G.C_TooltipInfo
 local Enum = _G.Enum
-local QuestUtil = _G.QuestUtil
 
+local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
 local GetFactionInfoByID = _G.GetFactionInfoByID
+local GetMoneyString = _G.GetMoneyString
 local GetNumQuestLogRewardCurrencies = _G.GetNumQuestLogRewardCurrencies
 local GetNumQuestLogRewards = _G.GetNumQuestLogRewards
 local GetQuestLogRewardArtifactXP = _G.GetQuestLogRewardArtifactXP
@@ -34,13 +40,16 @@ local QuestUtils_IsQuestWorldQuest = _G.QuestUtils_IsQuestWorldQuest
 local format = string.format
 local ipairs = ipairs
 local issecretvalue = _G.issecretvalue
+local floor = math.floor
 local max = math.max
 local min = math.min
 local pairs = pairs
+local pcall = pcall
 local sort = table.sort
 local tconcat = table.concat
 local tinsert = table.insert
 local tonumber = tonumber
+local tostring = tostring
 local type = type
 local wipe = _G.wipe
 
@@ -60,10 +69,10 @@ local MAX_SCAN_MAPS = 128
 local REFRESH_DELAY_SECONDS = 0.20
 local REWARD_REQUEST_RETRY_SECONDS = 5
 local MAX_EXPIRY_TIMER_SECONDS = 86400
-local WINDOW_LAYOUT_VERSION = 2
-local WINDOW_MIN_WIDTH = 480
+local WINDOW_LAYOUT_VERSION = 3
+local WINDOW_MIN_WIDTH = 600
 local WINDOW_MIN_HEIGHT = 180
-local WINDOW_DEFAULT_WIDTH = 620
+local WINDOW_DEFAULT_WIDTH = 760
 local WINDOW_DEFAULT_HEIGHT = 360
 
 local UI_MAP_TYPE_CONTINENT = Enum and Enum.UIMapType and Enum.UIMapType.Continent or 2
@@ -74,6 +83,22 @@ local ITEM_CLASS_TRADEGOODS = Enum and Enum.ItemClass and Enum.ItemClass.Tradego
 local QUEST_TAG_PVP = Enum and Enum.QuestTagType and Enum.QuestTagType.PvP or 3
 local QUEST_WATCH_MANUAL = Enum and Enum.QuestWatchType
     and Enum.QuestWatchType.Manual or 1
+local TOOLTIP_LINE_ITEM_NAME = Enum and Enum.TooltipDataLineType
+    and Enum.TooltipDataLineType.ItemName or 22
+local TOOLTIP_LINE_ITEM_LEVEL = Enum and Enum.TooltipDataLineType
+    and Enum.TooltipDataLineType.ItemLevel or 31
+local TOOLTIP_LINE_SELL_PRICE = Enum and Enum.TooltipDataLineType
+    and Enum.TooltipDataLineType.SellPrice or 11
+local TOOLTIP_DATA_ITEM = Enum and Enum.TooltipDataType
+    and Enum.TooltipDataType.Item or 0
+local TOOLTIP_COMPARISON_SINGLE = Enum and Enum.TooltipComparisonMethod
+    and Enum.TooltipComparisonMethod.Single or 0
+local TOOLTIP_COMPARISON_BOTH_HANDS = Enum and Enum.TooltipComparisonMethod
+    and Enum.TooltipComparisonMethod.WithBothHands or 1
+local TOOLTIP_COMPARISON_BAG_MAIN_HAND = Enum and Enum.TooltipComparisonMethod
+    and Enum.TooltipComparisonMethod.WithBagMainHandItem or 2
+local TOOLTIP_COMPARISON_BAG_OFF_HAND = Enum and Enum.TooltipComparisonMethod
+    and Enum.TooltipComparisonMethod.WithBagOffHandItem or 3
 
 local REWARD_ORDER = {
     { key = "gear", label = "Gear", option = "showgear" },
@@ -344,6 +369,442 @@ local function HasKnownReward(flags)
     return false
 end
 
+local function FormatRewardAmount(amount)
+    if not IsSafeNumber(amount) then
+        return
+    end
+
+    if BreakUpLargeNumbers then
+        local amountText = BreakUpLargeNumbers(amount)
+        if IsSafeString(amountText) and amountText ~= "" then
+            return amountText
+        end
+    end
+
+    return tostring(amount)
+end
+
+local function BuildRewardTextureMarkup(texture)
+    local textureText
+    if IsSafeNumber(texture) then
+        textureText = tostring(texture)
+    elseif IsSafeString(texture) and texture ~= "" then
+        textureText = texture
+    end
+
+    if textureText then
+        return "|T" .. textureText .. ":14:14|t"
+    end
+end
+
+local function AddRewardText(details, rowText, texture)
+    if not IsSafeString(rowText) or rowText == "" then
+        return false
+    end
+
+    local textureMarkup = BuildRewardTextureMarkup(texture)
+    details[#details + 1] = {
+        rowText = rowText,
+        tooltipText = textureMarkup and textureMarkup .. " " .. rowText or rowText,
+    }
+    return true
+end
+
+local function AddNamedReward(details, name, amount, texture, showSingleAmount)
+    if not IsSafeString(name) or name == "" then
+        return false
+    end
+
+    local rowText = name
+    if IsSafeNumber(amount) and amount > 0
+        and (showSingleAmount or amount > 1) then
+        local amountText = FormatRewardAmount(amount)
+        if amountText then
+            rowText = amountText .. " " .. name
+        end
+    end
+
+    return AddRewardText(details, rowText, texture)
+end
+
+local function ColorizeTooltipText(text, color)
+    if not IsSafeString(text) or text == "" then
+        return
+    end
+
+    if not IsSafeValue(color) or type(color) ~= "table" then
+        return text
+    end
+
+    local red = color.r
+    local green = color.g
+    local blue = color.b
+    if not IsSafeNumber(red) or not IsSafeNumber(green) or not IsSafeNumber(blue) then
+        return text
+    end
+
+    red = floor(min(1, max(0, red)) * 255 + 0.5)
+    green = floor(min(1, max(0, green)) * 255 + 0.5)
+    blue = floor(min(1, max(0, blue)) * 255 + 0.5)
+    return format("|cff%02x%02x%02x%s|r", red, green, blue, text)
+end
+
+local function BuildItemTooltipLine(lineData, itemName)
+    if not IsSafeValue(lineData) or type(lineData) ~= "table" then
+        return
+    end
+
+    local lineType = lineData.type
+    if IsSafeNumber(lineType) and lineType == TOOLTIP_LINE_ITEM_NAME then
+        return
+    end
+
+    local leftText = IsSafeString(lineData.leftText) and lineData.leftText or nil
+    local rightText = IsSafeString(lineData.rightText) and lineData.rightText or nil
+
+    -- The reward line already contains the item name and quantity.
+    if leftText and not rightText and IsSafeString(itemName) and leftText == itemName then
+        return
+    end
+
+    -- Blizzard renders SellPrice as a money frame after the data line. Fold
+    -- that value into text because Carbonite intentionally uses a private,
+    -- string-backed tooltip instead of Blizzard's reward tooltip frames.
+    if IsSafeNumber(lineType) and lineType == TOOLTIP_LINE_SELL_PRICE
+        and IsSafeNumber(lineData.price) and lineData.price > 0
+        and GetMoneyString then
+        local moneyText = GetMoneyString(lineData.price, true)
+        if IsSafeString(moneyText) and moneyText ~= "" then
+            local sellPriceText = leftText
+            if not sellPriceText or sellPriceText == "" then
+                sellPriceText = IsSafeString(_G.SELL_PRICE) and _G.SELL_PRICE or "Sell Price:"
+            end
+            leftText = sellPriceText .. " " .. moneyText
+        end
+    end
+
+    leftText = ColorizeTooltipText(leftText, lineData.leftColor)
+    rightText = ColorizeTooltipText(rightText, lineData.rightColor)
+
+    if leftText and rightText then
+        -- Nx:SetTooltipText interprets a tab as a true two-column tooltip row.
+        return leftText .. "\t" .. rightText
+    end
+    return leftText or rightText
+end
+
+local function GetQuestRewardItemTooltipLines(questID, rewardIndex, itemName)
+    if not C_TooltipInfo or type(C_TooltipInfo.GetQuestLogItem) ~= "function"
+        or not IsSafeNumber(questID) or not IsSafeNumber(rewardIndex) then
+        return nil, true
+    end
+
+    -- This is the read-only data source used by Blizzard's full world-quest
+    -- item tooltip. It does not mutate GameTooltip, UI widgets, or map pins.
+    local succeeded, tooltipData = pcall(
+        C_TooltipInfo.GetQuestLogItem,
+        "reward",
+        rewardIndex,
+        questID,
+        true
+    )
+    if not succeeded then
+        return nil, true
+    end
+    if not tooltipData then
+        return nil, false
+    end
+    if not IsSafeValue(tooltipData) or type(tooltipData) ~= "table"
+        or not IsSafeValue(tooltipData.lines) or type(tooltipData.lines) ~= "table" then
+        return nil, true
+    end
+
+    local lines = {}
+    for _, lineData in ipairs(tooltipData.lines) do
+        local line = BuildItemTooltipLine(lineData, itemName)
+        if line then
+            lines[#lines + 1] = line
+        end
+    end
+    return lines, true, tooltipData
+end
+
+local function CopyTooltipComparisonItem(item)
+    if not IsSafeValue(item) or type(item) ~= "table" then
+        return
+    end
+
+    local comparisonItem
+    if IsSafeString(item.guid) and item.guid ~= "" then
+        comparisonItem = { guid = item.guid }
+    elseif IsSafeString(item.hyperlink) and item.hyperlink ~= "" then
+        comparisonItem = { hyperlink = item.hyperlink }
+    end
+
+    if comparisonItem and IsSafeNumber(item.overrideItemLevel) then
+        comparisonItem.overrideItemLevel = item.overrideItemLevel
+    end
+    return comparisonItem
+end
+
+local function CreateTooltipComparisonItem(tooltipData)
+    if not IsSafeValue(tooltipData) or type(tooltipData) ~= "table"
+        or not IsSafeNumber(tooltipData.type)
+        or tooltipData.type ~= TOOLTIP_DATA_ITEM then
+        return
+    end
+
+    return CopyTooltipComparisonItem(tooltipData)
+end
+
+local function GetTooltipComparisonItemKey(item)
+    if type(item) ~= "table" then
+        return
+    end
+    if IsSafeString(item.guid) and item.guid ~= "" then
+        return "guid:" .. item.guid
+    end
+    if IsSafeString(item.hyperlink) and item.hyperlink ~= "" then
+        return "link:" .. item.hyperlink
+    end
+end
+
+local function GetTooltipComparisonItemData(item)
+    if not C_TooltipInfo or type(item) ~= "table" then
+        return
+    end
+
+    local getter
+    local itemKey
+    if IsSafeString(item.guid) and item.guid ~= ""
+        and type(C_TooltipInfo.GetItemByGUID) == "function" then
+        getter = C_TooltipInfo.GetItemByGUID
+        itemKey = item.guid
+    elseif IsSafeString(item.hyperlink) and item.hyperlink ~= ""
+        and type(C_TooltipInfo.GetHyperlink) == "function" then
+        getter = C_TooltipInfo.GetHyperlink
+        itemKey = item.hyperlink
+    end
+
+    if not getter then
+        return
+    end
+
+    local succeeded, tooltipData = pcall(getter, itemKey)
+    if not succeeded or not IsSafeValue(tooltipData)
+        or type(tooltipData) ~= "table" then
+        return
+    end
+    return tooltipData
+end
+
+local function GetTooltipComparisonItemSummary(item)
+    local tooltipData = GetTooltipComparisonItemData(item)
+    if not tooltipData or not IsSafeValue(tooltipData.lines)
+        or type(tooltipData.lines) ~= "table" then
+        return
+    end
+
+    local itemName
+    local itemLevel
+    for _, lineData in ipairs(tooltipData.lines) do
+        if IsSafeValue(lineData) and type(lineData) == "table" then
+            local lineType = lineData.type
+            if IsSafeNumber(lineType) and lineType == TOOLTIP_LINE_ITEM_NAME
+                and IsSafeString(lineData.leftText)
+                and lineData.leftText ~= "" then
+                itemName = ColorizeTooltipText(lineData.leftText, lineData.leftColor)
+            elseif IsSafeNumber(lineType) and lineType == TOOLTIP_LINE_ITEM_LEVEL then
+                itemLevel = BuildItemTooltipLine(lineData)
+            end
+        end
+    end
+
+    return itemName, itemLevel
+end
+
+local function GetTooltipComparisonDelta(
+    comparisonItem,
+    equippedItem,
+    pairedItem,
+    addPairedStats
+)
+    if not C_TooltipComparison
+        or type(C_TooltipComparison.GetItemComparisonDelta) ~= "function" then
+        return
+    end
+
+    local succeeded, deltaLines = pcall(
+        C_TooltipComparison.GetItemComparisonDelta,
+        comparisonItem,
+        equippedItem,
+        pairedItem,
+        addPairedStats
+    )
+    if not succeeded or not IsSafeValue(deltaLines)
+        or type(deltaLines) ~= "table" then
+        return
+    end
+
+    local safeLines = {}
+    for _, deltaLine in ipairs(deltaLines) do
+        if IsSafeString(deltaLine) and deltaLine ~= "" then
+            safeLines[#safeLines + 1] = deltaLine
+        end
+    end
+    return safeLines
+end
+
+local function AddTooltipComparisonItemSummary(lines, item, headerText)
+    local itemName, itemLevel = GetTooltipComparisonItemSummary(item)
+    if not itemName and not itemLevel then
+        return false
+    end
+
+    headerText = IsSafeString(headerText) and headerText ~= ""
+        and headerText or "Equipped"
+    if itemName then
+        lines[#lines + 1] = "|cffffd100" .. headerText .. "|r: " .. itemName
+    else
+        lines[#lines + 1] = "|cffffd100" .. headerText .. "|r"
+    end
+    if itemLevel then
+        lines[#lines + 1] = "  " .. itemLevel
+    end
+    return true
+end
+
+local function AddTooltipComparisonDelta(lines, deltaLines, multipleItems)
+    if type(deltaLines) ~= "table" or #deltaLines == 0 then
+        return false
+    end
+
+    local summaryHeader
+    if multipleItems then
+        summaryHeader = _G.ITEM_DELTA_MULTIPLE_COMPARISON_DESCRIPTION
+    else
+        summaryHeader = _G.ITEM_DELTA_DESCRIPTION
+    end
+    if not IsSafeString(summaryHeader) or summaryHeader == "" then
+        summaryHeader = multipleItems
+            and "If you replace these items, the following stat changes will occur:"
+            or "If you replace this item, the following stat changes will occur:"
+    end
+
+    lines[#lines + 1] = "|cffffd100" .. summaryHeader .. "|r"
+    for _, deltaLine in ipairs(deltaLines) do
+        lines[#lines + 1] = "  " .. deltaLine
+    end
+    return true
+end
+
+local function GetQuestRewardItemComparisonLines(tooltipData)
+    if not C_TooltipComparison
+        or type(C_TooltipComparison.GetItemComparisonInfo) ~= "function" then
+        return
+    end
+
+    local comparisonItem = CreateTooltipComparisonItem(tooltipData)
+    if not comparisonItem then
+        return
+    end
+
+    local succeeded, comparisonInfo = pcall(
+        C_TooltipComparison.GetItemComparisonInfo,
+        comparisonItem
+    )
+    if not succeeded or not IsSafeValue(comparisonInfo)
+        or type(comparisonInfo) ~= "table" then
+        return
+    end
+
+    local comparisonMethod = comparisonInfo.method
+    if not IsSafeNumber(comparisonMethod)
+        or comparisonMethod < TOOLTIP_COMPARISON_SINGLE
+        or comparisonMethod > TOOLTIP_COMPARISON_BAG_OFF_HAND then
+        return
+    end
+
+    local primaryItem = CopyTooltipComparisonItem(comparisonInfo.item)
+    if not primaryItem then
+        return
+    end
+
+    local additionalItems = {}
+    local seenItems = {}
+    local primaryKey = GetTooltipComparisonItemKey(primaryItem)
+    if primaryKey then
+        seenItems[primaryKey] = true
+    end
+
+    if IsSafeValue(comparisonInfo.additionalItems)
+        and type(comparisonInfo.additionalItems) == "table" then
+        for _, item in ipairs(comparisonInfo.additionalItems) do
+            local additionalItem = CopyTooltipComparisonItem(item)
+            local itemKey = GetTooltipComparisonItemKey(additionalItem)
+            if additionalItem and (not itemKey or not seenItems[itemKey]) then
+                additionalItems[#additionalItems + 1] = additionalItem
+                if itemKey then
+                    seenItems[itemKey] = true
+                end
+                -- Retail currently returns at most the alternate equipment
+                -- slots and weapon pairings. Keep malformed data bounded.
+                if #additionalItems >= 4 then
+                    break
+                end
+            end
+        end
+    end
+
+    local equippedHeader = IsSafeString(_G.EQUIPPED) and _G.EQUIPPED or "Equipped"
+    local lines = {}
+
+    if comparisonMethod == TOOLTIP_COMPARISON_SINGLE then
+        local comparisonItems = { primaryItem }
+        for _, item in ipairs(additionalItems) do
+            comparisonItems[#comparisonItems + 1] = item
+        end
+
+        for _, equippedItem in ipairs(comparisonItems) do
+            AddTooltipComparisonItemSummary(lines, equippedItem, equippedHeader)
+            local deltaLines = GetTooltipComparisonDelta(
+                comparisonItem,
+                equippedItem,
+                nil,
+                false
+            )
+            AddTooltipComparisonDelta(lines, deltaLines, false)
+        end
+    else
+        local pairedItem = additionalItems[1]
+        local isBagPair = comparisonMethod == TOOLTIP_COMPARISON_BAG_MAIN_HAND
+            or comparisonMethod == TOOLTIP_COMPARISON_BAG_OFF_HAND
+
+        AddTooltipComparisonItemSummary(lines, primaryItem, equippedHeader)
+        if pairedItem then
+            local pairedHeader = isBagPair
+                and (IsSafeString(_G.IF_EQUIPPED_TOGETHER)
+                    and _G.IF_EQUIPPED_TOGETHER or "Equipped With")
+                or equippedHeader
+            AddTooltipComparisonItemSummary(lines, pairedItem, pairedHeader)
+        end
+
+        local deltaLines = GetTooltipComparisonDelta(
+            comparisonItem,
+            primaryItem,
+            pairedItem,
+            isBagPair
+        )
+        AddTooltipComparisonDelta(
+            lines,
+            deltaLines,
+            comparisonMethod == TOOLTIP_COMPARISON_BOTH_HANDS
+        )
+    end
+
+    return #lines > 0 and lines or nil
+end
+
 local function BuildRewardLabel(flags)
     local labels = {}
 
@@ -361,6 +822,26 @@ local function BuildRewardLabel(flags)
     end
 
     return tconcat(labels, ", ")
+end
+
+local function BuildRewardDisplay(flags, details)
+    local rewardTexts = {}
+
+    if type(details) == "table" then
+        for _, detail in ipairs(details) do
+            if type(detail) == "table"
+                and IsSafeString(detail.rowText)
+                and detail.rowText ~= "" then
+                rewardTexts[#rewardTexts + 1] = detail.rowText
+            end
+        end
+    end
+
+    if #rewardTexts > 0 then
+        return tconcat(rewardTexts, ", ")
+    end
+
+    return BuildRewardLabel(flags)
 end
 
 local function IsRewardVisible(flags)
@@ -386,9 +867,44 @@ local function BuildQuestTooltip(info)
     local lines = {
         "|cffffffff" .. info.title .. "|r",
         L["Zone"] .. ": " .. info.zoneName,
-        L["Reward"] .. ": " .. info.rewardLabel,
-        L["Time Left"] .. ": " .. info.timeLabel,
     }
+
+    local addedRewardDetails = false
+    if type(info.rewardDetails) == "table" then
+        for _, detail in ipairs(info.rewardDetails) do
+            if type(detail) == "table"
+                and IsSafeString(detail.tooltipText)
+                and detail.tooltipText ~= "" then
+                if not addedRewardDetails then
+                    local rewardHeader = IsSafeString(_G.QUEST_REWARDS)
+                        and _G.QUEST_REWARDS or L["Reward"]
+                    lines[#lines + 1] = "|cffffd100" .. rewardHeader .. "|r"
+                    addedRewardDetails = true
+                end
+                lines[#lines + 1] = (QUEST_DASH or "- ") .. detail.tooltipText
+                if type(detail.itemTooltipLines) == "table" then
+                    for _, itemLine in ipairs(detail.itemTooltipLines) do
+                        if IsSafeString(itemLine) and itemLine ~= "" then
+                            lines[#lines + 1] = "  " .. itemLine
+                        end
+                    end
+                end
+                if type(detail.itemComparisonLines) == "table" then
+                    for _, comparisonLine in ipairs(detail.itemComparisonLines) do
+                        if IsSafeString(comparisonLine) and comparisonLine ~= "" then
+                            lines[#lines + 1] = "  " .. comparisonLine
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if not addedRewardDetails then
+        lines[#lines + 1] = L["Reward"] .. ": " .. info.rewardLabel
+    end
+
+    lines[#lines + 1] = L["Time Left"] .. ": " .. info.timeLabel
 
     if info.factionName then
         lines[#lines + 1] = L["Faction"] .. ": " .. info.factionName
@@ -613,11 +1129,11 @@ function Nx.Quest.WQList:Open()
         false
     )
     self.List = list
-    list:SetMinSize(460, 120)
+    list:SetMinSize(580, 120)
     list:ColumnAdd("", COLUMN_ICON, 16)
     list:ColumnAdd(L["Name"], COLUMN_NAME, 190)
     list:ColumnAdd(L["Zone"], COLUMN_ZONE, 105)
-    list:ColumnAdd(L["Reward"], COLUMN_REWARD, 115)
+    list:ColumnAdd(L["Reward"], COLUMN_REWARD, 190)
     list:ColumnAdd(L["Time Left"], COLUMN_TIME, 70)
     list:SetUser(self, self.OnListEvent)
     list.Frm.NxSetSize = function(_, width, height)
@@ -694,6 +1210,7 @@ function Nx.Quest.WQList:Open()
     self:RegisterEvent("UNIT_QUEST_LOG_CHANGED", "ScheduleUpdateDB")
     self:RegisterEvent("QUEST_DATA_LOAD_RESULT", "ScheduleUpdateDB")
     self:RegisterEvent("GET_ITEM_INFO_RECEIVED", "ScheduleUpdateDB")
+    self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "ScheduleUpdateDB")
     self:RegisterEvent("QUEST_WATCH_LIST_CHANGED", "OnWatchListChanged")
 
     win.Frm:SetScript("OnShow", function()
@@ -731,27 +1248,23 @@ function Nx.Quest.WQList:ToggleWorldQuestWatch(questID)
     end
 
     local shouldTrack = not IsWorldQuestWatched(questID)
-    local canTrack = QuestUtil and QuestUtil.TrackWorldQuest
-        or C_QuestLog.AddWorldQuestWatch
-    local canUntrack = QuestUtil and QuestUtil.UntrackWorldQuest
-        or C_QuestLog.RemoveWorldQuestWatch
+    local canTrack = Nx.AddWorldQuestWatchSafe
+    local canUntrack = Nx.RemoveWorldQuestWatchSafe
     if shouldTrack and not canTrack or not shouldTrack and not canUntrack then
         return
     end
 
     -- Match Carbonite's world-map pin path: leave the tainted row-click stack
     -- before touching Blizzard's watch API, and defer again if combat begins.
+    -- Call the native watch API through Carbonite's secure boundary rather
+    -- than QuestUtil's Lua wrapper: removing the currently super-tracked WQ
+    -- synchronously calls Blizzard_QuestSuperTracking, whose map refresh would
+    -- otherwise inherit Carbonite taint and block SetPassThroughButtons.
     local function ApplyWatchChange()
         if shouldTrack then
-            if QuestUtil and QuestUtil.TrackWorldQuest then
-                QuestUtil.TrackWorldQuest(questID, QUEST_WATCH_MANUAL)
-            else
-                C_QuestLog.AddWorldQuestWatch(questID, QUEST_WATCH_MANUAL)
-            end
-        elseif QuestUtil and QuestUtil.UntrackWorldQuest then
-            QuestUtil.UntrackWorldQuest(questID)
+            Nx.AddWorldQuestWatchSafe(questID, QUEST_WATCH_MANUAL)
         else
-            C_QuestLog.RemoveWorldQuestWatch(questID)
+            Nx.RemoveWorldQuestWatchSafe(questID)
         end
 
         self:OnWatchListChanged()
@@ -828,13 +1341,14 @@ end
 
 function Nx.Quest.WQList:ClassifyRewards(questID, tagInfo)
     local flags = {}
+    local details = {}
 
     if HaveQuestRewardData then
         local rewardDataLoaded = HaveQuestRewardData(questID)
         if not IsSafeValue(rewardDataLoaded) or rewardDataLoaded ~= true then
             flags.pending = true
             self:RequestRewardData(questID)
-            return flags
+            return flags, details
         end
     end
 
@@ -843,24 +1357,48 @@ function Nx.Quest.WQList:ClassifyRewards(questID, tagInfo)
         flags.pvp = true
     end
 
+    local honor
     if GetQuestLogRewardHonor then
-        local honor = GetQuestLogRewardHonor(questID)
-        if IsSafeNumber(honor) and honor > 0 then
+        local rewardHonor = GetQuestLogRewardHonor(questID)
+        if IsSafeNumber(rewardHonor) and rewardHonor > 0 then
+            honor = rewardHonor
             flags.pvp = true
         end
     end
 
+    local artifactPower
     if GetQuestLogRewardArtifactXP then
-        local artifactPower = GetQuestLogRewardArtifactXP(questID)
-        if IsSafeNumber(artifactPower) and artifactPower > 0 then
+        local rewardArtifactPower = GetQuestLogRewardArtifactXP(questID)
+        if IsSafeNumber(rewardArtifactPower) and rewardArtifactPower > 0 then
+            artifactPower = rewardArtifactPower
             flags.power = true
         end
     end
 
+    local money
     if GetQuestLogRewardMoney then
-        local money = GetQuestLogRewardMoney(questID)
-        if IsSafeNumber(money) and money > 0 then
+        local rewardMoney = GetQuestLogRewardMoney(questID)
+        if IsSafeNumber(rewardMoney) and rewardMoney > 0 then
+            money = rewardMoney
             flags.gold = true
+        end
+    end
+
+    local experience
+    if GetQuestLogRewardXP then
+        local totalExperience, baseExperience = GetQuestLogRewardXP(questID)
+        if IsSafeNumber(baseExperience) and baseExperience > 0 then
+            experience = baseExperience
+        elseif IsSafeNumber(totalExperience) and totalExperience > 0 then
+            experience = totalExperience
+        end
+    end
+
+    local favor
+    if C_QuestInfoSystem and C_QuestInfoSystem.GetQuestLogRewardFavor then
+        local rewardFavor = C_QuestInfoSystem.GetQuestLogRewardFavor(questID)
+        if IsSafeNumber(rewardFavor) and rewardFavor > 0 then
+            favor = rewardFavor
         end
     end
 
@@ -868,10 +1406,35 @@ function Nx.Quest.WQList:ClassifyRewards(questID, tagInfo)
         local rewardCount = GetNumQuestLogRewards(questID)
         if IsSafeNumber(rewardCount) then
             for rewardIndex = 1, rewardCount do
-                local itemName, _, _, _, _, itemID =
+                local itemName, itemTexture, itemCount, _, _, itemID =
                     GetQuestLogRewardInfo(rewardIndex, questID)
 
+                local addedItem = AddNamedReward(
+                    details,
+                    itemName,
+                    itemCount,
+                    itemTexture,
+                    false
+                )
+                local itemDetail = addedItem and details[#details] or nil
+
                 if IsSafeNumber(itemID) and itemID > 0 then
+                    if itemDetail and C_TooltipInfo
+                        and type(C_TooltipInfo.GetQuestLogItem) == "function" then
+                        local itemTooltipLines, tooltipDataReady, tooltipData =
+                            GetQuestRewardItemTooltipLines(questID, rewardIndex, itemName)
+                        if tooltipDataReady then
+                            itemDetail.itemTooltipLines = itemTooltipLines
+                            itemDetail.itemComparisonLines =
+                                GetQuestRewardItemComparisonLines(tooltipData)
+                        else
+                            flags.pending = true
+                            if C_Item and C_Item.RequestLoadItemDataByID then
+                                C_Item.RequestLoadItemDataByID(itemID)
+                            end
+                        end
+                    end
+
                     local categorized = false
                     local itemPending = false
 
@@ -928,7 +1491,29 @@ function Nx.Quest.WQList:ClassifyRewards(questID, tagInfo)
             usedModernCurrencies = true
             for _, currencyReward in ipairs(currencyRewards) do
                 if type(currencyReward) == "table" then
-                    AddCurrencyReward(flags, currencyReward.currencyID)
+                    local currencyID = currencyReward.currencyID
+                    AddCurrencyReward(flags, currencyID)
+
+                    local currencyName = currencyReward.name
+                    local currencyTexture = currencyReward.texture
+                    if (not IsSafeString(currencyName) or currencyName == "")
+                        and IsSafeNumber(currencyID)
+                        and C_CurrencyInfo
+                        and C_CurrencyInfo.GetCurrencyInfo then
+                        local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(currencyID)
+                        if type(currencyInfo) == "table" then
+                            currencyName = currencyInfo.name
+                            currencyTexture = currencyInfo.iconFileID
+                        end
+                    end
+
+                    AddNamedReward(
+                        details,
+                        currencyName,
+                        currencyReward.totalRewardAmount,
+                        currencyTexture,
+                        true
+                    )
                 end
             end
         end
@@ -940,9 +1525,16 @@ function Nx.Quest.WQList:ClassifyRewards(questID, tagInfo)
         local currencyCount = GetNumQuestLogRewardCurrencies(questID)
         if IsSafeNumber(currencyCount) then
             for currencyIndex = 1, currencyCount do
-                local _, _, _, currencyID =
+                local currencyName, currencyTexture, currencyAmount, currencyID =
                     GetQuestLogRewardCurrencyInfo(currencyIndex, questID)
                 AddCurrencyReward(flags, currencyID)
+                AddNamedReward(
+                    details,
+                    currencyName,
+                    currencyAmount,
+                    currencyTexture,
+                    true
+                )
             end
         end
     end
@@ -950,14 +1542,107 @@ function Nx.Quest.WQList:ClassifyRewards(questID, tagInfo)
     if C_QuestLog and C_QuestLog.GetQuestLogMajorFactionReputationRewards then
         local reputationRewards =
             C_QuestLog.GetQuestLogMajorFactionReputationRewards(questID)
-        if type(reputationRewards) == "table" and #reputationRewards > 0 then
-            flags.reputation = true
+        if type(reputationRewards) == "table" then
+            for _, reputationReward in ipairs(reputationRewards) do
+                if type(reputationReward) == "table"
+                    and IsSafeNumber(reputationReward.factionID) then
+                    local factionName
+                    if C_MajorFactions and C_MajorFactions.GetMajorFactionData then
+                        local factionData =
+                            C_MajorFactions.GetMajorFactionData(reputationReward.factionID)
+                        if type(factionData) == "table"
+                            and IsSafeString(factionData.name) then
+                            factionName = factionData.name
+                        end
+                    end
+                    factionName = factionName
+                        or GetFactionName(reputationReward.factionID)
+
+                    local reputationName = factionName
+                    if factionName and IsSafeString(_G.QUEST_REPUTATION_REWARD_TITLE) then
+                        reputationName = format(
+                            _G.QUEST_REPUTATION_REWARD_TITLE,
+                            factionName
+                        )
+                    end
+
+                    flags.reputation = true
+                    AddNamedReward(
+                        details,
+                        reputationName,
+                        reputationReward.rewardAmount,
+                        nil,
+                        true
+                    )
+                end
+            end
         end
     end
 
-    if not HasKnownReward(flags) and GetQuestLogRewardXP then
-        local experience = GetQuestLogRewardXP(questID)
-        if IsSafeNumber(experience) and experience > 0 then
+    if C_QuestInfoSystem
+        and C_QuestInfoSystem.GetQuestRewardSpells
+        and C_QuestInfoSystem.GetQuestRewardSpellInfo then
+        local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID)
+        if type(spellRewards) == "table" then
+            for _, spellID in ipairs(spellRewards) do
+                if IsSafeNumber(spellID) and spellID > 0 then
+                    local spellInfo =
+                        C_QuestInfoSystem.GetQuestRewardSpellInfo(questID, spellID)
+                    if type(spellInfo) == "table"
+                        and AddNamedReward(
+                            details,
+                            spellInfo.name,
+                            nil,
+                            spellInfo.texture,
+                            false
+                        ) then
+                        flags.other = true
+                    end
+                end
+            end
+        end
+    end
+
+    if money then
+        local moneyText
+        if GetMoneyString then
+            local formattedMoney = GetMoneyString(money, true)
+            if IsSafeString(formattedMoney) and formattedMoney ~= "" then
+                moneyText = formattedMoney
+            end
+        end
+        moneyText = moneyText or FormatRewardAmount(money)
+        AddRewardText(details, moneyText)
+    end
+
+    if honor then
+        AddNamedReward(details, _G.HONOR or L["PvP"], honor, nil, true)
+    end
+
+    if artifactPower then
+        AddNamedReward(
+            details,
+            _G.ARTIFACT_POWER or L["Power"],
+            artifactPower,
+            nil,
+            true
+        )
+    end
+
+    if favor then
+        flags.other = true
+        AddNamedReward(
+            details,
+            _G.HOUSING_DASHBOARD_REWARD_ESTATE_XP or L["Other"],
+            favor,
+            nil,
+            true
+        )
+    end
+
+    if experience then
+        AddNamedReward(details, _G.XP or "XP", experience, nil, true)
+        if not HasKnownReward(flags) then
             flags.other = true
         end
     end
@@ -966,7 +1651,7 @@ function Nx.Quest.WQList:ClassifyRewards(questID, tagInfo)
         flags.other = true
     end
 
-    return flags
+    return flags, details
 end
 
 function Nx.Quest.WQList:GenWQTip(questID)
@@ -1106,7 +1791,7 @@ function Nx.Quest.WQList:AddQuestToSnapshot(snapshot, taskInfo, scanMapID)
     end
 
     local tagInfo = GetQuestTagInfoCompat and GetQuestTagInfoCompat(questID)
-    local rewardFlags = self:ClassifyRewards(questID, tagInfo)
+    local rewardFlags, rewardDetails = self:ClassifyRewards(questID, tagInfo)
     local timeLabel = IsSafeNumber(timeLeftSeconds)
         and Nx.Util_GetTimeElapsedStr(max(0, timeLeftSeconds))
         or L["Unknown"]
@@ -1122,7 +1807,9 @@ function Nx.Quest.WQList:AddQuestToSnapshot(snapshot, taskInfo, scanMapID)
         zoneName = GetMapName(questMapID),
         numobjectives = numObjectives,
         rewardFlags = rewardFlags,
-        rewardLabel = BuildRewardLabel(rewardFlags),
+        rewardDetails = rewardDetails,
+        rewardTypeLabel = BuildRewardLabel(rewardFlags),
+        rewardLabel = BuildRewardDisplay(rewardFlags, rewardDetails),
         timeLeftSeconds = timeLeftSeconds,
         timeLabel = timeLabel,
         PVP = rewardFlags.pvp == true,
@@ -1358,7 +2045,7 @@ function Nx.Quest.WQList:Update()
         list:ItemAdd(info)
         list:ItemSet(COLUMN_NAME, info.title)
         list:ItemSet(COLUMN_ZONE, info.zoneName)
-        list:ItemSet(COLUMN_REWARD, info.rewardLabel)
+        list:ItemSet(COLUMN_REWARD, info.rewardTypeLabel)
         list:ItemSet(COLUMN_TIME, info.timeLabel)
         list:ItemSetButton("QuestWatchCustomTip", isWatched)
         list:ItemSetButtonTip(
