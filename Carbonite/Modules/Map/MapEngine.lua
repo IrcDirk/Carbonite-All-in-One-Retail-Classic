@@ -42,19 +42,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 -- Extended tooltip library for enhanced tooltips
 local ExtToolTip = LibStub('LibQTip-1.0RS')
 
--- Carbonite replaces ToggleWorldMap, so opening or closing Blizzard's map can
--- originate in addon code. Enter Blizzard's map lifecycle through a secure
--- call; otherwise its OnShow/OnHide provider refresh creates tainted reusable
--- pins before the player ever hovers them.
-local securecallfunction = _G.securecallfunction
-local function CallBlizzardMapSecurely(api, ...)
-    if securecallfunction then
-        securecallfunction(api, ...)
-    else
-        api(...)
-    end
-end
-
 -------------------------------------------------------------------------------
 -- Relocation note
 -------------------------------------------------------------------------------
@@ -335,22 +322,15 @@ end
 -- @param zone  The map ID to display
 --
 function Nx.Map:SetMapByID(zone)
-    -- Retail C_Map queries no longer depend on WorldMapFrame's selected map.
-    -- Never drive that Blizzard frame from Carbonite: SetMapID refreshes all
-    -- of its providers synchronously in our execution context. Reused AreaPOI
-    -- pins then taint GameTooltip's secret widget dimensions, while quest pins
-    -- can reach the protected SetPassThroughButtons call.
-    if Nx.isRetail then
-        return
-    end
-
-    -- Preserve the prior hidden-frame priming behavior on Classic branches,
-    -- where legacy map selection still depends on it and secret widget values
-    -- are not exposed. The Retail return above is the strict taint boundary.
-    if WorldMapFrame
-        and not WorldMapFrame:IsShown()
-        and WorldMapFrame.ScrollContainer
-        and WorldMapFrame.ScrollContainer.zoomLevels then
+    -- Only push the id into Blizzard's WorldMapFrame when it's actually shown
+    -- AND its zoom data exists. Carbonite normally keeps WorldMapFrame hidden
+    -- and reads the hovered zone from Nx.Map.MouseIsOverMap (see
+    -- GetCurrentMapAreaID), so we must NOT call SetMapID for our own hidden
+    -- map: that taints WorldMapFrame's data providers (WorldQuestDataProvider
+    -- -> AcquirePin -> SetPassThroughButtons gets ADDON_ACTION_BLOCKED when a
+    -- world quest later refreshes). zoomLevels is nil while hidden post-12.0.5,
+    -- so this stays a no-op for the Carbonite map -- exactly what we want.
+    if not WorldMapFrame:IsShown() and WorldMapFrame.ScrollContainer.zoomLevels then
         -- Translate continent IDs for non-MoP Classic clients
         if Nx.OldMapIDs then
             if zone == 12 then zone = 1414 end      -- Kalimdor
@@ -1855,7 +1835,7 @@ function Nx.Map:OnWin(typ)
     elseif typ == "SizeMax" then
         -- Maximized
         if WorldMapFrame:IsShown() then
-            CallBlizzardMapSecurely(HideUIPanel, WorldMapFrame)
+            HideUIPanel(WorldMapFrame)
         end
         tinsert(UISpecialFrames, self:GetWinName())
         self:AttachWorldMap()
@@ -2314,8 +2294,16 @@ function Nx.Map:MinimapOwnInit()
     mm:SetParent (self.Win.Frm)
 
     --self.MMFrm:SetQuestBlobRingAlpha(1)
-    self.MMFrm:SetPOIArrowTexture("Interface\\Addons\\Carbonite\\Gfx\\Map\\32Transparent")
-    self.MMFrm:SetStaticPOIArrowTexture("Interface\\Addons\\Carbonite\\Gfx\\Map\\32Transparent")
+    -- Retail 12.1 removed these MinimapFrame methods, while Classic clients
+    -- still expose them. Detect the capabilities so combined-minimap startup
+    -- remains compatible with every supported client.
+    local transparentPOITexture = "Interface\\Addons\\Carbonite\\Gfx\\Map\\32Transparent"
+    if type(mm.SetPOIArrowTexture) == "function" then
+        mm:SetPOIArrowTexture(transparentPOITexture)
+    end
+    if type(mm.SetStaticPOIArrowTexture) == "function" then
+        mm:SetStaticPOIArrowTexture(transparentPOITexture)
+    end
     mm:SetScript ("OnMouseDown", self.MinimapOnMouseDown)
     mm:SetScript ("OnMouseUp", self.MinimapOnMouseUp)
     mm:SetScript ("OnEnter", self.MinimapOnEnter)
@@ -2586,6 +2574,12 @@ function Nx.Map:MinimapNodeGlowInit(reset)
     -- Cancel existing timer
     Nx:CancelTimer(MapNodeGlow)
 
+    -- Retail 12.1 no longer exposes SetBlipTexture. Do not schedule the
+    -- Classic node-glow animation when the client cannot replace blip art.
+    if type(mm.SetBlipTexture) ~= "function" then
+        return
+    end
+
     if reset then
         mm:SetBlipTexture("Interface\\Minimap\\ObjectIconsAtlas")
     end
@@ -2634,6 +2628,9 @@ end
 -- @param letter  Texture suffix ("" or "G" for glow)
 --
 function Nx.Map:MinimapNodeGlowSet(letter)
+    if type(self.MMFrm.SetBlipTexture) ~= "function" then
+        return
+    end
     self.MMFrm:SetBlipTexture("Interface\\AddOns\\Carbonite\\Gfx\\Map\\MMOIcons" .. letter)
 end
 
@@ -2999,7 +2996,9 @@ function Nx.Map:MinimapUpdateMask (optName)
     local name = self.MMZoomType == 0 and "Interface\\Minimap\\MinimapArrow" or "Interface\\Addons\\Carbonite\\Gfx\\Map\\32Transparent"
     if self.MMArrowName ~= name then
         self.MMArrowName = name
-        if (name ~= "") then
+        -- SetPlayerTexture was removed from Retail 12.1's MinimapFrame API.
+        -- Classic clients still use it for Carbonite's docked player arrow.
+        if name ~= "" and type(self.MMFrm.SetPlayerTexture) == "function" then
             self.MMFrm:SetPlayerTexture (name)
         end
     end
@@ -3653,9 +3652,13 @@ end
 Nx.Map.WMFOnShow = true
 
 -- Hook WorldMapFrame OnShow to intercept and potentially redirect to Carbonite map
--- The redirect enters HideUIPanel through CallBlizzardMapSecurely so reusable
--- MapCanvas pins and Blizzard's panel state are not written from Carbonite's
--- execution context.
+-- NOTE: the HideUIPanel redirect below writes WorldMapFrame's shown state
+-- from insecure code, tainting it until /reload. Secure code reads it back
+-- in ActionBarController (UpdateMicroButtons -> QuestLogMicroButton), which
+-- can block OverrideActionBar:Show() on vehicle transitions in combat.
+-- Unavoidable while we redirect the Blizzard map; the per-login variant of
+-- this taint (SetupPipeline's old ShowUIPanel/HideUIPanel priming) has been
+-- removed, so this only bites in sessions where the Blizzard map was opened.
 WorldMapFrame:HookScript("OnShow", function()
     -- Fix for ElvUI constant WorldMapFrame Show and Hide
     if ElvUI then
@@ -3681,13 +3684,13 @@ WorldMapFrame:HookScript("OnShow", function()
             if DugisGuideViewer then
                 local isGuideMode, isEssentialMode, isOffMode = DugisGuideViewer.GetPluginMode()
                 if not isOffMode and GPSArrowIcon and not GPSArrowIcon:IsShown() then
-                    CallBlizzardMapSecurely(HideUIPanel, WorldMapFrame)
+                    HideUIPanel(WorldMapFrame)
                     return
                 end
             end
 
             -- Redirect to Carbonite map
-            CallBlizzardMapSecurely(HideUIPanel, WorldMapFrame)
+            HideUIPanel(WorldMapFrame)
             Nx.Map:ToggleSize()
         end
     end
@@ -3755,7 +3758,7 @@ end
 function Nx.Map:BlizzToggleWorldMap()
     if WorldMapFrame:IsShown() then
         if not InCombatLockdown() then
-            CallBlizzardMapSecurely(HideUIPanel, WorldMapFrame)
+            HideUIPanel(WorldMapFrame)
         else
             WorldMapFrame:Hide()
         end
@@ -3765,10 +3768,7 @@ function Nx.Map:BlizzToggleWorldMap()
         local map = self:GetMap(1)
         map:DetachWorldMap()
         if not InCombatLockdown() then
-            CallBlizzardMapSecurely(
-                WorldMapFrame.HandleUserActionToggleSelf,
-                WorldMapFrame
-            )
+            WorldMapFrame:HandleUserActionToggleSelf()
         end
     end
 end
@@ -4913,10 +4913,12 @@ function Nx.Map:UpdateWorld()
             if not self.LastOverlayCheckTime or (now - self.LastOverlayCheckTime) > 2 then
                 self.LastOverlayCheckTime = now
                 local i = self:GetExploredOverlayNum()
-                if i == self.CurWorldUpdateOverlayNum then
+                local quickArtMapID = self:GetArtSourceMapID(mapId)
+                local quickArtID = C_Map and C_Map.GetMapArtID and C_Map.GetMapArtID(quickArtMapID)
+                    or quickArtMapID
+                if i == self.CurWorldUpdateOverlayNum and quickArtID == self.CurWorldUpdateArtID then
                     return  -- Nothing changed
                 end
-                self.CurWorldUpdateOverlayNum = i
             else
                 return  -- Use cached overlay count, no update needed
             end
@@ -4929,10 +4931,14 @@ function Nx.Map:UpdateWorld()
         --Nx.Map:RegisterEvent ("WORLD_MAP_UPDATE", "OnEvent")
         -- Use the player's actual zone when mouse is not over the map
         -- This fixes city maps not showing initially (RMapId may not be updated yet)
-        mapId = MapUtil.GetDisplayableMapForPlayer()
+        mapId = self:GetDisplayableMapForPlayer()
     end
     if not mapId or mapId == 9000 then
         mapId = self:GetCurrentMapId()
+    end
+    if self.WorldArtRetryMapId == mapId and self.WorldArtRetryTime
+        and GetTime() < self.WorldArtRetryTime then
+        return
     end
 
     local winfo = self.MapWorldInfo[mapId]
@@ -4942,6 +4948,10 @@ function Nx.Map:UpdateWorld()
     if not winfo then
         winfo = {}
     end
+    local artMapID = self:GetArtSourceMapID(mapId)
+    if winfo.Garrison then artMapID = mapId end
+    local mapArtID = C_Map and C_Map.GetMapArtID and C_Map.GetMapArtID(artMapID)
+        or artMapID
     if winfo.MapLevel then
         if dungeonLevel ~= winfo.MapLevel then    -- Wrong level?
             --SetDungeonMapLevel (winfo.MapLevel)
@@ -4952,16 +4962,13 @@ function Nx.Map:UpdateWorld()
     local i = self:GetExploredOverlayNum()
     self.LastOverlayCheckTime = GetTime()
 
-    if self.CurWorldUpdateMapId == mapId and i == self.CurWorldUpdateOverlayNum and dungeonLevel == self.LastDungeonLevel then
+    if self.CurWorldUpdateMapId == mapId and i == self.CurWorldUpdateOverlayNum
+        and dungeonLevel == self.LastDungeonLevel and mapArtID == self.CurWorldUpdateArtID then
         return
     end
 
-    self.CurWorldUpdateMapId = mapId
-    self.CurWorldUpdateOverlayNum = i
-    self.LastDungeonLevel = dungeonLevel
-
 --    local mapInfo = C_Map.GetMapInfo(mapId)
-    local mapInfo = Nx.Map:GetMapInfo(mapId)
+    local mapInfo = Nx.Map:GetMapInfo(mapId) or {}
     local mapFileName = winfo.Overlay or (mapInfo.name and mapInfo.name:gsub(" ", "") or "")
     if not mapFileName then
         if Nx.Map:GetCurrentMapContinent() == WORLDMAP_COSMIC_ID then
@@ -5008,22 +5015,53 @@ function Nx.Map:UpdateWorld()
         Nx.prt (" File %s", texPath..texName..mapId)
     end
 
-    local GetMapArtLayerTexturesMapId = ((self.MapWorldInfo[mapId] and self.MapWorldInfo[mapId].RBaseMap) and self.MapWorldInfo[mapId].RBaseMap or mapId)
-    if winfo.Garrison then GetMapArtLayerTexturesMapId = mapId end
-    if GetMapArtLayerTexturesMapId == nil then
+    if artMapID == nil then
+        self:HideZoneTileFrames(self.TileFrms, true)
+        self.CurWorldUpdateMapId = nil
+        self.CurWorldUpdateArtID = nil
+        self.WorldArtRetryMapId = mapId
+        self.WorldArtRetryTime = GetTime() + 1
         return
     end
 
-    local texturesIDs = Nx.Map:GetArtLayerTextures(GetMapArtLayerTexturesMapId, 1)
-    if not texturesIDs then
-        return  -- API not available
-    end
+    local texturesIDs = Nx.Map:GetArtLayerTextures(artMapID, 1)
     -- Classic Era returns nested table {[1]={textures}}, Retail returns flat array {textures}
     -- Check if first element is a table (nested) or number (flat)
-    if type(texturesIDs[1]) == "table" then
+    if texturesIDs and type(texturesIDs[1]) == "table" then
         texturesIDs = texturesIDs[1]
     end
-    local numtiles = #texturesIDs
+
+    -- Some MoP city maps are valid player maps but intentionally have no
+    -- C_Map art assignment. Carbonite still ships the original 4x3 world-map
+    -- textures for those cities, so use them instead of leaving the previous
+    -- zone's tile IDs in this shared frame pool.
+    if (not texturesIDs or not texturesIDs[1]) and winfo.LegacyMapArt then
+        local layers = Nx.Map:GetArtLayers(artMapID)
+        local layerInfo = layers and layers[1]
+        local tilex = layerInfo and ceil(layerInfo.layerWidth / layerInfo.tileWidth)
+            or winfo.TileX or 4
+        local tiley = layerInfo and ceil(layerInfo.layerHeight / layerInfo.tileHeight)
+            or winfo.TileY or 3
+        local legacyName = winfo.LegacyMapArt
+        local legacyBase = "Interface\\WorldMap\\" .. legacyName .. "\\" .. legacyName
+        texturesIDs = {}
+        for tileIndex = 1, tilex * tiley do
+            texturesIDs[tileIndex] = legacyBase .. tileIndex
+        end
+    end
+
+    if not texturesIDs or not texturesIDs[1] then
+        self:HideZoneTileFrames(self.TileFrms, true)
+        -- Do not cache a failed art request. Blizzard can populate map art
+        -- after loading/phase changes, and the next update must retry it.
+        self.CurWorldUpdateMapId = nil
+        self.CurWorldUpdateArtID = nil
+        self.WorldArtRetryMapId = mapId
+        self.WorldArtRetryTime = GetTime() + 1
+        return
+    end
+
+    local numtiles = min(#texturesIDs, 150)
 
     for i = 1, numtiles do
         if self.TileFrms[i] and self.TileFrms[i].texture then
@@ -5034,6 +5072,24 @@ function Nx.Map:UpdateWorld()
             end
         end
     end
+
+    for tileIndex = numtiles + 1, 150 do
+        local frm = self.TileFrms[tileIndex]
+        if frm then
+            frm:Hide()
+            if frm.texture then frm.texture:SetTexture(nil) end
+        end
+    end
+
+    -- Commit the cache only after the requested art was installed. Caching a
+    -- nil texture response is what previously made a random old zone persist.
+    self.CurWorldUpdateMapId = mapId
+    self.CurWorldUpdateOverlayNum = i
+    self.CurWorldUpdateArtID = mapArtID
+    self.CurWorldTileCount = numtiles
+    self.LastDungeonLevel = dungeonLevel
+    self.WorldArtRetryMapId = nil
+    self.WorldArtRetryTime = nil
 end
 
 --------
@@ -5373,7 +5429,7 @@ function Nx.Map:Update (elapsed)
 
         plZX = plZX * 100
         plZY = plZY * 100
-        PLMapID = MapUtil.GetDisplayableMapForPlayer()
+        PLMapID = self:GetDisplayableMapForPlayer()
 
         if Nx.OldMapIDs then
             if PLMapID == 1414 then PLMapID = 12 end
@@ -7700,16 +7756,9 @@ function Nx.Map:CalcTracking()
 
     local srcX = self.PlyrX
     local srcY = self.PlyrY
-    -- Use C_Map.GetBestMapForUnit("player") for the routing source,
-    -- NOT MapUtil.GetDisplayableMapForPlayer(): on retail the latter
-    -- can return whatever WorldMapFrame is currently showing (cursor
-    -- mouseovers swap that), which made srcMapId flip per tick and
-    -- forced BuildPath to re-route from a different "source" every
-    -- frame the user hovered an adjacent zone. The path's actual
-    -- starting point is the player, not the displayed map.
-    local srcMapId = (C_Map and C_Map.GetBestMapForUnit
-        and C_Map.GetBestMapForUnit("player"))
-        or MapUtil.GetDisplayableMapForPlayer()
+    -- Carbonite's player-map resolver is independent of map hover and also
+    -- canonicalizes Blizzard aliases (MoP Undercity 998 -> city 90).
+    local srcMapId = self:GetDisplayableMapForPlayer()
 
     -- Build path through all targets. Scalar-arg BuildPath signature
     -- because this is a hot path - wrapping the src/dst pairs in
@@ -7965,6 +8014,26 @@ function Nx.Map:CheckWorldHotspots(wx, wy)
         end
     end
 
+    -- Keep the active city while the cursor is still inside that city's own
+    -- hotspot. City and parent-zone rectangles intentionally overlap; testing
+    -- the general list first could otherwise replace Exodar with Azuremyst or
+    -- Undercity with Tirisfal before the city hotspot was considered. This is
+    -- geometric selection, not an "underground" lock, so leaving the city's
+    -- actual bounds still selects the surrounding zone normally.
+    local currentMapID = self:GetCurrentMapId()
+    local currentInfo = self.MapWorldInfo and self.MapWorldInfo[currentMapID]
+    if currentInfo and currentInfo.City and currentInfo.LegacyMapArt then
+        for _, spot in ipairs(self.WorldHotspotsCity) do
+            if spot.MapId == currentMapID
+                and wx >= spot.WX1 and wx <= spot.WX2
+                and wy >= spot.WY1 and wy <= spot.WY2 then
+                Nx.Map.MouseIsOverMap = currentMapID
+                self.WorldHotspotTipStr = spot.NxTipBase .. "\n"
+                return
+            end
+        end
+    end
+
     local quad1 = self.WorldHotspotsCity
     local quad2 = self.WorldHotspots
 
@@ -8160,16 +8229,7 @@ function Nx.Map:MoveCurZoneTiles (clear)
 
     else
 --        Nx.prt ("ClearCurZoneTiles %d", mapId)
-        local frms, frm
-
-        frms = self.TileFrms
-
-        for i = 1, 150 do
-            frm = frms[i]
-            if frm then
-                frm:Hide()
-            end
-        end
+        self:HideZoneTileFrames(self.TileFrms)
     end
 end
 
@@ -8194,6 +8254,28 @@ end
 -- Reading layers[1].layerWidth then yields nil -> ceil(nil/nil) errors inside
 -- the pcall'd draw pass -> tiles silently stop rendering (the default
 -- "unexplored" art shows). These normalize the return to the old flat shape.
+function Nx.Map:GetArtSourceMapID (id)
+    local info = id and self.MapWorldInfo and self.MapWorldInfo[id]
+    if not info then return id end
+    return info.ArtMapID or info.RBaseMap or id
+end
+
+function Nx.Map:HideZoneTileFrames (frms, clearTextures)
+    if not frms then return end
+    for i = 1, 150 do
+        local frm = frms[i]
+        if frm then
+            frm:Hide()
+            if clearTextures and frm.texture then
+                frm.texture:SetTexture(nil)
+            end
+        end
+    end
+    if clearTextures and frms == self.TileFrms then
+        self.CurWorldTileCount = 0
+    end
+end
+
 function Nx.Map:GetArtLayers (id)
     local L = id and C_Map and C_Map.GetMapArtLayers and C_Map.GetMapArtLayers (id)
     if L and L[1] and L[1].layerWidth == nil and type (L[1][1]) == "table" then
@@ -8224,6 +8306,7 @@ end
 function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
     local zname, zx, zy, zw, zh = self:GetWorldZoneInfo (cont, zone)
     if not zx then
+        self:HideZoneTileFrames(frms)
         return
     end
     -- Nx.prt ("MapZ %f, %f", zx, zy, zone)
@@ -8245,7 +8328,7 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
         end
     else
         -- Get actual tile dimensions from layer info if available
-        local layers = Nx.Map:GetArtLayers(zone)
+        local layers = Nx.Map:GetArtLayers(self:GetArtSourceMapID(zone))
         if layers and layers[1] then
             local layerInfo = layers[1]
             tilex = ceil(layerInfo.layerWidth / layerInfo.tileWidth)
@@ -8286,6 +8369,9 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
     local texX1, texX2
     local texY1, texY2
     local numtiles = tilex * tiley
+    if frms == self.TileFrms and self.CurWorldTileCount then
+        numtiles = min(numtiles, self.CurWorldTileCount)
+    end
 
     for i = 1, numtiles do
 
@@ -8349,6 +8435,13 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
             bx = 0
             by = by + 1
         end
+    end
+
+    -- The tile frame pool is reused across every map. A smaller city map
+    -- following a larger zone must not leave the surplus zone tiles visible.
+    for i = numtiles + 1, 150 do
+        local frm = frms[i]
+        if frm then frm:Hide() end
     end
 end
 
@@ -10776,7 +10869,7 @@ function Nx.Map:IconOnMouseDown(button)
                                     -- trips protected SetPassThroughButtons
                                     -- in combat).
                                     Nx.SuperTrackSafe(function()
-                                        Nx.SetSuperTrackedQuestIDSafe(0)
+                                        C_SuperTrack.SetSuperTrackedQuestID(0)
                                         if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
                                     end)
                                 end)
@@ -10819,12 +10912,12 @@ function Nx.Map:IconOnMouseDown(button)
                                         if C_SuperTrack.SetSuperTrackedUserWaypoint
                                            and C_SuperTrack.IsSuperTrackingUserWaypoint
                                            and C_SuperTrack.IsSuperTrackingUserWaypoint() then
-                                            Nx.SetSuperTrackedUserWaypointSafe(false)
+                                            C_SuperTrack.SetSuperTrackedUserWaypoint(false)
                                         end
                                         if C_SuperTrack.ClearAllSuperTracked then
-                                            Nx.ClearAllSuperTrackedSafe()
+                                            C_SuperTrack.ClearAllSuperTracked()
                                         end
-                                        Nx.SetSuperTrackedQuestIDSafe(_live)
+                                        C_SuperTrack.SetSuperTrackedQuestID(_live)
                                         if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
                                     end)
                                 end)
@@ -12211,7 +12304,7 @@ end
 -- Set the map to current zone
 
 function Nx.Map:SetToCurrentZone()
-    Nx.Map:SetMapByID(MapUtil.GetDisplayableMapForPlayer())
+    Nx.Map:SetMapByID(Nx.Map:GetDisplayableMapForPlayer())
 end
 
 ---
@@ -12221,7 +12314,7 @@ end
 -- which made the docked minimap collapse whenever a city was hovered (#538).
 --
 function Nx.Map:GetPlayerMapAreaID()
-    local mapID = MapUtil.GetDisplayableMapForPlayer()
+    local mapID = self:GetDisplayableMapForPlayer()
     if Nx.OldMapIDs then
         if mapID == 1414 then mapID = 12 end
         if mapID == 1415 then mapID = 13 end
@@ -12230,7 +12323,7 @@ function Nx.Map:GetPlayerMapAreaID()
 end
 
 function Nx.Map:GetCurrentMapAreaID()
-    local displayableMapID = MapUtil.GetDisplayableMapForPlayer()
+    local displayableMapID = self:GetDisplayableMapForPlayer()
     -- Use the zone Carbonite resolved under the cursor (set in
     -- CheckWorldHotspotsType) rather than WorldMapFrame:GetMapID(). Reading the
     -- Blizzard frame would force us to SetMapID into it from insecure code,
@@ -12359,7 +12452,7 @@ function Nx.Map:GotoCurrentZone()
         self:Move (self.PlyrX, self.PlyrY, 20, 15)
     else
         self:SetToCurrentZone()
-        local mapId = MapUtil.GetDisplayableMapForPlayer()
+        local mapId = self:GetDisplayableMapForPlayer()
         if Nx.OldMapIDs then
             if mapId == 1414 then mapId = 12 end
             if mapId == 1415 then mapId = 13 end
