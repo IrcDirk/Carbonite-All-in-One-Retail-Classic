@@ -19560,17 +19560,6 @@ Map.MiniMapBlks = {
         Map.MapWorldInfo[2274].X + Map.MapInfo[15].X - 402, Map.MapWorldInfo[2274].Y + Map.MapInfo[15].Y - 215,
             "World\\Minimaps\\2601"
     },
-    -- Midnight surface zones such as The Coiled Isle are still stored in
-    -- Blizzard's Azeroth (MapID 0) minimap grid. Carbonite draws the Midnight
-    -- sub-continent at MapInfo[16], so reuse the current Eastern Kingdoms
-    -- FileDataIDs with that display offset instead of leaving detail zoom blank.
-    [16] = {
-        Map.EkMapBlks,
-        2420,
-        24, 20,
-        Map.MapWorldInfo[14].X + Map.MapInfo[16].X - 1080, Map.MapWorldInfo[14].Y + Map.MapInfo[16].Y - 1308,
-        "World\\Minimaps\\Azeroth"
-    },
     [94] = {
         Map.BloodelfMapBlks,
         4111,
@@ -19731,13 +19720,6 @@ function Nx.Map:GetMiniInfo (mapId)
         id = winfo.Cont
 
         if not id then
-            return
-        end
-
-        -- The Midnight continent fallback is the Azeroth surface grid. Do not
-        -- leak those tiles into the Vaults, Delves, or any future interior map;
-        -- an interior may still opt into its own detail set with MId.
-        if id == 16 and (winfo.Instance or winfo.Underground) then
             return
         end
 
@@ -20069,33 +20051,19 @@ local function BuildMissingZoneInfo(mapID, force)
         local parentInfo = GetSafeZoneMapInfo(mapInfo.parentMapID)
         if parentInfo and parentInfo.mapType ~= continentType then
             Map:GetZoneInfo(parentMapID)
-            parentWorldInfo = worldInfo[parentMapID]
         end
     end
 
     local ownFields = GetZoneMapFields(mapID)
     local anchor = FindZoneMapAnchor(mapInfo, ownFields)
-    local isMicroMap = mapType == microType
     local geometry
-    if mapType == zoneType or mapType == orphanType or isMicroMap then
+    if mapType == zoneType or mapType == orphanType then
         geometry = GetZoneMapGeometry(mapID)
     end
 
-    local isInstance = mapType == dungeonType
+    local isInstance = mapType == dungeonType or mapType == microType
         or (ownFields and ownFields.faction == 3 and ownFields.continent == 5)
-        or (parentWorldInfo and parentWorldInfo.Instance)
         or IsCurrentZoneInstance(mapID)
-
-    -- Blizzard also uses the Micro map type for outdoor footholds and other
-    -- ordinary zone subdivisions. Only classify one as an instance when it
-    -- lacks a valid shared-world projection, has an instance parent, or the
-    -- player is actually inside that instance.
-    if isMicroMap and not isInstance then
-        local parentGeometry = anchor and GetZoneMapGeometry(anchor.mapID)
-        isInstance = not geometry or not parentGeometry
-            or not geometry.worldMapID or not parentGeometry.worldMapID
-            or geometry.worldMapID ~= parentGeometry.worldMapID
-    end
 
     if not isInstance and geometry and anchor then
         local parentGeometry = GetZoneMapGeometry(anchor.mapID)
@@ -20147,7 +20115,6 @@ local function BuildMissingZoneInfo(mapID, force)
         winfo.Cont = anchor.continent
         winfo.Zone = mapID
         winfo.Instance = true
-        winfo.OutdoorSubzone = nil
 
         if not Nx.Zones[mapID] then
             Nx.Zones[mapID] = localizedName .. "|0|0|3|5|" .. anchor.mapID
@@ -20168,7 +20135,6 @@ local function BuildMissingZoneInfo(mapID, force)
         winfo.Cont = anchor.continent
         winfo.Zone = mapID
         winfo.Instance = nil
-        winfo.OutdoorSubzone = isMicroMap or nil
         winfo.ModernZoneArt = anchor.continent == 16
             or (parentWorldInfo and parentWorldInfo.ModernZoneArt)
             or winfo.ModernZoneArt

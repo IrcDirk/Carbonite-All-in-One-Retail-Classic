@@ -2197,11 +2197,6 @@ function Nx.Map:InitFrames()
         local tileY = artLayer and ceil(artLayer.layerHeight / artLayer.tileHeight)
             or self.MapInfo[n].TileY or 3
         local numtiles = tileX * tileY
-        local continentFrames = self.ContFrms[n]
-        continentFrames.NxArtLayer = artLayer
-        continentFrames.NxTileX = tileX
-        continentFrames.NxTileY = tileY
-        continentFrames.NxTileCount = numtiles
 
         for i = 1, numtiles do
             if Nx.ContBlks[n][i] ~= 0 then
@@ -4269,8 +4264,7 @@ function Nx.Map:OnMouseDown (button)
                 map.DebugMapId = map.MapId
 
             else
-                if map.CurOpts.NXInstanceMaps
-                    and map:IsActiveInstanceMap(Nx.Map.RMapId) then
+                if (Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)) and map.CurOpts.NXInstanceMaps then
                     return
                 end
                 map.LClickTime = GetTime()
@@ -4410,8 +4404,7 @@ function Nx.Map:MouseWheel(value)
     local this = map.Frm
 
     -- Disable zoom in instance/BG maps when using instance overlay
-    if map.CurOpts.NXInstanceMaps
-        and map:IsActiveInstanceMap(Nx.Map.RMapId) then
+    if (Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)) and map.CurOpts.NXInstanceMaps then
         return
     end
 
@@ -4786,8 +4779,7 @@ function Nx.Map.OnUpdate(this, elapsed)
         map.Scrolling = false
     end
 
-    if map.CurOpts.NXInstanceMaps
-        and map:IsActiveInstanceMap(Nx.Map.RMapId) then
+    if (Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)) and map.CurOpts.NXInstanceMaps then
         winx = nil
         map.Scrolling = false
     end
@@ -5342,11 +5334,9 @@ function Nx.Map:UpdateWorld()
         local frm = self.TileFrms[tileIndex]
         if frm then
             frm:Hide()
-            frm.NxTileVisible = false
             if frm.texture then frm.texture:SetTexture(nil) end
         end
     end
-    self.TileFrms.NxDrawMapID = nil
 
     -- Commit the cache only after the requested art was installed. Caching a
     -- nil texture response is what previously made a random old zone persist.
@@ -8244,8 +8234,23 @@ function Nx.Map:MoveContinents()
         self.Level = self.Level + 2
     else
         -- Hide all continent tiles
+        local frms, frm
+
         for contN = 1, Nx.Map.ContCnt do
-            self:HideZoneTileFrames(self.ContFrms[contN])
+            frms = self.ContFrms[contN]
+            local numtiles = 12
+
+            -- Some continents have different tile counts
+            if self.MapInfo[contN].TileX and self.MapInfo[contN].TileY then
+                numtiles = self.MapInfo[contN].TileX * self.MapInfo[contN].TileY
+            end
+
+            for i = 1, numtiles do
+                frm = frms[i]
+                if frm then
+                    frm:Hide()
+                end
+            end
         end
 
         if self.ContFillFrm then
@@ -8258,38 +8263,6 @@ end
 -- WORLD ZONE HOTSPOT DETECTION
 -- Detects which zone the cursor is over
 -------------------------------------------------------------------------------
-
----
--- Determine whether a selected instance map is the player's active instance.
--- Outdoor micro maps and previews must never disable world-map interaction.
--- @param mapID  Selected map identifier
--- @return       True only while the player occupies an instance or battleground
---
-function Nx.Map:IsActiveInstanceMap(mapID)
-    if not mapID or (not self:IsInstanceMap(mapID)
-        and not self:IsBattleGroundMap(mapID)) then
-        return false
-    end
-
-    local instanceCheck = _G.IsInInstance
-    if type(instanceCheck) == "function" then
-        local ok, inInstance = pcall(instanceCheck)
-        if ok then
-            return inInstance and true or false
-        end
-    end
-
-    local instanceInfo = _G.GetInstanceInfo
-    if type(instanceInfo) == "function" then
-        local ok, _, instanceType = pcall(instanceInfo)
-        if ok then
-            return instanceType ~= nil and instanceType ~= "none"
-        end
-    end
-
-    -- Preserve legacy behavior when an old client exposes neither API.
-    return true
-end
 
 ---
 -- Check if cursor is over a world zone hotspot
@@ -8319,26 +8292,22 @@ function Nx.Map:CheckWorldHotspots(wx, wy)
         end
     end
 
-    -- Keep the active city, modern zone, or underground layer only while the
-    -- cursor remains inside its actual hotspot. These rectangles often overlap
-    -- their parent zones, but leaving the bounded hotspot must always release
-    -- the selection so another zone can be highlighted immediately.
+    -- Keep the active city while the cursor is still inside that city's own
+    -- hotspot. City and parent-zone rectangles intentionally overlap; testing
+    -- the general list first could otherwise replace Exodar with Azuremyst or
+    -- Undercity with Tirisfal before the city hotspot was considered. This is
+    -- geometric selection, not an "underground" lock, so leaving the city's
+    -- actual bounds still selects the surrounding zone normally.
     local currentMapID = self:GetCurrentMapId()
     local currentInfo = self.MapWorldInfo and self.MapWorldInfo[currentMapID]
-    if currentInfo and (currentInfo.ModernZoneArt
-        or currentInfo.Underground
-        or currentInfo.City and currentInfo.LegacyMapArt) then
-        local activeHotspots = (currentInfo.City or currentInfo.StartZone)
-            and self.WorldHotspotsCity or self.WorldHotspots
-        if activeHotspots then
-            for _, spot in ipairs(activeHotspots) do
-                if spot.MapId == currentMapID
-                    and wx >= spot.WX1 and wx <= spot.WX2
-                    and wy >= spot.WY1 and wy <= spot.WY2 then
-                    Nx.Map.MouseIsOverMap = currentMapID
-                    self.WorldHotspotTipStr = spot.NxTipBase .. "\n"
-                    return
-                end
+    if currentInfo and currentInfo.City and currentInfo.LegacyMapArt then
+        for _, spot in ipairs(self.WorldHotspotsCity) do
+            if spot.MapId == currentMapID
+                and wx >= spot.WX1 and wx <= spot.WX2
+                and wy >= spot.WY1 and wy <= spot.WY2 then
+                Nx.Map.MouseIsOverMap = currentMapID
+                self.WorldHotspotTipStr = spot.NxTipBase .. "\n"
+                return
             end
         end
     end
@@ -8358,7 +8327,6 @@ function Nx.Map:CheckWorldHotspots(wx, wy)
         return
     end
 
-    Nx.Map.MouseIsOverMap = nil
     self.WorldHotspotTipStr = false
 
 --    local tt = GameTooltip
@@ -8393,6 +8361,20 @@ function Nx.Map:CheckWorldHotspotsType (wx, wy, quad)
             local curId = self:GetCurrentMapId()
 
             if spot.MapId ~= curId then
+                local winfo = self.MapWorldInfo[curId]
+                if winfo and winfo.Underground then
+                    return false
+                end
+                if winfo and winfo.Instance
+                    and curId == self:GetDisplayableMapForPlayer() then
+                    -- Instance-style standalone maps are positioned at their
+                    -- outdoor entrance for Carbonite's world geometry. Do not
+                    -- let that overlapping parent hotspot replace the active
+                    -- map or its tooltip (Emerald Dreamway / Val'sharah).
+                    Nx.Map.MouseIsOverMap = curId
+                    self.WorldHotspotTipStr = self:IdToName(curId) .. "\n"
+                    return true
+                end
 --                Nx.prt ("hotspot %s %s %s %s %s", spot.MapId, spot.WX1, spot.WX2, spot.WY1, spot.WY2)
                 if not Nx.Map:CheckDropdownListVisible() then self:SetCurrentMap (spot.MapId) end
             end
@@ -8570,21 +8552,15 @@ end
 
 function Nx.Map:HideZoneTileFrames (frms, clearTextures)
     if not frms then return end
-    if frms.NxOffscreen and not clearTextures then return end
-    for i = 1, frms.NxTileCount or 150 do
+    for i = 1, 150 do
         local frm = frms[i]
         if frm then
-            if frm.NxTileVisible ~= false then
-                frm:Hide()
-                frm.NxTileVisible = false
-            end
+            frm:Hide()
             if clearTextures and frm.texture then
                 frm.texture:SetTexture(nil)
             end
         end
     end
-    frms.NxOffscreen = true
-    frms.NxDrawMapID = nil
     if clearTextures and frms == self.TileFrms then
         self.CurWorldTileCount = 0
     end
@@ -8628,12 +8604,13 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
     local scale = self.ScaleDraw
     local tilex, tiley, layerInfo
     if zone == 0 then
-        -- Continent art never changes while these frames exist. InitFrames
-        -- already queried Blizzard and installed these exact textures; asking
-        -- again here performed one expensive API call per continent per tick.
-        layerInfo = frms.NxArtLayer
-        tilex = frms.NxTileX or self.MapInfo[cont].TileX or 4
-        tiley = frms.NxTileY or self.MapInfo[cont].TileY or 3
+        local rootMapID = self.MapZones[0] and self.MapZones[0][cont]
+        local layers = rootMapID and self:GetArtLayers(rootMapID)
+        layerInfo = layers and layers[1]
+        tilex = layerInfo and ceil(layerInfo.layerWidth / layerInfo.tileWidth)
+            or self.MapInfo[cont].TileX or 4
+        tiley = layerInfo and ceil(layerInfo.layerHeight / layerInfo.tileHeight)
+            or self.MapInfo[cont].TileY or 3
 
         if self.MapInfo[cont].ZXOff and self.MapInfo[cont].ZYOff then
             zx = zx + self.MapInfo[cont].ZXOff
@@ -8645,22 +8622,10 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
             zh = zh + self.MapInfo[cont].ZHOff
         end
     else
-        -- The selected tile pool is shared between maps. Refresh its art
-        -- geometry only when the map, installed art, or tile count changes.
-        local artMapID = self:GetArtSourceMapID(zone)
-        local artID = self.CurWorldUpdateMapId == zone
-            and self.CurWorldUpdateArtID or nil
-        local tileCount = self.CurWorldTileCount or 0
-        if frms.NxArtMapID ~= artMapID or frms.NxArtID ~= artID
-            or frms.NxArtTileCount ~= tileCount then
-            local layers = self:GetArtLayers(artMapID)
-            frms.NxArtLayer = layers and layers[1]
-            frms.NxArtMapID = artMapID
-            frms.NxArtID = artID
-            frms.NxArtTileCount = tileCount
-        end
-        layerInfo = frms.NxArtLayer
-        if layerInfo then
+        -- Get actual tile dimensions from layer info if available
+        local layers = Nx.Map:GetArtLayers(self:GetArtSourceMapID(zone))
+        if layers and layers[1] then
+            layerInfo = layers[1]
             tilex = ceil(layerInfo.layerWidth / layerInfo.tileWidth)
             tiley = ceil(layerInfo.layerHeight / layerInfo.tileHeight)
         else
@@ -8707,28 +8672,6 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
     local numtiles = tilex * tiley
     if frms == self.TileFrms and self.CurWorldTileCount then
         numtiles = min(numtiles, self.CurWorldTileCount)
-    end
-
-    -- Reject whole off-screen continents/zones before inspecting up to 150
-    -- individual frames. Hidden pools remain hidden without repeated calls.
-    local mapWidth = layerInfo and zw * scale or bw * tilex
-    local mapHeight = layerInfo and zh * scale or bh * tiley
-    if x >= clipW or y >= clipH or x + mapWidth <= 0
-        or y + mapHeight <= 0 then
-        self:HideZoneTileFrames(frms)
-        return
-    end
-
-    -- A stationary map requires no frame geometry or visibility updates.
-    -- Store scalar fields on the existing pool to avoid per-tick allocations.
-    if not frms.NxOffscreen and frms.NxDrawMapID == zone
-        and frms.NxDrawCont == cont and frms.NxDrawX == x
-        and frms.NxDrawY == y and frms.NxDrawTileW == bw
-        and frms.NxDrawTileH == bh and frms.NxDrawClipW == clipW
-        and frms.NxDrawClipH == clipH and frms.NxDrawTitleH == self.TitleH
-        and frms.NxDrawLevel == level and frms.NxDrawTileCount == numtiles
-        and frms.NxDrawLayer == layerInfo then
-        return
     end
 
     for i = 1, numtiles do
@@ -8779,10 +8722,7 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
             h = vy2 - vy1
 
             if w <= 0 or h <= 0 then
-                if frm.NxTileVisible ~= false then
-                    frm:Hide()
-                    frm.NxTileVisible = false
-                end
+                frm:Hide()
             else
                 frm:SetPoint ("TOPLEFT", vx1, -vy1 - self.TitleH)
                 frm:SetWidth (w)
@@ -8792,10 +8732,7 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
                 frm.texture:SetTexCoord (texX1, texX2, texY1, texY2)
                 --frm.texture:SetVertexColor (1, 1, 1, self.BackgndAlpha)
 
-                if frm.NxTileVisible ~= true then
-                    frm:Show()
-                    frm.NxTileVisible = true
-                end
+                frm:Show()
             end
         end
 
@@ -8809,28 +8746,10 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
 
     -- The tile frame pool is reused across every map. A smaller city map
     -- following a larger zone must not leave the surplus zone tiles visible.
-    local previousTileCount = frms.NxDrawTileCount or frms.NxTileCount or 150
-    for i = numtiles + 1, previousTileCount do
+    for i = numtiles + 1, 150 do
         local frm = frms[i]
-        if frm and frm.NxTileVisible ~= false then
-            frm:Hide()
-            frm.NxTileVisible = false
-        end
+        if frm then frm:Hide() end
     end
-
-    frms.NxOffscreen = false
-    frms.NxDrawMapID = zone
-    frms.NxDrawCont = cont
-    frms.NxDrawX = x
-    frms.NxDrawY = y
-    frms.NxDrawTileW = bw
-    frms.NxDrawTileH = bh
-    frms.NxDrawClipW = clipW
-    frms.NxDrawClipH = clipH
-    frms.NxDrawTitleH = self.TitleH
-    frms.NxDrawLevel = level
-    frms.NxDrawTileCount = numtiles
-    frms.NxDrawLayer = layerInfo
 end
 
 --------
@@ -8889,12 +8808,8 @@ local OverlayCache = {
 
 -- Pre-parse overlay string data once (avoids Nx.Split every frame)
 local function GetParsedOverlay(txFolder, txName, whxyStr)
-    local folderCache = OverlayCache.parsedOverlays[txFolder]
-    if not folderCache then
-        folderCache = {}
-        OverlayCache.parsedOverlays[txFolder] = folderCache
-    end
-    local cached = folderCache[txName]
+    local cacheKey = txFolder .. txName
+    local cached = OverlayCache.parsedOverlays[cacheKey]
     if cached then
         return cached
     end
@@ -8919,24 +8834,19 @@ local function GetParsedOverlay(txFolder, txName, whxyStr)
         isMultiTexture = isMultiTexture,
         whxyKey = oX..","..oY..","..txW..","..txH,
     }
-    folderCache[txName] = cached
+    OverlayCache.parsedOverlays[cacheKey] = cached
     return cached
 end
 
 -- Get cached layer info (avoids API calls every frame)
-local function GetCachedLayerInfo(mapId, owner)
+local function GetCachedLayerInfo(mapId)
     local artMapID = Nx.Map:GetArtSourceMapID(mapId)
-    -- UpdateWorld already tracks phase/art changes on a throttled schedule.
-    -- Reuse that known ID instead of querying Blizzard for every overlay pass.
-    local artID = owner and owner.CurWorldUpdateMapId == mapId
-        and owner.CurWorldUpdateArtID or nil
+    local artID = C_Map and C_Map.GetMapArtID and C_Map.GetMapArtID(artMapID)
+        or artMapID
     local cached = OverlayCache.layerInfo[mapId]
-    if cached and (not artID or cached.artID == artID) then
+    if cached and cached.artID == artID then
         return cached.info
     end
-
-    artID = artID or C_Map and C_Map.GetMapArtID
-        and C_Map.GetMapArtID(artMapID) or artMapID
 
     local layers = Nx.Map:GetArtLayers(artMapID)
     if not layers or not layers[1] then
@@ -9228,10 +9138,10 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
     local alpha = self.BackgndAlpha
     local unExAl = self.LOpts.NXUnexploredAlpha
     -- Use cached explored textures (refreshes every 2 seconds instead of every frame)
-    local exploredWHXY = unex and GetCachedExploredTextures(mapId) or nil
+    local exploredWHXY = unex and GetCachedExploredTextures(mapId) or {}
 
     -- Use cached layer info (avoids API calls every frame)
-    local layerInfo = GetCachedLayerInfo(mapId, self)
+    local layerInfo = GetCachedLayerInfo(mapId)
     if not layerInfo then
         return
     end
@@ -9245,18 +9155,7 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
 
     -- LOD: Skip very small overlays when zoomed out (they're not visible anyway)
     local scale = self.ScaleDraw
-    if not scale or scale <= 0 then
-        return
-    end
     local minVisibleSize = scale < 0.15 and 128 or (scale < 0.3 and 64 or 0)
-    local halfWorldW = self.MapW * .5 / scale
-    local halfWorldH = self.MapH * .5 / scale
-    local viewMinX = self.MapPosXDraw - halfWorldW
-    local viewMaxX = self.MapPosXDraw + halfWorldW
-    local viewMinY = self.MapPosYDraw - halfWorldH
-    local viewMaxY = self.MapPosYDraw + halfWorldH
-    local tileWorldW = TILE_SIZE_WIDTH * worldPerPixelX
-    local tileWorldH = TILE_SIZE_HEIGHT * worldPerPixelY
 
     for oName, whxyStr in pairs (overlays) do
         -- Skip dynamic overlays
@@ -9278,9 +9177,9 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
         else
             local lev = 0
             local brt = bright
-            local txName = not arTx and path .. oName or nil
+            local txName = path .. oName
 
-            if exploredWHXY and exploredWHXY[whxyKey] then
+            if exploredWHXY[whxyKey] then
                 oX = oX - 10000
             end
 
@@ -9295,111 +9194,87 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
 
             bW = ceil (txW / TILE_SIZE_WIDTH)
             bH = ceil (txH / TILE_SIZE_HEIGHT)
-            local overlayWX, overlayWY = self:GetWorldPos(mapId,
-                oX / layerWidth * 100, oY / layerHeight * 100)
-            local overlayRight = overlayWX + txW * worldPerPixelX
-            local overlayBottom = overlayWY + txH * worldPerPixelY
+            txIndex = 1
 
-            -- Exploration tiles use the same finite non-interactive pool as
-            -- path arrows. Never allocate a frame for off-screen artwork.
-            if overlayRight > viewMinX and overlayWX < viewMaxX
-                and overlayBottom > viewMinY and overlayWY < viewMaxY then
-                local firstBX = max(0,
-                    floor((viewMinX - overlayWX) / tileWorldW))
-                local lastBX = min(bW - 1,
-                    ceil((viewMaxX - overlayWX) / tileWorldW) - 1)
-                local firstBY = max(0,
-                    floor((viewMinY - overlayWY) / tileWorldH))
-                local lastBY = min(bH - 1,
-                    ceil((viewMaxY - overlayWY) / tileWorldH) - 1)
-                local foundUnderscore = string.find(oName, "_", 1, true)
+            for bY = 0, bH - 1 do
 
-                for bY = firstBY, lastBY do
-
-                    if bY < bH - 1 then
+                if bY < bH - 1 then
+                    txPixelH = TILE_SIZE_HEIGHT
+                    txFileH = TILE_SIZE_HEIGHT
+                else
+                    txPixelH = mod (txH, TILE_SIZE_HEIGHT)
+                    if txPixelH == 0 then
                         txPixelH = TILE_SIZE_HEIGHT
-                        txFileH = TILE_SIZE_HEIGHT
-                    else
-                        txPixelH = mod (txH, TILE_SIZE_HEIGHT)
-                        if txPixelH == 0 then
-                            txPixelH = TILE_SIZE_HEIGHT
-                        end
-                        txFileH = 16
-                        while txFileH < txPixelH do
-                            txFileH = txFileH * 2
-                        end
                     end
-
-                    for bX = firstBX, lastBX do
-
-                        if bX < bW - 1 then
-                            txPixelW = TILE_SIZE_WIDTH
-                            txFileW = TILE_SIZE_WIDTH
-                        else
-                            txPixelW = mod (txW, TILE_SIZE_WIDTH)
-                            if txPixelW == 0 then
-                                txPixelW = TILE_SIZE_WIDTH
-                            end
-                            txFileW = 16
-                            while txFileW < txPixelW do
-                                txFileW = txFileW * 2
-                            end
-                        end
-
-                        -- Keep the last 256 pooled frames available for actual
-                        -- arrows/markers; otherwise slot 1500 is reused and
-                        -- icons inherit unrelated exploration textures.
-                        if self.IconNIFrms and self.IconNIFrms.Next >= 1244 then
-                            self.Level = self.Level + 2
-                            return
-                        end
-
-                        local f = self:GetIconNI (lev)
-
-                        local wx = overlayWX + bX * tileWorldW
-                        local wy = overlayWY + bY * tileWorldH
-                        txIndex = bY * bW + bX + 1
-
-                        if foundUnderscore == 1 and bX == 0 and bY == 0 then
-
-                            local nName, nW, nH = Nx.Split (",", oName)
-                            nW = tonumber(nW)
-                            nH = tonumber(nH)
-                            if self:ClipFrameTL(f, wx, wy,
-                                    nW * worldPerPixelX, nH * worldPerPixelY) then
-                                f.texture:SetColorTexture (1, 0, 0, 0)
-                                f.texture:SetTexture (GetCompressedTexturePath(nName, txFolder))
-                                f.texture:SetVertexColor (brt, brt, brt, alpha)
-                            end
-
-                        else
-
-                            if self:ClipFrameTL(f, wx, wy,
-                                    txPixelW * worldPerPixelX,
-                                    txPixelH * worldPerPixelY,
-                                    txPixelW / txFileW,
-                                    txPixelH / txFileH) then
-
-                                f.texture:SetColorTexture (1, 0, 0, 0) -- fix for background green overlays
-
-                                if arTx then
-                                    if not foundUnderscore then
-                                        local textureID = arTx[txIndex]
-                                        f.texture:SetTexture(tonumber(textureID) or textureID)
-                                    end
-                                elseif wzone.Phase then -- Classic MOP phases support
-                                    local phasetex = format("%s%s_%s", txName, txIndex, wzone.Phase)
-                                    f.texture:SetTexture (phasetex)
-                                else
-                                    f.texture:SetTexture (mode and txName or txName .. txIndex)
-                                end
-                                f.texture:SetVertexColor (brt, brt, brt, alpha)
-                            end
-
-                        end
+                    txFileH = 16
+                    while txFileH < txPixelH do
+                        txFileH = txFileH * 2
                     end
                 end
-            end -- visible overlay rectangle
+
+                for bX = 0, bW - 1 do
+
+                    if bX < bW - 1 then
+                        txPixelW = TILE_SIZE_WIDTH
+                        txFileW = TILE_SIZE_WIDTH
+                    else
+                        txPixelW = mod (txW, TILE_SIZE_WIDTH)
+                        if txPixelW == 0 then
+                            txPixelW = TILE_SIZE_WIDTH
+                        end
+                        txFileW = 16
+                        while txFileW < txPixelW do
+                            txFileW = txFileW * 2
+                        end
+                    end
+
+                    local f = self:GetIconNI (lev)
+
+                    local wx, wy = self:GetWorldPos (mapId, (oX + bX * TILE_SIZE_WIDTH) / layerWidth * 100, (oY + bY * TILE_SIZE_HEIGHT) / layerHeight * 100)
+
+                    local foundUnderscore = string.find(oName, "_")
+
+                    if foundUnderscore == 1 and bX == 0 and bY == 0 then
+
+                        local nName, nW, nH = Nx.Split (",", oName)
+                        nW = tonumber(nW)
+                        nH = tonumber(nH)
+                        if self:ClipFrameTL(f, wx, wy,
+                                nW * worldPerPixelX, nH * worldPerPixelY) then
+                            f.texture:SetColorTexture (1, 0, 0, 0)
+                            f.texture:SetTexture (GetCompressedTexturePath(nName, txFolder))
+                            f.texture:SetVertexColor (brt, brt, brt, alpha)
+                        end
+
+                    else
+
+                        if self:ClipFrameTL(f, wx, wy,
+                                txPixelW * worldPerPixelX,
+                                txPixelH * worldPerPixelY,
+                                txPixelW / txFileW,
+                                txPixelH / txFileH) then
+
+                            f.texture:SetColorTexture (1, 0, 0, 0) -- fix for background green overlays
+
+                            if arTx then
+                                if not string.find(oName, "_") then
+                                    local textureID = arTx[txIndex]
+                                    f.texture:SetTexture(tonumber(textureID) or textureID)
+                                end
+                            elseif wzone.Phase then -- Classic MOP phases support
+                                local phasetex = format("%s%s_%s", txName, txIndex, wzone.Phase)
+                                f.texture:SetTexture (phasetex)
+                            else
+                                f.texture:SetTexture (mode and txName or txName .. txIndex)
+                            end
+                            f.texture:SetVertexColor (brt, brt, brt, alpha)
+                        end
+
+                    end
+
+                    txIndex = txIndex + 1
+                end
+            end
         end -- end LOD size check
     end
 
@@ -12981,11 +12856,6 @@ end
 -- delve, or scenario is protected even before Carbonite's static map data is
 -- updated for it.
 local function ComputeInstanceDisplayContext(map, mapID)
-    local worldInfo = map.MapWorldInfo and map.MapWorldInfo[mapID]
-    if worldInfo and worldInfo.OutdoorSubzone then
-        return false
-    end
-
     local mapInfo = GetSafeMapInfo(mapID)
     if mapInfo and IsDungeonLikeMapType(mapInfo.mapType) then
         return true

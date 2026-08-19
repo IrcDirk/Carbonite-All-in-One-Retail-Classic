@@ -101,8 +101,18 @@ function MapIDs:GetCurrentMapAreaID()
     -- WorldMapFrame:GetMapID(). Reading the Blizzard frame would require
     -- SetMapID'ing into it from insecure code, tainting its data providers
     -- (SetPassThroughButtons block on world-quest pins).
-    local mapID = (NxMap and NxMap.MouseOver and NxMap.MouseIsOverMap)
-        or displayable
+    local playerMapInfo = NxMap and NxMap.MapWorldInfo
+        and NxMap.MapWorldInfo[displayable]
+    local mapID = displayable
+
+    -- Standalone areas such as Emerald Dreamway have their own instance-style
+    -- map, but GetInstanceInfo reports "none". Their outdoor entry-zone
+    -- hotspot overlaps Carbonite's synthetic map anchor and must not replace
+    -- the player's actual map when the map or minimap receives mouse focus.
+    if not (playerMapInfo and playerMapInfo.Instance) then
+        mapID = (NxMap and NxMap.MouseOver and NxMap.MouseIsOverMap)
+            or displayable
+    end
 
     -- Instance maps always use the displayable one because
     -- WorldMapFrame:GetMapID() can lag behind on first entry. The
