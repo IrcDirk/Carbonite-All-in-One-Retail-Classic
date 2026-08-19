@@ -41,6 +41,9 @@ local worldquestdb = Nx.Quest.worldquestdb
 -- Promoted from NxQuest.lua's file-local cache helper.
 local GetCachedDifficultyColorStr = Nx.Quest.GetCachedDifficultyColorStr
 
+-- Arithmetic decoding retains modern quest IDs above the 32-bit bit-op range.
+local GetPackedQuestID = Nx.Quest.GetPackedQuestID
+
 -- Quest list
 -------------------------------------------------------------------------------
 
@@ -83,6 +86,9 @@ function Nx.Quest.List:Open()
     CarboniteQuest:RegisterEvent ("QUEST_REMOVED", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("QUEST_TURNED_IN", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("QUEST_DETAIL", "OnQuestUpdate")
+    -- Blizzard's quest-log track button changes watch membership without
+    -- necessarily changing the quest log or the super-tracked quest.
+    CarboniteQuest:RegisterEvent ("QUEST_WATCH_LIST_CHANGED", "OnQuestUpdate")
     if C_SuperTrack then
         -- Retail / Wrath+ Classic. Lets the map blob/arrow follow Blizzard's
         -- super-tracked quest (e.g. set by clicking a quest POI).
@@ -117,7 +123,7 @@ function Nx.Quest.List:Open()
                         -- moves inside so it's armed right before the call.
                         Nx.SuperTrackSafe(function()
                             Nx.Quest._stSuppressHook = true
-                            Nx.SetSuperTrackedQuestIDSafe(0)
+                            C_SuperTrack.SetSuperTrackedQuestID(0)
                         end)
                     end
                     return
@@ -148,7 +154,7 @@ function Nx.Quest.List:Open()
                     Nx.SuperTrackSafe(function()
                         Nx.Quest._stSuppressHook = true
                         Nx.Quest.UserClearedActive = true
-                        Nx.SetSuperTrackedQuestIDSafe(0)
+                        C_SuperTrack.SetSuperTrackedQuestID(0)
                         -- Blizzard quest area blob is drawn into a
                         -- separate WorldMapBlobFrame (QMap.QuestWin) and
                         -- doesn't auto-hide on super-track clear; do it
@@ -312,6 +318,10 @@ function Nx.Quest.List:Open()
 
     local menui4 = {}
     self.MenuItems4 = menui4
+
+    local item = menu:AddItem (0, L["Remove Watch"], self.Menu_OnToggleWatch, self)
+    self.MenuIToggleWatch = item
+    tinsert (menui1, item)
 
     local item = menu:AddItem (0, L["Toggle High Watch Priority"], self.Menu_OnHighPri, self)
     tinsert (menui1, item)
@@ -547,6 +557,7 @@ function Nx.Quest.List:UpdateMenu()
     if self.TabSelected == 1 then
 
         local show = -1
+        local selectedQuest
         local i = self.List:ItemGetData()
         if i then
 
@@ -554,10 +565,29 @@ function Nx.Quest.List:UpdateMenu()
             if qi > 0 then
                 local i, cur = Nx.Quest:FindCurByIndex (qi)
                 if cur then
+                    selectedQuest = cur
                     if cur.CanShare then
                         show = true
                     end
                 end
+            end
+        end
+
+        if self.MenuIToggleWatch then
+            if selectedQuest then
+                local watched = Nx.Quest:GetQuest (selectedQuest.QId) == "W"
+                local syncWatches = Nx.qdb and Nx.qdb.profile
+                    and Nx.qdb.profile.QuestWatch
+                    and Nx.qdb.profile.QuestWatch.Sync
+                if not watched and syncWatches and C_QuestLog
+                        and C_QuestLog.GetQuestWatchType then
+                    watched = C_QuestLog.GetQuestWatchType (selectedQuest.QId) ~= nil
+                end
+                self.MenuIToggleWatch:SetText (watched and L["Remove Watch"]
+                    or TRACK_QUEST or "Track Quest")
+                self.MenuIToggleWatch:Show()
+            else
+                self.MenuIToggleWatch:Show (false)
             end
         end
 
@@ -750,7 +780,7 @@ function Nx.Quest.List:Select (qId, qI)
         if i then
 
             local qi = bit_band (i, 0xff)
-            local qid = bit_rshift (i, 16)
+            local qid = GetPackedQuestID(i)
 
             if qi == qI and qid == qId then
 
@@ -772,7 +802,7 @@ function Nx.Quest.List:GetCurSelected()
     if i then
 
         local qi = bit_band (i, 0xff)
-        local qid = bit_rshift (i, 16)
+        local qid = GetPackedQuestID(i)
         if qid > 0 or qi > 0 then
             local _, cur = Nx.Quest:FindCur (qid, qi)
             return cur
@@ -785,7 +815,7 @@ function Nx.Quest.List:GetCurSelected()
             return cur
         else
 
-            local qid = bit_rshift (i, 16)
+            local qid = GetPackedQuestID(i)
             local i, cur = Nx.Quest:FindCur (qid)
             return cur
         end
@@ -891,7 +921,7 @@ function Nx.Quest.List:Menu_OnGoto (item)
             Nx.prt (L["Already have the quest!"])
 
         else
-            local qId = bit_rshift (i, 16)
+            local qId = GetPackedQuestID(i)
             Nx.Quest:Goto (qId)
 
             self:Update()
@@ -906,6 +936,59 @@ function Nx.Quest.List:Menu_OnHighPri (item)
         cur.HighPri = not cur.HighPri
         self:Update()
     end
+end
+
+-- Watching is membership in the quest tracker; it is separate from selecting
+-- the quest's route or Blizzard's super-tracked target. Right-click actions
+-- must change only membership, even when another quest is currently focused.
+function Nx.Quest.List:ToggleWatchMembership (qId, qIndex)
+    if type (qId) ~= "number" or qId <= 0 then
+        return false
+    end
+
+    local Quest = Nx.Quest
+    local curIndex, cur, id = Quest:FindCur (qId, qIndex)
+    if not cur and qIndex and qIndex > 0
+            and C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+        local liveQuestId = C_QuestLog.GetQuestIDForLogIndex (qIndex)
+        if liveQuestId and liveQuestId > 0 and liveQuestId ~= qId then
+            qId = liveQuestId
+            curIndex, cur, id = Quest:FindCur (qId, qIndex)
+        end
+    end
+
+    if not cur or not Quest.Watch then
+        return false
+    end
+
+    local watched = Quest:GetQuest (id) == "W"
+    local syncWatches = Nx.qdb and Nx.qdb.profile
+        and Nx.qdb.profile.QuestWatch and Nx.qdb.profile.QuestWatch.Sync
+    if not watched and syncWatches and C_QuestLog
+            and C_QuestLog.GetQuestWatchType then
+        watched = C_QuestLog.GetQuestWatchType (qId) ~= nil
+    end
+
+    if watched then
+        Quest.Watch:RemoveWatch (qId, cur.QI or qIndex)
+    else
+        Quest.Watch:Add (curIndex)
+    end
+
+    Quest.Watch:Update()
+    self:Update()
+    return true
+end
+
+function Nx.Quest.List:Menu_OnToggleWatch (item)
+    local data = self.List:ItemGetData()
+    if not data then
+        return
+    end
+
+    local qId = GetPackedQuestID (data)
+    local qIndex = bit_band (data, 0xff)
+    self:ToggleWatchMembership (qId, qIndex)
 end
 
 function Nx.Quest.List:Menu_OnShowHeaders (item)
@@ -962,7 +1045,7 @@ function Nx.Quest.List:Menu_OnCompleted (item)
     local i = self.List:ItemGetData()
     if i then
 
-        local qId = bit_rshift (i, 16)
+        local qId = GetPackedQuestID(i)
         local qStatus, qTime = Nx.Quest:GetQuest (qId)
 
         if qStatus == "C" then
@@ -1128,7 +1211,7 @@ function Nx.Quest.List:Menu_OnAbandon (item)
     if i then
 
         local qIndex = bit_band (i, 0xff)
-        local qId = bit_rshift (i, 16)
+        local qId = GetPackedQuestID(i)
         Nx.Quest:Abandon (qIndex, qId)
 
 --        self:Update()    -- Dialog gets closed!
@@ -1140,7 +1223,7 @@ function Nx.Quest.List:Menu_OnWowhead (item)
     local i = self.List:ItemGetData()
     if i then
         local qIndex = bit_band (i, 0xff)
-        local qId = bit_rshift (i, 16)
+        local qId = GetPackedQuestID(i)
         Nx.Quest:ShowWowheadLink (qId, qIndex)
     end
 end
@@ -1183,7 +1266,7 @@ function Nx.Quest.List:OnListEvent (eventName, sel, val2, click)
     local hdrCur = self.List:ItemGetDataEx (sel, 1)
 
     local qIndex = bit_band (itemData, 0xff)
-    local qId = bit_rshift (itemData, 16)
+    local qId = GetPackedQuestID(itemData)
 
     local shift = IsShiftKeyDown() or eventName == "mid"
 
@@ -1207,7 +1290,7 @@ function Nx.Quest.List:OnListEvent (eventName, sel, val2, click)
                     end
 
                     local qIndex = bit_band (itemData, 0xff)
-                    local qId = bit_rshift (itemData, 16)
+                    local qId = GetPackedQuestID(itemData)
 
                     local i, cur, id = Quest:FindCur (qId, qIndex)
 
@@ -1297,6 +1380,11 @@ function Nx.Quest.List:OnListEvent (eventName, sel, val2, click)
 
             if self.TabSelected == 1 then
 
+                if click == "RightButton" then
+                    self:ToggleWatchMembership (qId, qIndex)
+                    return
+                end
+
                 self:ToggleWatch (qId, qIndex, qObj, shift)
 
             elseif self.TabSelected == 3 then
@@ -1372,7 +1460,7 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
                 -- the closure so it's set when the call actually fires.
                 Nx.SuperTrackSafe(function()
                     Quest.UserClearedActive = true
-                    Nx.SetSuperTrackedQuestIDSafe(0)
+                    C_SuperTrack.SetSuperTrackedQuestID(0)
                 end)
                 Quest.ActiveQID = 0
                 Quest.ActiveObjI = 0
@@ -1391,7 +1479,7 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
                 end
                 local _live = liveQID
                 Nx.SuperTrackSafe(function()
-                    Nx.SetSuperTrackedQuestIDSafe(_live)
+                    C_SuperTrack.SetSuperTrackedQuestID(_live)
                 end)
                 Quest.ActiveObjI = qObj
                 if qObj > 0 and Quest.TrackOnMap then
@@ -1672,6 +1760,10 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             Quest:NoteQuestLogRemoval (removedQID)
         end
         Nx.Quest.List:Refresh(event)
+    elseif event == "QUEST_WATCH_LIST_CHANGED" then
+        if Quest.Watch and Quest.Watch.OnBlizzardWatchChanged then
+            Quest.Watch:OnBlizzardWatchChanged (arg1, arg2)
+        end
     elseif event == "SUPER_TRACKING_CHANGED" then
         Nx.Quest:OnSuperTrackChanged()
     elseif event == "QUEST_POI_UPDATE" then
@@ -1776,12 +1868,12 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 if (C_SuperTrack.GetSuperTrackedQuestID() or 0) ~= 0 then
                     return        -- something got tracked in the meantime
                 end
-                if Nx.AddWorldQuestWatchSafe and Enum and Enum.QuestWatchType
+                if QuestUtil and QuestUtil.TrackWorldQuest and Enum and Enum.QuestWatchType
                    and C_QuestLog and C_QuestLog.GetQuestWatchType
                    and C_QuestLog.GetQuestWatchType(questId) ~= Enum.QuestWatchType.Manual then
-                    Nx.AddWorldQuestWatchSafe(questId, Enum.QuestWatchType.Automatic)
+                    QuestUtil.TrackWorldQuest(questId, Enum.QuestWatchType.Automatic)
                 end
-                Nx.SetSuperTrackedQuestIDSafe(questId)
+                C_SuperTrack.SetSuperTrackedQuestID(questId)
             end)
         end
 
@@ -1801,7 +1893,7 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 -- tainted SUPER_TRACKING_CHANGED chain trips the
                 -- combat-protected SetPassThroughButtons.
                 Nx.SuperTrackSafe(function()
-                    Nx.SetSuperTrackedQuestIDSafe(0)
+                    C_SuperTrack.SetSuperTrackedQuestID(0)
                 end)
             end
             -- Drop the Goto route if it was pointing at this WQ. Icon
@@ -1838,7 +1930,7 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                     -- at fire time in case the super-track moved on.
                     Nx.SuperTrackSafe(function()
                         if C_SuperTrack.GetSuperTrackedQuestID() == questId then
-                            Nx.SetSuperTrackedQuestIDSafe(0)
+                            C_SuperTrack.SetSuperTrackedQuestID(0)
                         end
                     end)
                 end

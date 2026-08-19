@@ -631,7 +631,7 @@ function Nx.Quest:OnSuperTrackChanged()
             -- secure API from our taint trips the combat-protected
             -- SetPassThroughButtons in the QuestDataProvider chain.
             Nx.SuperTrackSafe(function()
-                Nx.SetSuperTrackedQuestIDSafe(prev)
+                C_SuperTrack.SetSuperTrackedQuestID(prev)
             end)
             return
         end
@@ -822,3 +822,4 @@ function Nx.Quest:FinishQuest()
     self.Watch:Update()
     self.WQList:Update()
 end
+

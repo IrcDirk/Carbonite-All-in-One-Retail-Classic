@@ -38,6 +38,9 @@ local GetCachedDifficultyColorStr = Nx.Quest.GetCachedDifficultyColorStr
 -- Promoted from NxQuest.lua's file-local compat shim.
 local GetQuestTagInfoCompat = Nx.Quest.GetQuestTagInfoCompat
 
+-- Packed rows can contain quest IDs larger than WoW's 32-bit bit operations.
+local GetPackedQuestID = Nx.Quest.GetPackedQuestID
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Quest watch
@@ -190,13 +193,11 @@ function Nx.Quest.Watch:Open()
     local item = menu:AddItem (0, L["Max Visible In List"], update, self)
     item:SetSlider (qopts, 1, i, 1, "NXWVisMax")
 
-    if Nx.Quest.WQList:IsAvailable() then
-        menu:AddItem (0, "")
-        local function func()
-            Nx.Quest.WQList:Show()
-        end
-        menu:AddItem (0, L["Open World Quest List"], func)
+--    menu:AddItem (0, "")
+    local function func()
+        Nx.Quest.WQList.Win:Show()
     end
+    --menu:AddItem (0, L["Open World Quest List"], func)
 
     local function func()
         Nx.Opts:Open ("Quest Watch")
@@ -452,7 +453,7 @@ function Nx.Quest.Watch:Menu_OnSetActive (item)
         -- SUPER_TRACKING_CHANGED in our taint and trip the protected
         -- SetPassThroughButtons in Blizzard's QuestDataProvider.
         Nx.SuperTrackSafe(function()
-            Nx.SetSuperTrackedQuestIDSafe(qId)
+            C_SuperTrack.SetSuperTrackedQuestID(qId)
         end)
         return
     end
@@ -481,6 +482,238 @@ function Nx.Quest.Watch:Menu_OnRemoveAllWatches (item)
     Nx.Quest.List:Update()
 end
 
+local function GetBlizzardQuestWatchState (questId, questIndex)
+    if not questId or questId <= 0 then
+        return nil
+    end
+
+    if C_QuestLog and C_QuestLog.GetQuestWatchType then
+        return C_QuestLog.GetQuestWatchType (questId) ~= nil
+    end
+
+    if questIndex and questIndex > 0 and IsQuestWatched then
+        return IsQuestWatched (questIndex) and true or false
+    end
+
+    return nil
+end
+
+local function GetLiveQuestIndex (questId, fallbackIndex)
+    local questIndex
+
+    if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
+        questIndex = C_QuestLog.GetLogIndexForQuestID (questId)
+    elseif GetQuestLogIndexByID then
+        questIndex = GetQuestLogIndexByID (questId)
+    end
+
+    if questIndex and questIndex > 0 then
+        return questIndex
+    end
+
+    -- During quest-log rebuilds Carbonite can still hold the prior index.
+    -- Reuse it only when the client can confirm that it still names this ID.
+    if fallbackIndex and fallbackIndex > 0 then
+        if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+            if C_QuestLog.GetQuestIDForLogIndex (fallbackIndex) == questId then
+                return fallbackIndex
+            end
+        elseif GetQuestIDFromLogIndex then
+            if GetQuestIDFromLogIndex (fallbackIndex) == questId then
+                return fallbackIndex
+            end
+        else
+            return fallbackIndex
+        end
+    end
+
+    return 0
+end
+
+function Nx.Quest.Watch:SyncBlizzardWatch (questId, questIndex, watched)
+    local profile = Nx.qdb and Nx.qdb.profile
+    if not profile or not profile.QuestWatch or not profile.QuestWatch.Sync
+            or not questId or questId <= 0 then
+        return false
+    end
+
+    if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
+        questIndex = C_QuestLog.GetLogIndexForQuestID (questId)
+    elseif GetQuestLogIndexByID then
+        questIndex = GetQuestLogIndexByID (questId)
+    end
+
+    if not questIndex or questIndex <= 0 then
+        return false
+    end
+
+    local currentlyWatched = GetBlizzardQuestWatchState (questId, questIndex)
+    if currentlyWatched == watched then
+        return false
+    end
+
+    local Quest = Nx.Quest
+    Nx.SuperTrackSafe (function()
+        local liveIndex = questIndex
+        if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
+            liveIndex = C_QuestLog.GetLogIndexForQuestID (questId)
+        elseif GetQuestLogIndexByID then
+            liveIndex = GetQuestLogIndexByID (questId)
+        end
+
+        if not liveIndex or liveIndex <= 0
+                or GetBlizzardQuestWatchState (questId, liveIndex) == watched then
+            return
+        end
+
+        if Nx.isRetail and C_QuestLog then
+            local isWorldQuest = QuestUtils_IsQuestWorldQuest
+                and QuestUtils_IsQuestWorldQuest (questId)
+            local changeWatch
+            if isWorldQuest then
+                changeWatch = watched and C_QuestLog.AddWorldQuestWatch
+                    or C_QuestLog.RemoveWorldQuestWatch
+            else
+                changeWatch = watched and C_QuestLog.AddQuestWatch
+                    or C_QuestLog.RemoveQuestWatch
+            end
+            if changeWatch then
+                changeWatch (questId)
+            end
+            return
+        end
+
+        local changeWatch = watched and AddQuestWatch or RemoveQuestWatch
+        if not changeWatch then
+            return
+        end
+
+        -- Classic hooks AddQuestWatch to infer map-pin clicks. Mirroring a
+        -- watch-list change is not a click and must not toggle the active quest.
+        local previousSuppress = Quest._addWatchSuppress
+        Quest._addWatchSuppress = true
+        changeWatch (liveIndex)
+        Quest._addWatchSuppress = previousSuppress
+    end)
+
+    return true
+end
+
+function Nx.Quest.Watch:OnBlizzardWatchChanged (questId, added)
+    local Quest = Nx.Quest
+    local profile = Nx.qdb and Nx.qdb.profile
+    if not profile or not profile.QuestWatch or not profile.QuestWatch.Sync
+            or not Quest.CurCharacter or not Quest.CurCharacter.Q then
+        return
+    end
+
+    local function ApplyWatchState (changedQuestId, questIndex, watched)
+        if type (changedQuestId) ~= "number" or changedQuestId <= 0
+                or watched == nil then
+            return false
+        end
+
+        local currentStatus, currentTime = Quest:GetQuest (changedQuestId)
+        local changed = false
+        if watched then
+            if currentStatus ~= "W" then
+                self.ApplyingBlizzardWatch = true
+                Quest:SetQuest (changedQuestId, "W", currentTime)
+                self.ApplyingBlizzardWatch = nil
+                changed = true
+            end
+        else
+            local liveIndex = GetLiveQuestIndex (changedQuestId, questIndex)
+            local shouldSetUnwatched = currentStatus == "W"
+                or (liveIndex > 0 and currentStatus == nil)
+
+            -- A historical "C" normally belongs to a quest already turned
+            -- in and must survive Blizzard's automatic watch removal. Only
+            -- repair it when Blizzard confirms the still-active quest has not
+            -- actually been completed by this character.
+            if currentStatus == "C" and liveIndex > 0
+                    and C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted
+                    and not C_QuestLog.IsQuestFlaggedCompleted (changedQuestId) then
+                shouldSetUnwatched = true
+            end
+
+            -- Preserve completed history after turn-in, when the quest has
+            -- already left the log. If it is still an active log entry, an
+            -- unwatch is authoritative even when stale data marked it "C".
+            if shouldSetUnwatched then
+                self.ApplyingBlizzardWatch = true
+                Quest:SetQuest (changedQuestId, "c", currentTime)
+                self.ApplyingBlizzardWatch = nil
+                changed = true
+            end
+
+            if Quest.Tracking then
+                Quest.Tracking[changedQuestId] = nil
+            end
+
+            if Quest.AcceptRefreshGuard and Quest.AcceptRefreshGuard.WatchedQuestIds then
+                Quest.AcceptRefreshGuard.WatchedQuestIds[changedQuestId] = nil
+            end
+
+            if Quest.IsTargeted and Quest:IsTargeted (changedQuestId)
+                    and Quest.Map and Quest.Map.ClearTargets then
+                Quest.Map:ClearTargets()
+            end
+        end
+
+        return changed
+    end
+
+    local changed = false
+    local refresh = false
+    if type (questId) == "number" and questId > 0 then
+        local cur = Quest.QIds and Quest.QIds[questId]
+        if not cur and Quest.CurQ then
+            for _, candidate in ipairs (Quest.CurQ) do
+                if candidate.QId == questId and candidate.QI and candidate.QI > 0 then
+                    cur = candidate
+                    break
+                end
+            end
+        end
+
+        local questIndex = GetLiveQuestIndex (questId, cur and cur.QI)
+        if added == nil then
+            added = GetBlizzardQuestWatchState (questId, questIndex)
+        end
+        changed = ApplyWatchState (questId, questIndex, added)
+
+        -- The event itself is authoritative. Rebuild even when Carbonite's
+        -- saved status already matched it so a stale rendered row is removed.
+        refresh = added ~= nil
+    else
+        local seenQuestIds = {}
+        for _, cur in ipairs (Quest.CurQ or {}) do
+            local currentQuestId = cur.QId
+            if cur.QI and cur.QI > 0 and currentQuestId and currentQuestId > 0
+                    and not seenQuestIds[currentQuestId] then
+                seenQuestIds[currentQuestId] = true
+                local questIndex = GetLiveQuestIndex (currentQuestId, cur.QI)
+                local watched = GetBlizzardQuestWatchState (currentQuestId, questIndex)
+                changed = ApplyWatchState (currentQuestId, questIndex, watched) or changed
+            end
+        end
+    end
+
+    if not changed and not refresh then
+        return
+    end
+
+    self.ForceListRefresh = true
+    self:Update()
+
+    local questList = Quest.List
+    if questList and questList.Win and questList.Win.IsShown
+            and questList.Win:IsShown() then
+        questList:Update()
+    end
+end
+
 function Nx.Quest.Watch:RemoveWatch (qId, qI)
 
     local i, cur, id = Nx.Quest:FindCur (qId, qI)
@@ -488,23 +721,23 @@ function Nx.Quest.Watch:RemoveWatch (qId, qI)
     if i then
 
         local qStatus, qTime = Nx.Quest:GetQuest (id)
-        if qStatus == "W" then
+        if qStatus ~= "c" and qStatus ~= "C" then
 
             Nx.Quest:SetQuest (id, "c", qTime)
             Nx.Quest:PartyStartSend()
+        end
 
-            if qId > 0 then
-                Nx.Quest.Tracking[qId] = nil
+        if qId > 0 then
+            Nx.Quest.Tracking[qId] = nil
 
-                if Nx.Quest:IsTargeted (qId) then
-                    Nx.Quest.Map:ClearTargets()
-                end
+            if Nx.Quest:IsTargeted (qId) then
+                Nx.Quest.Map:ClearTargets()
             end
+
+            self:SyncBlizzardWatch (qId, qI, false)
         end
 
-        if IsQuestWatched (qI) then    -- Blizz crap? Remove
-            RemoveQuestWatch (qI)
-        end
+        self.ForceListRefresh = true
     end
 end
 
@@ -592,7 +825,10 @@ function Nx.Quest.Watch:Update()
         QuestWatchDistUp = nil
     end
 
-    QuestWatchDistUp = Nx:ScheduleTimer(self.OnTimer, 0.5, self)
+    -- Explicit membership changes must rebuild on the next timer tick instead
+    -- of waiting behind the ordinary distance/objective refresh delay.
+    local delay = self.ForceListRefresh and 0.01 or 0.5
+    QuestWatchDistUp = Nx:ScheduleTimer(self.OnTimer, delay, self)
 end
 
 function Nx.Quest.Watch:ClearCustom ()
@@ -645,7 +881,7 @@ end
 
 -- Emissary click handler (static function to avoid recreation)
 local function WatchList_EmmFunc(id)
-    local qId = bit_rshift(id, 16)
+    local qId = GetPackedQuestID(id)
     local bId = bit_band(id, 0xff)
     --WorldMapFrame.overlayFrames[3].SetSelectedBountyIndex(bId)
 end
@@ -675,9 +911,7 @@ local function WatchList_ScanTip(bounty)
         if scanTip.ItemTooltip then scanTip.ItemTooltip:Hide() end
 
         scanTip:SetText(title, HIGHLIGHT_FONT_COLOR:GetRGB())
-        if Nx.Quest.AddQuestTimeToTooltipCompat then
-            Nx.Quest.AddQuestTimeToTooltipCompat(scanTip, bounty.questID)
-        end
+        WorldMap_AddQuestTimeToTooltip(bounty.questID)
 
         local _, questDescription = GetQuestLogQuestText(questIndex)
         scanTip:AddLine(questDescription, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
@@ -967,134 +1201,65 @@ local function WatchList_AddScenario(list)
     return true
 end
 
--- Queue every world-quest feed into one ordered section. Current-map tasks,
--- quest-log task fallbacks, and manually watched off-map quests can report the
--- same quest, so use the quest ID as the stable de-duplication key.
-local function WatchList_QueueWorldQuest(
-    worldQuests,
-    queuedQuestIDs,
-    questId,
-    title,
-    numObjectives
-)
-    if type(questId) ~= "number" or questId <= 0 then
+-- GetQuestsOnMap is not exclusively a bonus-objective feed on modern retail:
+-- Midnight also includes ordinary campaign/story quests. Blizzard routes those
+-- through CampaignQuestObjectiveTracker, which enumerates the actual quest
+-- watches, rather than through its task tracker. Keep the same separation here
+-- so a map entry cannot resurrect a quest that the player explicitly unwatched.
+local function WatchList_ShouldShowTask (Quest, questId, questIndex)
+    if type (questId) ~= "number" or questId <= 0
+            or Quest:GetQuest (questId) == "c" then
         return false
     end
 
-    if queuedQuestIDs[questId] then
-        return false
-    end
+    local questInfo
+    if C_QuestLog then
+        if (not questIndex or questIndex <= 0)
+                and C_QuestLog.GetLogIndexForQuestID then
+            questIndex = C_QuestLog.GetLogIndexForQuestID (questId)
+        end
 
-    queuedQuestIDs[questId] = true
-    worldQuests[#worldQuests + 1] = {
-        questId = questId,
-        title = title,
-        numObjectives = numObjectives,
-    }
-    return true
-end
-
-local function WatchList_AddTaskQuestRows(
-    list,
-    questId,
-    title,
-    numObjectives,
-    titleRowID
-)
-    if type(questId) ~= "number" or questId <= 0 then
-        return false
-    end
-
-    if (not title or title == "")
-        and C_TaskQuest and C_TaskQuest.GetQuestInfoByQuestID then
-        title = C_TaskQuest.GetQuestInfoByQuestID(questId)
-    end
-    if (not title or title == "")
-        and C_QuestLog and C_QuestLog.GetTitleForQuestID then
-        title = C_QuestLog.GetTitleForQuestID(questId)
-    end
-
-    if type(titleRowID) ~= "number" then
-        titleRowID = questId * 0x10000
-    end
-    list:ItemAdd(titleRowID)
-    list:ItemSet(
-        2,
-        Nx.Util_str2colstr(Nx.qdb.profile.QuestWatch.OIncompleteColor)
-            .. (title or L["Retrieving data"] or "")
-    )
-
-    if type(numObjectives) ~= "number" then
-        numObjectives = C_QuestLog and C_QuestLog.GetNumQuestObjectives
-            and C_QuestLog.GetNumQuestObjectives(questId)
-    end
-    if type(numObjectives) == "number" and numObjectives > 0 then
-        for objectiveIndex = 1, numObjectives do
-            local text, objectiveType =
-                GetQuestObjectiveInfo(questId, objectiveIndex, false)
-            if objectiveType == "progressbar" then
-                list:ItemAdd(0)
-                list:ItemSetOffset(16, -1)
-                local percent = C_TaskQuest
-                    and C_TaskQuest.GetQuestProgressBarInfo
-                    and C_TaskQuest.GetQuestProgressBarInfo(questId) or 0
-                if Nx.qdb.profile.QuestWatch.BonusBar then
-                    local filled = floor(percent)
-                    local empty = 100 - filled
-                    local bar = filled > 0
-                        and format(
-                            " |TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:12:%d:|t",
-                            filled
-                        )
-                        or " "
-                    if empty > 0 then
-                        bar = bar .. format(
-                            "|TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarBG:12:%d:|t",
-                            empty
-                        )
-                    end
-                    list:ItemSet(2, format("%s %.2f%%", bar, percent))
-                else
-                    list:ItemSet(
-                        2,
-                        format("|cff00ff00%s %.2f%%", L["Progress: "], percent)
-                    )
-                end
-            elseif text and text ~= "" then
-                list:ItemAdd(0)
-                list:ItemSetOffset(16, -1)
-                list:ItemSet(2, "|cff00ff00" .. text)
-            end
+        if questIndex and questIndex > 0 and C_QuestLog.GetInfo then
+            questInfo = C_QuestLog.GetInfo (questIndex)
         end
     end
 
-    return true
-end
+    local classifications = Enum and Enum.QuestClassification
+    local classification = questInfo and questInfo.questClassification
+    if classification == nil and C_QuestInfoSystem
+            and C_QuestInfoSystem.GetQuestClassification then
+        classification = C_QuestInfoSystem.GetQuestClassification (questId)
+    end
 
-local function WatchList_AddWorldQuestSection(list, worldQuests)
-    if #worldQuests == 0 then
+    local campaignClassification = classifications and classifications.Campaign
+    if campaignClassification ~= nil
+            and classification == campaignClassification then
         return false
     end
 
-    list:ItemAdd(0)
-    list:ItemSet(
-        2,
-        "|cffff00ff----[ |cffffff00"
-            .. L["WORLD QUEST"]
-            .. " |cffff00ff]----"
-    )
-
-    for _, worldQuest in ipairs(worldQuests) do
-        WatchList_AddTaskQuestRows(
-            list,
-            worldQuest.questId,
-            worldQuest.title,
-            worldQuest.numObjectives
-        )
+    if questInfo and (questInfo.campaignID ~= nil or questInfo.isStory) then
+        return false
     end
 
-    list:ItemAdd(0)
-    list:ItemSet(2, "|cffff00ff------------------------------")
+    local isWorldQuest = false
+    if C_QuestLog and C_QuestLog.IsWorldQuest then
+        isWorldQuest = C_QuestLog.IsWorldQuest (questId)
+    elseif QuestUtils_IsQuestWorldQuest then
+        isWorldQuest = QuestUtils_IsQuestWorldQuest (questId)
+    end
+
+    -- A normal accepted quest can also appear in the map feed. Only genuine
+    -- bonus/task objectives and world quests belong in the separate section.
+    if questInfo and questInfo.isTask == false and not isWorldQuest then
+        return false
+    end
+
+    if C_QuestLog and C_QuestLog.IsQuestTask
+            and not C_QuestLog.IsQuestTask (questId)
+            and not isWorldQuest then
+        return false
+    end
+
     return true
 end
 
@@ -1177,7 +1342,11 @@ function Nx.Quest.Watch:UpdateList()
             local qId = cur.QId
             local id = qId > 0 and qId or cur.Title
             local qStatus = Nx.Quest:GetQuest (id)
-            local qWatched = qStatus == "W" or cur.PartyDesc
+            -- Party progress annotates our own watched quests; it must not
+            -- override an explicit unwatch. Keep showing party-only quests
+            -- until the user explicitly removes their watch as well.
+            local qWatched = qStatus == "W"
+                or (cur.Party and cur.PartyDesc and qStatus ~= "c")
 
 --            Nx.prt ("qid %s %s dist %s", qId, qStatus, cur.Distance)
 
@@ -1326,27 +1495,6 @@ function Nx.Quest.Watch:UpdateList()
                     WatchList_AddScenario(list)
                 end
                 local tasks = {}
-                local worldQuests = {}
-                local queuedWorldQuestIDs = {}
-                local watchedWorldQuestIDs = {}
-                local watchedWorldQuests = {}
-
-                -- Blizzard's world-quest watch list is independent of the
-                -- current map and quest-log task lists. Preserve its order and
-                -- use a set for the two existing feed paths to avoid duplicates.
-                if C_QuestLog
-                    and C_QuestLog.GetNumWorldQuestWatches
-                    and C_QuestLog.GetQuestIDForWorldQuestWatchIndex then
-                    local watchCount = C_QuestLog.GetNumWorldQuestWatches()
-                    for watchIndex = 1, watchCount do
-                        local questId =
-                            C_QuestLog.GetQuestIDForWorldQuestWatchIndex(watchIndex)
-                        if questId and questId > 0 and not watchedWorldQuests[questId] then
-                            watchedWorldQuests[questId] = true
-                            watchedWorldQuestIDs[#watchedWorldQuestIDs + 1] = questId
-                        end
-                    end
-                end
                 -- World quests / bonus tasks feed. The 12.0 engine is unified
                 -- across flavors, but some C_TaskQuest functions are disabled
                 -- on individual Classic clients, and the old global GetTaskInfo
@@ -1368,9 +1516,9 @@ function Nx.Quest.Watch:UpdateList()
                             -- on area entry; accepted world quests are on-quest.
                             -- Replaces the removed GetTaskInfo isInArea gate and
                             -- avoids flooding the tracker with every map WQ.
-                            if watchedWorldQuests[questId]
-                                or C_QuestLog and C_QuestLog.IsOnQuest
-                                    and C_QuestLog.IsOnQuest(questId) then
+                            if C_QuestLog and C_QuestLog.IsOnQuest
+                                    and C_QuestLog.IsOnQuest(questId)
+                                    and WatchList_ShouldShowTask (Quest, questId) then
                                 local title, factionID = C_TaskQuest.GetQuestInfoByQuestID(questId)
                                 local questTagInfo = GetQuestTagInfoCompat(questId)
                                 local tagID = questTagInfo and questTagInfo.tagID
@@ -1379,25 +1527,53 @@ function Nx.Quest.Watch:UpdateList()
                                 local rarity = questTagInfo and questTagInfo.quality
                                 local isElite = questTagInfo and questTagInfo.isElite
                                 local tradeskillLineIndex = questTagInfo and questTagInfo.tradeskillLineID
+                                local task_title = L["BONUS TASK"]
+                                if worldQuestType ~= nil then task_title = L["WORLD QUEST"] end
+                                list:ItemAdd(0)
+                                list:ItemSet(2,"|cffff00ff----[ |cffffff00" .. task_title .. " |cffff00ff]----")
+                                local questIndex = C_QuestLog.GetLogIndexForQuestID
+                                    and C_QuestLog.GetLogIndexForQuestID(questId) or 0
+                                list:ItemAdd(questId * 0x10000 + questIndex)
+                                list:ItemSet(2,Nx.Util_str2colstr (Nx.qdb.profile.QuestWatch.OIncompleteColor) .. (title or ""))
+                                --local _,x,y = QuestPOIGetIconInfo(questId)
+                                --Nx.prt("====%s: %s, %s", title, x, y)
+                                if numObjectives and numObjectives > 0 then
+                                    for j=1,numObjectives do
+                                        local text, objectiveType, finished = GetQuestObjectiveInfo (questId, j, false)
+                                        if objectiveType == "progressbar" then
+                                            list:ItemAdd(0)
+                                            list:ItemSetOffset (16, -1)
+                                            local percent = C_TaskQuest.GetQuestProgressBarInfo(questId) or 0
+                                            if Nx.qdb.profile.QuestWatch.BonusBar then
+                                                -- Two-segment bar: filled (B) + remainder (BG).
+                                                -- Always 100px wide so the bar's full extent
+                                                -- is visible even at low percentages.
+                                                local filled = math.floor(percent)
+                                                local empty  = 100 - filled
+                                                local bar = ""
+                                                if filled > 0 then
+                                                    bar = format(" |TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:12:%d:|t", filled)
+                                                else
+                                                    bar = " "
+                                                end
+                                                if empty > 0 then
+                                                    bar = bar .. format("|TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarBG:12:%d:|t", empty)
+                                                end
+                                                list:ItemSet(2, format("%s %.2f%%", bar, percent))
+                                            else
+                                                list:ItemSet(2,format("|cff00ff00%s %.2f%%", L["Progress: "], percent))
+                                            end
+                                        else
+                                            list:ItemAdd(0)
+                                            list:ItemSetOffset (16, -1)
+                                            list:ItemSet(2,"|cff00ff00" .. text)
+                                        end
+                                    end
+                                end
+                                list:ItemAdd(0)
                                 if worldQuestType ~= nil then
-                                    WatchList_QueueWorldQuest(
-                                        worldQuests,
-                                        queuedWorldQuestIDs,
-                                        questId,
-                                        title,
-                                        numObjectives
-                                    )
+                                    list:ItemSet(2,"|cffff00ff------------------------------")
                                 else
-                                    list:ItemAdd(0)
-                                    list:ItemSet(2,"|cffff00ff----[ |cffffff00" .. L["BONUS TASK"] .. " |cffff00ff]----")
-                                    WatchList_AddTaskQuestRows(
-                                        list,
-                                        questId,
-                                        title,
-                                        numObjectives,
-                                        questId * 0x10000
-                                    )
-                                    list:ItemAdd(0)
                                     list:ItemSet(2,"|cffff00ff----------------------------")
                                 end
                             end
@@ -1407,8 +1583,8 @@ function Nx.Quest.Watch:UpdateList()
                     if taskInfo > 0 then
                         for i=1,taskInfo do
                             local title, _, _, _, _, _, _, questId, _, _, _, _, isTask, _ = GetQuestLogTitle(i)
-                            if isTask and tasks[questId] ~= true then
-                                tasks[questId] = true
+                            if isTask and tasks[questId] ~= true
+                                    and WatchList_ShouldShowTask (Quest, questId, i) then
                                 local title, factionID = C_TaskQuest.GetQuestInfoByQuestID(questId)
                                 local questTagInfo = GetQuestTagInfoCompat(questId)
                                 local tagID = questTagInfo and questTagInfo.tagID
@@ -1417,52 +1593,52 @@ function Nx.Quest.Watch:UpdateList()
                                 local rarity = questTagInfo and questTagInfo.quality
                                 local isElite = questTagInfo and questTagInfo.isElite
                                 local tradeskillLineIndex = questTagInfo and questTagInfo.tradeskillLineID
+                                local task_title = L["BONUS TASK"]
+                                if worldQuestType ~= nil then task_title = L["WORLD QUEST"] end
+                                list:ItemAdd(0)
+                                list:ItemSet(2,"|cffff00ff----[ |cffffff00" .. task_title .. " |cffff00ff]----")
+                                list:ItemAdd(questId * 0x10000 + i)
+                                list:ItemSet(2,Nx.Util_str2colstr (Nx.qdb.profile.QuestWatch.OIncompleteColor) .. (title or ""))
                                 local numObjectives = C_QuestLog and C_QuestLog.GetNumQuestObjectives
                                     and C_QuestLog.GetNumQuestObjectives(questId)
-                                if worldQuestType ~= nil then
-                                    WatchList_QueueWorldQuest(
-                                        worldQuests,
-                                        queuedWorldQuestIDs,
-                                        questId,
-                                        title,
-                                        numObjectives
-                                    )
-                                else
-                                    list:ItemAdd(0)
-                                    list:ItemSet(2,"|cffff00ff----[ |cffffff00" .. L["BONUS TASK"] .. " |cffff00ff]----")
-                                    WatchList_AddTaskQuestRows(
-                                        list,
-                                        questId,
-                                        title,
-                                        numObjectives,
-                                        0
-                                    )
-                                    list:ItemAdd(0)
-                                    list:ItemSet(2,"|cffff00ff-------------------------------")
+                                if numObjectives and numObjectives > 0 then
+                                    for j=1,numObjectives do
+                                        local text, objectiveType, finished = GetQuestObjectiveInfo (questId, j, false)
+                                        if objectiveType == "progressbar" then
+                                            list:ItemAdd(0)
+                                            list:ItemSetOffset (16, -1)
+                                            local percent = C_TaskQuest.GetQuestProgressBarInfo(questId) or 0
+                                            if Nx.qdb.profile.QuestWatch.BonusBar then
+                                                -- Two-segment bar: filled (B) + remainder (BG).
+                                                -- Always 100px wide so the bar's full extent
+                                                -- is visible even at low percentages.
+                                                local filled = math.floor(percent)
+                                                local empty  = 100 - filled
+                                                local bar = ""
+                                                if filled > 0 then
+                                                    bar = format(" |TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarB:12:%d:|t", filled)
+                                                else
+                                                    bar = " "
+                                                end
+                                                if empty > 0 then
+                                                    bar = bar .. format("|TInterface\\Addons\\Carbonite\\Gfx\\Skin\\InfoBarBG:12:%d:|t", empty)
+                                                end
+                                                list:ItemSet(2, format("%s %.2f%%", bar, percent))
+                                            else
+                                                list:ItemSet(2,format("|cff00ff00%s %.2f%%", L["Progress: "], percent))
+                                            end
+                                        else
+                                            list:ItemAdd(0)
+                                            list:ItemSetOffset (16, -1)
+                                            list:ItemSet(2,"|cff00ff00" .. text)
+                                        end
+                                    end
                                 end
+                                list:ItemAdd(0)
+                                list:ItemSet(2,"|cffff00ff-------------------------------")
                             end
                         end
                     end
-
-                    -- A manually watched WQ can be outside the current map and
-                    -- absent from the regular quest log. Add those remaining
-                    -- IDs explicitly so tracking from the WQ List always has a
-                    -- visible result in Carbonite's Quest Watch.
-                    for _, questId in ipairs(watchedWorldQuestIDs) do
-                        if tasks[questId] ~= true then
-                            tasks[questId] = true
-                            WatchList_QueueWorldQuest(
-                                worldQuests,
-                                queuedWorldQuestIDs,
-                                questId
-                            )
-                        end
-                    end
-
-                    -- Emit one shared section after all three feeds have been
-                    -- merged. Individual world quests keep their own title and
-                    -- objectives, but no longer repeat the section header.
-                    WatchList_AddWorldQuestSection(list, worldQuests)
                 end
                 if Nx.qdb.profile.QuestWatch.AchTrack then
                     local achs = Nx.Quest.TrackedAchievements
@@ -1863,18 +2039,30 @@ end
 -- On list control updates
 -------------------------------------------------------------------------------
 
+function Nx.Quest.Watch:OpenQuestContextMenu (data)
+    if not data or not self.WatchMenu or not self.WatchMenu.Open then
+        return false
+    end
+
+    local qId = GetPackedQuestID (data)
+    if not qId or qId <= 0 then
+        return false
+    end
+
+    self.MenuItemData = data
+    self.MenuQIndex = bit_band (data, 0xff)
+    self.MenuQId = qId
+    self.WatchMenu:Open()
+    return true
+end
+
 function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
 
 --    Nx.prt ("QuestListUpdate "..eventName)
 
-    if eventName == "menu" and self.RMenu then
-        local data = self.List:ItemGetData (val1)
-        if data then
-            local qId = bit_rshift (data, 16)
-            if qId and qId > 0 then
-                self.RMenu:Open()
-            end
-        end
+    if eventName == "menu" then
+        self:OpenQuestContextMenu (self.List:ItemGetData (val1))
+        return
     end
 
     if eventName == "button" then
@@ -1886,9 +2074,9 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
         local data = self.List:ItemGetData (val1)
         if data then
             local qIndex = bit_band (data, 0xff)
-            local qId = bit_rshift (data, 16)
+            local qId = GetPackedQuestID(data)
             local typ = but:GetType()
-            if typ.CustomTip or typ.EmissaryTip then
+            if (typ.CustomTip or typ.EmissaryTip) and click ~= "RightButton" then
                 local func = self.List:ItemGetFunc(data)
                 func(data)
                 return
@@ -1947,10 +2135,10 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                         if C_SuperTrack.SetSuperTrackedUserWaypoint
                            and C_SuperTrack.IsSuperTrackingUserWaypoint
                            and C_SuperTrack.IsSuperTrackingUserWaypoint() then
-                            Nx.SetSuperTrackedUserWaypointSafe(false)
+                            C_SuperTrack.SetSuperTrackedUserWaypoint(false)
                         end
                         if C_SuperTrack.ClearAllSuperTracked then
-                            Nx.ClearAllSuperTrackedSafe()
+                            C_SuperTrack.ClearAllSuperTracked()
                         end
                         -- Will trigger our SetSuperTrackedQuestID hook. If that
                         -- hook toggles off (clicking the active quest again), it
@@ -1958,7 +2146,7 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                         -- to remember the toggle happened so the rest of this
                         -- handler doesn't immediately re-add tracking via
                         -- Watch:Set (which would put the arrow right back).
-                        Nx.SetSuperTrackedQuestIDSafe(liveQID)
+                        C_SuperTrack.SetSuperTrackedQuestID(liveQID)
                     end)
                     if Quest._stLockoutUntil and GetTime
                        and GetTime() < Quest._stLockoutUntil then
@@ -2135,10 +2323,6 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
 
             elseif click == "RightButton" then
 
-                if typ.WatchTip then
-                    return
-                end
-
                 if IsAltKeyDown() then
                     Quest.IgnoreAlt = true
                     ToggleQuestLog()
@@ -2151,11 +2335,7 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                     Quest:LinkChat (qId)
 
                 else
-                    self.MenuItemData = data
-                    self.MenuQIndex = qIndex
-                    self.MenuQId = qId
-
-                    self.WatchMenu:Open()
+                    self:OpenQuestContextMenu (data)
                 end
             end
         end
@@ -2171,7 +2351,7 @@ function Nx.Quest.Watch:Set (data, on, track)
     local Quest = Nx.Quest
 
     local qIndex = bit_band (data, 0xff)
-    local qId = bit_rshift (data, 16)
+    local qId = GetPackedQuestID(data)
 
     if qId > 0 then
 
@@ -2279,17 +2459,40 @@ function Nx.Quest.Watch:Add (curi,addnew)
 
     local Quest = Nx.Quest
     local cur = Quest.CurQ[curi]
+    if not cur then
+        return
+    end
 
     local qId = cur.QId > 0 and cur.QId or cur.Title
-    if Nx.Quest:IsDaily(qId) and addnew then
-        Nx.Quest:SetQuest (qId, "W")
-        Quest:PartyStartSend()
-    end
     local qStatus = Nx.Quest:GetQuest (qId)
-    if not qStatus ~= "W" then
+    if qStatus ~= "W" then
         Nx.Quest:SetQuest (qId, "W")
         Quest:PartyStartSend()
     end
+
+    if type (qId) == "number" and qId > 0 then
+        self:SyncBlizzardWatch (qId, cur.QI, true)
+    end
+end
+
+-- Objective progress may auto-watch an unwatched quest when AddChanged is
+-- enabled. A lowercase "c" records an explicit user unwatch and must win over
+-- that automation until the user deliberately watches the quest again.
+function Nx.Quest.Watch:AddFromObjectiveChange (curi)
+    local Quest = Nx.Quest
+    local cur = Quest.CurQ and Quest.CurQ[curi]
+    if not cur then
+        return false
+    end
+
+    local qId = cur.QId > 0 and cur.QId or cur.Title
+    if Quest:GetQuest (qId) == "c" then
+        self.ForceListRefresh = true
+        return false
+    end
+
+    self:Add (curi)
+    return true
 end
 
 -------------------------------------------------------------------------------
@@ -2310,7 +2513,7 @@ function Nx.Quest.Watch:ClearCompleted (qIdMatch)
         if i then
 
             local qIndex = bit_band (i, 0xff)
-            local qId = bit_rshift (i, 16)
+            local qId = GetPackedQuestID(i)
 
             if qId > 0 and (not qIdMatch or qIdMatch == qId) then
 

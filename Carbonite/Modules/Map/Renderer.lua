@@ -72,8 +72,19 @@ end
 local function isHiddenByDockMM(mmSX1, mmSY1, mmSX2, mmSY2,
                                 iconX, iconY, offY, map, clipW, clipH, scaleDraw)
     if not mmSX1 then return false end
-    local sx = (iconX - map.MapPosXDraw) * scaleDraw + clipW * .5
-    local sy = ((iconY + offY) - map.MapPosYDraw) * scaleDraw + clipH * .5
+    local sx, sy
+    if map.CurOpts.NXInstanceMaps
+        and (map:IsInstanceMap(map.UpdateMapID)
+            or map:IsBattleGroundMap(map.UpdateMapID)) then
+        local canvas, canvasWidth, canvasHeight = map:GetInstanceMapCanvas()
+        if not canvas then return false end
+        local zoneX, zoneY = map:GetZonePos(map.MapId, iconX, iconY + offY)
+        sx = zoneX * .01 * canvasWidth
+        sy = zoneY * .01 * canvasHeight
+    else
+        sx = (iconX - map.MapPosXDraw) * scaleDraw + clipW * .5
+        sy = ((iconY + offY) - map.MapPosYDraw) * scaleDraw + clipH * .5
+    end
     return sx >= mmSX1 and sx <= mmSX2 and sy >= mmSY1 and sy <= mmSY2
 end
 
@@ -166,6 +177,7 @@ local function renderWP(map, layer, cls, frameLvl, wpScale, wpMin)
 
     local isInst = map:IsInstanceMap(map.UpdateMapID)
         or map:IsBattleGroundMap(map.UpdateMapID)
+    local fixedInstanceCanvas = isInst and map.CurOpts.NXInstanceMaps
     if isInst then
         w = Nx.db.profile.Map.InstanceScale
         h = Nx.db.profile.Map.InstanceScale
@@ -211,7 +223,8 @@ local function renderWP(map, layer, cls, frameLvl, wpScale, wpMin)
         local pin = layer.pins[i]
         local iconX, iconY = pin.x, pin.y
         if isPinMapRelevant(map, pin)
-            and (rawSize or (iconX >= visMinX and iconX <= visMaxX
+            and (rawSize or fixedInstanceCanvas
+                or (iconX >= visMinX and iconX <= visMaxX
                 and iconY >= visMinY and iconY <= visMaxY)) then
             local pinLevel = pin.level
             local levelOK = (not pinLevel and dungeonLevel == 0)

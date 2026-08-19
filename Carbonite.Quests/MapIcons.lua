@@ -820,22 +820,24 @@ function Nx.Quest:UpdateIcons (map)
                                 map.MapId)
                             if not InCombatLockdown() and self.worldQuest then
                                 if not ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
-                                    -- Capture click-time inputs and defer the
-                                    -- mutations to the next tick. The actual
-                                    -- C APIs are then invoked through the
-                                    -- secure-call helpers; a timer by itself
-                                    -- still runs as Carbonite and does not
-                                    -- remove execution taint.
-                                    -- Calling C_SuperTrack.* / QuestUtil from
-                                    -- this Carbonite click stack propagates taint
+                                    -- Capture click-time inputs and
+                                    -- defer the secure mutations to
+                                    -- the next tick via C_Timer.After.
+                                    -- Calling C_SuperTrack.* /
+                                    -- QuestUtil.TrackWorldQuest from
+                                    -- this (Carbonite-tainted) click
+                                    -- stack propagates our taint
                                     -- through Blizzard's CallbackRegistry
                                     -- super-track chain, which ends at
                                     -- QuestDataProvider:RefreshAllData
                                     -- → AcquirePin → SetPassThroughButtons
                                     -- — a protected call that throws
                                     -- ADDON_ACTION_BLOCKED blaming
-                                    -- Carbonite (typically surfaces on WQ
-                                    -- completion when Blizzard auto-clears it).
+                                    -- Carbonite (typically surfaces on
+                                    -- WQ completion when Blizz auto-
+                                    -- clears the super-track). Running
+                                    -- the block from a fresh timer
+                                    -- callback breaks the chain.
                                     local questID = self.questID
                                     local mapID = self.mapID
                                     local shift = IsShiftKeyDown()
@@ -857,21 +859,21 @@ function Nx.Quest:UpdateIcons (map)
                                         if shift then
                                             if watchType == Enum.QuestWatchType.Manual or (watchType == Enum.QuestWatchType.Automatic and isSuperTracked) then
                                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-                                                Nx.RemoveWorldQuestWatchSafe(questID)
+                                                QuestUtil.UntrackWorldQuest(questID)
                                             else
                                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                                                Nx.AddWorldQuestWatchSafe(questID, Enum.QuestWatchType.Manual)
+                                                QuestUtil.TrackWorldQuest(questID, Enum.QuestWatchType.Manual)
                                             end
                                         else
                                             if isSuperTracked then
                                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-                                                Nx.SetSuperTrackedQuestIDSafe(0)
+                                                C_SuperTrack.SetSuperTrackedQuestID(0)
                                             else
                                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                                                 if watchType ~= Enum.QuestWatchType.Manual then
-                                                    Nx.AddWorldQuestWatchSafe(questID, Enum.QuestWatchType.Automatic)
+                                                    QuestUtil.TrackWorldQuest(questID, Enum.QuestWatchType.Automatic)
                                                 end
-                                                Nx.SetSuperTrackedQuestIDSafe(questID)
+                                                C_SuperTrack.SetSuperTrackedQuestID(questID)
                                             end
                                         end
                                         end)

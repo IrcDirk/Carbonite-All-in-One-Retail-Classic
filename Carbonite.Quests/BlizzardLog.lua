@@ -453,7 +453,7 @@ function Nx.Quest:RecordQuestsLog (validatedQuestCount)
                     end
 
                     if change and Nx.qdb.profile.QuestWatch.AddChanged then
-                        self.Watch:Add (curi)
+                        self.Watch:AddFromObjectiveChange (curi)
                     end
                 end
             end
