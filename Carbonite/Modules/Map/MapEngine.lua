@@ -4269,7 +4269,8 @@ function Nx.Map:OnMouseDown (button)
                 map.DebugMapId = map.MapId
 
             else
-                if (Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)) and map.CurOpts.NXInstanceMaps then
+                if map.CurOpts.NXInstanceMaps
+                    and map:IsActiveInstanceMap(Nx.Map.RMapId) then
                     return
                 end
                 map.LClickTime = GetTime()
@@ -4409,7 +4410,8 @@ function Nx.Map:MouseWheel(value)
     local this = map.Frm
 
     -- Disable zoom in instance/BG maps when using instance overlay
-    if (Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)) and map.CurOpts.NXInstanceMaps then
+    if map.CurOpts.NXInstanceMaps
+        and map:IsActiveInstanceMap(Nx.Map.RMapId) then
         return
     end
 
@@ -4784,7 +4786,8 @@ function Nx.Map.OnUpdate(this, elapsed)
         map.Scrolling = false
     end
 
-    if (Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)) and map.CurOpts.NXInstanceMaps then
+    if map.CurOpts.NXInstanceMaps
+        and map:IsActiveInstanceMap(Nx.Map.RMapId) then
         winx = nil
         map.Scrolling = false
     end
@@ -8257,6 +8260,38 @@ end
 -------------------------------------------------------------------------------
 
 ---
+-- Determine whether a selected instance map is the player's active instance.
+-- Outdoor micro maps and previews must never disable world-map interaction.
+-- @param mapID  Selected map identifier
+-- @return       True only while the player occupies an instance or battleground
+--
+function Nx.Map:IsActiveInstanceMap(mapID)
+    if not mapID or (not self:IsInstanceMap(mapID)
+        and not self:IsBattleGroundMap(mapID)) then
+        return false
+    end
+
+    local instanceCheck = _G.IsInInstance
+    if type(instanceCheck) == "function" then
+        local ok, inInstance = pcall(instanceCheck)
+        if ok then
+            return inInstance and true or false
+        end
+    end
+
+    local instanceInfo = _G.GetInstanceInfo
+    if type(instanceInfo) == "function" then
+        local ok, _, instanceType = pcall(instanceInfo)
+        if ok then
+            return instanceType ~= nil and instanceType ~= "none"
+        end
+    end
+
+    -- Preserve legacy behavior when an old client exposes neither API.
+    return true
+end
+
+---
 -- Check if cursor is over a world zone hotspot
 -- Updates current map display based on cursor position
 -- @param wx  World X coordinate
@@ -8284,15 +8319,14 @@ function Nx.Map:CheckWorldHotspots(wx, wy)
         end
     end
 
-    -- Keep the active city or modern zone while the cursor remains inside its
-    -- own hotspot. City/parent rectangles overlap, and Midnight's Coiled Isle
-    -- also overlaps the earlier Voidstorm/Harandar rectangles. List ordering
-    -- otherwise flips the active map each tick and invalidates all icon data.
-    -- This remains geometric: leaving the current hotspot still selects the
-    -- neighboring zone normally.
+    -- Keep the active city, modern zone, or underground layer only while the
+    -- cursor remains inside its actual hotspot. These rectangles often overlap
+    -- their parent zones, but leaving the bounded hotspot must always release
+    -- the selection so another zone can be highlighted immediately.
     local currentMapID = self:GetCurrentMapId()
     local currentInfo = self.MapWorldInfo and self.MapWorldInfo[currentMapID]
     if currentInfo and (currentInfo.ModernZoneArt
+        or currentInfo.Underground
         or currentInfo.City and currentInfo.LegacyMapArt) then
         local activeHotspots = (currentInfo.City or currentInfo.StartZone)
             and self.WorldHotspotsCity or self.WorldHotspots
@@ -8324,6 +8358,7 @@ function Nx.Map:CheckWorldHotspots(wx, wy)
         return
     end
 
+    Nx.Map.MouseIsOverMap = nil
     self.WorldHotspotTipStr = false
 
 --    local tt = GameTooltip
@@ -8358,10 +8393,6 @@ function Nx.Map:CheckWorldHotspotsType (wx, wy, quad)
             local curId = self:GetCurrentMapId()
 
             if spot.MapId ~= curId then
-                local winfo = self.MapWorldInfo[curId]
-                if winfo and winfo.Underground then
-                    return false
-                end
 --                Nx.prt ("hotspot %s %s %s %s %s", spot.MapId, spot.WX1, spot.WX2, spot.WY1, spot.WY2)
                 if not Nx.Map:CheckDropdownListVisible() then self:SetCurrentMap (spot.MapId) end
             end
@@ -12950,6 +12981,11 @@ end
 -- delve, or scenario is protected even before Carbonite's static map data is
 -- updated for it.
 local function ComputeInstanceDisplayContext(map, mapID)
+    local worldInfo = map.MapWorldInfo and map.MapWorldInfo[mapID]
+    if worldInfo and worldInfo.OutdoorSubzone then
+        return false
+    end
+
     local mapInfo = GetSafeMapInfo(mapID)
     if mapInfo and IsDungeonLikeMapType(mapInfo.mapType) then
         return true

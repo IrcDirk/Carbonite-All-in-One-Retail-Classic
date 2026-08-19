@@ -175,24 +175,20 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
     local quest = Nx.Quests[qId]
 
     if Nx.qdb.profile.QuestWatch.Sync then
-        local i = 1
-        while GetQuestLogTitle(i) do
-            local _, _, _, _, _, _, _, questID = GetQuestLogTitle(i)
-            if questID == qId then
-                BlizIndex = i
-            else
-                if (IsQuestWatched(i)) then
-                    -- Combat-defer: a bare RemoveQuestWatch fires
-                    -- QUEST_WATCH_LIST_CHANGED in our taint, which drives
-                    -- Blizzard's BonusObjective/Quest data providers into the
-                    -- combat-protected SetPassThroughButtons (AcquirePin →
-                    -- CheckMouseButtonPassthrough). CalcAutoTrack runs this on
-                    -- objective updates (e.g. a rare kill) mid-combat.
-                    local _i = i
-                    Nx.SuperTrackSafe(function() RemoveQuestWatch(_i) end)
+        if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
+            BlizIndex = C_QuestLog.GetLogIndexForQuestID (qId)
+        elseif GetQuestLogIndexByID then
+            BlizIndex = GetQuestLogIndexByID (qId)
+        else
+            local i = 1
+            while GetQuestLogTitle (i) do
+                local _, _, _, _, _, _, _, questID = GetQuestLogTitle (i)
+                if questID == qId then
+                    BlizIndex = i
+                    break
                 end
+                i = i + 1
             end
-        i = i + 1
         end
     end
     if quest then
@@ -256,14 +252,9 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
 --        Nx.prt ("TrackOnMap %s %s %s %s %s", qId, qObj, track, name, zone)
 
         if track > 0 and zone then
-            if Nx.qdb.profile.QuestWatch.Sync then
-                if BlizIndex then
-                    if not (IsQuestWatched(BlizIndex)) then
-                        -- Combat-defer (see RemoveQuestWatch note above).
-                        local _bi = BlizIndex
-                        Nx.SuperTrackSafe(function() AddQuestWatch(_bi) end)
-                    end
-                end
+            if BlizIndex and Quest:GetQuest (qId) == "W"
+                    and Quest.Watch and Quest.Watch.SyncBlizzardWatch then
+                Quest.Watch:SyncBlizzardWatch (qId, BlizIndex, true)
             end
     local QMap = NxMap1.NxMap
     if not InCombatLockdown() then
@@ -607,11 +598,8 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                 if tqid == qId then        -- Same quest as us?
 
                     if tbits == 0 or (tid == qId * 100 + qObj) then
-                        if Nx.qdb.profile.QuestWatch.Sync then
-                            -- Combat-defer (see RemoveQuestWatch note above).
-                            local _bi = BlizIndex
-                            Nx.SuperTrackSafe(function() RemoveQuestWatch(_bi) end)
-                        end
+                        -- Clearing an active map target is independent from
+                        -- removing a quest from either watch list.
                         self.Map:ClearTargets()
                         if not InCombatLockdown() and Nx.BlobsAvailable then
                             local QMap = NxMap1.NxMap
@@ -627,4 +615,3 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
         end
     end
 end
-

@@ -1371,8 +1371,26 @@ end
 -- @param qTime    Quest time
 --
 function Nx.Quest:SetQuest(qId, qStatus, qTime)
+    local previousStatus = self:GetQuest(qId)
     qTime = qTime or 0
-    Nx.Quest.CurCharacter.Q[qId] = qStatus .. qTime
+    self.CurCharacter.Q[qId] = qStatus .. qTime
+
+    local wasWatched = previousStatus == "W"
+    local isWatched = qStatus == "W"
+    if wasWatched == isWatched then
+        return
+    end
+
+    local watch = self.Watch
+    if watch then
+        watch.ForceListRefresh = true
+
+        if watch.Opened and watch.SyncBlizzardWatch
+                and not watch.ApplyingBlizzardWatch
+                and type(qId) == "number" and qId > 0 then
+            watch:SyncBlizzardWatch(qId, nil, isWatched)
+        end
+    end
 end
 
 ---

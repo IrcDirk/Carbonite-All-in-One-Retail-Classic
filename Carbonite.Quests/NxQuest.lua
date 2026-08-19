@@ -259,6 +259,19 @@ end
 -- NxQuest sites unchanged.
 Nx.Quest = Nx.Quest or {}
 Nx.Quest.GetQuestCompletionState = GetQuestCompletionState
+
+-- Quest-list rows store the quest ID above their low 16 objective/index bits.
+-- WoW's bit library truncates its input to 32 bits, so bit.rshift(row, 16)
+-- corrupts every modern quest ID above 65535. Lua numbers retain these packed
+-- values exactly; arithmetic division preserves the complete quest ID.
+function Nx.Quest.GetPackedQuestID(packedData)
+    if type(packedData) ~= "number" or packedData <= 0 then
+        return 0
+    end
+
+    return floor(packedData / 0x10000)
+end
+
 function Nx.Quest.GetQuestTagInfoCompat(questID)
     if not questID then return nil end
     if C_QuestLog and C_QuestLog.GetQuestTagInfo then
@@ -319,7 +332,7 @@ if C_QuestLog and C_QuestLog.AddQuestWatch and not AddQuestWatch then
             -- combat-protected SetPassThroughButtons (same family as
             -- the C_SuperTrack sites). Synchronous out of combat.
             Nx.SuperTrackSafe(function()
-                C_QuestLog.AddQuestWatch(questID, Enum.QuestWatchType.Manual)
+                C_QuestLog.AddQuestWatch(questID)
             end)
         end
     end
