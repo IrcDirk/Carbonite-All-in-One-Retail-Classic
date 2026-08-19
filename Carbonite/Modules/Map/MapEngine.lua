@@ -922,6 +922,14 @@ function Nx.Map:Create(index)
     Nx.Map:RegisterEvent("ZONE_CHANGED_INDOORS", "OnEvent")     -- Indoor/outdoor
     Nx.Map:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")    -- New area
 
+    -- Blizzard publishes guard directions (auction house, trainers, banks,
+    -- and similar city services) through this event. Some older clients do
+    -- not expose it, so keep registration capability-gated and protected.
+    if _G.C_GossipInfo and _G.C_GossipInfo.GetPoiForUiMapID then
+        pcall(Nx.Map.RegisterEvent, Nx.Map,
+            "DYNAMIC_GOSSIP_POI_UPDATED", "OnEvent")
+    end
+
     -- Set up mouse handlers
     f:SetScript("OnMouseDown", self.OnMouseDown)
     f:SetScript("OnMouseUp", self.OnMouseUp)
@@ -4159,6 +4167,11 @@ function Nx.Map:OnEvent (event, ...)
         if map.Win.Frm:IsVisible() then
             map:UpdateAll()
         end
+    elseif event == "DYNAMIC_GOSSIP_POI_UPDATED" then
+        -- Bypass the normal POI cache on the next map pass. This is required
+        -- while the map is following, zooming, or scrolling, because those
+        -- paths intentionally retain the previous POI snapshot.
+        map.GossipPOIDirty = true
     elseif event == "PLAYER_REGEN_DISABLED" then
         local win = map.Win
         if (Nx.db.profile.Map.HideCombat and win:IsSizeMax()) then
@@ -6021,13 +6034,15 @@ function Nx.Map:Update (elapsed)
         local zPOIs
         local now = GetTime()
         local isZoomingOrScrolling = self.StepTime ~= 0 or self.Scrolling
-        local cacheValid = POI_Cache.mapID == rid
+        local gossipPOIDirty = self.GossipPOIDirty
+        local cacheValid = not gossipPOIDirty
+            and POI_Cache.mapID == rid
             and POI_Cache.instanceContext == isInstanceContext
             and POI_Cache.data
             and (now - POI_Cache.time) < POI_Cache.refreshInterval
 
         -- Use cached POI data during zoom/scroll to reduce stutter, or if cache is still valid
-        if isZoomingOrScrolling and POI_Cache.data
+        if not gossipPOIDirty and isZoomingOrScrolling and POI_Cache.data
             and POI_Cache.mapID == rid
             and POI_Cache.instanceContext == isInstanceContext then
             zPOIs = POI_Cache.data
@@ -6215,11 +6230,11 @@ function Nx.Map:Update (elapsed)
                 end
             end
 
-            -- Gossip POI (retail). C_GossipInfo.GetPoiForUiMapID returns
-            -- at most one gossipPoiID per map (Renown Quartermaster /
-            -- DYNAMIC_GOSSIP_POI_UPDATED hubs). Wrap it in a POI-shaped
-            -- entry so the existing iteration's atlasName branch renders
-            -- it. Toggled at iteration via _type = 8 + ShowGossip gate.
+            -- Dynamic gossip POI. This includes directions requested from
+            -- city guards (auction houses, trainers, banks, and other city
+            -- services). GossipPoiInfo supplies a Minimap POI textureIndex,
+            -- not an atlasName; retain optional fields only for forward
+            -- compatibility. Toggled via _type = 8 + ShowGossip below.
             local gPOIs = POI_Pool.gPOIs
             wipe(gPOIs)
             if _G.C_GossipInfo
@@ -6232,8 +6247,10 @@ function Nx.Map:Update (elapsed)
                         gPOIs[1] = {
                             position      = gInfo.position,
                             name          = gInfo.name,
+                            textureIndex  = gInfo.textureIndex,
                             atlasName     = gInfo.atlasName,
                             description   = gInfo.description,
+                            inBattleMap   = gInfo.inBattleMap,
                             textureWidth  = 16,
                             textureHeight = 16,
                         }
@@ -6313,6 +6330,7 @@ function Nx.Map:Update (elapsed)
             POI_Cache.instanceContext = isInstanceContext
             POI_Cache.time = now
             POI_Cache.data = zPOIs
+            self.GossipPOIDirty = nil
 
             if debugProfile then
                 local now2 = debugprofilestop()
@@ -6369,7 +6387,7 @@ function Nx.Map:Update (elapsed)
             -- type, name, desc, txIndex, pX, pY = C_WorldMap.GetMapLandmarkInfo (i)
             -- local type, name, desc, txIndex, pX, pY, mapLinkID, inBattleMap, graveyardID, areaID, poiID, isObjectIcon, atlasIcon = C_WorldMap.GetMapLandmarkInfo(i);
             -- Nx.prtCtrl ("LandMs %s, %s, %s, %s, %s, %s, %s, %s", i, poiID, txIndex or '-', name, type, isObjectIcon, atlasIcon, WorldMap_IsSpecialPOI(poiID))
-            if (atlasIcon or zPOI.tex or (pX and txIndex ~= 0)) and not skip then        -- WotLK has 0 index POIs for named locations
+            if (atlasIcon or zPOI.tex or (pX and txIndex and txIndex ~= 0)) and not skip then        -- WotLK has 0 index POIs for named locations
                 if (type ~= 3 or Nx.db.char.Map.ShowArchBlobs)
                     and (type ~= 8 or Nx.db.char.Map.ShowGossip)
                     and (type ~= 9 or Nx.db.char.Map.ShowBonusObjective)
