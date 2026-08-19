@@ -139,6 +139,7 @@ Nx.MapWorldHotspots2 = {
         [2393] = "3ff3ffa65bd6",
         [2395] = "333028ca36b73336e0732851",
         [2437] = "3ff0283fffad23d7ff7ad7d62e19eac514eb",
+        [2512] = "000000ffffff",
         [2536] = "07a0ccee0eb7"
 
 

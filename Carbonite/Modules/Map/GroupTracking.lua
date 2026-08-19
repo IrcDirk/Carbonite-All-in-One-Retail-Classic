@@ -28,15 +28,22 @@ local DEFAULT_HIT_RADIUS = 3       -- zone units (zone is 0..100)
 
 function GroupTracking:GetUnitPosition(unit)
     if not unit or not _G.C_Map then return 0, 0 end
-    local mapID = _G.C_Map.GetBestMapForUnit and _G.C_Map.GetBestMapForUnit(unit)
-    if not mapID then return 0, 0 end
+    local queryMapID = _G.C_Map.GetBestMapForUnit and _G.C_Map.GetBestMapForUnit(unit)
+    if not queryMapID then return 0, 0 end
 
     local NxMap = _G.Nx and _G.Nx.Map
-    if unit ~= "player" and NxMap and NxMap.RMapId and mapID ~= NxMap.RMapId then
+    local MapIDs = Carbonite.Modules.Map.MapIDs
+    local logicalMapID = MapIDs and MapIDs.CanonicalizeMapID
+        and MapIDs:CanonicalizeMapID(queryMapID)
+        or queryMapID
+
+    -- Compare Carbonite's logical map IDs (for example Undercity 90), but
+    -- query the position on Blizzard's actual player map (Undercity 998).
+    if unit ~= "player" and NxMap and NxMap.RMapId and logicalMapID ~= NxMap.RMapId then
         return 0, 0
     end
 
-    local pos = _G.C_Map.GetPlayerMapPosition and _G.C_Map.GetPlayerMapPosition(mapID, unit)
+    local pos = _G.C_Map.GetPlayerMapPosition and _G.C_Map.GetPlayerMapPosition(queryMapID, unit)
     if not pos then return 0, 0 end
     local x, y = pos:GetXY()
     return x or 0, y or 0

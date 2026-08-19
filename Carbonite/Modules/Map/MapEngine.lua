@@ -322,15 +322,14 @@ end
 -- @param zone  The map ID to display
 --
 function Nx.Map:SetMapByID(zone)
-    -- Only push the id into Blizzard's WorldMapFrame when it's actually shown
-    -- AND its zoom data exists. Carbonite normally keeps WorldMapFrame hidden
-    -- and reads the hovered zone from Nx.Map.MouseIsOverMap (see
-    -- GetCurrentMapAreaID), so we must NOT call SetMapID for our own hidden
-    -- map: that taints WorldMapFrame's data providers (WorldQuestDataProvider
-    -- -> AcquirePin -> SetPassThroughButtons gets ADDON_ACTION_BLOCKED when a
-    -- world quest later refreshes). zoomLevels is nil while hidden post-12.0.5,
-    -- so this stays a no-op for the Carbonite map -- exactly what we want.
-    if not WorldMapFrame:IsShown() and WorldMapFrame.ScrollContainer.zoomLevels then
+    -- Carbonite resolves its own map independently. Changing a hidden Blizzard
+    -- canvas still runs OnMapChanged and its data providers, which removes
+    -- scenario/vignette pins before the player subsequently opens that map.
+    -- Never disturb an already-open Blizzard map either: only an explicitly
+    -- requested Blizzard-map operation owns its current map selection.
+    local worldMap = _G.WorldMapFrame
+    if self.BlizzToggling and worldMap and worldMap:IsShown()
+        and worldMap.ScrollContainer and worldMap.ScrollContainer.zoomLevels then
         -- Translate continent IDs for non-MoP Classic clients
         if Nx.OldMapIDs then
             if zone == 12 then zone = 1414 end      -- Kalimdor
@@ -340,7 +339,7 @@ function Nx.Map:SetMapByID(zone)
         -- (their code doesn't handle nil from C_PvP.GetBattlefieldVehicles)
         -- Skip during combat to avoid taint from Blizzard's quest data providers
         if not InCombatLockdown() then
-            pcall(WorldMapFrame.SetMapID, WorldMapFrame, zone)
+            pcall(worldMap.SetMapID, worldMap, zone)
         end
     end
 end
@@ -1569,6 +1568,22 @@ function Nx.Map:Create(index)
         m.QuestWin:SetBorderTexture([[Interface\WorldMap\UI-QuestBlob-Outside]])
         m.QuestWin:SetBorderScalar(0.15)
 
+        -- Delve objectives are ScenarioPOIFrame blobs, not QuestPOIFrame
+        -- blobs. This frame type is absent on some supported Classic clients.
+        local scenarioOK, scenarioWin = pcall(
+            CreateFrame, "ScenarioPOIFrame", nil, m.TextScFrm:GetScrollChild()
+        )
+        if scenarioOK and scenarioWin then
+            m.ScenarioWin = scenarioWin
+            scenarioWin:Hide()
+            scenarioWin:SetSize(1002, 668)
+            scenarioWin:SetFillAlpha(255 * m.QuestAlpha)
+            scenarioWin:SetBorderAlpha(255 * m.QuestAlpha)
+            scenarioWin:SetFillTexture([[Interface\WorldMap\UI-QuestBlob-Inside]])
+            scenarioWin:SetBorderTexture([[Interface\WorldMap\UI-QuestBlob-Outside]])
+            scenarioWin:SetBorderScalar(1)
+        end
+
         -- Archaeology dig site blobs
         local arch = CreateFrame("ArchaeologyDigSiteFrame")
         m.Arch = arch
@@ -1854,6 +1869,44 @@ end
 function Nx.Map:AttachWorldMap() end
 function Nx.Map:DetachWorldMap() end
 
+-- Instance art lives on Carbonite's own WMDF canvas. Keep every overlay and
+-- marker anchored to that exact frame instead of inferring its rectangle from
+-- the outer window, title height, or the independent Blizzard world map.
+function Nx.Map:GetInstanceMapCanvas()
+    local canvas = Nx.Map.WMDF
+    if not canvas or not canvas.GetParent or canvas:GetParent() ~= self.Frm
+        or not canvas.IsShown or not canvas:IsShown() then
+        return nil
+    end
+
+    local width = canvas:GetWidth()
+    local height = canvas:GetHeight()
+    if type(width) ~= "number" or type(height) ~= "number"
+        or width <= 0 or height <= 0 then
+        return nil
+    end
+
+    return canvas, width, height
+end
+
+function Nx.Map:AnchorInstanceMapOverlay(overlay, levelOffset)
+    local canvas, width, height = self:GetInstanceMapCanvas()
+    if not overlay or not canvas then
+        if overlay then overlay:Hide() end
+        return false
+    end
+
+    if overlay:GetParent() ~= canvas then
+        overlay:SetParent(canvas)
+    end
+    overlay:SetScale(1)
+    overlay:ClearAllPoints()
+    overlay:SetPoint("TOPLEFT", canvas, "TOPLEFT", 0, 0)
+    overlay:SetSize(width, height)
+    overlay:SetFrameLevel(canvas:GetFrameLevel() + (levelOffset or 1))
+    return true
+end
+
 --------
 -- Update Blizzard world map frame if we grabbed it
 
@@ -1928,12 +1981,56 @@ function Nx.Map:UpdateWorldMap()
             self.Arch:Hide()
         end
 
-        -- World Quest blob drawing (only for super-tracked world quests)
-        -- Regular quest blobs are handled separately in NxQuest.lua
         local superTrackedQuestID = C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID and C_SuperTrack.GetSuperTrackedQuestID()
         local isWorldQuest = superTrackedQuestID and superTrackedQuestID > 0 and QuestUtils_IsQuestWorldQuest and QuestUtils_IsQuestWorldQuest(superTrackedQuestID)
 
-        if isWorldQuest and not isInstanceMap then
+        if isInstanceMap and self.CurOpts.NXInstanceMaps then
+            local mapID = self.MapId or Nx.Map.RMapId
+            local showBlobs = Nx.db.char.Map.ShowQuestBlobs
+            local scenarioActive = _G.C_Scenario
+                and type(_G.C_Scenario.IsInScenario) == "function"
+                and _G.C_Scenario.IsInScenario()
+
+            if self.ScenarioWin then
+                self.ScenarioWin:DrawNone()
+                if showBlobs and scenarioActive
+                    and self:AnchorInstanceMapOverlay(self.ScenarioWin, 1) then
+                    self.ScenarioWin:SetMapID(mapID)
+                    self.ScenarioWin:DrawAll()
+                    self.ScenarioWin:SetFillAlpha(255 * self.QuestAlpha)
+                    self.ScenarioWin:SetBorderAlpha(255 * self.QuestAlpha)
+                    self.ScenarioWin:Show()
+                else
+                    self.ScenarioWin:Hide()
+                end
+            end
+
+            self.QuestWin:DrawNone()
+            local questPOIEnabled = not _G.GetCVarBool
+                or _G.GetCVarBool("questPOI")
+            if showBlobs and questPOIEnabled and superTrackedQuestID
+                and superTrackedQuestID > 0
+                and self:AnchorInstanceMapOverlay(self.QuestWin, 2) then
+                self.QuestWin:SetMapID(mapID)
+                self.QuestWin:DrawBlob(superTrackedQuestID, true)
+                self.QuestWin:SetFillAlpha(255 * self.QuestAlpha)
+                self.QuestWin:SetBorderAlpha(255 * self.QuestAlpha)
+                self.QuestWin:Show()
+                self.ShowingWorldQuestBlob = true
+            else
+                self.QuestWin:Hide()
+                -- Prevent the regular quest tracker from clearing an active
+                -- delve-scenario overlay between map refreshes.
+                self.ShowingWorldQuestBlob = not not (showBlobs and scenarioActive)
+            end
+        elseif isWorldQuest and not isInstanceMap then
+            if self.ScenarioWin then self.ScenarioWin:Hide() end
+            local questParent = self.TextScFrm:GetScrollChild()
+            if self.QuestWin:GetParent() ~= questParent then
+                self.QuestWin:SetParent(questParent)
+                self.QuestWin:SetScale(1)
+                self.QuestWin:SetSize(1002, 668)
+            end
             self.QuestWin:DrawNone()
             if isZooming or self.Scrolling then
                 self.QuestWin:Hide()
@@ -1956,11 +2053,18 @@ function Nx.Map:UpdateWorldMap()
             -- Mark that we're showing a world quest blob so NxQuest.lua doesn't interfere
             self.ShowingWorldQuestBlob = true
         elseif isInstanceMap then
-            -- Hide QuestWin for instance maps to prevent world map rendering issues
+            if self.ScenarioWin then self.ScenarioWin:Hide() end
             self.QuestWin:DrawNone()
             self.QuestWin:Hide()
             self.ShowingWorldQuestBlob = false
         else
+            if self.ScenarioWin then self.ScenarioWin:Hide() end
+            local questParent = self.TextScFrm:GetScrollChild()
+            if self.QuestWin:GetParent() ~= questParent then
+                self.QuestWin:SetParent(questParent)
+                self.QuestWin:SetScale(1)
+                self.QuestWin:SetSize(1002, 668)
+            end
             -- Not tracking a world quest - clear the blob if we were showing one
             if self.ShowingWorldQuestBlob then
                 self.QuestWin:DrawNone()
@@ -2081,12 +2185,23 @@ function Nx.Map:InitFrames()
         self.ContFrms[n] = {}
 
         local mapFileName = self.MapInfo[n].FileName
-        local texi = 1
+        local rootMapID = self.MapZones[0] and self.MapZones[0][n]
+        local artTextures = Nx.isRetail and rootMapID
+            and self:GetArtLayerTextures(rootMapID, 1)
+        local artLayers = artTextures and self:GetArtLayers(rootMapID)
+        local artLayer = artLayers and artLayers[1]
 
 --        Nx.prt ("Map Update ".. mapFileName)
-        local tileX    = self.MapInfo[n].TileX or 4
-        local tileY    = self.MapInfo[n].TileY or 3
+        local tileX = artLayer and ceil(artLayer.layerWidth / artLayer.tileWidth)
+            or self.MapInfo[n].TileX or 4
+        local tileY = artLayer and ceil(artLayer.layerHeight / artLayer.tileHeight)
+            or self.MapInfo[n].TileY or 3
         local numtiles = tileX * tileY
+        local continentFrames = self.ContFrms[n]
+        continentFrames.NxArtLayer = artLayer
+        continentFrames.NxTileX = tileX
+        continentFrames.NxTileY = tileY
+        continentFrames.NxTileCount = numtiles
 
         for i = 1, numtiles do
             if Nx.ContBlks[n][i] ~= 0 then
@@ -2097,7 +2212,8 @@ function Nx.Map:InitFrames()
                 t:SetAllPoints (cf)
                 cf.texture = t
 
-                t:SetTexture ("Interface\\WorldMap\\"..mapFileName.."\\"..mapFileName..i)
+                t:SetTexture(artTextures and artTextures[i]
+                    or "Interface\\WorldMap\\"..mapFileName.."\\"..mapFileName..i)
 
                 t:SetSnapToPixelGrid(false)
                 t:SetTexelSnappingBias(0)
@@ -4056,15 +4172,21 @@ function Nx.Map:OnEvent (event, ...)
         if Nx.BlobsAvailable then
             map.Arch:Hide()
             map.QuestWin:Hide()
+            if map.ScenarioWin then map.ScenarioWin:Hide() end
             map.Arch:SetParent(nil)
             map.QuestWin:SetParent(nil)
+            if map.ScenarioWin then map.ScenarioWin:SetParent(nil) end
             map.Arch:ClearAllPoints()
             map.QuestWin:ClearAllPoints()
+            if map.ScenarioWin then map.ScenarioWin:ClearAllPoints() end
         end
     elseif event == "PLAYER_REGEN_ENABLED" then
         if Nx.BlobsAvailable then
             map.Arch:SetParent(map.TextScFrm:GetScrollChild())
             map.QuestWin:SetParent(map.TextScFrm:GetScrollChild())
+            if map.ScenarioWin then
+                map.ScenarioWin:SetParent(map.TextScFrm:GetScrollChild())
+            end
             -- Don't show blobs on instance maps as they cause rendering issues
             local isInstanceMap = Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)
             if not isInstanceMap then
@@ -4381,6 +4503,7 @@ local POI_Pool = {
     vPOIs = {},
     gPOIs = {},  -- gossip (C_GossipInfo)
     bPOIs = {},  -- bonus objectives (C_TaskQuest filtered to bonus)
+    sPOIs = {},  -- scenario objectives, locked doors, and other delve markers
 }
 
 -- Shared sentinel returned in place of `or {}` when a C_AreaPoiInfo /
@@ -4431,6 +4554,145 @@ local function GetSafeMapGroupID(mapID)
 
     local ok, groupID = pcall(_G.C_Map.GetMapGroupID, mapID)
     return ok and groupID or nil
+end
+
+-- Blizzard's scenario and vignette pins use their atlas's native dimensions.
+-- Older clients do not expose C_Texture.GetAtlasInfo, so keep their existing
+-- 16-pixel fallback instead of assuming the Retail texture API exists.
+function Nx.Map:GetMapPOIAtlasSize(atlasName, fallbackSize)
+    local size = fallbackSize or 16
+    local textureAPI = _G.C_Texture
+    if not atlasName or not textureAPI
+        or type(textureAPI.GetAtlasInfo) ~= "function" then
+        return size, size
+    end
+
+    local ok, atlasInfo = pcall(textureAPI.GetAtlasInfo, atlasName)
+    if not ok or type(atlasInfo) ~= "table"
+        or type(atlasInfo.width) ~= "number"
+        or type(atlasInfo.height) ~= "number"
+        or atlasInfo.width <= 0 or atlasInfo.height <= 0 then
+        return size, size
+    end
+
+    return atlasInfo.width, atlasInfo.height
+end
+
+-- Mirror Blizzard_SharedMapDataProviders/ScenarioDataProvider.lua. Delves
+-- expose locked doors, scenario objectives, and special objects through
+-- C_ScenarioInfo rather than the area-POI or vignette APIs.
+function Nx.Map:GetScenarioMapPOIs(mapID, output)
+    wipe(output)
+
+    local scenarioAPI = _G.C_Scenario
+    local scenarioInfoAPI = _G.C_ScenarioInfo
+    if not mapID or mapID <= 0 or not scenarioAPI or not scenarioInfoAPI
+        or type(scenarioAPI.IsInScenario) ~= "function"
+        or type(scenarioInfoAPI.GetScenarioIconInfo) ~= "function" then
+        return output
+    end
+
+    local activeOK, inScenario = pcall(scenarioAPI.IsInScenario)
+    if not activeOK or not inScenario then
+        return output
+    end
+
+    local iconsOK, icons = pcall(scenarioInfoAPI.GetScenarioIconInfo, mapID)
+    if not iconsOK or type(icons) ~= "table" then
+        return output
+    end
+
+    for _, icon in ipairs(icons) do
+        if type(icon) == "table"
+            and type(icon.x) == "number"
+            and type(icon.y) == "number"
+            and type(icon.atlas) == "string"
+            and icon.atlas ~= "" then
+            local width, height = self:GetMapPOIAtlasSize(icon.atlas, 16)
+            local description = icon.description
+            if type(description) ~= "string" or description == "" then
+                description = _G.SCENARIO or "Scenario"
+            end
+
+            output[#output + 1] = {
+                position = { x = icon.x, y = icon.y },
+                name = description,
+                atlasName = icon.atlas,
+                textureWidth = width,
+                textureHeight = height,
+                _scenarioIcon = true,
+            }
+        end
+    end
+
+    return output
+end
+
+-- Blizzard's vignette provider explicitly suppresses these markers on maps
+-- carrying UIMapFlag.HideVignettes. Preserve the existing behavior on client
+-- families that do not expose that flag or its bit helpers.
+function Nx.Map:ShouldShowMapVignettes(mapID)
+    local mapInfo = GetSafeMapInfo(mapID)
+    local hideFlag = _G.Enum and _G.Enum.UIMapFlag
+        and _G.Enum.UIMapFlag.HideVignettes
+    if not mapInfo or type(mapInfo.flags) ~= "number"
+        or type(hideFlag) ~= "number" then
+        return true
+    end
+
+    if _G.FlagsUtil and type(_G.FlagsUtil.IsSet) == "function" then
+        local ok, hidden = pcall(_G.FlagsUtil.IsSet, mapInfo.flags, hideFlag)
+        if ok then
+            return not hidden
+        end
+    end
+
+    if _G.bit and type(_G.bit.band) == "function" then
+        local ok, flags = pcall(_G.bit.band, mapInfo.flags, hideFlag)
+        if ok then
+            return flags == 0
+        end
+    end
+
+    return true
+end
+
+-- Instance artwork is a fixed normalized canvas, not an outdoor world-space
+-- projection. Using MapPosXDraw/ScaleDraw here makes treasure and NPC icons
+-- drift when the map is panned or zoomed and can hide valid edge markers.
+function Nx.Map:PlaceInstanceMapPOI(frame, mapX, mapY, width, height)
+    if type(mapX) ~= "number" or type(mapY) ~= "number"
+        or type(width) ~= "number" or type(height) ~= "number"
+        or width <= 0 or height <= 0 then
+        frame:Hide()
+        return false
+    end
+
+    local canvas, canvasWidth, canvasHeight = self:GetInstanceMapCanvas()
+    if not canvas then
+        frame:Hide()
+        return false
+    end
+
+    local x = mapX * canvasWidth
+    local y = mapY * canvasHeight
+    local halfWidth = width * 0.5
+    local halfHeight = height * 0.5
+    if x + halfWidth < 0 or x - halfWidth > canvasWidth
+        or y + halfHeight < 0 or y - halfHeight > canvasHeight then
+        frame:Hide()
+        return false
+    end
+
+    frame:ClearAllPoints()
+    local scale = frame.GetScale and frame:GetScale() or 1
+    if type(scale) ~= "number" or scale <= 0 then scale = 1 end
+    frame:SetPoint("CENTER", canvas, "TOPLEFT", x / scale, -y / scale)
+    frame:SetWidth(width)
+    frame:SetHeight(height)
+    frame:SetFrameLevel((self.Level or 0) + 51)
+    frame:Show()
+    return true
 end
 
 -- Per-frame cached values (set at start of Update)
@@ -5077,9 +5339,11 @@ function Nx.Map:UpdateWorld()
         local frm = self.TileFrms[tileIndex]
         if frm then
             frm:Hide()
+            frm.NxTileVisible = false
             if frm.texture then frm.texture:SetTexture(nil) end
         end
     end
+    self.TileFrms.NxDrawMapID = nil
 
     -- Commit the cache only after the requested art was installed. Caching a
     -- nil texture response is what previously made a random old zone persist.
@@ -5854,12 +6118,8 @@ function Nx.Map:Update (elapsed)
             -- crashes on nil.
             -- Boss encounters from the dungeon journal. Built into
             -- their OWN array (NOT appended to aPOIs) so ArrayConcatReuse
-            -- below stamps them with a distinct _type. aPOIs entries
-            -- collide with the iteration's stale "type == 4 means
-            -- Archaeology dig site" gate (a leftover from the old
-            -- C_WorldMap.GetMapLandmarkInfo API; the reused _type field
-            -- now means source-array index, not landmark kind) — so
-            -- anything dumped into aPOIs gets filtered by ShowArchBlobs.
+            -- below stamps them with a distinct _type and retains the
+            -- separate journal-click behavior used for encounter icons.
             local ePOIs = POI_Pool.ePOIs
             if not ePOIs then
                 ePOIs = {}
@@ -5929,18 +6189,33 @@ function Nx.Map:Update (elapsed)
             -- array is the main win.
             local vPOIs = POI_Pool.vPOIs
             wipe(vPOIs)
-            if C_VignetteInfo and C_VignetteInfo.GetVignettes then
+            if self:ShouldShowMapVignettes(rid)
+                and C_VignetteInfo
+                and C_VignetteInfo.GetVignettes
+                and C_VignetteInfo.GetVignetteInfo then
                 local vGUIDs = C_VignetteInfo.GetVignettes() or POI_EMPTY
                 for _, guid in ipairs(vGUIDs) do
                     local vInfo = C_VignetteInfo.GetVignetteInfo(guid)
                     if vInfo and vInfo.onWorldMap then
-                        local pos = C_VignetteInfo.GetVignettePosition and C_VignetteInfo.GetVignettePosition(guid, rid)
-                        if pos then
+                        local pos, facing
+                        if C_VignetteInfo.GetVignettePosition then
+                            pos, facing = C_VignetteInfo.GetVignettePosition(guid, rid)
+                        end
+                        if pos and _G.type(pos.x) == "number"
+                            and _G.type(pos.y) == "number" then
+                            local width, height = self:GetMapPOIAtlasSize(vInfo.atlasName, 16)
                             vPOIs[#vPOIs + 1] = {
                                 position = pos,
                                 name = vInfo.name,
                                 atlasName = vInfo.atlasName,
                                 description = vInfo.description,
+                                textureWidth = width,
+                                textureHeight = height,
+                                tooltipWidgetSet = vInfo.tooltipWidgetSet,
+                                vignetteGUID = guid,
+                                onMinimap = vInfo.onMinimap,
+                                inFogOfWar = vInfo.inFogOfWar,
+                                facing = facing,
                             }
                         end
                     end
@@ -6016,13 +6291,29 @@ function Nx.Map:Update (elapsed)
                 end
             end
 
-            -- Use pooled table for concatenation. ePOIs (boss
-            -- encounters) lands at index 7, getting _type = 7 — distinct
-            -- from aPOIs' _type = 4 so the Archaeology gate in the
-            -- iteration doesn't filter them out. gPOIs/bPOIs follow at
-            -- index 8/9 with their own toggle gates.
+            -- Blizzard's ScenarioDataProvider is separate from both its
+            -- area-POI and vignette providers. Keep that distinction so
+            -- locked doors and scenario objects are not hidden by the
+            -- Archaeology, Gossip, or Bonus Objective visibility toggles.
+            local sPOIs = self:GetScenarioMapPOIs(rid, POI_Pool.sPOIs)
+
+            -- Preserve all existing source indexes: archaeology is 3,
+            -- area POIs are 4, encounters 7, gossip 8, bonus objectives 9,
+            -- and the new Blizzard scenario source is 10.
             zPOIs = POI_Pool.zPOIs
-            Nx.ArrayConcatReuse(zPOIs, tPOIs, pPOIs, dPOIs, aPOIs, bgPOIs, vPOIs, ePOIs, gPOIs, bPOIs)
+            Nx.ArrayConcatReuse(
+                zPOIs,
+                tPOIs,
+                pPOIs,
+                dPOIs,
+                aPOIs,
+                bgPOIs,
+                vPOIs,
+                ePOIs,
+                gPOIs,
+                bPOIs,
+                sPOIs
+            )
 
             -- Cache the POI data
             POI_Cache.mapID = rid
@@ -6058,6 +6349,7 @@ function Nx.Map:Update (elapsed)
                 pX = zPOI.x
                 pY = zPOI.y
             end
+            local mapX, mapY = pX, pY
 
             local atlasIcon = zPOI.atlasName or zPOI.atlas
             local desc = zPOI.description
@@ -6085,7 +6377,7 @@ function Nx.Map:Update (elapsed)
             -- local type, name, desc, txIndex, pX, pY, mapLinkID, inBattleMap, graveyardID, areaID, poiID, isObjectIcon, atlasIcon = C_WorldMap.GetMapLandmarkInfo(i);
             -- Nx.prtCtrl ("LandMs %s, %s, %s, %s, %s, %s, %s, %s", i, poiID, txIndex or '-', name, type, isObjectIcon, atlasIcon, WorldMap_IsSpecialPOI(poiID))
             if (atlasIcon or zPOI.tex or (pX and txIndex ~= 0)) and not skip then        -- WotLK has 0 index POIs for named locations
-                if (type ~= 4 or Nx.db.char.Map.ShowArchBlobs)
+                if (type ~= 3 or Nx.db.char.Map.ShowArchBlobs)
                     and (type ~= 8 or Nx.db.char.Map.ShowGossip)
                     and (type ~= 9 or Nx.db.char.Map.ShowBonusObjective)
                     and (faction == nil or faction == 0 or Nx.PlFactionNum == faction) then
@@ -6275,7 +6567,21 @@ function Nx.Map:Update (elapsed)
                         -- size keeps them readable but not dominant.
                         local iconW = txW
                         local iconH = txH
-                        if self:ClipFrameWNoChop(f, pX, pY, iconW, iconH) then
+                        local isInstanceCanvas = self.CurOpts.NXInstanceMaps
+                            and (self:IsInstanceMap(self.MapId)
+                                or self:IsBattleGroundMap(self.MapId))
+                        local visible
+                        if isInstanceCanvas then
+                            visible = self:PlaceInstanceMapPOI(
+                                f, mapX, mapY, iconW, iconH
+                            )
+                        else
+                            visible = self:ClipFrameWNoChop(
+                                f, pX, pY, iconW, iconH
+                            )
+                        end
+
+                        if visible then
                             if zPOI._bossEncounter then
                                 -- Boss POIs need a frame-level bump on
                                 -- instance maps: ClipFrameMF stamps the
@@ -6302,27 +6608,6 @@ function Nx.Map:Update (elapsed)
                                     encounterID = zPOI._bossEncID,
                                     instanceID  = zPOI._bossInstID,
                                 }
-                                -- And re-anchor using zone-coord
-                                -- placement on instance / BG maps.
-                                -- ClipFrameWNoChop projects via world
-                                -- coords + ScaleDraw, but the instance
-                                -- canvas shows zone [0..1] stretched to
-                                -- [0..MapW] directly. Carbonite assigns
-                                -- instances a generic small world-scale
-                                -- (1002/25600 ≈ 0.039) that's tighter
-                                -- than the actual instance extent, so
-                                -- world-coord placement compresses
-                                -- positions toward the canvas centre.
-                                if (self:IsInstanceMap(self.MapId)
-                                    or self:IsBattleGroundMap(self.MapId))
-                                    and self.CurOpts.NXInstanceMaps then
-                                    local mx = (zPOI.position and zPOI.position.x) or 0
-                                    local my = (zPOI.position and zPOI.position.y) or 0
-                                    f:ClearAllPoints()
-                                    f:SetPoint("TOPLEFT",
-                                        mx * self.MapW - iconW * 0.5,
-                                        -my * self.MapH + iconH * 0.5 - (self.TitleH or 0))
-                                end
                             end
                             -- Bonus objective: wire click to ToggleGoto
                             -- (cat = 6 in IconOnMouseDown) and reset the
@@ -7956,23 +8241,8 @@ function Nx.Map:MoveContinents()
         self.Level = self.Level + 2
     else
         -- Hide all continent tiles
-        local frms, frm
-
         for contN = 1, Nx.Map.ContCnt do
-            frms = self.ContFrms[contN]
-            local numtiles = 12
-
-            -- Some continents have different tile counts
-            if self.MapInfo[contN].TileX and self.MapInfo[contN].TileY then
-                numtiles = self.MapInfo[contN].TileX * self.MapInfo[contN].TileY
-            end
-
-            for i = 1, numtiles do
-                frm = frms[i]
-                if frm then
-                    frm:Hide()
-                end
-            end
+            self:HideZoneTileFrames(self.ContFrms[contN])
         end
 
         if self.ContFillFrm then
@@ -8014,22 +8284,27 @@ function Nx.Map:CheckWorldHotspots(wx, wy)
         end
     end
 
-    -- Keep the active city while the cursor is still inside that city's own
-    -- hotspot. City and parent-zone rectangles intentionally overlap; testing
-    -- the general list first could otherwise replace Exodar with Azuremyst or
-    -- Undercity with Tirisfal before the city hotspot was considered. This is
-    -- geometric selection, not an "underground" lock, so leaving the city's
-    -- actual bounds still selects the surrounding zone normally.
+    -- Keep the active city or modern zone while the cursor remains inside its
+    -- own hotspot. City/parent rectangles overlap, and Midnight's Coiled Isle
+    -- also overlaps the earlier Voidstorm/Harandar rectangles. List ordering
+    -- otherwise flips the active map each tick and invalidates all icon data.
+    -- This remains geometric: leaving the current hotspot still selects the
+    -- neighboring zone normally.
     local currentMapID = self:GetCurrentMapId()
     local currentInfo = self.MapWorldInfo and self.MapWorldInfo[currentMapID]
-    if currentInfo and currentInfo.City and currentInfo.LegacyMapArt then
-        for _, spot in ipairs(self.WorldHotspotsCity) do
-            if spot.MapId == currentMapID
-                and wx >= spot.WX1 and wx <= spot.WX2
-                and wy >= spot.WY1 and wy <= spot.WY2 then
-                Nx.Map.MouseIsOverMap = currentMapID
-                self.WorldHotspotTipStr = spot.NxTipBase .. "\n"
-                return
+    if currentInfo and (currentInfo.ModernZoneArt
+        or currentInfo.City and currentInfo.LegacyMapArt) then
+        local activeHotspots = (currentInfo.City or currentInfo.StartZone)
+            and self.WorldHotspotsCity or self.WorldHotspots
+        if activeHotspots then
+            for _, spot in ipairs(activeHotspots) do
+                if spot.MapId == currentMapID
+                    and wx >= spot.WX1 and wx <= spot.WX2
+                    and wy >= spot.WY1 and wy <= spot.WY2 then
+                    Nx.Map.MouseIsOverMap = currentMapID
+                    self.WorldHotspotTipStr = spot.NxTipBase .. "\n"
+                    return
+                end
             end
         end
     end
@@ -8218,8 +8493,10 @@ function Nx.Map:MoveCurZoneTiles (clear)
     local isInstanceWithOverlay = (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps
 
     if not clear and not isInstanceWithOverlay and
-            (not wzone or wzone.City or (wzone.StartZone and Nx.Map.RMapId == mapId) or
-            self:IsBattleGroundMap (Nx.Map.RMapId)) or self:IsMicroDungeon(Nx.Map.RMapId) then
+            (wzone.City or wzone.ModernZoneArt or
+            (wzone.StartZone and Nx.Map.RMapId == mapId) or
+            self:IsBattleGroundMap(Nx.Map.RMapId) or
+            self:IsMicroDungeon(Nx.Map.RMapId)) then
 
 --        Nx.prt ("MoveCurZoneTiles %d", mapId)
         local alpha = self.BackgndAlpha * (wzone.Alpha or 1)
@@ -8262,15 +8539,21 @@ end
 
 function Nx.Map:HideZoneTileFrames (frms, clearTextures)
     if not frms then return end
-    for i = 1, 150 do
+    if frms.NxOffscreen and not clearTextures then return end
+    for i = 1, frms.NxTileCount or 150 do
         local frm = frms[i]
         if frm then
-            frm:Hide()
+            if frm.NxTileVisible ~= false then
+                frm:Hide()
+                frm.NxTileVisible = false
+            end
             if clearTextures and frm.texture then
                 frm.texture:SetTexture(nil)
             end
         end
     end
+    frms.NxOffscreen = true
+    frms.NxDrawMapID = nil
     if clearTextures and frms == self.TileFrms then
         self.CurWorldTileCount = 0
     end
@@ -8312,10 +8595,14 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
     -- Nx.prt ("MapZ %f, %f", zx, zy, zone)
 
     local scale = self.ScaleDraw
-    local tilex, tiley
+    local tilex, tiley, layerInfo
     if zone == 0 then
-        tilex = self.MapInfo[cont].TileX or 4
-        tiley = self.MapInfo[cont].TileY or 3
+        -- Continent art never changes while these frames exist. InitFrames
+        -- already queried Blizzard and installed these exact textures; asking
+        -- again here performed one expensive API call per continent per tick.
+        layerInfo = frms.NxArtLayer
+        tilex = frms.NxTileX or self.MapInfo[cont].TileX or 4
+        tiley = frms.NxTileY or self.MapInfo[cont].TileY or 3
 
         if self.MapInfo[cont].ZXOff and self.MapInfo[cont].ZYOff then
             zx = zx + self.MapInfo[cont].ZXOff
@@ -8327,10 +8614,22 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
             zh = zh + self.MapInfo[cont].ZHOff
         end
     else
-        -- Get actual tile dimensions from layer info if available
-        local layers = Nx.Map:GetArtLayers(self:GetArtSourceMapID(zone))
-        if layers and layers[1] then
-            local layerInfo = layers[1]
+        -- The selected tile pool is shared between maps. Refresh its art
+        -- geometry only when the map, installed art, or tile count changes.
+        local artMapID = self:GetArtSourceMapID(zone)
+        local artID = self.CurWorldUpdateMapId == zone
+            and self.CurWorldUpdateArtID or nil
+        local tileCount = self.CurWorldTileCount or 0
+        if frms.NxArtMapID ~= artMapID or frms.NxArtID ~= artID
+            or frms.NxArtTileCount ~= tileCount then
+            local layers = self:GetArtLayers(artMapID)
+            frms.NxArtLayer = layers and layers[1]
+            frms.NxArtMapID = artMapID
+            frms.NxArtID = artID
+            frms.NxArtTileCount = tileCount
+        end
+        layerInfo = frms.NxArtLayer
+        if layerInfo then
             tilex = ceil(layerInfo.layerWidth / layerInfo.tileWidth)
             tiley = ceil(layerInfo.layerHeight / layerInfo.tileHeight)
         else
@@ -8362,8 +8661,14 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
     local y = (zy - self.MapPosYDraw) * scale + clipH / 2
     local bx = 0
     local by = 0
-    local bw = zw * (tilex == 15 and 1 or 1024 / 1002) / tilex * scale
-    local bh = zh * (tiley == 10 and 1 or 768 / 668) / tiley * scale
+    local bw, bh
+    if layerInfo then
+        bw = zw * layerInfo.tileWidth / layerInfo.layerWidth * scale
+        bh = zh * layerInfo.tileHeight / layerInfo.layerHeight * scale
+    else
+        bw = zw * (tilex == 15 and 1 or 1024 / 1002) / tilex * scale
+        bh = zh * (tiley == 10 and 1 or 768 / 668) / tiley * scale
+    end
 
     local w, h
     local texX1, texX2
@@ -8373,19 +8678,47 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
         numtiles = min(numtiles, self.CurWorldTileCount)
     end
 
+    -- Reject whole off-screen continents/zones before inspecting up to 150
+    -- individual frames. Hidden pools remain hidden without repeated calls.
+    local mapWidth = layerInfo and zw * scale or bw * tilex
+    local mapHeight = layerInfo and zh * scale or bh * tiley
+    if x >= clipW or y >= clipH or x + mapWidth <= 0
+        or y + mapHeight <= 0 then
+        self:HideZoneTileFrames(frms)
+        return
+    end
+
+    -- A stationary map requires no frame geometry or visibility updates.
+    -- Store scalar fields on the existing pool to avoid per-tick allocations.
+    if not frms.NxOffscreen and frms.NxDrawMapID == zone
+        and frms.NxDrawCont == cont and frms.NxDrawX == x
+        and frms.NxDrawY == y and frms.NxDrawTileW == bw
+        and frms.NxDrawTileH == bh and frms.NxDrawClipW == clipW
+        and frms.NxDrawClipH == clipH and frms.NxDrawTitleH == self.TitleH
+        and frms.NxDrawLevel == level and frms.NxDrawTileCount == numtiles
+        and frms.NxDrawLayer == layerInfo then
+        return
+    end
+
     for i = 1, numtiles do
 
         local frm = frms[i]
         if frm then
             --Nx.prt ("MapZ %f", i)
             texX1 = 0
-            texX2 = 1
             texY1 = 0
-            texY2 = 1
+            texX2 = layerInfo
+                and min(layerInfo.tileWidth, layerInfo.layerWidth - bx * layerInfo.tileWidth)
+                    / layerInfo.tileWidth
+                or 1
+            texY2 = layerInfo
+                and min(layerInfo.tileHeight, layerInfo.layerHeight - by * layerInfo.tileHeight)
+                    / layerInfo.tileHeight
+                or 1
 
             local vx0 = bx * bw + x
             local vx1 = vx0
-            local vx2 = vx0 + bw
+            local vx2 = vx0 + bw * texX2
 
             if vx1 < 0 then
                 vx1 = 0
@@ -8399,7 +8732,7 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
 
             local vy0 = by * bh + y
             local vy1 = vy0
-            local vy2 = vy0 + bh
+            local vy2 = vy0 + bh * texY2
 
             if vy1 < 0 then
                 vy1 = 0
@@ -8415,7 +8748,10 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
             h = vy2 - vy1
 
             if w <= 0 or h <= 0 then
-                frm:Hide()
+                if frm.NxTileVisible ~= false then
+                    frm:Hide()
+                    frm.NxTileVisible = false
+                end
             else
                 frm:SetPoint ("TOPLEFT", vx1, -vy1 - self.TitleH)
                 frm:SetWidth (w)
@@ -8425,7 +8761,10 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
                 frm.texture:SetTexCoord (texX1, texX2, texY1, texY2)
                 --frm.texture:SetVertexColor (1, 1, 1, self.BackgndAlpha)
 
-                frm:Show()
+                if frm.NxTileVisible ~= true then
+                    frm:Show()
+                    frm.NxTileVisible = true
+                end
             end
         end
 
@@ -8439,10 +8778,28 @@ function Nx.Map:MoveZoneTiles (cont, zone, frms, alpha, level)
 
     -- The tile frame pool is reused across every map. A smaller city map
     -- following a larger zone must not leave the surplus zone tiles visible.
-    for i = numtiles + 1, 150 do
+    local previousTileCount = frms.NxDrawTileCount or frms.NxTileCount or 150
+    for i = numtiles + 1, previousTileCount do
         local frm = frms[i]
-        if frm then frm:Hide() end
+        if frm and frm.NxTileVisible ~= false then
+            frm:Hide()
+            frm.NxTileVisible = false
+        end
     end
+
+    frms.NxOffscreen = false
+    frms.NxDrawMapID = zone
+    frms.NxDrawCont = cont
+    frms.NxDrawX = x
+    frms.NxDrawY = y
+    frms.NxDrawTileW = bw
+    frms.NxDrawTileH = bh
+    frms.NxDrawClipW = clipW
+    frms.NxDrawClipH = clipH
+    frms.NxDrawTitleH = self.TitleH
+    frms.NxDrawLevel = level
+    frms.NxDrawTileCount = numtiles
+    frms.NxDrawLayer = layerInfo
 end
 
 --------
@@ -8501,8 +8858,12 @@ local OverlayCache = {
 
 -- Pre-parse overlay string data once (avoids Nx.Split every frame)
 local function GetParsedOverlay(txFolder, txName, whxyStr)
-    local cacheKey = txFolder .. txName
-    local cached = OverlayCache.parsedOverlays[cacheKey]
+    local folderCache = OverlayCache.parsedOverlays[txFolder]
+    if not folderCache then
+        folderCache = {}
+        OverlayCache.parsedOverlays[txFolder] = folderCache
+    end
+    local cached = folderCache[txName]
     if cached then
         return cached
     end
@@ -8527,36 +8888,36 @@ local function GetParsedOverlay(txFolder, txName, whxyStr)
         isMultiTexture = isMultiTexture,
         whxyKey = oX..","..oY..","..txW..","..txH,
     }
-    OverlayCache.parsedOverlays[cacheKey] = cached
+    folderCache[txName] = cached
     return cached
 end
 
 -- Get cached layer info (avoids API calls every frame)
-local function GetCachedLayerInfo(mapId)
+local function GetCachedLayerInfo(mapId, owner)
+    local artMapID = Nx.Map:GetArtSourceMapID(mapId)
+    -- UpdateWorld already tracks phase/art changes on a throttled schedule.
+    -- Reuse that known ID instead of querying Blizzard for every overlay pass.
+    local artID = owner and owner.CurWorldUpdateMapId == mapId
+        and owner.CurWorldUpdateArtID or nil
     local cached = OverlayCache.layerInfo[mapId]
-    if cached then
-        return cached
+    if cached and (not artID or cached.artID == artID) then
+        return cached.info
     end
 
-    local layers = Nx.Map:GetArtLayers(mapId)
+    artID = artID or C_Map and C_Map.GetMapArtID
+        and C_Map.GetMapArtID(artMapID) or artMapID
+
+    local layers = Nx.Map:GetArtLayers(artMapID)
     if not layers or not layers[1] then
         return nil
     end
 
-    -- Try to get layer index from WorldMapFrame (Retail), fallback to 1 (Classic)
-    -- zoomLevels is only populated after the Blizzard map has been shown at least
-    -- once (SetMapID -> SetZoomLevels); GetCurrentLayerIndex errors before that
-    local layerIndex = 1
-    if WorldMapFrame and WorldMapFrame.GetCanvasContainer then
-        local canvas = WorldMapFrame:GetCanvasContainer()
-        if canvas and canvas.GetCurrentLayerIndex and canvas.zoomLevels then
-            layerIndex = canvas:GetCurrentLayerIndex() or 1
-        end
-    end
-
-    cached = layers[layerIndex] or layers[1]
-    OverlayCache.layerInfo[mapId] = cached
-    return cached
+    -- Carbonite installs layer-one zone textures in UpdateWorld.  The
+    -- independent Blizzard canvas can display another map or zoom layer;
+    -- borrowing its layer makes Carbonite's overlays drift or disappear.
+    local layerInfo = layers[1]
+    OverlayCache.layerInfo[mapId] = { artID = artID, info = layerInfo }
+    return layerInfo
 end
 
 -- Get cached explored textures (only refresh every 2 seconds)
@@ -8609,7 +8970,7 @@ function Nx.Map:UpdateZones()
     end
 
     if freeOrScale or
-        winfo.City or winfo.NoTilemap or
+        winfo.City or winfo.ModernZoneArt or winfo.NoTilemap or
         (winfo.StartZone and Nx.Map.UpdateMapID == mapId) or
         self:IsBattleGroundMap (Nx.Map.UpdateMapID) or
         self:IsMicroDungeon(Nx.Map.UpdateMapID)  then
@@ -8835,13 +9196,11 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
     end
     local alpha = self.BackgndAlpha
     local unExAl = self.LOpts.NXUnexploredAlpha
-    local zscale = self:GetWorldZoneScale (mapId) / 10
-
     -- Use cached explored textures (refreshes every 2 seconds instead of every frame)
-    local exploredWHXY = unex and GetCachedExploredTextures(mapId) or {}
+    local exploredWHXY = unex and GetCachedExploredTextures(mapId) or nil
 
     -- Use cached layer info (avoids API calls every frame)
-    local layerInfo = GetCachedLayerInfo(mapId)
+    local layerInfo = GetCachedLayerInfo(mapId, self)
     if not layerInfo then
         return
     end
@@ -8849,10 +9208,24 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
     local TILE_SIZE_HEIGHT = layerInfo.tileHeight
     local layerWidth = layerInfo.layerWidth
     local layerHeight = layerInfo.layerHeight
+    local zoneScale = self:GetWorldZoneScale(mapId)
+    local worldPerPixelX = zoneScale * 100 / layerWidth
+    local worldPerPixelY = zoneScale * 100 / (1.5 * layerHeight)
 
     -- LOD: Skip very small overlays when zoomed out (they're not visible anyway)
     local scale = self.ScaleDraw
+    if not scale or scale <= 0 then
+        return
+    end
     local minVisibleSize = scale < 0.15 and 128 or (scale < 0.3 and 64 or 0)
+    local halfWorldW = self.MapW * .5 / scale
+    local halfWorldH = self.MapH * .5 / scale
+    local viewMinX = self.MapPosXDraw - halfWorldW
+    local viewMaxX = self.MapPosXDraw + halfWorldW
+    local viewMinY = self.MapPosYDraw - halfWorldH
+    local viewMaxY = self.MapPosYDraw + halfWorldH
+    local tileWorldW = TILE_SIZE_WIDTH * worldPerPixelX
+    local tileWorldH = TILE_SIZE_HEIGHT * worldPerPixelY
 
     for oName, whxyStr in pairs (overlays) do
         -- Skip dynamic overlays
@@ -8866,14 +9239,7 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
         local txW, txH = parsed.txW, parsed.txH
         local mode = parsed.mode
         local arTx = parsed.arTx
-        local isMultiTexture = parsed.isMultiTexture
         local whxyKey = parsed.whxyKey
-
-        -- Adjust zscale for multi-texture overlays (comma-separated IDs use different scale)
-        local overlayZscale = zscale
-        if isMultiTexture then
-            overlayZscale = self:GetWorldZoneScale(mapId) / 38
-        end
 
         -- LOD: Skip small overlays when zoomed out
         if txW < minVisibleSize and txH < minVisibleSize then
@@ -8881,9 +9247,9 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
         else
             local lev = 0
             local brt = bright
-            local txName = path .. oName
+            local txName = not arTx and path .. oName or nil
 
-            if exploredWHXY[whxyKey] then
+            if exploredWHXY and exploredWHXY[whxyKey] then
                 oX = oX - 10000
             end
 
@@ -8898,79 +9264,111 @@ function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
 
             bW = ceil (txW / TILE_SIZE_WIDTH)
             bH = ceil (txH / TILE_SIZE_HEIGHT)
-            txIndex = 1
+            local overlayWX, overlayWY = self:GetWorldPos(mapId,
+                oX / layerWidth * 100, oY / layerHeight * 100)
+            local overlayRight = overlayWX + txW * worldPerPixelX
+            local overlayBottom = overlayWY + txH * worldPerPixelY
 
-            for bY = 0, bH - 1 do
+            -- Exploration tiles use the same finite non-interactive pool as
+            -- path arrows. Never allocate a frame for off-screen artwork.
+            if overlayRight > viewMinX and overlayWX < viewMaxX
+                and overlayBottom > viewMinY and overlayWY < viewMaxY then
+                local firstBX = max(0,
+                    floor((viewMinX - overlayWX) / tileWorldW))
+                local lastBX = min(bW - 1,
+                    ceil((viewMaxX - overlayWX) / tileWorldW) - 1)
+                local firstBY = max(0,
+                    floor((viewMinY - overlayWY) / tileWorldH))
+                local lastBY = min(bH - 1,
+                    ceil((viewMaxY - overlayWY) / tileWorldH) - 1)
+                local foundUnderscore = string.find(oName, "_", 1, true)
 
-                if bY < bH - 1 then
-                    txPixelH = TILE_SIZE_HEIGHT
-                    txFileH = TILE_SIZE_HEIGHT
-                else
-                    txPixelH = mod (txH, TILE_SIZE_HEIGHT)
-                    if txPixelH == 0 then
+                for bY = firstBY, lastBY do
+
+                    if bY < bH - 1 then
                         txPixelH = TILE_SIZE_HEIGHT
-                    end
-                    txFileH = 16
-                    while txFileH < txPixelH do
-                        txFileH = txFileH * 2
-                    end
-                end
-
-                for bX = 0, bW - 1 do
-
-                    if bX < bW - 1 then
-                        txPixelW = TILE_SIZE_WIDTH
-                        txFileW = TILE_SIZE_WIDTH
+                        txFileH = TILE_SIZE_HEIGHT
                     else
-                        txPixelW = mod (txW, TILE_SIZE_WIDTH)
-                        if txPixelW == 0 then
+                        txPixelH = mod (txH, TILE_SIZE_HEIGHT)
+                        if txPixelH == 0 then
+                            txPixelH = TILE_SIZE_HEIGHT
+                        end
+                        txFileH = 16
+                        while txFileH < txPixelH do
+                            txFileH = txFileH * 2
+                        end
+                    end
+
+                    for bX = firstBX, lastBX do
+
+                        if bX < bW - 1 then
                             txPixelW = TILE_SIZE_WIDTH
-                        end
-                        txFileW = 16
-                        while txFileW < txPixelW do
-                            txFileW = txFileW * 2
-                        end
-                    end
-
-                    local f = self:GetIconNI (lev)
-
-                    local wx, wy = self:GetWorldPos (mapId, (oX + bX * TILE_SIZE_WIDTH) / layerWidth * 100, (oY + bY * TILE_SIZE_HEIGHT) / layerHeight * 100)
-
-                    local foundUnderscore = string.find(oName, "_")
-
-                    if foundUnderscore == 1 and bX == 0 and bY == 0 then
-
-                        local nName, nW, nH = Nx.Split (",", oName)
-                        nW = tonumber(nW)
-                        nH = tonumber(nH)
-                        if self:ClipFrameTL (f, wx, wy, nW * overlayZscale, nH * overlayZscale) then
-                            f.texture:SetColorTexture (1, 0, 0, 0)
-                            f.texture:SetTexture (GetCompressedTexturePath(nName, txFolder))
-                            f.texture:SetVertexColor (brt, brt, brt, alpha)
-                        end
-
-                    else
-
-                        if self:ClipFrameTL (f, wx, wy, txFileW * overlayZscale, txFileH * overlayZscale) then
-
-                            f.texture:SetColorTexture (1, 0, 0, 0) -- fix for background green overlays
-
-                            if arTx then
-                                if not string.find(oName, "_") then f.texture:SetTexture (arTx[txIndex]) end
-                            elseif wzone.Phase then -- Classic MOP phases support
-                                local phasetex = format("%s%s_%s", txName, txIndex, wzone.Phase)
-                                f.texture:SetTexture (phasetex)
-                            else
-                                f.texture:SetTexture (mode and txName or txName .. txIndex)
+                            txFileW = TILE_SIZE_WIDTH
+                        else
+                            txPixelW = mod (txW, TILE_SIZE_WIDTH)
+                            if txPixelW == 0 then
+                                txPixelW = TILE_SIZE_WIDTH
                             end
-                            f.texture:SetVertexColor (brt, brt, brt, alpha)
+                            txFileW = 16
+                            while txFileW < txPixelW do
+                                txFileW = txFileW * 2
+                            end
                         end
 
-                    end
+                        -- Keep the last 256 pooled frames available for actual
+                        -- arrows/markers; otherwise slot 1500 is reused and
+                        -- icons inherit unrelated exploration textures.
+                        if self.IconNIFrms and self.IconNIFrms.Next >= 1244 then
+                            self.Level = self.Level + 2
+                            return
+                        end
 
-                    txIndex = txIndex + 1
+                        local f = self:GetIconNI (lev)
+
+                        local wx = overlayWX + bX * tileWorldW
+                        local wy = overlayWY + bY * tileWorldH
+                        txIndex = bY * bW + bX + 1
+
+                        if foundUnderscore == 1 and bX == 0 and bY == 0 then
+
+                            local nName, nW, nH = Nx.Split (",", oName)
+                            nW = tonumber(nW)
+                            nH = tonumber(nH)
+                            if self:ClipFrameTL(f, wx, wy,
+                                    nW * worldPerPixelX, nH * worldPerPixelY) then
+                                f.texture:SetColorTexture (1, 0, 0, 0)
+                                f.texture:SetTexture (GetCompressedTexturePath(nName, txFolder))
+                                f.texture:SetVertexColor (brt, brt, brt, alpha)
+                            end
+
+                        else
+
+                            if self:ClipFrameTL(f, wx, wy,
+                                    txPixelW * worldPerPixelX,
+                                    txPixelH * worldPerPixelY,
+                                    txPixelW / txFileW,
+                                    txPixelH / txFileH) then
+
+                                f.texture:SetColorTexture (1, 0, 0, 0) -- fix for background green overlays
+
+                                if arTx then
+                                    if not foundUnderscore then
+                                        local textureID = arTx[txIndex]
+                                        f.texture:SetTexture(tonumber(textureID) or textureID)
+                                    end
+                                elseif wzone.Phase then -- Classic MOP phases support
+                                    local phasetex = format("%s%s_%s", txName, txIndex, wzone.Phase)
+                                    f.texture:SetTexture (phasetex)
+                                else
+                                    f.texture:SetTexture (mode and txName or txName .. txIndex)
+                                end
+                                f.texture:SetVertexColor (brt, brt, brt, alpha)
+                            end
+
+                        end
+                    end
                 end
-            end
+            end -- visible overlay rectangle
         end -- end LOD size check
     end
 
@@ -8997,8 +9395,11 @@ local NewQuelThalasZones = {
     [2437] = true,  -- New Zul'Aman
     [2536] = true,  -- Atal'Aman
     [2424] = true,  -- New Quel'Danas
+    [2432] = true,  -- New Quel'Danas phased map
     [2405] = true,  -- Voidstorm
     [2413] = true,  -- Harandar
+    [2509] = true,  -- Vaults of Atal'Utek
+    [2512] = true,  -- The Coiled Isle
 }
 
 -- Check if player is currently in an old Blood Elf zone
@@ -9651,7 +10052,7 @@ end
 -- @param h    Height in world units
 -- @return     true if visible, false if completely clipped
 --
-function Nx.Map:ClipFrameTL (frm, bx, by, w, h)
+function Nx.Map:ClipFrameTL (frm, bx, by, w, h, texMaxX, texMaxY)
 
     -- Each world unit maps to a pixel, so w * scale == size in pixels
 
@@ -9744,7 +10145,14 @@ function Nx.Map:ClipFrameTL (frm, bx, by, w, h)
     frm:SetWidth (w)
     frm:SetHeight (h)
 
-    frm.texture:SetTexCoord (Nx.Util_NanToZero(texX1), Nx.Util_NanToZero(texX2), Nx.Util_NanToZero(texY1), Nx.Util_NanToZero(texY2))
+    if texMaxX and texMaxY then
+        texX1 = texX1 * texMaxX
+        texX2 = texX2 * texMaxX
+        texY1 = texY1 * texMaxY
+        texY2 = texY2 * texMaxY
+    end
+    frm.texture:SetTexCoord(Nx.Util_NanToZero(texX1), Nx.Util_NanToZero(texX2),
+        Nx.Util_NanToZero(texY1), Nx.Util_NanToZero(texY2))
 
     -- Note: SetSnapToPixelGrid/SetTexelSnappingBias now set once at frame creation
 
@@ -9766,88 +10174,25 @@ end
 --
 function Nx.Map:ClipFrameMF (frm, bx, by, w, h, dir)
     local x, y = Nx.Map:GetZonePos(self.MapId, bx, by)
-
-    local bw = w
-    local clipW = self.MapW
-
-    local texX1 = 0
-    local texX2 = 1
-
-    local vx0 = x - bw * .5
-    local vx1 = vx0
-    local vx2 = vx0 + bw
-
-    if vx1 < 0 then
-        vx1 = 0
-        texX1 = (vx1 - vx0) / bw
+    if not self:PlaceInstanceMapPOI(frm, x * .01, y * .01, w, h) then
+        return false, x, y
     end
 
-    if vx2 > clipW then
-        vx2 = clipW
-        texX2 = (vx2 - vx0) / bw
-    end
-
-    w = vx2 - vx1
-
-    local bh = h
-    local clipH = self.MapH
-
-    local texY1 = 0
-    local texY2 = 1
-
-    local vy0 = y - bh * .5        -- Center frame at by
-    local vy1 = vy0
-    local vy2 = vy0 + bh
-
-    if vy1 < 0 then
-        vy1 = 0
-        texY1 = (vy1 - vy0) / bh
-    end
-
-    if vy2 > clipH then
-        vy2 = clipH
-        texY2 = (vy2 - vy0) / bh
-    end
-
-    h = vy2 - vy1
-
-    frm:SetPoint("TOPLEFT", x / 100 * self.MapW - 8, -y  / 100 * self.MapH + 8)
-
-    frm:SetWidth (Nx.db.profile.Map.InstanceScale)
-    frm:SetHeight (Nx.db.profile.Map.InstanceScale)
-
-    frm.texture:SetTexCoord (0, 1, 0, 1)
-
-    if dir == 0 then
-        if texX1 <= 1 and texX1 >= 0 and texX2 <= 1 and texX2 >= 0 and texY1 <= 1 and texY1 >= 0 and texY2 <= 1 and texY2 >= 0 then
-            frm.texture:SetTexCoord (texX1, texX2, texY1, texY2)
-        end
-    else
-        local t1x, t1y, t2x, t2y, t3x, t3y, t4x, t4y
-        texX1 = texX1 - .5
-        texX2 = texX2 - .5
-        texY1 = texY1 - .5
-        texY2 = texY2 - .5
-
-        local co = cos (dir)
-        local si = sin (dir)
-        t1x = texX1 * co + texY1 * si + .5
-        t1y = texX1 * -si + texY1 * co + .5
-        t2x = texX1 * co + texY2 * si + .5
-        t2y = texX1 * -si + texY2 * co + .5
-        t3x = texX2 * co + texY1 * si + .5
-        t3y = texX2 * -si + texY1 * co + .5
-        t4x = texX2 * co + texY2 * si + .5
-        t4y = texX2 * -si + texY2 * co + .5
-        if t1x <= 1 and t1x >= 0 and t2x <= 1 and t2x >= 0 and t3x <= 1 and t3x >= 0 and t4x <= 1 and t4x >= 0 and t1y <= 1 and t1y >= 0 and t2y <= 1 and t2y >= 0 and t3y <= 1 and t3y >= 0 and t4y <= 1 and t4y >= 0 then
-            frm.texture:SetTexCoord (t1x, t1y, t2x, t2y, t3x, t3y, t4x, t4y)
+    frm.texture:SetTexCoord(0, 1, 0, 1)
+    if dir and dir ~= 0 then
+        local co = cos(dir)
+        local si = sin(dir)
+        local t1x, t1y = -.5 * co - .5 * si + .5,  .5 * si - .5 * co + .5
+        local t2x, t2y = -.5 * co + .5 * si + .5,  .5 * si + .5 * co + .5
+        local t3x, t3y =  .5 * co - .5 * si + .5, -.5 * si - .5 * co + .5
+        local t4x, t4y =  .5 * co + .5 * si + .5, -.5 * si + .5 * co + .5
+        if t1x >= 0 and t1x <= 1 and t1y >= 0 and t1y <= 1
+            and t2x >= 0 and t2x <= 1 and t2y >= 0 and t2y <= 1
+            and t3x >= 0 and t3x <= 1 and t3y >= 0 and t3y <= 1
+            and t4x >= 0 and t4x <= 1 and t4y >= 0 and t4y <= 1 then
+            frm.texture:SetTexCoord(t1x, t1y, t2x, t2y, t3x, t3y, t4x, t4y)
         end
     end
-    frm:SetFrameLevel(50)
-
-    -- Note: SetSnapToPixelGrid/SetTexelSnappingBias now set once at frame creation
-
-    frm:Show()
 
     return true, x, y
 end
@@ -12977,6 +13322,9 @@ function Nx.Map:GetZonePos (mapId, worldX, worldY)
     local winfo = self.MapWorldInfo[mapId]
 
     if winfo then
+        if winfo.BaseMap then
+            winfo = self.MapWorldInfo[winfo.BaseMap] or winfo
+        end
         if winfo.Scale and winfo[4] and winfo[5] then
             local scale = winfo.Scale
                 return    (worldX - winfo[4]) / scale,
@@ -15684,7 +16032,7 @@ function Nx.Map.MoveWorldMap()
     Nx.Map:SetCurrentMap (Nx.Map.NInstMapId)
 
     local mapInfo = C_Map.GetMapInfo(curId)
-    if not mapInfo.name then
+    if not mapInfo or not mapInfo.name then
         return
     end
     local layers = Nx.Map:GetArtLayers(curId)
@@ -15721,30 +16069,49 @@ function Nx.Map.MoveWorldMap()
         Nx.Map.WMDTCount = numtiles
     end
 
-    Nx.Map.WMDF:SetParent(Nx.Map:GetMap(1).Frm)
+    local map = Nx.Map:GetMap(1)
+    Nx.Map.WMDF:SetParent(map.Frm)
     Nx.Map.WMDF:SetFrameLevel(20)
-    Nx.Map.WMDF:SetWidth(Nx.Map:GetMap(1).MapW)
-    Nx.Map.WMDF:SetHeight(Nx.Map:GetMap(1).MapH)
+    Nx.Map.WMDF:ClearAllPoints()
+    Nx.Map.WMDF:SetPoint(
+        "TOPLEFT", map.Frm, "TOPLEFT", map.PadX or 0, -(map.TitleH or 0)
+    )
+    Nx.Map.WMDF:SetWidth(map.MapW)
+    Nx.Map.WMDF:SetHeight(map.MapH)
+    if Nx.Map.WMDF.SetClipsChildren then
+        Nx.Map.WMDF:SetClipsChildren(true)
+    end
     Nx.Map.WMDF:Show()
 
     local textures = Nx.Map:GetArtLayerTextures(curId, 1)
 
-    local tileW = Nx.Map.WMDF:GetWidth() / cols
-    local tileH = Nx.Map.WMDF:GetHeight() / rows
+    -- Blizzard lays full tileWidth/tileHeight textures over a canvas sized
+    -- layerWidth/layerHeight. The final row/column is clipped, not squeezed
+    -- into an equal grid cell: otherwise every normalized icon drifts away
+    -- from the underlying artwork, especially on the partial bottom row.
+    local canvasWidth = Nx.Map.WMDF:GetWidth()
+    local canvasHeight = Nx.Map.WMDF:GetHeight()
+    local tileW = canvasWidth * layerInfo.tileWidth / layerInfo.layerWidth
+    local tileH = canvasHeight * layerInfo.tileHeight / layerInfo.layerHeight
     for j = 1, rows do
         for i = 1, cols do
             local index = (j - 1) * cols + i
             local t = Nx.Map.WMDT[index]
             if t then
+                local x = (i - 1) * tileW
+                local y = (j - 1) * tileH
+                local width = math.min(tileW, canvasWidth - x)
+                local height = math.min(tileH, canvasHeight - y)
                 t:ClearAllPoints()
-                t:SetPoint("TOPLEFT", Nx.Map.WMDF, "TOPLEFT", (i - 1) * tileW, -(j - 1) * tileH)
-                t:SetWidth(tileW)
-                t:SetHeight(tileH)
+                t:SetPoint("TOPLEFT", Nx.Map.WMDF, "TOPLEFT", x, -y)
+                t:SetWidth(width)
+                t:SetHeight(height)
+                t:SetTexCoord(0, width / tileW, 0, height / tileH)
                 t:SetTexture(textures and textures[index])
+                t:Show()
             end
         end
     end
-    Nx.Map.WMDF:SetAllPoints()
     NXWorldMapUnitPositionFrame:SetParent(Nx.Map.WMDF)
     NXWorldMapUnitPositionFrame:SetAllPoints()
     NXWorldMapUnitPositionFrame:SetFrameLevel(40)

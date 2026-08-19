@@ -13,6 +13,7 @@ Carbonite.Modules.Map.MapIDs = MapIDs
 -- Per-process cache for IdToContZone lookups (the legacy code had
 -- this as a file-local `ContZoneCache`).
 local contZoneCache = {}
+local playerMapAliasCache = {}
 
 local function nxMap() return _G.Nx and _G.Nx.Map end
 
@@ -26,12 +27,62 @@ local function nxMap() return _G.Nx and _G.Nx.Map end
 --      map but can be sentinel 9000 when no zone is selected.
 -- ---------------------------------------------------------------------
 
--- Displayable map for the player, with the legacy OldMapIDs remap
--- applied (1414 → 12, 1415 → 13 on pre-MoP clients).
+-- Convert a Blizzard player/art map alias to the canonical Carbonite map ID.
+-- Most maps are already canonical. A small number of layered cities are not:
+-- MoP Undercity, for example, is reported as uiMapID 998 while Carbonite's
+-- world geometry and quest data intentionally remain keyed by city ID 90.
+function MapIDs:CanonicalizeMapID(mapID)
+    if not mapID or mapID == 0 then return mapID end
+
+    local NxMap = nxMap()
+    local worldInfo = NxMap and NxMap.MapWorldInfo
+    if not worldInfo then return mapID end
+
+    local cached = playerMapAliasCache[mapID]
+    if cached then return cached end
+
+    for canonicalID, info in pairs(worldInfo) do
+        local aliases = info and info.PlayerMapID
+        if aliases == mapID then
+            playerMapAliasCache[mapID] = canonicalID
+            return canonicalID
+        elseif type(aliases) == "table" then
+            for _, aliasID in pairs(aliases) do
+                if aliasID == mapID then
+                    playerMapAliasCache[mapID] = canonicalID
+                    return canonicalID
+                end
+            end
+        end
+    end
+
+    -- Explicit aliases win even if another subsystem has already created a
+    -- transient MapWorldInfo entry for Blizzard's alias ID.
+    playerMapAliasCache[mapID] = mapID
+    return mapID
+end
+
+-- Displayable map for the player, with Carbonite city aliases and the legacy
+-- OldMapIDs remap applied (1414 → 12, 1415 → 13 on pre-MoP clients).
 function MapIDs:GetDisplayableMapForPlayer()
     local MapUtil = _G.MapUtil
-    local mapID = (MapUtil and MapUtil.GetDisplayableMapForPlayer and MapUtil.GetDisplayableMapForPlayer())
-        or (_G.C_Map and _G.C_Map.GetBestMapForUnit and _G.C_Map.GetBestMapForUnit("player"))
+    local C_Map = _G.C_Map
+    local rawMapID = C_Map and C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player")
+    local displayableMapID = (MapUtil and MapUtil.GetDisplayableMapForPlayer and MapUtil.GetDisplayableMapForPlayer())
+        or rawMapID
+        or 0
+
+    -- Blizzard's displayable helper deliberately climbs away from maps that
+    -- have no C_Map art. Carbonite can still render its legacy city tiles, so
+    -- retain a raw city map only when its flavor data declares legacy art
+    -- (Exodar is the common MoP example), and canonicalize aliases such as
+    -- Undercity 998 → 90. Every other map keeps Blizzard's displayable-parent
+    -- behavior.
+    local rawCanonicalID = self:CanonicalizeMapID(rawMapID)
+    local NxMap = nxMap()
+    local rawInfo = NxMap and NxMap.MapWorldInfo and NxMap.MapWorldInfo[rawCanonicalID]
+    local mapID = rawInfo and rawInfo.City and rawInfo.LegacyMapArt and rawCanonicalID
+        or self:CanonicalizeMapID(displayableMapID)
         or 0
 
     if _G.Nx and _G.Nx.OldMapIDs then
@@ -215,6 +266,7 @@ local function rewireLegacy()
     if not NxMap then return end
 
     NxMap.GetDisplayableMapForPlayer = function(_) return MapIDs:GetDisplayableMapForPlayer() end
+    NxMap.CanonicalizeMapID = function(_, mapID) return MapIDs:CanonicalizeMapID(mapID) end
     NxMap.GetCurrentMapAreaID = function(_) return MapIDs:GetCurrentMapAreaID() end
     NxMap.GetCurrentMapId     = function(_) return MapIDs:GetCurrentMapId() end
     NxMap.IdToContZone        = function(_, mapID) return MapIDs:IdToContZone(mapID) end

@@ -245,6 +245,13 @@ if C_QuestLog and C_QuestLog.GetInfo then
     end
 end
 
+-- WorldMap_AddQuestTimeToTooltip shim for retail
+if not WorldMap_AddQuestTimeToTooltip and GameTooltip_AddQuestTimeToTooltip then
+    function WorldMap_AddQuestTimeToTooltip(questID)
+        GameTooltip_AddQuestTimeToTooltip(GameTooltip, questID)
+    end
+end
+
 -- GetQuestTagInfo compatibility wrapper.
 -- Retail uses C_QuestLog.GetQuestTagInfo(questID); Classic uses
 -- GetQuestTagInfo(questID). Published on Nx.Quest so extracted
@@ -252,25 +259,6 @@ end
 -- NxQuest sites unchanged.
 Nx.Quest = Nx.Quest or {}
 Nx.Quest.GetQuestCompletionState = GetQuestCompletionState
-
--- Add quest-time text only to the tooltip explicitly supplied by the caller.
--- The old Retail compatibility shim always targeted Blizzard's GameTooltip,
--- even when Carbonite was scanning into Nx.TooltipText. That invisible write
--- left GameTooltip tainted and later broke AreaPOI widget-set layout when its
--- height/width values were secret. Older clients without the two-argument API
--- simply omit this cosmetic scan line instead of touching the global tooltip.
-function Nx.Quest.AddQuestTimeToTooltipCompat(tooltip, questID)
-    if not tooltip then
-        return
-    end
-
-    if GameTooltip_CheckAddQuestTimeToTooltip then
-        GameTooltip_CheckAddQuestTimeToTooltip(tooltip, questID)
-    elseif GameTooltip_AddQuestTimeToTooltip then
-        GameTooltip_AddQuestTimeToTooltip(tooltip, questID)
-    end
-end
-
 function Nx.Quest.GetQuestTagInfoCompat(questID)
     if not questID then return nil end
     if C_QuestLog and C_QuestLog.GetQuestTagInfo then
@@ -613,16 +601,14 @@ Nx.Quest.defaults = {
         -- World quest list options
         WQList = {
             showgear = true,                            -- Show gear rewards
-            showap = true,                              -- Show power rewards
-            showorder = true,                           -- Show currency/material/reputation rewards
+            showap = true,                              -- Show artifact power
+            showorder = true,                           -- Show order resources
             showgold = true,                            -- Show gold rewards
             showother = true,                           -- Show other rewards
             showpvp = true,                             -- Show PVP rewards
             showbounty = false,                         -- Bounty only
-            sortmode = 3,                               -- Sort by zone initially
+            sortmode = 1,                               -- Sort mode
             zoneonly = false,                           -- Current zone only
-            reactivated = false,                        -- One-time hidden migration
-            layoutVersion = 0,                          -- Movable/resizable layout migration
             -- Faction filters
             showfaronis = true,
             showdreamweaver = true,

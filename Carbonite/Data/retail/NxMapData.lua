@@ -123,23 +123,23 @@ Map.ContBlks = {
         1,1,1,1
     },
     {
-        0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,
-        0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,
-        0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,
-        0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
     },
 }
 
 Map.MapZones = {
     [0] = {12,13,101,113,948,424,572,619,905,875,876,1409,1550,1978,2274,2537,0,-1},
     [1] = {1,7,10,57,62,63,64,65,66,69,70,71,76,77,78,80,81,83,85,86,88,89,97,103,106,198,199,249,327,338,460,461,462,463,468,1469,1527},
-    [2] = {14,15,17,18,21,22,23,25,26,27,32,36,37,42,47,48,49,50,51,52,56,84,87,90,94,95,110,122,124,179,201,202,204,205,203,210,217,218,224,241,244,245,425,427,465,467,469,1470,2537,2395,2393,2405,2413,2424,2432,2437,2536},
+    [2] = {14,15,17,18,21,22,23,25,26,27,32,36,37,42,47,48,49,50,51,52,56,84,87,90,94,95,110,122,124,179,201,202,204,205,203,210,217,218,224,241,244,245,425,427,465,467,469,1470,2537,2395,2393,2424,2432,2437,2536},
     [3] = {100,102,104,105,107,108,109,111},
     [4] = {114,115,116,117,118,119,120,121,123,125,127,170},
     [5] = {174,194,207,276,407},
@@ -153,7 +153,7 @@ Map.MapZones = {
     [13] = {1525,1533,1536,1543,1565,1648,1670,1671,1672,1673,1961,1701,1702,1703,1970},
     [14] = {2022,2023,2024,2025,2112,2151,2133,2200},
     [15] = {2248,2214,2215,2255,2256,2339,2213,2216,2346,2369,2371,2472},
-    [16] = {2405,2413},
+    [16] = {2405,2413,2509,2512},
     [90] = {91,92,93,112,128,169,206,275,397,417,423,519,623},
     [100] = {},
 }
@@ -2098,6 +2098,7 @@ Map.MapWorldInfo = {
         X = 88.333197021484,
         Y = -2495.8400390624,
         Overlay = "ek_midnight_continent",
+        ModernZoneArt = true,
     },
 
     [2395] = {
@@ -2106,6 +2107,7 @@ Map.MapWorldInfo = {
         Y = -2032.919921875,
         Name = L["Eversong Woods"],
         Overlay = "eversongwoodsek",
+        ModernZoneArt = true,
     },
 
     [2393] = {
@@ -2127,6 +2129,7 @@ Map.MapWorldInfo = {
         Overlay = "voidstorm",
         MId = 2405,
         UseAId = true,
+        ModernZoneArt = true,
     },
 
     [2413] = {
@@ -2137,6 +2140,7 @@ Map.MapWorldInfo = {
         Overlay = "harandar",
         MId = 2413,
         UseAId = true,
+        ModernZoneArt = true,
     },
 
     [2424] = {
@@ -2144,7 +2148,8 @@ Map.MapWorldInfo = {
         X = 586.666796875,
         Y = -2393.333203125,
         Name = L["Quel'Danas"],
-        Overlay = "newqueldanas"
+        Overlay = "newqueldanas",
+        ModernZoneArt = true,
     },
 
     [2432] = {
@@ -2155,6 +2160,7 @@ Map.MapWorldInfo = {
         Overlay = "newqueldanas",
         MId = 2424,
         UseAId = true,
+        ModernZoneArt = true,
     },
 
     [2437] = {
@@ -2162,7 +2168,26 @@ Map.MapWorldInfo = {
         X = 728.333203125,
         Y = -1660,
         Name = L["Zul'Aman"],
-        Overlay = "newzulaman"
+        Overlay = "newzulaman",
+        ModernZoneArt = true,
+    },
+
+    [2509] = {
+        Scale = 5.725,
+        X = 1809.583203125,
+        Y = -1242.9166015625,
+        Name = L["Vaults of Atal'Utek"],
+        Underground = true,
+        ModernZoneArt = true,
+    },
+
+    [2512] = {
+        Scale = 16.4,
+        X = 1460,
+        Y = -1720,
+        Name = L["The Coiled Isle"],
+        Overlay = "coiledisle",
+        ModernZoneArt = true,
     },
 
     [2536] = {
@@ -4513,6 +4538,22 @@ Map.ZoneOverlays = {
         ["7580177,7580178,7580179,7580180,7580181,7580182,7580183,7580184,7580185,7580186,7580187,7580188,7580189,7580190,7580191,7580192,7580193,7580194,7580195,7580196,7580197,7580198,7580199,7580200,7580201,7580202,7580203,7580204,7580205,7580206,7580207,7580208,7580209,7580210,7580211,7580212,7580213,7580214,7580215,7580216"] = "1967,70,1250,1994", -- straightofhexxalor|4962|5x8
         ["7580340,7580341,7580342,7580343,7580344,7580345,7580346,7580347,7580348,7580349,7580350,7580351,7580352,7580353,7580354,7580355,7580356,7580357,7580358,7580359"] = "675,33,1184,820", -- witherbarkbluffs|4963|5x4
     },
+
+    ["coiledisle"] = {
+        ["8140096,8140104,8140105,8140106,8140107,8140108,8140109,8140110,8140111,8140097,8140098,8140099,8140100,8140101,8140102,8140103"] = "1228,309,874,778", -- blisteringterrace|5535|4x4
+        ["8140112,8140128,8140137,8140138,8140139,8140140,8140141,8140142,8140143,8140113,8140114,8140115,8140116,8140117,8140118,8140119,8140121,8140124,8140125,8140130,8140132,8140134,8140135,8140136"] = "1253,1192,856,1323", -- gateoftheeasternfang|5536|4x6
+        ["8140144,8140168,8140170,8140171,8140172,8140173,8140174,8140175,8140176,8140145,8140146,8140147,8140148,8140149,8140150,8140164,8140165,8140166,8140167,8140169"] = "1046,727,1027,845", -- gateoftheserpentseye|5537|5x4
+        ["8140177,8140181,8140182,8140183,8140184,8140185,8140186,8140187,8140188,8140178,8140179,8140180"] = "1910,1726,930,666", -- gnarldorisle|5538|4x3
+        ["8140189,8140200,8140206,8140207,8140208,8140209,8140210,8140211,8140217,8140190,8140191,8140192,8140193,8140194,8140195,8140196,8140197,8140198,8140199,8140201,8140202,8140203,8140204,8140205"] = "2106,18,950,1361", -- mlurkkrmire|5539|4x6
+        ["8140357,8140368,8140374,8140375,8140376,8140377,8140378,8140379,8140380,8140358,8140359,8140360,8140361,8140362,8140363,8140364,8140365,8140366,8140367,8140369,8140370,8140371,8140372,8140373"] = "571,1084,967,1344", -- theforum|5540|4x6
+        ["8140381,8140390,8140391,8140392,8140393,8140394,8140395,8140396,8140397,8140384,8140385,8140386,8140387,8140388,8140389"] = "1756,215,692,1092", -- theserpentstail|5541|3x5
+        ["8140398,8140409,8140411,8140412,8140413,8140414,8140415,8140416,8140417,8140399,8140400,8140401,8140402,8140403,8140404,8140405,8140406,8140407,8140408,8140410"] = "2355,1118,833,1101", -- thewhisperingmarsh|5542|4x5
+        ["8140418,8140422,8140423,8140424,8140425,8140426,8140427,8140428,8140429,8140419,8140420,8140421"] = "1908,834,683,877", -- tokkaslanding|5543|3x4
+        ["8140430,8140431,8140432,8140433,8140434,8140435,8140436,8140437,8140438"] = "1956,1431,609,549", -- wreckofpakustalon|5544|3x3
+    },
+
+    -- UIMapID 2525 (The Darkway) uses UiMapArtID 2035, but Blizzard ships
+    -- no WorldMapOverlay rows for that art.  Its absence here is intentional.
 }
 
 --------
@@ -19749,56 +19790,394 @@ function Nx.Map:GetMiniBlkName (miniT, x, y)
     end
 end
 
-function Nx.Map:GetZoneInfo (mapid, force)
-    local vec, vec2 = CreateVector2D(0,0), CreateVector2D(0.5,0.5)
-    local winfo = Nx.Map:GetMap(1).MapWorldInfo
+-- Missing maps are resolved through Carbonite's existing map-data entry point.
+-- Keep the lookup lazy: rebuilding the entire catalog during startup changes
+-- active instance placement and can disturb unlocked map/minimap windows.
+local zoneInfoInProgress = {}
 
-    if not winfo or (winfo[mapid] and winfo[mapid].Scale) then
-        if not force then
+local function NormalizeZoneMapID(mapID)
+    if Nx.OldMapIDs then
+        if mapID == 1414 then
+            return 12
+        end
+        if mapID == 1415 then
+            return 13
+        end
+    end
+    return mapID
+end
+
+local function GetSafeZoneMapInfo(mapID)
+    if not mapID or mapID <= 0 or not C_Map or not C_Map.GetMapInfo then
+        return nil
+    end
+
+    local ok, mapInfo = pcall(C_Map.GetMapInfo, mapID)
+    if ok and type(mapInfo) == "table" then
+        return mapInfo
+    end
+    return nil
+end
+
+local function IsFiniteMapCoordinate(value)
+    return type(value) == "number"
+        and value == value
+        and value ~= math.huge
+        and value ~= -math.huge
+end
+
+local function GetZoneMapGeometry(mapID)
+    if not C_Map or not C_Map.GetWorldPosFromMapPos or not CreateVector2D then
+        return nil
+    end
+
+    local topOK, worldMapID, topLeft = pcall(
+        C_Map.GetWorldPosFromMapPos, mapID, CreateVector2D(0, 0)
+    )
+    local bottomOK, secondWorldMapID, bottomRight = pcall(
+        C_Map.GetWorldPosFromMapPos, mapID, CreateVector2D(0.5, 0.5)
+    )
+    if not topOK or not bottomOK or not topLeft or not bottomRight then
+        return nil
+    end
+
+    local topPositionOK, top, left = pcall(topLeft.GetXY, topLeft)
+    local bottomPositionOK, bottom, right = pcall(bottomRight.GetXY, bottomRight)
+    if not topPositionOK or not bottomPositionOK
+        or not IsFiniteMapCoordinate(top)
+        or not IsFiniteMapCoordinate(left)
+        or not IsFiniteMapCoordinate(bottom)
+        or not IsFiniteMapCoordinate(right) then
+        return nil
+    end
+
+    right = left + (right - left) * 2
+    local scale = (left - right) / 500
+    if not IsFiniteMapCoordinate(scale) or scale <= 0 then
+        return nil
+    end
+
+    return {
+        worldMapID = worldMapID or secondWorldMapID,
+        x = -left / 5,
+        y = -top / 5,
+        scale = scale,
+    }
+end
+
+local function GetZoneMapFields(mapID)
+    local zoneData = Nx.Zones and Nx.Zones[mapID]
+    if not zoneData then
+        return nil
+    end
+
+    local _, _, _, faction, continent, entryID, entryX, entryY = Nx.Split("|", zoneData)
+    return {
+        faction = tonumber(faction),
+        continent = tonumber(continent),
+        entryID = tonumber(entryID),
+        entryX = tonumber(entryX),
+        entryY = tonumber(entryY),
+    }
+end
+
+local function ResolveZoneMapAnchor(mapID)
+    local seen = {}
+    local entryX, entryY = 50, 50
+
+    for _ = 1, 16 do
+        mapID = NormalizeZoneMapID(mapID)
+        if not mapID or mapID <= 0 or seen[mapID] then
+            return nil
+        end
+        seen[mapID] = true
+
+        local fields = GetZoneMapFields(mapID)
+        if fields then
+            if fields.faction == 3 and fields.continent == 5 and fields.entryID then
+                entryX = fields.entryX or entryX
+                entryY = fields.entryY or entryY
+                mapID = fields.entryID
+            elseif fields.continent and fields.continent > 0
+                and Map.MapInfo and Map.MapInfo[fields.continent]
+                and Map.MapWorldInfo and Map.MapWorldInfo[mapID]
+                and Map.MapWorldInfo[mapID].Scale then
+                return {
+                    mapID = mapID,
+                    continent = fields.continent,
+                    x = entryX,
+                    y = entryY,
+                }
+            else
+                local mapInfo = GetSafeZoneMapInfo(mapID)
+                mapID = mapInfo and mapInfo.parentMapID
+            end
+        else
+            local mapInfo = GetSafeZoneMapInfo(mapID)
+            mapID = mapInfo and mapInfo.parentMapID
+        end
+    end
+
+    return nil
+end
+
+local function FindZoneMapAnchor(mapInfo, ownFields)
+    if ownFields and ownFields.faction == 3 and ownFields.continent == 5 then
+        local ownAnchor = ResolveZoneMapAnchor(mapInfo.mapID)
+        if ownAnchor then
+            return ownAnchor
+        end
+    end
+
+    return ResolveZoneMapAnchor(mapInfo.parentMapID)
+end
+
+local function FindStableZoneMapAnchor()
+    local rootMaps = Map.MapZones and Map.MapZones[0]
+    if not rootMaps then
+        return nil
+    end
+
+    for _, rootMapID in ipairs(rootMaps) do
+        local anchor = ResolveZoneMapAnchor(rootMapID)
+        if anchor then
+            return anchor
+        end
+    end
+    return nil
+end
+
+local function AddUniqueZoneMapID(mapList, mapID)
+    if not mapList then
+        return
+    end
+
+    for _, existingMapID in ipairs(mapList) do
+        if existingMapID == mapID then
             return
         end
     end
-    local _,topLeft = C_Map.GetWorldPosFromMapPos(mapid,vec)
-    local _,bottomRight = C_Map.GetWorldPosFromMapPos(mapid,vec2)
-    if topLeft and bottomRight then
-        local top, left = topLeft:GetXY()
-        local bottom, right = bottomRight:GetXY()
-        bottom = top + (bottom - top) * 2
-        right = left + (right - left) * 2
-        winfo[mapid] = {}
-        winfo[mapid].X = ((left * -1) / 5)
-        winfo[mapid].Y = ((top * -1) / 5)
-        winfo[mapid].Scale = ((right * -1) + left) / 500
-        winfo[mapid].MapArt = C_Map.GetMapArtID(mapid)
+    mapList[#mapList + 1] = mapID
+end
 
-        local mapinfo = C_Map.GetMapInfo(mapid)
-        if mapinfo and mapinfo.name then
-            if mapinfo.name then
-                winfo[mapid].Name = L[mapinfo.name]
-
-                local parentMapID = mapinfo.parentMapID or 0
-                Nx.Zones[mapid] = L[mapinfo.name] .. "|110|120|3|5|"..(parentMapID > 0 and parentMapID or 100).."|0|0|0"
-                Nx.Map:InitTables(true)
-            end
-            if mapinfo.parentMapID then
-                winfo[mapid].parentMapID = mapinfo.parentMapID
-            end
-            if mapinfo.mapType == 5 or mapinfo.mapType == 4 then
-                winfo[mapid].Instance = true
-            end
-        end
-
-        if winfo[mapid].X == math.huge or winfo[mapid].X == -math.huge then
-            winfo[mapid] = false
-        end
-
-        if winfo[mapid].Y == math.huge or winfo[mapid].Y == -math.huge then
-            winfo[mapid] = false
-        end
-
+local function IsPrimaryInstanceMap(mapID)
+    if not C_Map or not C_Map.GetMapGroupID or not C_Map.GetMapGroupMembersInfo then
+        return true
     end
 
-    return winfo[mapid]
+    local groupOK, groupID = pcall(C_Map.GetMapGroupID, mapID)
+    if not groupOK or not groupID or groupID == 0 then
+        return true
+    end
+
+    local membersOK, members = pcall(C_Map.GetMapGroupMembersInfo, groupID)
+    if not membersOK or type(members) ~= "table" then
+        return true
+    end
+
+    local mapTypes = Enum and Enum.UIMapType or {}
+    local dungeonType = mapTypes.Dungeon or 4
+    local microType = mapTypes.Micro or 5
+    local lowestMapID = mapID
+
+    for _, member in ipairs(members) do
+        local memberMapID = member.mapID
+        if memberMapID and memberMapID ~= mapID then
+            local memberFields = GetZoneMapFields(memberMapID)
+            local memberWorldInfo = Map.MapWorldInfo and Map.MapWorldInfo[memberMapID]
+            if (memberFields and memberFields.faction == 3 and memberFields.continent == 5)
+                or (memberWorldInfo and memberWorldInfo.Instance) then
+                return false
+            end
+
+            local memberInfo = GetSafeZoneMapInfo(memberMapID)
+            if memberInfo and (memberInfo.mapType == dungeonType or memberInfo.mapType == microType)
+                and memberMapID < lowestMapID then
+                lowestMapID = memberMapID
+            end
+        end
+    end
+
+    return mapID == lowestMapID
+end
+
+local function IsCurrentZoneInstance(mapID)
+    if not IsInInstance or not C_Map or not C_Map.GetBestMapForUnit then
+        return false
+    end
+
+    local instanceOK, inInstance = pcall(IsInInstance)
+    if not instanceOK or not inInstance then
+        return false
+    end
+
+    local playerMapOK, playerMapID = pcall(C_Map.GetBestMapForUnit, "player")
+    return playerMapOK and NormalizeZoneMapID(playerMapID) == mapID
+end
+
+local function BuildMissingZoneInfo(mapID, force)
+    local worldInfo = Map.MapWorldInfo
+    if not worldInfo then
+        return nil
+    end
+
+    local existingInfo = worldInfo[mapID]
+    if existingInfo and existingInfo.Scale and not force then
+        return existingInfo
+    end
+
+    local mapInfo = GetSafeZoneMapInfo(mapID)
+    if not mapInfo or not mapInfo.name then
+        return nil
+    end
+    mapInfo.mapID = mapInfo.mapID or mapID
+
+    local mapTypes = Enum and Enum.UIMapType or {}
+    local continentType = mapTypes.Continent or 2
+    local zoneType = mapTypes.Zone or 3
+    local dungeonType = mapTypes.Dungeon or 4
+    local microType = mapTypes.Micro or 5
+    local orphanType = mapTypes.Orphan or 6
+    local mapType = mapInfo.mapType
+    if mapType ~= zoneType and mapType ~= dungeonType
+        and mapType ~= microType and mapType ~= orphanType then
+        return nil
+    end
+
+    local parentMapID = NormalizeZoneMapID(mapInfo.parentMapID)
+    local parentWorldInfo = parentMapID and worldInfo[parentMapID]
+    if parentMapID and parentMapID > 0 and parentMapID ~= mapID
+        and (not parentWorldInfo or not parentWorldInfo.Scale) then
+        local parentInfo = GetSafeZoneMapInfo(mapInfo.parentMapID)
+        if parentInfo and parentInfo.mapType ~= continentType then
+            Map:GetZoneInfo(parentMapID)
+        end
+    end
+
+    local ownFields = GetZoneMapFields(mapID)
+    local anchor = FindZoneMapAnchor(mapInfo, ownFields)
+    local geometry
+    if mapType == zoneType or mapType == orphanType then
+        geometry = GetZoneMapGeometry(mapID)
+    end
+
+    local isInstance = mapType == dungeonType or mapType == microType
+        or (ownFields and ownFields.faction == 3 and ownFields.continent == 5)
+        or IsCurrentZoneInstance(mapID)
+
+    if not isInstance and geometry and anchor then
+        local parentGeometry = GetZoneMapGeometry(anchor.mapID)
+        isInstance = parentGeometry and geometry.worldMapID
+            and parentGeometry.worldMapID
+            and geometry.worldMapID ~= parentGeometry.worldMapID or false
+    end
+    if not isInstance and (not geometry or not anchor
+        or not Map.MapInfo or not Map.MapInfo[anchor.continent]) then
+        isInstance = true
+    end
+
+    if isInstance then
+        anchor = anchor or FindStableZoneMapAnchor()
+        if not anchor then
+            return nil
+        end
+    end
+
+    local winfo = existingInfo or {}
+    local localizedName = L[mapInfo.name] or mapInfo.name
+    winfo.Name = localizedName
+    winfo.parentMapID = mapInfo.parentMapID
+
+    if C_Map.GetMapArtID then
+        local artOK, mapArtID = pcall(C_Map.GetMapArtID, mapID)
+        if artOK and mapArtID then
+            winfo.MapArt = mapArtID
+        end
+    end
+
+    if isInstance then
+        local worldX, worldY = 0, 0
+        if Map.GetWorldPos then
+            local positionOK, x, y = pcall(
+                Map.GetWorldPos, Map, anchor.mapID, anchor.x or 50, anchor.y or 50
+            )
+            if positionOK and IsFiniteMapCoordinate(x) and IsFiniteMapCoordinate(y) then
+                worldX, worldY = x, y
+            end
+        end
+
+        winfo.EntryMId = anchor.mapID
+        winfo.Scale = 1002 / 25600
+        winfo.X = worldX
+        winfo.Y = worldY
+        winfo[4] = worldX
+        winfo[5] = worldY
+        winfo.Cont = anchor.continent
+        winfo.Zone = mapID
+        winfo.Instance = true
+
+        if not Nx.Zones[mapID] then
+            Nx.Zones[mapID] = localizedName .. "|0|0|3|5|" .. anchor.mapID
+                .. "|" .. (anchor.x or 50) .. "|" .. (anchor.y or 50) .. "|0"
+        end
+
+        if mapType ~= microType and IsPrimaryInstanceMap(mapID) then
+            Map.MapZones[100] = Map.MapZones[100] or {}
+            AddUniqueZoneMapID(Map.MapZones[100], mapID)
+        end
+    else
+        local continentInfo = Map.MapInfo[anchor.continent]
+        winfo.Scale = geometry.scale
+        winfo.X = geometry.x
+        winfo.Y = geometry.y
+        winfo[4] = continentInfo.X + geometry.x
+        winfo[5] = continentInfo.Y + geometry.y
+        winfo.Cont = anchor.continent
+        winfo.Zone = mapID
+        winfo.Instance = nil
+        winfo.ModernZoneArt = anchor.continent == 16
+            or (parentWorldInfo and parentWorldInfo.ModernZoneArt)
+            or winfo.ModernZoneArt
+
+        if not Nx.Zones[mapID] then
+            Nx.Zones[mapID] = localizedName .. "|0|0|2|" .. anchor.continent .. "||"
+        end
+
+        local parentInfo = GetSafeZoneMapInfo(mapInfo.parentMapID)
+        if parentInfo and parentInfo.mapType == continentType then
+            Map.MapZones[anchor.continent] = Map.MapZones[anchor.continent] or {}
+            AddUniqueZoneMapID(Map.MapZones[anchor.continent], mapID)
+        end
+    end
+
+    worldInfo[mapID] = winfo
+    if Nx.MapIdToName then
+        Nx.MapIdToName[mapID] = localizedName
+    end
+    if Nx.MapNameToId and not Nx.MapNameToId[localizedName] then
+        Nx.MapNameToId[localizedName] = mapID
+    end
+
+    return winfo
+end
+
+function Nx.Map:GetZoneInfo(mapID, force)
+    mapID = tonumber(mapID)
+    if not mapID or mapID <= 0 or mapID == 9000 then
+        return nil
+    end
+    if zoneInfoInProgress[mapID] then
+        return Map.MapWorldInfo and Map.MapWorldInfo[mapID] or nil
+    end
+
+    zoneInfoInProgress[mapID] = true
+    local ok, result = pcall(BuildMissingZoneInfo, mapID, force)
+    zoneInfoInProgress[mapID] = nil
+
+    if ok then
+        return result
+    end
+    return nil
 end
 
 Map.MapLevels={
