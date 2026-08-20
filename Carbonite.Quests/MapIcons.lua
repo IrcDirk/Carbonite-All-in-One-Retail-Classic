@@ -74,6 +74,64 @@ end
 
 local GetObjectIconTextureCoords = _G.C_Minimap and _G.C_Minimap.GetObjectIconTextureCoords
 
+-- GetQuestsOnMap also returns nearby quests whose own map differs from the
+-- requested canvas. Blizzard rejects those entries except for a genuine child
+-- map or the super-tracked quest on its parent continent.
+local function GetVisibleTaskMapID(info, viewMapID, trackedQuestID)
+    if not info or type(info.questID) ~= "number"
+        or type(info.x) ~= "number" or type(info.y) ~= "number" then
+        return nil
+    end
+
+    viewMapID = tonumber(viewMapID)
+    local taskMapID = tonumber(info.mapID or info.mapId)
+    if not taskMapID and _G.GetQuestUiMapID then
+        taskMapID = tonumber(_G.GetQuestUiMapID(info.questID))
+    end
+
+    if not viewMapID or not taskMapID or taskMapID <= 0 then
+        return nil
+    end
+    if taskMapID == viewMapID then
+        return taskMapID
+    end
+
+    local mapAPI = _G.C_Map
+    local mapTypes = _G.Enum and _G.Enum.UIMapType
+    if not mapAPI or not mapAPI.GetMapInfo or not mapTypes then
+        return nil
+    end
+
+    local viewMapInfo = mapAPI.GetMapInfo(viewMapID)
+    if not viewMapInfo then
+        return nil
+    end
+
+    local isChildMapQuest = info.childDepth
+        and viewMapInfo.mapType == mapTypes.Zone
+    local isTrackedContinentQuest = info.questID == trackedQuestID
+        and viewMapInfo.mapType == mapTypes.Continent
+    if not isChildMapQuest and not isTrackedContinentQuest then
+        return nil
+    end
+
+    local ancestorMapID = taskMapID
+    for _ = 1, 16 do
+        local ancestorInfo = mapAPI.GetMapInfo(ancestorMapID)
+        local parentMapID = ancestorInfo and tonumber(ancestorInfo.parentMapID)
+        if not parentMapID or parentMapID <= 0
+            or parentMapID == ancestorMapID then
+            return nil
+        end
+        if parentMapID == viewMapID then
+            return taskMapID
+        end
+        ancestorMapID = parentMapID
+    end
+
+    return nil
+end
+
 -------------------------------------------------------------------------------
 -- Update map icons (called by map)
 -------------------------------------------------------------------------------
@@ -721,14 +779,15 @@ function Nx.Quest:UpdateIcons (map)
 
     -- BONUS TASKS and WORLD QUESTS icons
     local taskIconIndex = 1
-    local activeWQ = {}
     if C_TaskQuest and C_TaskQuest.GetQuestsOnMap
         and viewMapID ~= 9000 and not instanceIconContext then
         local taskInfo = RefreshTaskInfoCache(viewMapID, Nx.Map.mapChange)
         if taskInfo and Nx.db.char.Map.ShowWorldQuest then
             for i = 1, #taskInfo do
                 local info = taskInfo[i]
-                local questID = taskInfo[i].questID
+                local taskMapID = GetVisibleTaskMapID(info, viewMapID, activeQID)
+                if taskMapID then
+                local questID = info.questID
                 local title, faction
                 if C_TaskQuest.GetQuestInfoByQuestID then
                     title, faction = C_TaskQuest.GetQuestInfoByQuestID(questID)
@@ -779,13 +838,27 @@ function Nx.Quest:UpdateIcons (map)
                                                (classification == Enum.QuestClassification.Legendary)
                         end
                     end
-                    if QuestUtils_ShouldDisplayExpirationWarning(questID) or (timeLeft and timeLeft > 0) or isImportantQuest then
+                    local isWorldQuest = not info.isMeta
+                    if _G.QuestUtils_IsQuestWorldQuest then
+                        isWorldQuest = _G.QuestUtils_IsQuestWorldQuest(questID)
+                    end
+                    local canShowAsWorldQuest = isWorldQuest
+                        or info.isMapIndicatorQuest or isImportantQuest
+                    if canShowAsWorldQuest
+                        and (QuestUtils_ShouldDisplayExpirationWarning(questID)
+                            or (timeLeft and timeLeft > 0) or isImportantQuest) then
                         local x, y = info.x * 100, info.y * 100
+                        -- Task coordinates are normalized to the map passed
+                        -- to GetQuestsOnMap, even for a valid child-map quest.
+                        local worldX, worldY = map:GetWorldPos(viewMapID, x, y)
                         local f = map:GetIconWQ(120)
                         f.questID = info.questID
+                        f.mapID = taskMapID
 
                         -- Use hideOutside=true to completely hide icon when outside visible area
-                        if not map:ClipFrameZ(f, x, y, 24, 24, 0, true) then
+                        if not map:ClipFrameByMapType(
+                            f, worldX, worldY, 24, 24, 0, true
+                        ) then
                             -- Icon is outside visible area, skip processing
                             f:Hide()
                         else
@@ -814,10 +887,9 @@ function Nx.Quest:UpdateIcons (map)
                             -- unconditionally re-setting it; second
                             -- click on the same WQ clears it (parity
                             -- with the bonus-objective pin behaviour).
-                            local wx, wy = map:GetWorldPos(map.MapId, x, y)
-                            map:ToggleGotoQuest(self.questID, wx, wy,
+                            map:ToggleGotoQuest(self.questID, worldX, worldY,
                                 C_TaskQuest.GetQuestInfoByQuestID(self.questID),
-                                map.MapId)
+                                self.mapID)
                             if not InCombatLockdown() and self.worldQuest then
                                 if not ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
                                     -- Capture click-time inputs and
@@ -917,8 +989,10 @@ function Nx.Quest:UpdateIcons (map)
                 else
                     if not worldquestdb[questID] and title then
                         taskIconIndex = taskIconIndex + 1
-                        local x, y = taskInfo[i].x * 100, taskInfo[i].y * 100
+                        local x, y = info.x * 100, info.y * 100
+                        local worldX, worldY = map:GetWorldPos(viewMapID, x, y)
                         local f = map:GetIcon(3)
+                        f.mapID = taskMapID
 
                         local objTxt = ""
                         for objectiveIndex = 1, taskInfo[i].numObjectives do
@@ -934,7 +1008,9 @@ function Nx.Quest:UpdateIcons (map)
                             if not taskInfo[i].inProgress then
                                 f.questID = taskInfo[i].questID
                                 f.NxTip = L["|cffffd100Daily Task:\n"] .. title:gsub("Daily Objective: ", "") .. objTxt .. "\n" .. GREEN_FONT_COLOR:GenerateHexColorMarkup() .. GRANTS_FOLLOWER_XP
-                                if not map:ClipFrameZ(f, x, y, 22, 22, 0, true) then
+                                if not map:ClipFrameByMapType(
+                                    f, worldX, worldY, 22, 22, 0, true
+                                ) then
                                     f:Hide()
                                 else
                                     local left, right, top, bottom
@@ -968,7 +1044,9 @@ function Nx.Quest:UpdateIcons (map)
                             end
                         else
                             f.NxTip = L["|cffffd100Bonus Task:\n"] .. title:gsub("Bonus Objective: ", "") .. objTxt
-                            if map:ClipFrameZ(f, x, y, 22, 22, 0, true) then
+                            if map:ClipFrameByMapType(
+                                f, worldX, worldY, 22, 22, 0, true
+                            ) then
                                 local left, right, top, bottom
                                 if GetObjectIconTextureCoords then
                                     left, right, top, bottom = GetObjectIconTextureCoords(4734)
@@ -991,6 +1069,7 @@ function Nx.Quest:UpdateIcons (map)
                     end
                 end
                 end -- if not skipBonusOrThreat
+                end -- if task belongs to the displayed map
             end
         end
     end
