@@ -79,6 +79,16 @@ function Nx:SetupEverything()
     end
 
     Nx.Initialized = true
+
+    -- Module addons can register additional sections while the delayed setup
+    -- pipeline is running. Refresh once more at the ready boundary so the
+    -- Blizzard options canvas cannot retain an incomplete startup snapshot.
+    local Options = _G.Carbonite and _G.Carbonite.GetModule
+        and _G.Carbonite:GetModule("Options", true)
+    if Options and Options.Refresh then
+        Options:Refresh()
+    end
+
     Nx:OnPlayer_login("PLAYER_LOGIN")
 
     -- Zygor Guides Viewer arrow integration moved to

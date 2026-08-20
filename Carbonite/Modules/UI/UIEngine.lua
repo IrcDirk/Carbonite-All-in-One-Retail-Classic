@@ -4492,6 +4492,7 @@ function Nx.Button:OnMouseDown (button)
 
         else
             but.Pressed = true
+            but.MouseDownButton = button
 
         end
     end
@@ -4528,9 +4529,14 @@ function Nx.Button:OnMouseUp (button)
 
         if not (but.Type.Bool or but.Type.States or but.Type.Scroll) then
 
+            local wasPressed = but.Pressed and but.MouseDownButton == button
             but.Pressed = false
+            but.MouseDownButton = nil
 
-            if Nx.Util_IsMouseOver (but.Frm) then
+            -- Moving or resizing a window can place its close button beneath
+            -- the cursor before release. A release without a matching press
+            -- must never activate that button and close the entire window.
+            if wasPressed and Nx.Util_IsMouseOver (but.Frm) then
 
                 if but.UserFunc then
                     but.UserFunc (but.User, but, but.Id, button)

@@ -35,6 +35,22 @@ local Options = Module:New("Options", {
 -- { provider = fn, displayName = string, order = number }.
 local registry = {}
 
+local function unavailableGroup(name, reason)
+    return {
+        type = "group",
+        name = name,
+        args = {
+            unavailable = {
+                type = "description",
+                name = "These settings are not available yet. Reopen the options window after Carbonite finishes loading.\n\n"
+                    .. tostring(reason or "The options provider did not return a settings group."),
+                order = 1,
+                width = "full",
+            },
+        },
+    }
+end
+
 -- Root group: built lazily each time AceConfig asks for the table so
 -- providers registered after OnEnable (e.g. by plugins loaded later)
 -- still appear. The legacy NxOptions section provides a "Main" tab
@@ -71,25 +87,36 @@ local function buildRootGroup()
     for _, id in ipairs(ids) do
         local entry = registry[id]
         local ok, table_ = pcall(entry.provider)
-        if ok and type(table_) == "table" then
-            args[id] = table_
-            args[id].order = entry.order or 100
-            args[id].name  = entry.displayName or id
-        elseif Carbonite.Core.Logger then
-            Carbonite.Core.Logger:Get("Options"):error("provider for %s failed: %s", id, tostring(table_))
+        if not ok or type(table_) ~= "table" or table_.type ~= "group"
+            or type(table_.args) ~= "table" then
+            local reason = ok and "The options provider returned an invalid settings group." or table_
+            table_ = unavailableGroup(entry.displayName or id, reason)
+            if Carbonite.Core.Logger then
+                pcall(function()
+                    Carbonite.Core.Logger:Get("Options"):error("provider for %s failed: %s", id, tostring(reason))
+                end)
+            end
         end
+        args[id] = table_
+        args[id].order = entry.order or 100
+        args[id].name  = entry.displayName or id
     end
 
-    -- Profiles tab (every AceAddon addon should expose this).
+    -- Profiles options should not prevent every other category from rendering
+    -- if the saved-variable database has not completed initialization yet.
     if Carbonite.db then
-        args.profiles = AceDBOptions:GetOptionsTable(Carbonite.db)
+        local ok, profiles = pcall(AceDBOptions.GetOptionsTable, AceDBOptions, Carbonite.db)
+        args.profiles = ok and type(profiles) == "table" and profiles
+            or unavailableGroup("Profiles", profiles)
         args.profiles.order = 1000
     end
 
     return {
         type = "group",
         name = "Carbonite",
-        childGroups = "tab",
+        -- Top-level sections must stay in AceGUI's scrollable navigation tree.
+        -- Tabs remain available inside individual sections where appropriate.
+        childGroups = "tree",
         args = args,
     }
 end
@@ -105,9 +132,19 @@ function Options:Register(id, provider, opts)
         displayName = opts.displayName or id,
         order       = opts.order or 100,
     }
+
+    -- The Blizzard category can already exist when legacy or plugin sections
+    -- register. Invalidate AceConfig's cached root so a panel opened during
+    -- early startup cannot remain stuck with an empty options table.
+    if self._rootRegistered then
+        AceConfigReg:NotifyChange("Carbonite")
+    end
 end
 
 function Options:Open(panelId)
+    if self._rootRegistered then
+        self:Refresh()
+    end
     AceConfigDialog:Open("Carbonite")
     if panelId then
         AceConfigDialog:SelectGroup("Carbonite", panelId)
@@ -120,6 +157,7 @@ end
 
 function Options:OnEnable()
     AceConfig:RegisterOptionsTable("Carbonite", buildRootGroup)
+    self._rootRegistered = true
     self.frame, self.panelID = AceConfigDialog:AddToBlizOptions("Carbonite", "Carbonite")
 
     -- The AceConfigDialog default (700 wide) is too narrow for the
@@ -140,4 +178,8 @@ function Options:OnEnable()
     Carbonite.Opts = Carbonite.Opts or {}
     Carbonite.Opts.Open    = function(_, panel) self:Open(panel) end
     Carbonite.Opts.Refresh = function() self:Refresh() end
+
+    -- Providers may have registered before this module was enabled. Force the
+    -- first Blizzard-panel render to query the complete live registry.
+    self:Refresh()
 end
