@@ -3261,6 +3261,15 @@ function Nx.Opts:Init()
     self:Reset (true)
     self:UpdateCom()
 
+    -- Core option providers reference the choice tables initialized above.
+    -- If Blizzard opened the panel before this point, AceConfig may have
+    -- cached a root in which those providers were skipped. Rebuild it now.
+    local Options = _G.Carbonite and _G.Carbonite.GetModule
+        and _G.Carbonite:GetModule("Options", true)
+    if Options and Options.Refresh then
+        Options:Refresh()
+    end
+
     OptsInit = Nx:ScheduleTimer(self.InitTimer, .5, self)
 
 --    Nx.prt ("cvar %s", GetCVar ("farclip") or "nil")

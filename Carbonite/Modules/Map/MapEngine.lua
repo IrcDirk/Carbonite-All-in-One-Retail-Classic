@@ -940,7 +940,10 @@ function Nx.Map:Create(index)
     -- Frame properties
     f:SetMovable(true)
     f:SetResizable(true)
-    f:SetFrameStrata("LOW")
+    -- Inherit the window's strata instead of pinning this child to LOW.
+    -- Nx.Window temporarily raises its parent to HIGH while moving or
+    -- sizing; a fixed LOW child then renders behind its own window and
+    -- makes the Carbonite map/minimap appear to disappear during a drag.
     f:SetWidth(m.W)
     f:SetHeight(m.H)
     f:SetResizeBounds(50, 50)
@@ -2390,7 +2393,30 @@ function Nx.Map:MinimapOwnInit()
     local mmc = _G["MinimapCluster"]
     self.MMChkDelay = 5        -- Prevent crash here
     self.MMOwnedFrms = {}
+
+    -- Capture Blizzard's native ownership once so disabling the combined
+    -- minimap can return the frame without requiring a UI reload.
+    if not self.MMOriginalParent then
+        self.MMOriginalParent = mm:GetParent()
+        self.MMOriginalStrata = mm:GetFrameStrata()
+        self.MMOriginalPoints = {}
+        for index = 1, mm:GetNumPoints() do
+            self.MMOriginalPoints[index] = { mm:GetPoint(index) }
+        end
+    end
+
     if not self.MMOwn then
+        if not InCombatLockdown() and self.MMOriginalParent
+            and mm:GetParent() ~= self.MMOriginalParent then
+            mm:SetParent(self.MMOriginalParent)
+            mm:ClearAllPoints()
+            for _, point in ipairs(self.MMOriginalPoints or {}) do
+                mm:SetPoint(unpack(point))
+            end
+            if self.MMOriginalStrata then
+                mm:SetFrameStrata(self.MMOriginalStrata)
+            end
+        end
         self.Win:Show (self.StartupShown)
         Nx.Map:MinimapButtonShowUpdate()
         return
@@ -2404,13 +2430,13 @@ function Nx.Map:MinimapOwnInit()
     mm:SetHeight (140)
     self.MMAlphaDelay = 100
 
-    -- Parent to the window frame (sibling of self.Frm) rather than self.Frm
-    -- itself, so the map frame's SetClipsChildren(true) (which clips Carbonite
-    -- icons at the map edges) does not also clip the docked minimap or its
-    -- children when the user offsets it outside the map's rect via DXO/DYO.
-    -- Clipping there hid GatherMate2 pins and broke the engine's tracking-blip
-    -- mouseover/tooltip for the portion of the minimap outside the clip box.
-    mm:SetParent (self.Win.Frm)
+    -- Blizzard's Minimap is a live Blizzard-managed frame. Making it a child
+    -- of NxMap1 also makes it part of the exact hierarchy that Carbonite moves
+    -- and resizes from its header and borders. On current clients that
+    -- managed descendant can invalidate StartMoving or StartSizing and make
+    -- the unlocked map window disappear. Keep it outside that hierarchy and
+    -- position it in screen coordinates instead.
+    mm:SetParent(UIParent)
 
     --self.MMFrm:SetQuestBlobRingAlpha(1)
     -- Retail 12.1 removed these MinimapFrame methods, while Classic clients
@@ -3002,8 +3028,8 @@ function Nx.Map:MinimapUpdateEnd()
                 (Enum.GarrisonType.Type_8_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_8_0_Garrison)) or
                 (Enum.GarrisonType.Type_9_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_9_0_Garrison))
                 )) then
-            mm:SetPoint("TOPLEFT", self.Frm, "TOPLEFT", 1, 0)
             mm:SetScale(.02)
+            self:PositionOwnedMinimap(1, 0)
             mm:SetFrameLevel(1)
 
             -- Also minimize model frames
@@ -3033,9 +3059,10 @@ function Nx.Map:MinimapUpdateEnd()
             y = (self.MapH - sz + 1)
         end
 
-        mm:ClearAllPoints()
-        mm:SetPoint ("TOPLEFT", self.Frm, "TOPLEFT", (x + Nx.db.profile.MiniMap.DXO) / iconScale,
-                                        (-y - Nx.db.profile.MiniMap.DYO) / iconScale)
+        self:PositionOwnedMinimap(
+            x + Nx.db.profile.MiniMap.DXO,
+            -y - Nx.db.profile.MiniMap.DYO
+        )
         mm:Show()
         if (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
             mm:SetFrameLevel (self.Level + 50)
@@ -3080,6 +3107,44 @@ function Nx.Map:MinimapUpdateEnd()
 
     --V4 gone TEST!!!!!!!!!
 --    MinimapPing:SetScale (self.Win.Frm:GetScale() * mm:GetScale())
+end
+
+-------------------------------------------------------------------------------
+-- Position Blizzard's owned minimap without anchoring or parenting it to the
+-- movable Carbonite window. localX/localY are offsets from Carbonite's map
+-- frame TOPLEFT in that frame's unscaled coordinates.
+-------------------------------------------------------------------------------
+
+function Nx.Map:PositionOwnedMinimap(localX, localY)
+    if InCombatLockdown() then
+        return false
+    end
+
+    local mm = self.MMFrm
+    local mapFrame = self.Frm
+    if not mm or not mapFrame or not mapFrame:GetLeft() or not mapFrame:GetTop() then
+        return false
+    end
+
+    local mapScale = mapFrame:GetEffectiveScale()
+    local minimapScale = mm:GetEffectiveScale()
+    if type(mapScale) ~= "number" or mapScale <= 0
+        or type(minimapScale) ~= "number" or minimapScale <= 0 then
+        return false
+    end
+
+    local left = (mapFrame:GetLeft() * mapScale + localX * mapScale) / minimapScale
+    local top = (mapFrame:GetTop() * mapScale + localY * mapScale) / minimapScale
+
+    mm:ClearAllPoints()
+    mm:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top)
+
+    -- UIParent ownership means the minimap no longer inherits NxMap1's layer.
+    -- Mirror it explicitly so drag/resize raising stays visually consistent.
+    if mm.SetFrameStrata and self.Win and self.Win.Frm then
+        mm:SetFrameStrata(self.Win.Frm:GetFrameStrata())
+    end
+    return true
 end
 
 function Nx.Map:MinimapSetScale (scale, iconScale)
@@ -3144,7 +3209,6 @@ function Nx.Map:MinimapDetachFrms()
 
     local mm = self.MMFrm
     local mmc = _G["MinimapCluster"]
-    local winf = self.Win.Frm
     local dock = Nx.Map.Dock
 
     if dock.InitPending then
@@ -3177,8 +3241,9 @@ function Nx.Map:MinimapDetachFrms()
 --                        Nx.prt ("MM Model %s", c:GetName() or "nil")
 
                         if self.MMOwn then
-
-                            c:SetParent (winf)
+                            -- Leave Blizzard model children with Minimap.
+                            -- Reparenting them into NxMap1 recreates the same
+                            -- managed-descendant drag failure avoided above.
                             self.MMOwnedFrms[c] = 0
                             tinsert (self.MMModels, c)
                         end
@@ -5162,7 +5227,7 @@ end
 --------
 -- Update all map data
 
-function Nx.Map:UpdateWorld()
+function Nx.Map:UpdateWorld(mapId)
 
     if self.Debug then
 --        Nx.prt ("%d Map UpdateWorld1 %d L%d",
@@ -5170,13 +5235,17 @@ function Nx.Map:UpdateWorld()
     end
 
     self.NeedWorldUpdate = false
-    local mapId
     local dungeonLevel = Nx.Map:GetCurrentMapDungeonLevel()
+
+    -- RMapId is committed later in the render pass. Prefer the map already
+    -- resolved for this pass so its shared tile frames cannot briefly retain
+    -- the previous zone's artwork after the visible map changes.
+    if not mapId or mapId == 9000 then
+        mapId = self:GetCurrentMapId()
+    end
 
     -- Quick early-out: if we have cached state, check if anything changed before expensive API calls
     if self.CurWorldUpdateMapId and self.LastDungeonLevel == dungeonLevel then
-        -- Use cached map ID for quick check
-        mapId = self:GetCurrentMapId()
         if self.CurWorldUpdateMapId == mapId then
             -- Only check overlay count every 2 seconds (expensive API call)
             local now = GetTime()
@@ -5388,7 +5457,11 @@ function Nx.Map:Update (elapsed)
     end
 
     self:MouseEnable (self.Win:IsSizeMax())
-    self:UpdateWorld()
+
+    -- Resolve the visible map once so texture loading and zone geometry use
+    -- the same map throughout this render pass.
+    local mapId = Nx.Map:GetCurrentMapAreaID()
+    self:UpdateWorld(mapId)
 
     if debugProfile then
         local now = debugprofilestop()
@@ -5401,7 +5474,6 @@ function Nx.Map:Update (elapsed)
     self.MapW = self.Frm:GetWidth() - self.PadX * 2
     self.MapH = self.Frm:GetHeight() - self.TitleH
     self.Level = self.Frm:GetFrameLevel() + 1
-    local mapId = Nx.Map:GetCurrentMapAreaID()
     self.Cont, self.Zone = self:IdToContZone (mapId)
 
     Nx.InSanctuary = C_PvP.GetZonePVPInfo() == "sanctuary"
@@ -8277,6 +8349,22 @@ end
 -- Detects which zone the cursor is over
 -------------------------------------------------------------------------------
 
+local function FindMapHotspotAtPosition(hotspots, mapID, worldX, worldY)
+    if not hotspots then
+        return nil
+    end
+
+    for _, hotspot in ipairs(hotspots) do
+        if hotspot.MapId == mapID
+            and worldX >= hotspot.WX1 and worldX <= hotspot.WX2
+            and worldY >= hotspot.WY1 and worldY <= hotspot.WY2 then
+            return hotspot
+        end
+    end
+
+    return nil
+end
+
 ---
 -- Check if cursor is over a world zone hotspot
 -- Updates current map display based on cursor position
@@ -8314,14 +8402,29 @@ function Nx.Map:CheckWorldHotspots(wx, wy)
     local currentMapID = self:GetCurrentMapId()
     local currentInfo = self.MapWorldInfo and self.MapWorldInfo[currentMapID]
     if currentInfo and currentInfo.City and currentInfo.LegacyMapArt then
-        for _, spot in ipairs(self.WorldHotspotsCity) do
-            if spot.MapId == currentMapID
-                and wx >= spot.WX1 and wx <= spot.WX2
-                and wy >= spot.WY1 and wy <= spot.WY2 then
-                Nx.Map.MouseIsOverMap = currentMapID
-                self.WorldHotspotTipStr = spot.NxTipBase .. "\n"
-                return
-            end
+        local currentSpot = FindMapHotspotAtPosition(
+            self.WorldHotspotsCity, currentMapID, wx, wy)
+        if currentSpot then
+            Nx.Map.MouseIsOverMap = currentMapID
+            self.WorldHotspotTipStr = currentSpot.NxTipBase .. "\n"
+            return
+        end
+    end
+
+    -- Layered maps often share world geometry with their surface map. Keep an
+    -- underground layer selected only while it is the player's actual map and
+    -- the cursor remains inside that layer's own hotspot. A remotely browsed
+    -- underground map must never prevent normal mouseover navigation.
+    if currentInfo and currentInfo.Underground
+        and currentMapID == self:GetDisplayableMapForPlayer() then
+        local currentSpot = FindMapHotspotAtPosition(
+            self.WorldHotspotsCity, currentMapID, wx, wy)
+            or FindMapHotspotAtPosition(
+                self.WorldHotspots, currentMapID, wx, wy)
+        if currentSpot then
+            Nx.Map.MouseIsOverMap = currentMapID
+            self.WorldHotspotTipStr = currentSpot.NxTipBase .. "\n"
+            return
         end
     end
 
@@ -8375,9 +8478,6 @@ function Nx.Map:CheckWorldHotspotsType (wx, wy, quad)
 
             if spot.MapId ~= curId then
                 local winfo = self.MapWorldInfo[curId]
-                if winfo and winfo.Underground then
-                    return false
-                end
                 if winfo and winfo.Instance
                     and curId == self:GetDisplayableMapForPlayer() then
                     -- Instance-style standalone maps are positioned at their
@@ -9948,7 +10048,7 @@ function Nx.Map:ClipMMW (frm, bx, by, w, h)
     self:MinimapSetScale (sc, isc)
 
 --    frm:SetScale (sc)
-    frm:SetPoint ("TOPLEFT", self.Frm, "TOPLEFT", vx1 / isc, (-vy1 - self.TitleH) / isc)
+    self:PositionOwnedMinimap(vx1, -vy1 - self.TitleH)
 
     frm:Show()
 
@@ -15997,8 +16097,10 @@ function Nx.Map.MoveWorldMap()
     local numtiles = rows * cols
 
     if not Nx.Map.WMDF then
-        Nx.Map.WMDF = CreateFrame("Frame", "WMDF")
-        Nx.Map.WMDF:SetFrameStrata("BACKGROUND")
+        -- Keep the instance-art canvas in its map window's inherited strata.
+        -- A fixed BACKGROUND strata remains behind the window when Carbonite
+        -- raises that window during a header drag or border resize.
+        Nx.Map.WMDF = CreateFrame("Frame", "WMDF", Nx.Map:GetMap(1).Frm)
         Nx.Map.WMDT = {}
         Nx.Map.EJMB = {}
     end
