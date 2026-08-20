@@ -5435,17 +5435,18 @@ function Nx.Map:Update (elapsed)
         end
 
         -- Hide all world quest icons immediately on map change to prevent stale icons
-        local wqFrms = self.IconWQFrms
-        for n = 1, wqFrms.Used or 0 do
-            if wqFrms[n] then
-                wqFrms[n]:Hide()
-            end
-        end
-        wqFrms.Next = 1
+        self:HideWorldQuestIcons()
 
-        -- Clear quest offer cache on map change to prevent showing wrong quest titles
-        if Nx.Quest and Nx.Quest.ClearQuestOfferCache then
-            Nx.Quest:ClearQuestOfferCache()
+        -- Drop old-map task data before the next draw so adjacent-zone and
+        -- emissary entries cannot survive the transition for one frame.
+        if Nx.Quest then
+            Nx.Quest._iconDirty = true
+            if Nx.Quest.ClearTaskInfoCache then
+                Nx.Quest:ClearTaskInfoCache()
+            end
+            if Nx.Quest.ClearQuestOfferCache then
+                Nx.Quest:ClearQuestOfferCache()
+            end
         end
 
         -- Clear POI cache on map change (POI_Cache is accessed via local reference)
@@ -5484,13 +5485,7 @@ function Nx.Map:Update (elapsed)
         POI_Cache.data = nil
         POI_Cache.time = 0
 
-        local wqFrms = self.IconWQFrms
-        for n = 1, wqFrms.Used or 0 do
-            if wqFrms[n] then
-                wqFrms[n]:Hide()
-            end
-        end
-        wqFrms.Next = 1
+        self:HideWorldQuestIcons()
 
         if self.InstanceMapRelevanceCache then
             wipe(self.InstanceMapRelevanceCache)
@@ -10395,6 +10390,36 @@ end
 
 
 ------
+-- Immediately retire every world-quest frame, including frames stamped since
+-- the last ResetIcons pass. Used alone describes the previous draw and can
+-- miss newer frames, leaving their last screen anchor visible indefinitely.
+
+function Nx.Map:HideWorldQuestIcons()
+    local frms = self.IconWQFrms
+    if not frms then
+        return
+    end
+
+    local last = max(
+        frms.Used or 0,
+        (frms.Next or 1) - 1,
+        frms.MaxUsed or 0,
+        #frms
+    )
+
+    for n = 1, last do
+        local frame = frms[n]
+        if frame then
+            frame:Hide()
+        end
+    end
+
+    frms.MaxUsed = last
+    frms.Used = 0
+    frms.Next = 1
+end
+
+------
 -- Reset icons
 
 function Nx.Map:ResetIcons()
@@ -10422,7 +10447,7 @@ function Nx.Map:ResetIcons()
     local data = self.IconWQFrms
     data.Used = data.Next - 1        -- Save last used
     -- Track the maximum icons ever used (high-water mark) to ensure stale icons get hidden
-    data.MaxUsed = max(data.MaxUsed or 0, data.Used)
+    data.MaxUsed = max(data.MaxUsed or 0, data.Used, #data)
     data.Next = 1
 end
 
@@ -10462,19 +10487,17 @@ function Nx.Map:HideExtraIcons()
     end
 
     local data = self.IconWQFrms
+    local last = max(data.Used or 0, data.MaxUsed or 0, #data)
 
-    for n = data.Next, data.Used do        -- Hide up to last used amount
-        data[n]:Hide()
-    end
-
-    -- Also hide any icons beyond Used that might be visible (fixes stale icons on window activation)
-    -- This covers edge cases where icons were shown outside the normal update cycle
-    local maxWQ = data.MaxUsed or data.Used
-    for n = data.Used + 1, maxWQ do
-        if data[n] then
-            data[n]:Hide()
+    -- Frames before Next were stamped and positioned during this draw. Hide
+    -- every other allocated frame without touching newly reactivated icons.
+    for n = data.Next, last do
+        local frame = data[n]
+        if frame then
+            frame:Hide()
         end
     end
+    data.MaxUsed = last
 end
 
 ------
@@ -10652,7 +10675,12 @@ function Nx.Map:GetIconWQ (levelAdd)
     f.NXData = nil
     f.NXData2 = nil
     f.NxQuestOffer = nil      -- Clear quest offer flag
+    f.questID = nil
+    f.mapID = nil
+    f.worldQuest = nil
+    f.numObjectives = nil
 
+    frms.MaxUsed = max(frms.MaxUsed or 0, pos)
     frms.Next = pos + 1
 
     return f
