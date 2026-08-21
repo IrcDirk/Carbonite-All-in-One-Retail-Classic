@@ -1267,6 +1267,50 @@ local function WatchList_ShouldShowTask (Quest, questId, questIndex)
     return true
 end
 
+-- Blizzard distinguishes a world quest the player deliberately pinned from
+-- the Automatic watch created while the player is inside the quest's area.
+-- Only the former is persistent: an Automatic watch must not keep a task in
+-- Carbonite's tracker after GetTaskInfo reports that the player left it.
+--
+-- Older clients do not expose GetQuestWatchType. On those clients an entry in
+-- the world-quest watch list is treated as persistent, preserving the legacy
+-- behaviour instead of guessing at a watch type that the API cannot report.
+local function WatchList_IsPersistentWorldQuestWatch (
+    isWatched,
+    watchType,
+    watchTypesKnown
+)
+    if not isWatched then
+        return false
+    end
+
+    if not watchTypesKnown then
+        return true
+    end
+
+    local questWatchTypes = Enum and Enum.QuestWatchType
+    if not questWatchTypes or questWatchTypes.Manual == nil then
+        return true
+    end
+
+    return watchType == questWatchTypes.Manual
+end
+
+-- GetTaskInfo is still Blizzard's authoritative in-area predicate on Retail
+-- (and is what Blizzard_WorldQuestObjectiveTracker uses). IsOnQuest only says
+-- that a quest is in the log; using it as an area test caused Automatic world
+-- quest watches to survive after QUEST_REMOVED. Keep IsOnQuest solely as a
+-- compatibility fallback for clients that do not provide GetTaskInfo.
+local function WatchList_IsTaskInArea (questId)
+    if GetTaskInfo then
+        local isInArea = GetTaskInfo (questId)
+        return isInArea == true
+    end
+
+    return C_QuestLog and C_QuestLog.IsOnQuest
+        and C_QuestLog.IsOnQuest (questId) == true or false
+end
+
 -- Queue every world-quest feed into one ordered section. Current-map tasks,
 -- quest-log task fallbacks, and manually watched off-map quests can report the
 -- same quest, so use the quest ID as the stable de-duplication key.
@@ -1634,6 +1678,9 @@ function Nx.Quest.Watch:UpdateList()
                 local queuedWorldQuestIDs = {}
                 local watchedWorldQuestIDs = {}
                 local watchedWorldQuests = {}
+                local watchedWorldQuestTypes = {}
+                local worldQuestWatchTypesKnown = C_QuestLog
+                    and C_QuestLog.GetQuestWatchType ~= nil
 
                 -- Blizzard's world-quest watch list is independent of the
                 -- current map and quest-log task lists. Preserve its order and
@@ -1647,17 +1694,20 @@ function Nx.Quest.Watch:UpdateList()
                             C_QuestLog.GetQuestIDForWorldQuestWatchIndex(watchIndex)
                         if questId and questId > 0 and not watchedWorldQuests[questId] then
                             watchedWorldQuests[questId] = true
+                            if worldQuestWatchTypesKnown then
+                                watchedWorldQuestTypes[questId] =
+                                    C_QuestLog.GetQuestWatchType(questId)
+                            end
                             watchedWorldQuestIDs[#watchedWorldQuestIDs + 1] = questId
                         end
                     end
                 end
                 -- World quests / bonus tasks feed. The 12.0 engine is unified
                 -- across flavors, but some C_TaskQuest functions are disabled
-                -- on individual Classic clients, and the old global GetTaskInfo
-                -- / C_TaskQuest.GetQuestsForPlayerByMapID are gone. Use the
-                -- surviving GetQuestsOnMap + per-entry numObjectives and gate
-                -- the whole feed on availability so a client missing the API
-                -- skips it cleanly instead of erroring on a nil call.
+                -- on individual Classic clients. Discover candidates through
+                -- GetQuestsOnMap, then use GetTaskInfo (when available) only
+                -- for its authoritative in-area flag. Gate the feed so a
+                -- client missing the discovery API skips it without erroring.
                 local taskApiOK = C_TaskQuest and C_TaskQuest.GetQuestsOnMap
                     and C_TaskQuest.GetQuestInfoByQuestID
                 if Nx.qdb.profile.QuestWatch.BonusTask and taskApiOK then
@@ -1667,14 +1717,17 @@ function Nx.Quest.Watch:UpdateList()
                             local questId = taskInfo[i].questID
                             local numObjectives = taskInfo[i].numObjectives
                             tasks[questId] = true
-                            -- "In area / actively doing it": the task is in
-                            -- the player's quest log. Bonus objectives auto-add
-                            -- on area entry; accepted world quests are on-quest.
-                            -- Replaces the removed GetTaskInfo isInArea gate and
-                            -- avoids flooding the tracker with every map WQ.
-                            if watchedWorldQuests[questId]
-                                or C_QuestLog and C_QuestLog.IsOnQuest
-                                    and C_QuestLog.IsOnQuest(questId)
+                            local persistentWatch =
+                                WatchList_IsPersistentWorldQuestWatch(
+                                    watchedWorldQuests[questId],
+                                    watchedWorldQuestTypes[questId],
+                                    worldQuestWatchTypesKnown
+                                )
+                            -- Manual watches remain visible outside the area.
+                            -- Automatic/unwatched tasks require Blizzard's
+                            -- live in-area flag and the ordinary task filter.
+                            if persistentWatch
+                                or WatchList_IsTaskInArea(questId)
                                     and WatchList_ShouldShowTask (Quest, questId) then
                                 local title, factionID = C_TaskQuest.GetQuestInfoByQuestID(questId)
                                 local questTagInfo = GetQuestTagInfoCompat(questId)
@@ -1751,11 +1804,17 @@ function Nx.Quest.Watch:UpdateList()
                     end
 
                     -- A manually watched WQ can be outside the current map and
-                    -- absent from the regular quest log. Add those remaining
-                    -- IDs explicitly so tracking from the WQ List always has a
-                    -- visible result in Carbonite's Quest Watch.
+                    -- absent from the regular quest log. Add only persistent
+                    -- (Manual, or legacy untyped) watches here. Automatic
+                    -- watches are area-scoped and must not leak into this feed.
                     for _, questId in ipairs(watchedWorldQuestIDs) do
-                        if tasks[questId] ~= true then
+                        local persistentWatch =
+                            WatchList_IsPersistentWorldQuestWatch(
+                                true,
+                                watchedWorldQuestTypes[questId],
+                                worldQuestWatchTypesKnown
+                            )
+                        if persistentWatch and tasks[questId] ~= true then
                             tasks[questId] = true
                             WatchList_QueueWorldQuest(
                                 worldQuests,
