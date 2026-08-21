@@ -50,7 +50,7 @@ function QuestRouting:ClearActive()
         -- SUPER_TRACKING_CHANGED in our taint and trip the protected
         -- SetPassThroughButtons in Blizzard's QuestDataProvider.
         _G.Nx.SuperTrackSafe(function()
-            _G.C_SuperTrack.SetSuperTrackedQuestID(0)
+            _G.Nx.SetSuperTrackedQuestIDSafe(0)
         end)
     end
     Carbonite.Core.EventBus:Fire("QUEST_ROUTE_CLEARED")

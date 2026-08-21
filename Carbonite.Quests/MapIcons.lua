@@ -24,6 +24,7 @@ local format = _G.string.format or _G.format
 local gsub = _G.string.gsub or _G.gsub
 local max = _G.math.max or _G.max
 local wipe = _G.wipe or _G.wipe
+local issecretvalue = _G.issecretvalue
 local GetQuestObjectiveInfo = _G.GetQuestObjectiveInfo or _G.GetQuestObjectiveInfo
 local InCombatLockdown = _G.InCombatLockdown or _G.InCombatLockdown
 
@@ -74,26 +75,78 @@ end
 
 local GetObjectIconTextureCoords = _G.C_Minimap and _G.C_Minimap.GetObjectIconTextureCoords
 
--- GetQuestsOnMap also returns nearby quests whose own map differs from the
--- requested canvas. Blizzard rejects those entries except for a genuine child
--- map or the super-tracked quest on its parent continent.
+local function GetSafeMapID(value)
+    if value == nil or (issecretvalue and issecretvalue(value)) then
+        return nil
+    end
+
+    value = tonumber(value)
+    return value and value > 0 and value or nil
+end
+
+local function IsMapSameOrDescendant(mapID, ancestorMapID)
+    mapID = GetSafeMapID(mapID)
+    ancestorMapID = GetSafeMapID(ancestorMapID)
+    if not mapID or not ancestorMapID then
+        return false
+    end
+    if mapID == ancestorMapID then
+        return true
+    end
+
+    local mapAPI = _G.C_Map
+    if not mapAPI or not mapAPI.GetMapInfo then
+        return false
+    end
+
+    local currentMapID = mapID
+    for _ = 1, 16 do
+        local mapInfo = mapAPI.GetMapInfo(currentMapID)
+        local parentMapID = mapInfo and GetSafeMapID(mapInfo.parentMapID)
+        if not parentMapID or parentMapID == currentMapID then
+            return false
+        end
+        if parentMapID == ancestorMapID then
+            return true
+        end
+        currentMapID = parentMapID
+    end
+
+    return false
+end
+
+-- C_TaskQuest.GetQuestsOnMap can include watched, nearby, and map-indicator
+-- quests whose coordinates were projected onto the requested canvas. The
+-- feed's `mapID` alone is therefore not sufficient proof that the quest belongs
+-- to that zone. Match Blizzard's map-owner rules, then confirm ownership with
+-- GetQuestZoneID so a Valarjar/Kirin Tor/Highmountain quest cannot be stamped
+-- on an unrelated zone merely because the feed projected it there.
 local function GetVisibleTaskMapID(info, viewMapID, trackedQuestID)
     if not info or type(info.questID) ~= "number"
         or type(info.x) ~= "number" or type(info.y) ~= "number" then
         return nil
     end
 
-    viewMapID = tonumber(viewMapID)
-    local taskMapID = tonumber(info.mapID or info.mapId)
-    if not taskMapID and _G.GetQuestUiMapID then
-        taskMapID = tonumber(_G.GetQuestUiMapID(info.questID))
-    end
-
-    if not viewMapID or not taskMapID or taskMapID <= 0 then
+    viewMapID = GetSafeMapID(viewMapID)
+    local feedMapID = GetSafeMapID(info.mapID or info.mapId)
+    if not viewMapID or not feedMapID then
         return nil
     end
-    if taskMapID == viewMapID then
-        return taskMapID
+
+    local questMapID
+    if _G.C_TaskQuest and _G.C_TaskQuest.GetQuestZoneID then
+        questMapID = GetSafeMapID(
+            _G.C_TaskQuest.GetQuestZoneID(info.questID)
+        )
+    end
+    questMapID = questMapID or feedMapID
+
+    -- The normal WorldMap data-provider path requires the feed map to equal
+    -- the displayed map. Carbonite additionally verifies that the canonical
+    -- quest zone is that map or one of its children.
+    if feedMapID == viewMapID then
+        return IsMapSameOrDescendant(questMapID, viewMapID)
+            and questMapID or nil
     end
 
     local mapAPI = _G.C_Map
@@ -107,7 +160,13 @@ local function GetVisibleTaskMapID(info, viewMapID, trackedQuestID)
         return nil
     end
 
-    local isChildMapQuest = info.childDepth
+    local childDepth = info.childDepth
+    if childDepth ~= nil and issecretvalue and issecretvalue(childDepth) then
+        childDepth = nil
+    end
+    childDepth = tonumber(childDepth)
+
+    local isChildMapQuest = childDepth and childDepth > 0
         and viewMapInfo.mapType == mapTypes.Zone
     local isTrackedContinentQuest = info.questID == trackedQuestID
         and viewMapInfo.mapType == mapTypes.Continent
@@ -115,18 +174,9 @@ local function GetVisibleTaskMapID(info, viewMapID, trackedQuestID)
         return nil
     end
 
-    local ancestorMapID = taskMapID
-    for _ = 1, 16 do
-        local ancestorInfo = mapAPI.GetMapInfo(ancestorMapID)
-        local parentMapID = ancestorInfo and tonumber(ancestorInfo.parentMapID)
-        if not parentMapID or parentMapID <= 0
-            or parentMapID == ancestorMapID then
-            return nil
-        end
-        if parentMapID == viewMapID then
-            return taskMapID
-        end
-        ancestorMapID = parentMapID
+    if IsMapSameOrDescendant(feedMapID, viewMapID)
+        and IsMapSameOrDescendant(questMapID, viewMapID) then
+        return questMapID
     end
 
     return nil
@@ -840,10 +890,18 @@ function Nx.Quest:UpdateIcons (map)
                     end
                     local isWorldQuest = not info.isMeta
                     if _G.QuestUtils_IsQuestWorldQuest then
-                        isWorldQuest = _G.QuestUtils_IsQuestWorldQuest(questID)
+                        isWorldQuest =
+                            _G.QuestUtils_IsQuestWorldQuest(questID) == true
                     end
+                    -- Important/campaign quests already use Carbonite's quest
+                    -- offer and active-quest providers. Only actual world
+                    -- quests or Blizzard map-indicator tasks belong in this
+                    -- World Quest icon pool.
+                    local isOwnedMapIndicator =
+                        info.isMapIndicatorQuest == true
+                        and taskMapID == viewMapID
                     local canShowAsWorldQuest = isWorldQuest
-                        or info.isMapIndicatorQuest or isImportantQuest
+                        or isOwnedMapIndicator
                     if canShowAsWorldQuest
                         and (QuestUtils_ShouldDisplayExpirationWarning(questID)
                             or (timeLeft and timeLeft > 0) or isImportantQuest) then
@@ -892,24 +950,22 @@ function Nx.Quest:UpdateIcons (map)
                                 self.mapID)
                             if not InCombatLockdown() and self.worldQuest then
                                 if not ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
-                                    -- Capture click-time inputs and
-                                    -- defer the secure mutations to
-                                    -- the next tick via C_Timer.After.
-                                    -- Calling C_SuperTrack.* /
-                                    -- QuestUtil.TrackWorldQuest from
-                                    -- this (Carbonite-tainted) click
-                                    -- stack propagates our taint
+                                    -- Capture click-time inputs and defer the
+                                    -- mutations to the next tick. The actual
+                                    -- C APIs are then invoked through the
+                                    -- secure-call helpers; a timer by itself
+                                    -- still runs as Carbonite and does not
+                                    -- remove execution taint.
+                                    -- Calling C_SuperTrack.* / QuestUtil from
+                                    -- this Carbonite click stack propagates taint
                                     -- through Blizzard's CallbackRegistry
                                     -- super-track chain, which ends at
                                     -- QuestDataProvider:RefreshAllData
                                     -- → AcquirePin → SetPassThroughButtons
                                     -- — a protected call that throws
                                     -- ADDON_ACTION_BLOCKED blaming
-                                    -- Carbonite (typically surfaces on
-                                    -- WQ completion when Blizz auto-
-                                    -- clears the super-track). Running
-                                    -- the block from a fresh timer
-                                    -- callback breaks the chain.
+                                    -- Carbonite (typically surfaces on WQ
+                                    -- completion when Blizzard auto-clears it).
                                     local questID = self.questID
                                     local mapID = self.mapID
                                     local shift = IsShiftKeyDown()
@@ -931,21 +987,21 @@ function Nx.Quest:UpdateIcons (map)
                                         if shift then
                                             if watchType == Enum.QuestWatchType.Manual or (watchType == Enum.QuestWatchType.Automatic and isSuperTracked) then
                                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-                                                QuestUtil.UntrackWorldQuest(questID)
+                                                Nx.RemoveWorldQuestWatchSafe(questID)
                                             else
                                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                                                QuestUtil.TrackWorldQuest(questID, Enum.QuestWatchType.Manual)
+                                                Nx.AddWorldQuestWatchSafe(questID, Enum.QuestWatchType.Manual)
                                             end
                                         else
                                             if isSuperTracked then
                                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-                                                C_SuperTrack.SetSuperTrackedQuestID(0)
+                                                Nx.SetSuperTrackedQuestIDSafe(0)
                                             else
                                                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                                                 if watchType ~= Enum.QuestWatchType.Manual then
-                                                    QuestUtil.TrackWorldQuest(questID, Enum.QuestWatchType.Automatic)
+                                                    Nx.AddWorldQuestWatchSafe(questID, Enum.QuestWatchType.Automatic)
                                                 end
-                                                C_SuperTrack.SetSuperTrackedQuestID(questID)
+                                                Nx.SetSuperTrackedQuestIDSafe(questID)
                                             end
                                         end
                                         end)

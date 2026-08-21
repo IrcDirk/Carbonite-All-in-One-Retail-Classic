@@ -123,7 +123,7 @@ function Nx.Quest.List:Open()
                         -- moves inside so it's armed right before the call.
                         Nx.SuperTrackSafe(function()
                             Nx.Quest._stSuppressHook = true
-                            C_SuperTrack.SetSuperTrackedQuestID(0)
+                            Nx.SetSuperTrackedQuestIDSafe(0)
                         end)
                     end
                     return
@@ -154,7 +154,7 @@ function Nx.Quest.List:Open()
                     Nx.SuperTrackSafe(function()
                         Nx.Quest._stSuppressHook = true
                         Nx.Quest.UserClearedActive = true
-                        C_SuperTrack.SetSuperTrackedQuestID(0)
+                        Nx.SetSuperTrackedQuestIDSafe(0)
                         -- Blizzard quest area blob is drawn into a
                         -- separate WorldMapBlobFrame (QMap.QuestWin) and
                         -- doesn't auto-hide on super-track clear; do it
@@ -1460,7 +1460,7 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
                 -- the closure so it's set when the call actually fires.
                 Nx.SuperTrackSafe(function()
                     Quest.UserClearedActive = true
-                    C_SuperTrack.SetSuperTrackedQuestID(0)
+                    Nx.SetSuperTrackedQuestIDSafe(0)
                 end)
                 Quest.ActiveQID = 0
                 Quest.ActiveObjI = 0
@@ -1479,7 +1479,7 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
                 end
                 local _live = liveQID
                 Nx.SuperTrackSafe(function()
-                    C_SuperTrack.SetSuperTrackedQuestID(_live)
+                    Nx.SetSuperTrackedQuestIDSafe(_live)
                 end)
                 Quest.ActiveObjI = qObj
                 if qObj > 0 and Quest.TrackOnMap then
@@ -1868,12 +1868,12 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 if (C_SuperTrack.GetSuperTrackedQuestID() or 0) ~= 0 then
                     return        -- something got tracked in the meantime
                 end
-                if QuestUtil and QuestUtil.TrackWorldQuest and Enum and Enum.QuestWatchType
+                if Nx.AddWorldQuestWatchSafe and Enum and Enum.QuestWatchType
                    and C_QuestLog and C_QuestLog.GetQuestWatchType
                    and C_QuestLog.GetQuestWatchType(questId) ~= Enum.QuestWatchType.Manual then
-                    QuestUtil.TrackWorldQuest(questId, Enum.QuestWatchType.Automatic)
+                    Nx.AddWorldQuestWatchSafe(questId, Enum.QuestWatchType.Automatic)
                 end
-                C_SuperTrack.SetSuperTrackedQuestID(questId)
+                Nx.SetSuperTrackedQuestIDSafe(questId)
             end)
         end
 
@@ -1893,7 +1893,7 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 -- tainted SUPER_TRACKING_CHANGED chain trips the
                 -- combat-protected SetPassThroughButtons.
                 Nx.SuperTrackSafe(function()
-                    C_SuperTrack.SetSuperTrackedQuestID(0)
+                    Nx.SetSuperTrackedQuestIDSafe(0)
                 end)
             end
             -- Drop the Goto route if it was pointing at this WQ. Icon
@@ -1930,7 +1930,7 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                     -- at fire time in case the super-track moved on.
                     Nx.SuperTrackSafe(function()
                         if C_SuperTrack.GetSuperTrackedQuestID() == questId then
-                            C_SuperTrack.SetSuperTrackedQuestID(0)
+                            Nx.SetSuperTrackedQuestIDSafe(0)
                         end
                     end)
                 end
