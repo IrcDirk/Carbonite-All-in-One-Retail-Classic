@@ -34,10 +34,6 @@ local GetNumQuestLeaderBoards = GetNumQuestLeaderBoards
 local GetDailyQuestsCompleted = GetDailyQuestsCompleted
 local GetQuestResetTime       = GetQuestResetTime
 
--- Shared mutable state with NxQuest.lua (promoted to namespace
--- during the WorldQuestWindow extraction).
-local worldquestdb = Nx.Quest.worldquestdb
-
 -- Promoted from NxQuest.lua's file-local cache helper.
 local GetCachedDifficultyColorStr = Nx.Quest.GetCachedDifficultyColorStr
 
@@ -1887,32 +1883,115 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             Quest:NoteQuestLogRemoval (questId)
         end
         if QuestUtils_IsQuestWorldQuest and QuestUtils_IsQuestWorldQuest(questId) then
-            if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
-                -- QUEST_REMOVED fires mid-combat all the time (WQ done
-                -- while fighting); the secure clear must defer or the
-                -- tainted SUPER_TRACKING_CHANGED chain trips the
-                -- combat-protected SetPassThroughButtons.
-                Nx.SuperTrackSafe(function()
-                    Nx.SetSuperTrackedQuestIDSafe(0)
-                end)
+            local watchType
+            local questWatchTypes = Enum and Enum.QuestWatchType
+            if C_QuestLog and C_QuestLog.GetQuestWatchType then
+                watchType = C_QuestLog.GetQuestWatchType(questId)
             end
-            -- Drop the Goto route if it was pointing at this WQ. Icon
-            -- clicks add/remove the route via ToggleGotoQuest, but flying
-            -- out of the area removes the task from the log without a
-            -- second click, so the goto arrow would otherwise linger on a
-            -- quest that no longer exists. (Regular quests do the same via
-            -- ClearTargets in the else branch below.)
-            if Quest.Map and Quest.Map.Targets then
-                for _, tar in ipairs (Quest.Map.Targets) do
-                    if tar.TargetType == "Goto" and tar.QuestID == questId then
-                        Quest.Map:ClearTargets ("Goto")
-                        break
+
+            local completed = C_QuestLog
+                and C_QuestLog.IsQuestFlaggedCompleted
+                and C_QuestLog.IsQuestFlaggedCompleted(questId) == true
+            local preserveManual = not completed
+                and watchType ~= nil
+                and questWatchTypes
+                and questWatchTypes.Manual ~= nil
+                and watchType == questWatchTypes.Manual
+
+            -- QUEST_REMOVED is also the authoritative "left the effective
+            -- area" signal for an automatically activated world quest. Clear
+            -- every Carbonite-owned transient in that case. A Manual Blizzard
+            -- watch is explicit user intent and deliberately survives area
+            -- changes (unless the quest has completed).
+            if not preserveManual then
+                if Quest.Tracking then
+                    Quest.Tracking[questId] = nil
+                end
+
+                local wasActive = Quest.ActiveQID == questId
+                if wasActive then
+                    Quest.ActiveQID = 0
+                    Quest.ActiveObjI = 0
+                end
+
+                local wasSuperTracked = C_SuperTrack
+                    and C_SuperTrack.GetSuperTrackedQuestID
+                    and C_SuperTrack.GetSuperTrackedQuestID() == questId
+
+                -- Both watch and super-track mutations can fire protected
+                -- Blizzard update chains. Defer them together and re-check
+                -- Manual status at execution time so a last-moment user pin
+                -- is never removed by this cleanup.
+                if Nx.SuperTrackSafe then
+                    Nx.SuperTrackSafe(function()
+                        local liveWatchType = C_QuestLog
+                            and C_QuestLog.GetQuestWatchType
+                            and C_QuestLog.GetQuestWatchType(questId)
+                        local promotedToManual = not completed
+                            and liveWatchType ~= nil
+                            and questWatchTypes
+                            and questWatchTypes.Manual ~= nil
+                            and liveWatchType == questWatchTypes.Manual
+                        if promotedToManual then
+                            return
+                        end
+
+                        if liveWatchType ~= nil and Nx.RemoveWorldQuestWatchSafe then
+                            Nx.RemoveWorldQuestWatchSafe(questId)
+                        end
+                        if C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
+                           and C_SuperTrack.GetSuperTrackedQuestID() == questId then
+                            Nx.SetSuperTrackedQuestIDSafe(0)
+                        end
+                    end)
+                end
+
+                -- Remove only routes that belong to this WQ. Quest targets
+                -- are normally exclusive; Goto targets may be part of a
+                -- multi-target list and can be removed by unique ID.
+                if Quest.Map then
+                    if Quest:IsTargeted(questId) then
+                        Quest.Map:ClearTargets()
+                    elseif Quest.Map.Targets and Quest.Map.ClearTarget then
+                        for targetIndex = #Quest.Map.Targets, 1, -1 do
+                            local target = Quest.Map.Targets[targetIndex]
+                            if target.TargetType == "Goto"
+                               and target.QuestID == questId then
+                                Quest.Map:ClearTarget(target.UniqueId)
+                            end
+                        end
+                    end
+                end
+
+                if (wasActive or wasSuperTracked)
+                   and Nx.BlobsAvailable and not InCombatLockdown() then
+                    local QMap = NxMap1 and NxMap1.NxMap
+                    if QMap and QMap.QuestWin then
+                        QMap.QuestWin:DrawNone()
+                        QMap.QuestWin:Hide()
                     end
                 end
             end
-            worldquestdb[questId] = nil
-            if Nx.Quest.WQList then
-                Nx.Quest.WQList:UpdateDB()
+
+            -- Force both data and presentation layers to observe the removal.
+            -- The map task cache is invalidated rather than deleting the WQ's
+            -- map pin; active WQs therefore remain visible in their correct
+            -- zone while their area-only tracker row/blob is cleaned up.
+            Quest._iconDirty = true
+            if Quest.ClearTaskInfoCache then
+                Quest:ClearTaskInfoCache()
+            end
+            if Quest.Watch then
+                Quest.Watch.ForceListRefresh = true
+                Quest.Watch:Update()
+            end
+            Quest.List:Refresh(event)
+
+            -- QUEST_REMOVED can mean area exit, not quest expiry. Rebuild the
+            -- WQ List from Blizzard's authoritative map snapshot instead of
+            -- blindly deleting a still-active quest from the catalog.
+            if Quest.WQList and Quest.WQList.ScheduleUpdateDB then
+                Quest.WQList:ScheduleUpdateDB(event)
             end
         else
             -- Regular quest abandoned/turned-in: clear our tracking +
