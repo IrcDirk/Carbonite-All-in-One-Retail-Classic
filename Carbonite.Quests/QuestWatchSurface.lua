@@ -43,7 +43,7 @@ function QuestWatchSurface:Track(questID)
         -- SUPER_TRACKING_CHANGED in our taint and trip the protected
         -- SetPassThroughButtons in Blizzard's QuestDataProvider.
         _G.Nx.SuperTrackSafe(function()
-            _G.C_SuperTrack.SetSuperTrackedQuestID(questID)
+            _G.Nx.SetSuperTrackedQuestIDSafe(questID)
         end)
     end
 end
@@ -52,7 +52,7 @@ function QuestWatchSurface:Untrack(questID)
     if _G.C_SuperTrack and _G.C_SuperTrack.SetSuperTrackedQuestID then
         -- Combat-defer (see Track above).
         _G.Nx.SuperTrackSafe(function()
-            _G.C_SuperTrack.SetSuperTrackedQuestID(0)
+            _G.Nx.SetSuperTrackedQuestIDSafe(0)
         end)
     end
     local Quest = _G.Nx and _G.Nx.Quest

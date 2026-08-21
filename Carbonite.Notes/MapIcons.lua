@@ -14,6 +14,15 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Notes = Nx.Notes or {}
 
+-- RareScanner's AceAddon object is intentionally local in current builds,
+-- so `_G.RareScanner` is not a reliable installation check.  Its map data
+-- provider is the public integration surface Carbonite actually consumes.
+function Nx.Notes:IsRareScannerAvailable()
+    local provider = _G.RareScannerDataProviderMixin
+    return type(provider) == "table"
+        and type(provider.RefreshAllData) == "function"
+end
+
 -- Bust an integration's per-tick dirty-check cache. Each integration
 -- evolved its own field layout; rather than make every toggle
 -- handler / size-change setter remember which fields belong to which
@@ -32,10 +41,12 @@ local INTEGRATION_FIELDS = {
         HandyNotesLastLevel = "nil",
     },
     RareScanner = {
-        RSCache        = "table",
-        RSLastMapId    = "nil",
-        PrevRSPins     = "nil",
-        RSNeedsRefresh = "true",
+        RSCache          = "table",
+        RSLastMapId      = "nil",
+        RSRequestedMapId = "nil",
+        RSProviderMapId  = "nil",
+        PrevRSPins       = "nil",
+        RSNeedsRefresh   = "true",
     },
     RXP = {
         RXPCache     = "table",
@@ -166,7 +177,7 @@ function Nx.Notes:UpdateIcons()
     if Nx.fdb.profile.Notes.Questie and _G.Questie then
         self:Questie(mapId)
     end
-    if Nx.fdb.profile.Notes.RareScanner and _G.RareScanner then
+    if Nx.fdb.profile.Notes.RareScanner and self:IsRareScannerAvailable() then
         self:RareScanner(mapId)
     end
     if Nx.fdb.profile.Notes.RXP and _G.RXP then

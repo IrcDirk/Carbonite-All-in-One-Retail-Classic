@@ -11,9 +11,11 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Notes = Nx.Notes or {}
 
-Nx.Notes.RSCache         = Nx.Notes.RSCache or {}
-Nx.Notes.RSLastMapId     = nil
-Nx.Notes.RSNeedsRefresh  = true
+Nx.Notes.RSCache          = Nx.Notes.RSCache or {}
+Nx.Notes.RSLastMapId      = nil
+Nx.Notes.RSRequestedMapId = nil
+Nx.Notes.RSProviderMapId  = nil
+Nx.Notes.RSNeedsRefresh   = true
 
 -- Events that can change which RareScanner POIs should appear or
 -- how they look. RareScanner's own provider only refreshes when the
@@ -120,25 +122,78 @@ local function getRSProvider()
     return Nx.Notes.RSProviderInstance
 end
 
+-- RareScanner 12.1 uses its own RSPinMixin and stores normalized
+-- coordinates on pin.x / pin.y. Older MapCanvas-backed builds use
+-- normalizedX / normalizedY instead. Values on POIs can be either
+-- 0..1 fractions or RareScanner's four-digit integer format.
+local function normalizeMapID(value)
+    local ok, result = pcall(function()
+        return tonumber(value)
+    end)
+    return ok and result or nil
+end
+
+local function normalizeCoord(value)
+    local ok, result = pcall(function()
+        local number = tonumber(value)
+        if not number then return nil end
+        if number > 1 then number = number / 10000 end
+        if number < 0 or number > 1 then return nil end
+        return number
+    end)
+    return ok and result or nil
+end
+
+local function getPinCoords(pin)
+    if not pin then return nil, nil end
+
+    -- Prefer x/y: these are the live fields in RareScanner 12.1.
+    -- A pooled pin can still carry old normalizedX/Y values, so
+    -- choosing those first can project a new-zone POI at an old-zone
+    -- position. Fall back to normalizedX/Y for Classic/older builds.
+    local x = normalizeCoord(pin.x)
+    local y = normalizeCoord(pin.y)
+    if x ~= nil and y ~= nil then return x, y end
+
+    return normalizeCoord(pin.normalizedX), normalizeCoord(pin.normalizedY)
+end
+
 -- Force a refresh of the RareScanner provider for `targetMapId`.
--- Works even when the user hasn't opened the world map: we set the
--- canvas's mapID and call the provider's RefreshAllData directly.
--- Restores the previous mapID afterwards so the canvas state
--- matches what the user actually has open.
+-- RareScanner 12.1's private RSWorldMap has no SetMapID method.  Set
+-- the requested map only for the synchronous refresh, explicitly empty
+-- the provider's pools, and then restore RareScanner's original canvas
+-- identity.  Calling RefreshAllData directly is compatible with both
+-- the private retail provider and the MapCanvas-backed Classic provider;
+-- OnMapChanged is not, because third-party lifecycle hooks can reject a
+-- synthetic map transition.  Return success so callers never consume a
+-- stale previous-zone pool after combat or a provider error.
 local function forceRSRefresh(targetMapId)
     local canvas = getRSCanvas()
     local provider = getRSProvider()
-    if not provider or not canvas or InCombatLockdown() then return end
+    if not provider or not canvas then return false end
+    if _G.InCombatLockdown and InCombatLockdown() then return false end
 
-    local origMapId = canvas.mapID
-    if origMapId == targetMapId then
-        pcall(provider.RefreshAllData, provider)
-        return
+    local originalMapId = canvas.mapID
+    local ok = pcall(function()
+        canvas.mapID = targetMapId
+        if not provider.RefreshAllData then
+            error("RareScanner provider has no refresh lifecycle")
+        end
+        if provider.RemoveAllData then
+            provider:RemoveAllData()
+        end
+        provider:RefreshAllData()
+    end)
+
+    -- Keep RareScanner's own canvas identity aligned with the map the
+    -- user has open. Its pin pool intentionally remains populated for
+    -- targetMapId long enough for Carbonite to harvest synchronously.
+    canvas.mapID = originalMapId
+
+    if ok then
+        Nx.Notes.RSProviderMapId = targetMapId
     end
-
-    canvas.mapID = targetMapId
-    pcall(provider.RefreshAllData, provider)
-    canvas.mapID = origMapId
+    return ok
 end
 
 ---
@@ -146,17 +201,39 @@ end
 -- @param mapId  Current map ID
 --
 function Nx.Notes:RareScanner(mapId)
-    if not (Nx.fdb.profile.Notes.RareScanner and _G.RareScanner) then return end
+    if not Nx.fdb.profile.Notes.RareScanner then return end
+    if not _G.RareScannerDataProviderMixin then return end
+
+    mapId = normalizeMapID(mapId)
+    if not mapId or mapId <= 0 then return end
+
+    local map = Nx.Map:GetMap(1)
+    if not map then return end
+
+    -- Retire the old layer before touching RareScanner. Provider refreshes
+    -- can be blocked in combat or fail while an API is changing; leaving
+    -- the previous zone's Carbonite layer alive in either case is what
+    -- makes valid old coordinates look like they belong to the new zone.
+    if self.RSRequestedMapId ~= mapId then
+        self.RSRequestedMapId = mapId
+        self.RSNeedsRefresh = true
+        self.PrevRSPins = nil
+        map:ClearIconType("!RSR")
+    end
 
     local canvas = getRSCanvas()
     if not canvas or not canvas.pinPools then return end
 
-    -- Force a refresh when our cache is stale for this map.
-    -- forceRSRefresh safely handles both branches (mapIDs match ->
-    -- refresh in place; differ -> swap, refresh, restore), so no
-    -- gating on WorldMapFrame state needed.
-    if self.RSNeedsRefresh or self.RSLastMapId ~= mapId then
-        forceRSRefresh(mapId)
+    -- Force a refresh when our cache is stale for this map. Do not
+    -- harvest if it fails: the pool can still contain the prior zone.
+    local refreshed = false
+    if self.RSNeedsRefresh or self.RSLastMapId ~= mapId
+        or self.RSProviderMapId ~= mapId then
+        if not forceRSRefresh(mapId) then
+            self.RSNeedsRefresh = true
+            return
+        end
+        refreshed = true
         self.RSNeedsRefresh = false
     end
 
@@ -168,16 +245,10 @@ function Nx.Notes:RareScanner(mapId)
     -- icon per sub-POI so the killed rare in a cluster doesn't
     -- vanish just because it shares position with live neighbors.
     --
-    -- Coordinate source: we use pin.normalizedX/normalizedY (set by
-    -- Blizz's MapCanvas SetPosition pipeline through RSUtils.FixCoord),
-    -- NOT poi.x/y raw — RareScanner stores alreadyFoundInfo.coordX
-    -- as a 4-digit integer (e.g. 4555 for 45.55%) and applies
-    -- FixCoord only at render time. Using the pin's normalized
-    -- value means we get the same 0..1 fraction that Blizz's map
-    -- sees regardless of which code path produced the POI. For
-    -- group sub-POIs we don't have individual pins, so they share
-    -- the group pin's normalized position — visually the same as
-    -- how Blizz draws them (multi-textured icon at one spot).
+    -- Coordinate source: RareScanner 12.1's live pin.x/pin.y fields
+    -- are preferred, with normalizedX/normalizedY as the legacy
+    -- fallback. Group children have no individual frames, so their
+    -- raw POI coordinates are normalized independently.
     --
     -- Hash includes kill/open/discovery flags so dead-but-still-shown
     -- rares (red->blue texture swap) trigger an icon rebuild.
@@ -187,16 +258,23 @@ function Nx.Notes:RareScanner(mapId)
     -- spawn-point pins which carry their own colored texture).
     local entries = {}
     local currentHash = 0
-    local function consider(pin, poi, nx, ny, tex, color, isGroupRep)
-        -- Group POIs don't carry mapID directly (it's on each
-        -- sub-POI), so skip the mapID check for group representatives.
-        -- Caller is expected to have already verified the group
-        -- belongs to this map via its first sub-POI.
-        local mapOk = isGroupRep or (poi and poi.mapID == mapId)
-        if poi and mapOk and nx and ny and tex then
+    local function consider(pin, poi, nx, ny, tex, color, isGroupRep, groupPOI)
+        -- Current RareScanner POIs carry mapID.  Older builds and a few
+        -- third-party POI extensions omit it; those pins are still safe to
+        -- assign to the requested map because forceRSRefresh emptied the
+        -- pool before building this map's data.
+        local ownerMapId = poi and normalizeMapID(
+            poi.mapID or poi.mapId or poi.MapID or poi.MapId)
+        ownerMapId = ownerMapId or mapId
+        nx, ny = normalizeCoord(nx), normalizeCoord(ny)
+
+        -- Every emitted icon must have an exact owner zone. Never let a
+        -- synthetic group bypass this check; validate each child POI.
+        if poi and ownerMapId == mapId and nx ~= nil and ny ~= nil and tex then
             entries[#entries + 1] = {
                 pin = pin, poi = poi, nx = nx, ny = ny,
-                tex = tex, color = color, isGroupRep = isGroupRep,
+                tex = tex, color = color, mapId = ownerMapId,
+                isGroupRep = isGroupRep, groupPOI = groupPOI,
             }
             local stateBits = (poi.isDead and 1 or 0)
                             + (poi.isOpened and 2 or 0)
@@ -218,13 +296,11 @@ function Nx.Notes:RareScanner(mapId)
                 -- MapCanvasPinMixin which sets normalizedX/Y. Try
                 -- both so dragon-glyph pins (retail-only path)
                 -- render too.
-                local nx = pin.normalizedX or pin.x
-                local ny = pin.normalizedY or pin.y
+                local nx, ny = getPinCoords(pin)
                 if poi then
                     if poi.isGroup and poi.POIs then
-                        -- Verify the group belongs to our map;
-                        -- otherwise skip. Render each sub-rare at
-                        -- its OWN coords (which differ slightly per
+                        -- Render each current-map sub-rare at its OWN
+                        -- coords (which differ slightly per
                         -- rare — that's why RareScanner clustered
                         -- them in the first place). This produces
                         -- a visible cluster of distinct icons
@@ -233,21 +309,9 @@ function Nx.Notes:RareScanner(mapId)
                         -- pin is still attached as user data on
                         -- every sub-icon so mouseover on any of
                         -- them triggers the RS group popup.
-                        local first = poi.POIs[1]
-                        if first and first.mapID == mapId then
-                            for _, sub in ipairs(poi.POIs) do
-                                if sub.mapID == mapId and sub.x and sub.y then
-                                    -- Sub-POI x/y can be raw 4-digit
-                                    -- ints (e.g. 4555 for 45.55%) or
-                                    -- already-normalised 0..1
-                                    -- fractions; normalise defensively
-                                    -- before passing to consider()
-                                    -- which expects 0..1.
-                                    local sx = (sub.x > 1) and (sub.x / 10000) or sub.x
-                                    local sy = (sub.y > 1) and (sub.y / 10000) or sub.y
-                                    consider(pin, sub, sx, sy, sub.Texture, "FFFFFF", true)
-                                end
-                            end
+                        for _, sub in ipairs(poi.POIs) do
+                            consider(pin, sub, sub.x, sub.y,
+                                sub.Texture, "FFFFFF", true, poi)
                         end
                     else
                         consider(pin, poi, nx, ny, poi.Texture, "FFFFFF", false)
@@ -268,10 +332,13 @@ function Nx.Notes:RareScanner(mapId)
         if pool then
             for pin in pool:EnumerateActive() do
                 local parent = pin.pin
-                local poi = parent and parent.POI
-                local nx = pin.normalizedX or pin.x
-                local ny = pin.normalizedY or pin.y
-                if poi and parent and (nx ~= parent.normalizedX or ny ~= parent.normalizedY) then
+                -- Entity overlays point at the source pin; 12.1 group
+                -- overlays can point directly at a child POI table.
+                local poi = parent and (parent.POI or parent)
+                local nx, ny = getPinCoords(pin)
+                local parentX, parentY = getPinCoords(parent)
+                if poi and parent and nx ~= nil and ny ~= nil
+                    and (nx ~= parentX or ny ~= parentY) then
                     local tex = pin.Texture and pin.Texture.GetTexture and pin.Texture:GetTexture()
                     local color = "FFFFFF"
                     if pin.Texture and pin.Texture.GetVertexColor then
@@ -291,13 +358,12 @@ function Nx.Notes:RareScanner(mapId)
 
     -- Skip rebuild if nothing changed.
     local cacheKey = mapId .. "_RS"
-    if self.RSCache[cacheKey] == currentHash
+    if not refreshed and self.RSCache[cacheKey] == currentHash
         and self.RSLastMapId == mapId
         and self.PrevRSPins == #entries then
         return
     end
 
-    local map = Nx.Map:GetMap(1)
     map:ClearIconType("!RSR")
     self.RSCache[cacheKey] = currentHash
     self.RSLastMapId       = mapId
@@ -311,24 +377,28 @@ function Nx.Notes:RareScanner(mapId)
     map:SetIconTypeLevel("!RSR", 20)
 
     for _, e in ipairs(entries) do
-        local wx, wy = Nx.Map:GetWorldPos(mapId, e.nx * 100, e.ny * 100)
-        local rsnote = map:AddIconPt("!RSR", wx, wy, nil, e.color or "FFFFFF", e.tex)
-        rsnote.mapID, rsnote.MapId = mapId, mapId
-        local tip
-        if e.isGroupRep then
-            -- Plain-text fallback tooltip listing the group's
-            -- sub-rares — the hover handler in NxMap will also
-            -- trigger RS's own native group popup if it can position
-            -- it near the cursor.
-            local lines = { ("|cffff8080Group (%d):|r"):format(e.poi.POIs and #e.poi.POIs or 0) }
-            for _, sub in ipairs(e.poi.POIs or {}) do
-                lines[#lines + 1] = "  " .. (sub.name or "?")
+        local wx, wy = Nx.Map:GetWorldPos(e.mapId, e.nx * 100, e.ny * 100)
+        local rsnote = wx and wy
+            and map:AddIconPt("!RSR", wx, wy, nil, e.color or "FFFFFF", e.tex)
+        if rsnote then
+            rsnote.mapID, rsnote.MapId = e.mapId, e.mapId
+            local tip
+            if e.isGroupRep then
+                -- Plain-text fallback tooltip listing the group's
+                -- sub-rares — the hover handler in NxMap will also
+                -- trigger RS's own native group popup if it can position
+                -- it near the cursor.
+                local groupPOI = e.groupPOI or e.poi
+                local lines = { ("|cffff8080Group (%d):|r"):format(groupPOI.POIs and #groupPOI.POIs or 0) }
+                for _, sub in ipairs(groupPOI.POIs or {}) do
+                    lines[#lines + 1] = "  " .. (sub.name or "?")
+                end
+                tip = table.concat(lines, "\n")
+            else
+                tip = e.poi.name
             end
-            tip = table.concat(lines, "\n")
-        else
-            tip = e.poi.name
+            map:SetIconTip(rsnote, tip)
+            map:SetIconUserData(rsnote, e.pin)
         end
-        map:SetIconTip(rsnote, tip)
-        map:SetIconUserData(rsnote, e.pin)
     end
 end

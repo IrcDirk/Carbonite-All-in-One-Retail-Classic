@@ -77,7 +77,10 @@ function Nx.Notes:GetOptionsConfig()
                             map:ClearIconType("!RSR")
                         end
                     end,
-                    disabled = function() return not _G.RareScanner end,
+                    disabled = function()
+                        return not (Nx.Notes.IsRareScannerAvailable
+                            and Nx.Notes:IsRareScannerAvailable())
+                    end,
                 },
                 raresize = {
                     order = 5, type = "range", width = "normal",
@@ -97,7 +100,10 @@ function Nx.Notes:GetOptionsConfig()
                         Nx.Notes:BustIntegrationCache("RareScanner")
                         Nx.Notes:RareScanner(Nx.Map:GetCurrentMapAreaID())
                     end,
-                    disabled = function() return not _G.RareScanner end,
+                    disabled = function()
+                        return not (Nx.Notes.IsRareScannerAvailable
+                            and Nx.Notes:IsRareScannerAvailable())
+                    end,
                 },
                 questie = {
                     order = 6, type = "toggle", width = "full",
