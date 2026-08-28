@@ -45,7 +45,13 @@ function Nx:InitEvents()
     Com:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE", "OnChatEvent")
     Com:RegisterEvent("CHAT_MSG_CHANNEL_LEAVE", "OnChatEvent")
     Com:RegisterEvent("CHAT_MSG_CHANNEL", "OnChat_msg_channel")
-    Com:RegisterEvent("CHAT_MSG_SYSTEM", "OnChat_msg_channel")
+    -- Retail 12.1 can deliver CHAT_MSG_SYSTEM text as a secret string. The
+    -- unavailable-whisper parser is optional social-cache cleanup and must not
+    -- receive that protected payload on Mainline. Classic clients retain the
+    -- legacy accessible system-message path.
+    if not Nx.isRetail then
+        Com:RegisterEvent("CHAT_MSG_SYSTEM", "OnChat_msg_channel")
+    end
 
     -- SOCIAL_QUEUE_UPDATE: Available from Legion+ (group finder social queues)
     if Nx.LegionMaps then

@@ -41,6 +41,10 @@ end
 local function filter(self_, event, message, sender, _, _, _, _, _, _, channelName)
     if not ChannelSpamFilter.enabled then return false end
     if event == "CHAT_MSG_SYSTEM" then
+        if (_G.Nx and _G.Nx.isRetail) or
+                (_G.canaccessvalue and not _G.canaccessvalue(message)) then
+            return false
+        end
         local com = _G.Nx and _G.Nx.Com
         return com and com.HandleUnavailableWhisper
             and com:HandleUnavailableWhisper(message) or false
@@ -65,6 +69,11 @@ Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
     if ChannelSpamFilter._wired then return end
     ChannelSpamFilter._wired = true
     for _, event in ipairs(CHAT_EVENTS) do
-        _G.ChatFrame_AddMessageEventFilter(event, filter)
+        -- Never attach Carbonite to Retail's potentially secret system-chat
+        -- payload. The Classic clients still use this filter to correlate
+        -- accessible player-not-found messages.
+        if event ~= "CHAT_MSG_SYSTEM" or not (_G.Nx and _G.Nx.isRetail) then
+            _G.ChatFrame_AddMessageEventFilter(event, filter)
+        end
     end
 end)

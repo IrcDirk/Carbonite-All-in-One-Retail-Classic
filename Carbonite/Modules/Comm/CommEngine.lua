@@ -518,6 +518,15 @@ end
 -- @param message Localized CHAT_MSG_SYSTEM message
 -- @return true when Carbonite caused and handled the error
 function Nx.Com:HandleUnavailableWhisper(message)
+    -- Retail 12.1 can mark CHAT_MSG_SYSTEM payloads secret while chat
+    -- messaging lockdown is active.  Secret strings still report their Lua
+    -- type as "string", but inspecting them with strmatch/gsub/format is
+    -- forbidden from addon code.  Test accessibility before every operation
+    -- that could inspect or convert the payload.
+    if _G.canaccessvalue and not _G.canaccessvalue(message) then
+        return false
+    end
+
     if type(message) ~= "string" or not PLAYER_NOT_FOUND_PATTERN then
         return false
     end

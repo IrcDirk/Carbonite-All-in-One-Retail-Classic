@@ -53,6 +53,16 @@ Carbonite.Core.EventBus:Subscribe("CARBONITE_LOADED", function()
     local original = Com.OnChat_msg_channel
     Com.OnChat_msg_channel = function(self_, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
         original(self_, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
+
+        -- OnChat_msg_channel also receives CHAT_MSG_SYSTEM.  Those payloads
+        -- are not Carbonite channel traffic and may be secret on Retail 12.1,
+        -- so never forward them through the public channel-message bus.
+        if event ~= "CHAT_MSG_CHANNEL" then return end
+        if _G.canaccessvalue and
+                (not _G.canaccessvalue(arg1) or not _G.canaccessvalue(arg2)) then
+            return
+        end
+
         Carbonite.Core.EventBus:Fire("COMM_CHANNEL_MESSAGE", arg2, arg1, arg9 or arg4)
     end
 end)

@@ -16,6 +16,8 @@ Nx.Quest = Nx.Quest or {}
 -- WoW globals aliased as locals for hot-path speed.
 local InCombatLockdown = _G.InCombatLockdown or _G.InCombatLockdown
 local UnitName = _G.UnitName or _G.UnitName
+local RegisterStateDriver = _G.RegisterStateDriver
+local UnregisterStateDriver = _G.UnregisterStateDriver
 
 -- BLIZZARD TRACKER HIDING (Retail + Classic + Anniversary + MoP Classic)
 -- Checked = hide; Unchecked = show.
@@ -27,6 +29,18 @@ local NX_TRACKER_FRAMES = {
     "QuestWatchFrame",       -- Fallback (some UI variants)
     "QuestTimerFrame",       -- Anniversary / Classic timed quests
 }
+
+-- ObjectiveTrackerFrame is an Edit Mode-managed Blizzard system on Retail.
+-- Carbonite must not reparent it, alter its alpha/mouse state, or install an
+-- OnShow hook.  Retail visibility is instead controlled through Blizzard's
+-- secure visibility state driver. Legacy tracker frames retain the original
+-- handling on Classic clients.
+local function NxTracker_CanManage(name)
+    if name == "ObjectiveTrackerFrame" and Nx.isRetail then
+        return RegisterStateDriver ~= nil and UnregisterStateDriver ~= nil
+    end
+    return true
+end
 
 local function NxTracker_IsProtectedAndLockedDown(frame)
     return frame and frame.IsProtected and frame:IsProtected() and InCombatLockdown()
@@ -51,6 +65,8 @@ function Nx.Quest:TrackerHider_Init()
         hiddenParent = hiddenParent,
         hooked = {},
         orig = {},
+        retailDriverHidden = false,
+        retailOriginalAlpha = nil,
         pending = false,
     }
 
@@ -69,6 +85,43 @@ function Nx.Quest:TrackerHider_Init()
         self._trackerHider.pending = false
         self:TrackerHider_Apply()
     end)
+end
+
+function Nx.Quest:TrackerHider_SetRetailVisible(frame, visible)
+    local h = self._trackerHider
+    if not h or not frame or not RegisterStateDriver or not UnregisterStateDriver then
+        return
+    end
+
+    if InCombatLockdown() then
+        h.pending = true
+        return
+    end
+
+    if visible then
+        if h.retailOriginalAlpha ~= nil then
+            frame:SetAlpha(h.retailOriginalAlpha)
+            h.retailOriginalAlpha = nil
+        end
+        if h.retailDriverHidden then
+            -- Resolve "show" through Blizzard's secure driver before removing
+            -- Carbonite's driver. This clears statehidden without calling the
+            -- tracker's layout/update methods from addon execution.
+            RegisterStateDriver(frame, "visibility", "show")
+            UnregisterStateDriver(frame, "visibility")
+            h.retailDriverHidden = false
+        end
+    elseif not h.retailDriverHidden then
+        -- The secure state driver evaluates on a short timer. Blizzard can
+        -- call Show() between evaluations while refreshing objectives during
+        -- movement or taxi travel, which otherwise produces a visible flash.
+        -- Alpha is a visual guard only: no script hook or layout method is
+        -- installed, so Blizzard retains its normal update execution path.
+        h.retailOriginalAlpha = frame:GetAlpha()
+        frame:SetAlpha(0)
+        RegisterStateDriver(frame, "visibility", "hide")
+        h.retailDriverHidden = true
+    end
 end
 
 function Nx.Quest:TrackerHider_ShouldHide()
@@ -171,7 +224,11 @@ end
 
 function Nx.Quest:TrackerHider_HookFrame(name)
     local h = self._trackerHider
-    if not h or h.hooked[name] then
+    if not h or h.hooked[name] or not NxTracker_CanManage(name) then
+        return
+    end
+
+    if name == "ObjectiveTrackerFrame" and Nx.isRetail then
         return
     end
 
@@ -201,9 +258,13 @@ function Nx.Quest:TrackerHider_Apply()
     for i = 1, #NX_TRACKER_FRAMES do
         local name = NX_TRACKER_FRAMES[i]
         local frame = _G[name]
-        if frame then
-            self:TrackerHider_HookFrame(name)
-            self:TrackerHider_SetVisible(frame, name, not hide)
+        if frame and NxTracker_CanManage(name) then
+            if name == "ObjectiveTrackerFrame" and Nx.isRetail then
+                self:TrackerHider_SetRetailVisible(frame, not hide)
+            else
+                self:TrackerHider_HookFrame(name)
+                self:TrackerHider_SetVisible(frame, name, not hide)
+            end
         end
     end
 end
