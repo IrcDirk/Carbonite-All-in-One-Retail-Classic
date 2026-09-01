@@ -2852,6 +2852,11 @@ end
 -- Copy only the screen anchor shared by normal and minimized layouts
 ---------------------------------------------------------------------------------------
 
+local function IsLayoutNumber (value)
+    return type (value) == "number" and value == value
+        and value ~= math.huge and value ~= -math.huge
+end
+
 function Nx.Window:CopyLayoutPosition (sourceMode, targetMode)
 
     sourceMode = sourceMode or ""
@@ -2869,6 +2874,19 @@ function Nx.Window:CopyLayoutPosition (sourceMode, targetMode)
     data[targetMode.."X"] = x
     data[targetMode.."Y"] = y
     data[targetMode.."S"] = data[sourceMode.."S"]
+
+    -- CopyLayoutPosition intentionally does not copy the full layout size.
+    -- A fresh profile can therefore acquire MinX/MinY before a minimized
+    -- layout has ever been initialized. Complete that layout here so every
+    -- client can safely restore it from SavedVariables.
+    if targetMode == "Min" then
+        if not IsLayoutNumber (data["MinW"]) then
+            data["MinW"] = 125
+        end
+        if not IsLayoutNumber (data["MinH"]) then
+            data["MinH"] = 40
+        end
+    end
 end
 
 local LayoutAnchorFactors = {
@@ -3225,63 +3243,89 @@ function Nx.Window:SetLayoutMode (mode)
     end
 
     local x = data[mode.."X"]
+    local y = data[mode.."Y"]
+    local w = data[mode.."W"]
+    local h = data[mode.."H"]
 
-    if not x then
+    -- Saved layout records from older or first-use profiles can be partial.
+    -- Validate all four values together before arithmetic or frame setters use
+    -- them, preserving every valid coordinate and dimension during repair.
+    if not IsLayoutNumber (x) or not IsLayoutNumber (y)
+        or not IsLayoutNumber (w) or not IsLayoutNumber (h) then
 
         if mode == "Min" then
-            -- Defensive fallback for a frame that temporarily has no anchor.
-            local atPt, _, relPt, minX, minY = f:GetPoint()
-            if atPt and minX and minY and (not relPt or atPt == relPt) then
-                self:SetLayoutData (mode, minX, -minY, 125, 28,
-                    data[(oldMode or "").."L"], atPt, f:GetScale())
-            else
-                self:SetLayoutData (mode, sw * .9, sh * .4, 125, 28)
+            local atPt, _, relPt, frameX, frameY = f:GetPoint()
+            local hasFramePoint = atPt and IsLayoutNumber (frameX)
+                and IsLayoutNumber (frameY) and (not relPt or atPt == relPt)
+
+            x = IsLayoutNumber (x) and x
+                or (hasFramePoint and frameX or sw * .9)
+            y = IsLayoutNumber (y) and y
+                or (hasFramePoint and -frameY or sh * .4)
+            w = IsLayoutNumber (w) and w or 125
+            h = IsLayoutNumber (h) and h or 28
+
+            local attachPt = data[mode.."A"]
+            if not attachPt and hasFramePoint then
+                attachPt = atPt
             end
+
+            local scale = data[mode.."S"]
+            if not IsLayoutNumber (scale) or scale <= 0 then
+                scale = f:GetScale()
+                if not IsLayoutNumber (scale) or scale <= 0 then
+                    scale = 1
+                end
+            end
+
+            self:SetLayoutData (mode, x, y, w, h,
+                data[(oldMode or "").."L"], attachPt, scale)
         else
---            Nx.prt ("SetLayoutMode %s '%s' missing!", self.Name, mode)
-            self:SetLayoutData (mode, sw * .4, sh * .4, sw * .2, sh * .2)
+            x = IsLayoutNumber (x) and x or sw * .4
+            y = IsLayoutNumber (y) and y or sh * .4
+            w = IsLayoutNumber (w) and w or sw * .2
+            h = IsLayoutNumber (h) and h or sh * .2
+
+            self:SetLayoutData (mode, x, y, w, h, false,
+                data[mode.."A"], data[mode.."S"])
         end
-
-    else
-        local w = data[mode.."W"]
-        if w < 0 then
-            w = sw * -w
-        end
-
-        local h = data[mode.."H"]
-        if h < 0 then
-            h = sh * -h
-        end
-
-        if x >= 999999 then                -- Center
-            x = (sw - w) * .5
-
-        elseif x >= 300000 then                -- Offset + from screen center
-            local s = data[mode.."S"] or 1
-            x = (sw * .5 + (x - 300000)) / s
-
-        elseif x >= 200000 then                -- Offset - from screen center
-            local s = data[mode.."S"] or 1
-            x = (sw * -.5 - (x - 200000)) / s
---            x = sw * .5 - (x - 200000) - w
-
-        elseif x > 100000 then                -- Offset from screen right
-            x = sw - x + 100000 - self.BorderW
-
-        elseif x < 0 and x > -1 then            -- % of width
-            x = sw * -x
-        end
-
-        local y = data[mode.."Y"]
-
-        if y >= 999999 then                -- Center
-            y = (sh - h) * .5
-        elseif y < 0 and y > -1 then            -- % of width
-            y = sh * -y
-        end
-
-        self:SetLayoutData (mode, x, y, w, h, false, data[mode.."A"], data[mode.."S"])
     end
+
+    if w < 0 then
+        w = sw * -w
+    end
+
+    if h < 0 then
+        h = sh * -h
+    end
+
+    if x >= 999999 then                -- Center
+        x = (sw - w) * .5
+
+    elseif x >= 300000 then                -- Offset + from screen center
+        local s = data[mode.."S"] or 1
+        x = (sw * .5 + (x - 300000)) / s
+
+    elseif x >= 200000 then                -- Offset - from screen center
+        local s = data[mode.."S"] or 1
+        x = (sw * -.5 - (x - 200000)) / s
+--        x = sw * .5 - (x - 200000) - w
+
+    elseif x > 100000 then                -- Offset from screen right
+        x = sw - x + 100000 - self.BorderW
+
+    elseif x < 0 and x > -1 then            -- % of width
+        x = sw * -x
+    end
+
+    if y >= 999999 then                -- Center
+        y = (sh - h) * .5
+    elseif y < 0 and y > -1 then            -- % of height
+        y = sh * -y
+    end
+
+    self:SetLayoutData (mode, x, y, w, h, false,
+        data[mode.."A"], data[mode.."S"])
 
     if self.KeepMinimizePositionsOnScreen and (mode == "" or mode == "Min") then
         local clampW

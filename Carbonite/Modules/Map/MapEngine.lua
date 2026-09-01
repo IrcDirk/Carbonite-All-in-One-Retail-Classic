@@ -1567,45 +1567,60 @@ function Nx.Map:Create(index)
     ---------------------------------------------------------------------------
 
     if Nx.BlobsAvailable then
-        -- Quest objective blobs
-        local questwin = CreateFrame("QuestPOIFrame")
-        m.QuestWin = questwin
-        m.QuestWin:SetParent(m.TextScFrm:GetScrollChild())
-        m.QuestWin:Hide()
-        m.QuestWin:SetSize(1002, 668)
-        m.QuestWin:SetFillAlpha(255 * m.QuestAlpha)
-        m.QuestWin:SetBorderAlpha(255 * m.QuestAlpha)
-        m.QuestWin:SetFillTexture([[Interface\WorldMap\UI-QuestBlob-Inside]])
-        m.QuestWin:SetBorderTexture([[Interface\WorldMap\UI-QuestBlob-Outside]])
-        m.QuestWin:SetBorderScalar(0.15)
+        -- Quest objective blobs. Current Classic build numbers are higher
+        -- than old Retail expansion thresholds, so build-number detection is
+        -- no longer sufficient: the supplied Era/TBC UI sources have no
+        -- QuestBlobDataProvider, while Mists/Retail do. Probe the actual frame
+        -- capability and fall back to Carbonite's catalog areas if absent.
+        local questOK, questwin = pcall(CreateFrame, "QuestPOIFrame")
+        if questOK and questwin
+            and type(questwin.DrawBlob) == "function"
+            and type(questwin.SetMapID) == "function" then
+            m.QuestWin = questwin
+            m.QuestWin:SetParent(m.TextScFrm:GetScrollChild())
+            m.QuestWin:Hide()
+            m.QuestWin:SetSize(1002, 668)
+            m.QuestWin:SetFillAlpha(255 * m.QuestAlpha)
+            m.QuestWin:SetBorderAlpha(255 * m.QuestAlpha)
+            m.QuestWin:SetFillTexture([[Interface\WorldMap\UI-QuestBlob-Inside]])
+            m.QuestWin:SetBorderTexture([[Interface\WorldMap\UI-QuestBlob-Outside]])
+            m.QuestWin:SetBorderScalar(0.15)
+        else
+            Nx.BlobsAvailable = false
+        end
 
         -- Delve objectives are ScenarioPOIFrame blobs, not QuestPOIFrame
         -- blobs. This frame type is absent on some supported Classic clients.
-        local scenarioOK, scenarioWin = pcall(
-            CreateFrame, "ScenarioPOIFrame", nil, m.TextScFrm:GetScrollChild()
-        )
-        if scenarioOK and scenarioWin then
-            m.ScenarioWin = scenarioWin
-            scenarioWin:Hide()
-            scenarioWin:SetSize(1002, 668)
-            scenarioWin:SetFillAlpha(255 * m.QuestAlpha)
-            scenarioWin:SetBorderAlpha(255 * m.QuestAlpha)
-            scenarioWin:SetFillTexture([[Interface\WorldMap\UI-QuestBlob-Inside]])
-            scenarioWin:SetBorderTexture([[Interface\WorldMap\UI-QuestBlob-Outside]])
-            scenarioWin:SetBorderScalar(1)
-        end
+        if Nx.BlobsAvailable then
+            local scenarioOK, scenarioWin = pcall(
+                CreateFrame, "ScenarioPOIFrame", nil, m.TextScFrm:GetScrollChild()
+            )
+            if scenarioOK and scenarioWin then
+                m.ScenarioWin = scenarioWin
+                scenarioWin:Hide()
+                scenarioWin:SetSize(1002, 668)
+                scenarioWin:SetFillAlpha(255 * m.QuestAlpha)
+                scenarioWin:SetBorderAlpha(255 * m.QuestAlpha)
+                scenarioWin:SetFillTexture([[Interface\WorldMap\UI-QuestBlob-Inside]])
+                scenarioWin:SetBorderTexture([[Interface\WorldMap\UI-QuestBlob-Outside]])
+                scenarioWin:SetBorderScalar(1)
+            end
 
-        -- Archaeology dig site blobs
-        local arch = CreateFrame("ArchaeologyDigSiteFrame")
-        m.Arch = arch
-        m.Arch:SetParent(m.TextScFrm:GetScrollChild())
-        m.Arch:Hide()
-        m.Arch:SetSize(1002, 668)
-        m.Arch:SetFillAlpha(255 * m.ArchAlpha)
-        m.Arch:SetBorderAlpha(255 * m.ArchAlpha)
-        m.Arch:SetFillTexture([[Interface\WorldMap\UI-ArchaeologyBlob-Inside]])
-        m.Arch:SetBorderTexture([[Interface\WorldMap\UI-ArchaeologyBlob-Outside]])
-        m.Arch:SetBorderScalar(0.15)
+            -- Archaeology is another optional C-side frame type. Its absence
+            -- must not disable the independently available quest blob.
+            local archOK, arch = pcall(CreateFrame, "ArchaeologyDigSiteFrame")
+            if archOK and arch then
+                m.Arch = arch
+                m.Arch:SetParent(m.TextScFrm:GetScrollChild())
+                m.Arch:Hide()
+                m.Arch:SetSize(1002, 668)
+                m.Arch:SetFillAlpha(255 * m.ArchAlpha)
+                m.Arch:SetBorderAlpha(255 * m.ArchAlpha)
+                m.Arch:SetFillTexture([[Interface\WorldMap\UI-ArchaeologyBlob-Inside]])
+                m.Arch:SetBorderTexture([[Interface\WorldMap\UI-ArchaeologyBlob-Outside]])
+                m.Arch:SetBorderScalar(0.15)
+            end
+        end
     end
 
     ---------------------------------------------------------------------------
@@ -3173,6 +3188,13 @@ function Nx.Map:MinimapUpdateMask (optName)
 
         local mm = self.MMFrm
         mm:SetMaskTexture (name)
+
+        -- The Carbonite launcher may remain parented to Minimap when button
+        -- collection is disabled. Reproject it when docking changes between
+        -- Carbonite's round and square masks, even if the frame size is equal.
+        if Nx.NXMiniMapBut and type(Nx.NXMiniMapBut.Move) == "function" then
+            Nx.NXMiniMapBut:Move()
+        end
 
 --        Nx.prt ("MMmask %s", name)
     end
@@ -5480,9 +5502,15 @@ function Nx.Map:Update (elapsed)
 
     local doSetCurZone
     local mapChange
+    local scaleBeforeMapChange
 
     Nx.Map.mapChange = false
     if self.MapId ~= mapId then
+
+        -- Changing zones can call SwitchOptions/GotoCurrentZone below. Those
+        -- functions are allowed to recenter the view, but their fit-to-map
+        -- calculations must not replace the zoom selected by the user.
+        scaleBeforeMapChange = self.Scale
 
 --        Nx.prtD ("%d Map change %d to %d", self.Tick, self.MapId, mapId)
 
@@ -5675,6 +5703,12 @@ function Nx.Map:Update (elapsed)
     -- Real map switch
 
     if Nx.Map.RMapId ~= rid then
+        -- The visible map may already have changed through a hover/map scan
+        -- before the player's real map catches up. Capture the scale here as
+        -- well so that delayed city/instance transitions cannot bypass the
+        -- preservation guard above.
+        scaleBeforeMapChange = scaleBeforeMapChange or self.Scale
+
         if rid ~= 9000 then
 --            Nx.prtD ("Map zone changed %d, %d", rid, mapId)
 
@@ -5948,6 +5982,15 @@ function Nx.Map:Update (elapsed)
                 end
             end
         end
+    end
+
+    -- Preserve zoom across every map boundary (outdoor zones, cities,
+    -- instances, delves, and battlegrounds). Recentring still applies, so the
+    -- new map remains focused correctly; only the transition-time scale reset
+    -- is discarded.
+    if type(scaleBeforeMapChange) == "number" and scaleBeforeMapChange > 0 then
+        self.Scale = scaleBeforeMapChange
+        self.RealScale = scaleBeforeMapChange
     end
 
     -- Adjust draw scale and position
@@ -8174,10 +8217,22 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
     local dist = (x * x + y * y) ^ .5
     self.TrackDistYd = dist * 4.575
 
+    local firstTarget = self.Targets and self.Targets[1]
+    local questTarget = firstTarget and firstTarget.TargetType == "Q"
+        and firstTarget or nil
+
     if target then
+        target.dist = dist
+    end
+
+    -- Blizzard's live quest POI (or Carbonite's catalog fallback) is the
+    -- destination marker for a tracked quest.  Drawing IconWayTarget as well
+    -- creates the redundant grey/white arrow reported as NxIcon1 in /fstack.
+    -- Keep the route target and its direction/distance state intact, but do
+    -- not allocate the legacy destination overlay for quest navigation.
+    if target and not questTarget then
         local f = self:GetIcon (1)
         f.NxTarget = target;
-        target.dist = dist;
 
         -- Disable mouse so this overlay marker doesn't eat clicks meant
         -- for the underlying quest icon. The goto-target marker sits at
@@ -8202,6 +8257,38 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
         local dir = math.deg (math.atan2 (y, x)) + 90
 
         self.TrackDir = dir
+
+        -- A minimized Carbonite map already shows the tracked objective marker.
+        -- Do not stamp the animated quest breadcrumb trail onto any minimap
+        -- view. In combined mode instance clipping can leave an arrow pointing
+        -- upward; in standalone mode a short route becomes one scrolling arrow
+        -- that starts at the player and travels beyond the minimap.
+        --
+        -- On the full map, stop the same trail as soon as Blizzard reports that
+        -- the player is inside the tracked quest's objective blob. A live POI
+        -- can remain at the blob centre, so distance-to-waypoint alone cannot
+        -- detect arrival. IsInsideQuestBlob is the authoritative Retail signal;
+        -- older clients simply skip this guarded branch.
+        local insideQuestObjective = false
+        if target ~= nil and questTarget and questTarget.TargetId
+            and _G.C_Minimap
+            and type(_G.C_Minimap.IsInsideQuestBlob) == "function" then
+            local questID = floor((tonumber(questTarget.TargetId) or 0) / 100)
+            if questID > 0 then
+                local ok, inside = pcall(
+                    _G.C_Minimap.IsInsideQuestBlob, questID)
+                if ok and (not _G.issecretvalue
+                    or not _G.issecretvalue(inside)) then
+                    insideQuestObjective = inside == true
+                end
+            end
+        end
+
+        local suppressMinimapQuestArrow = self.Win and not self.Win:IsSizeMax()
+            and target ~= nil and questTarget ~= nil
+        if suppressMinimapQuestArrow or insideQuestObjective then
+            return
+        end
 
         local sx = self.ScaleDraw
         local sy = self.ScaleDraw / 1.5
@@ -10941,6 +11028,9 @@ function Nx.Map:GetIconStatic (levelAdd)
         f.NxLabel:SetText("")
         f.NxLabel:Hide()
     end
+    if f.NxQuestDisplay then
+        f.NxQuestDisplay:Hide()
+    end
 
     f.NxTip = nil
     f.NXType = nil            -- 1000 plyr, 2000 BG, 3000 POI, 8000 debug, 8500 quest offer, 9000+ quest
@@ -13100,6 +13190,35 @@ function Nx.Map:IsMapRelevantToInstance(sourceMapID, viewMapID)
         return true
     end
 
+    -- Outdoor phase maps are commonly exposed as UIMapType.Micro even though
+    -- the player is not inside an instance. Their quest catalog positions stay
+    -- on the outdoor parent zone (for example Midnight Eversong phase 2594
+    -- uses parent 2395). Permit that parent chain only while IsInInstance is
+    -- false; true dungeons, delves, raids, and scenarios retain the strict
+    -- isolation boundary below.
+    local referenceInfo = GetSafeMapInfo(referenceMapID)
+    if referenceInfo and referenceInfo.mapType == UI_MAP_TYPE_MICRO then
+        local inInstance = false
+        if _G.IsInInstance then
+            local ok, value = pcall(_G.IsInInstance)
+            inInstance = ok and value == true or false
+        end
+        if not inInstance then
+            local ancestorInfo = referenceInfo
+            for _ = 1, 8 do
+                local parentMapID = ancestorInfo
+                    and tonumber(ancestorInfo.parentMapID)
+                if not parentMapID or parentMapID <= 0 then
+                    break
+                end
+                if parentMapID == sourceMapID then
+                    return true
+                end
+                ancestorInfo = GetSafeMapInfo(parentMapID)
+            end
+        end
+    end
+
     self.InstanceMapRelevanceCache = self.InstanceMapRelevanceCache or {}
     local cacheKey = tostring(referenceMapID or 0) .. ":" .. tostring(sourceMapID)
     local cached = self.InstanceMapRelevanceCache[cacheKey]
@@ -13114,7 +13233,6 @@ function Nx.Map:IsMapRelevantToInstance(sourceMapID, viewMapID)
         relevant = true
     else
         local sourceInfo = GetSafeMapInfo(sourceMapID)
-        local referenceInfo = GetSafeMapInfo(referenceMapID)
         if sourceInfo and referenceInfo
             and IsDungeonLikeMapType(sourceInfo.mapType)
             and IsDungeonLikeMapType(referenceInfo.mapType) then

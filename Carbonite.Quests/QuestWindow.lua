@@ -237,7 +237,7 @@ function Nx.Quest.List:Open()
     --CarboniteQuest:RegisterEvent ("QUEST_WATCH_UPDATE", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("WORLD_STATE_TIMER_START", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("WORLD_STATE_TIMER_STOP", "OnQuestUpdate")
-    --CarboniteQuest:RegisterEvent ("QUEST_POI_UPDATE", "OnQuestUpdate")
+    CarboniteQuest:RegisterEvent ("QUEST_POI_UPDATE", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("TRACKED_ACHIEVEMENT_UPDATE", "OnTrackedAchievementUpdate")
     CarboniteQuest:RegisterEvent ("TRACKED_ACHIEVEMENT_LIST_CHANGED", "OnTrackedAchievementsUpdate")
     CarboniteQuest:RegisterEvent ("CHAT_MSG_COMBAT_FACTION_CHANGE", "OnChat_msg_combat_faction_change")
@@ -1763,6 +1763,15 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
     elseif event == "SUPER_TRACKING_CHANGED" then
         Nx.Quest:OnSuperTrackChanged()
     elseif event == "QUEST_POI_UPDATE" then
+        -- Blizzard's QuestDataProvider refreshes unconditionally for this
+        -- event. Carbonite used to leave the registration disabled and, even
+        -- if another path delivered the event, rebuilt only when the mapID
+        -- changed. Objective positions can change while remaining on the same
+        -- zone/phase map, so always invalidate the persistent quest pin layer.
+        Quest._iconDirty = true
+        if Quest.ClearTaskInfoCache then
+            Quest:ClearTaskInfoCache()
+        end
         local oldmap = Nx.Map:GetCurrentMapAreaID()
         if Nx.Quest.OldMap ~= oldmap then
             Nx.Quest.OldMap = oldmap

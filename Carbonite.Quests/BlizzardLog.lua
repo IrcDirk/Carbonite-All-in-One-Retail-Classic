@@ -635,24 +635,16 @@ function Nx.Quest:RecordQuestsLog (validatedQuestCount)
                     mask = 1
 
                 else
-                    for n = 1, 99 do
-                        local done
-                        if n <= lbCnt then
-                            done = cur[n + 100]
-                        end
-
-                        local obj = quest and quest["Objectives"]
-
-                        if not obj then
-                            break
-                        else obj = quest and quest["Objectives"][n]
-                        end
-                        if not obj then
-                            break
-                        end
-
-                        if obj and not done then
-                            mask = mask + bit_lshift (1, n)
+                    if self.BuildCatalogObjectiveMask then
+                        mask = self:BuildCatalogObjectiveMask(
+                            quest, cur, qId)
+                    else
+                        for n = 1, 15 do
+                            local obj = quest and quest["Objectives"]
+                                and quest["Objectives"][n]
+                            if obj and not cur[n + 100] then
+                                mask = mask + bit_lshift (1, n)
+                            end
                         end
                     end
                 end
@@ -1047,17 +1039,15 @@ function Nx.Quest:ScanBlizzQuestDataZone(WatchUpdate)
                         end
 
                         if not isComplete then
-                            -- Static-DB POIs are authoritative for position.
-                            -- If our slot has data, just rename its desc to
-                            -- the live objective text (so tooltips / watch
-                            -- list show real labels instead of "nil"). If
-                            -- the slot is empty AND we had no objective
-                            -- data at all, write a single Blizzard-derived
-                            -- POI as a fallback. When we already have
-                            -- curated objectives in the DB (e.g. quest
-                            -- 10302's many-area-rect data), don't
-                            -- synthesize over them — even when an
-                            -- individual slot is missing.
+                            -- Static catalog POIs are authoritative for both
+                            -- position and identity grouping. Do not rename
+                            -- slot i from live row i: catalog slots are
+                            -- location records, and several slots may belong
+                            -- to one Blizzard objective. MapIcons resolves
+                            -- live tooltip/completion state by normalized
+                            -- objective identity at render time. Only quests
+                            -- with no catalog geometry receive the public
+                            -- quest-level POI as a fallback.
                             local hadObjectives = quest["Objectives"] ~= nil
                             if not quest["Objectives"] then
                                 quest["Objectives"] = {}
@@ -1067,22 +1057,10 @@ function Nx.Quest:ScanBlizzQuestDataZone(WatchUpdate)
                             for i = 1, lbCnt do
                                 local objText = (objectives[i] and objectives[i].text) or "?"
                                 objText = (objText:gsub("|", ""))
-                                local slot = quest["Objectives"][i]
-                                if not slot then
-                                    if not hadObjectives then
-                                        local obj = format ("%s|%s|32|%f|%f|6|6",
-                                            objText, mapId, x, y)
-                                        quest["Objectives"][i] = {obj}
-                                    end
-                                else
-                                    for j, poi in ipairs (slot) do
-                                        if type(poi) == "string" then
-                                            local rest = poi:match("^[^|]*(|.*)$")
-                                            if rest then
-                                                slot[j] = objText .. rest
-                                            end
-                                        end
-                                    end
+                                if not hadObjectives then
+                                    local obj = format ("%s|%s|32|%f|%f|6|6",
+                                        objText, mapId, x, y)
+                                    quest["Objectives"][i] = {obj}
                                 end
                             end
                         end

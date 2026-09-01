@@ -16,6 +16,7 @@
 --   w, h          pixel size at scale 1
 --   tex           default texture path (per-instance .tex overrides)
 --   scale         per-type scale multiplier (default 1)
+--   scaleMode     "navigation" uses fixed IconNavScale instead of map zoom
 --   atScale       min map zoom below which the whole class is hidden
 --   alpha         base alpha
 --   alphaNear     pulse alpha when player within 80yd (nil = no pulse)

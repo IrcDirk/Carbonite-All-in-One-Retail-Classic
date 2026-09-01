@@ -10,25 +10,24 @@
 -- consumes it and gates the per-frame work behind a content-hash
 -- dirty-check.
 --
--- Two pin kinds:
+-- Three pin kinds:
 --   POI        - quest start / end / objective POI icons. WP draw mode.
 --                Uses an `onStamp` callback to apply per-icon vertex
 --                colors, super-tracked glow visibility, and the
 --                objective-number label (NxLabel) that the legacy
 --                code wrote directly to the pool frame.
---   POI_Inv    - same as POI but no glow / label. Used for the
---                completed-quest "complete" marker.
---
--- Quest watch-area rectangles (drawn with ClipFrameTL + per-instance
--- width/height + hover state) stay on the legacy GetIconStatic path;
--- they're cheap, low-volume, and the renderer's WP mode doesn't yet
--- support per-pin geometry.
+--   LivePOI    - Blizzard watched/tracked quest objective coordinates.
+--                Kept above every database-derived quest pin so live
+--                objectives remain visible on both Carbonite map sizes.
+--   Area       - top-left-anchored quest-area rectangles with raw world
+--                dimensions; these remain below the foreground POIs.
 
 local Nx = _G.Nx
 if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
 local Carbonite = _G.Carbonite
+local unpack = _G.unpack or table.unpack
 
 -- Lazy initialisation: the MapProvider module loads from
 -- Carbonite/Modules/Map/MapProvider.lua via Modules.xml during the
@@ -43,7 +42,7 @@ local function provider()
     end
     local p = Carbonite.Map:CreateProvider("Carbonite.Quests")
 
-    -- Stamping callback shared by both kinds. Quest icons want full
+    -- Stamping callback shared by the quest pin kinds. Quest icons want full
     -- per-pin control of vertex color, glow, and objective label —
     -- legacy code set these directly on the pool frame after
     -- GetIconStatic. With pin/layer we run the same logic after the
@@ -56,6 +55,46 @@ local function provider()
         else
             fTex:SetVertexColor(1, 1, 1, 1)
         end
+
+        -- Retail's POIButton is a composite: the outer quest-number ring is
+        -- one atlas and the in-progress/complete/waypoint glyph is a second
+        -- texture. Legacy Blizzard providers use the same two-layer shape
+        -- with UI-QuestPoi-NumberIcons. Carbonite cannot reparent Blizzard's
+        -- MapCanvas pin, so reproduce those two texture layers on the pooled
+        -- Carbonite frame while retaining Blizzard's public data source.
+        local display = frame.NxQuestDisplay
+        if (pin.displayAtlas or pin.displayTex) and not display
+            and type(frame.CreateTexture) == "function" then
+            display = frame:CreateTexture(nil, "OVERLAY", nil, 1)
+            frame.NxQuestDisplay = display
+            if display.SetPoint then display:SetPoint("CENTER") end
+            if display.SetSnapToPixelGrid then
+                display:SetSnapToPixelGrid(false)
+            end
+            if display.SetTexelSnappingBias then
+                display:SetTexelSnappingBias(0)
+            end
+        end
+        if display then
+            display:Hide()
+            if pin.displayAtlas and type(display.SetAtlas) == "function" then
+                display:SetTexCoord(0, 1, 0, 1)
+                display:SetAtlas(pin.displayAtlas)
+            elseif pin.displayTex and type(display.SetTexture) == "function" then
+                display:SetTexture(pin.displayTex)
+                if pin.displayTexCoord then
+                    display:SetTexCoord(unpack(pin.displayTexCoord))
+                else
+                    display:SetTexCoord(0, 1, 0, 1)
+                end
+            end
+            if pin.displayWidth and pin.displayHeight
+                and type(display.SetSize) == "function" then
+                display:SetSize(pin.displayWidth, pin.displayHeight)
+            end
+            display:Show()
+        end
+
         local glow = frame.NxGlow
         if glow then
             if pin.showGlow then glow:Show() else glow:Hide() end
@@ -71,26 +110,30 @@ local function provider()
         end
     end
 
-    -- POI size picked to roughly match the legacy navscale (16)
-    -- after the renderer's icon-scale multiplier kicks in. Going
-    -- much higher (32) made them dominate the map next to Questie's
-    -- own available-quest pins; sticking close to legacy keeps the
-    -- map readable.
+    -- Quest POIs use the same fixed navigation size as the legacy
+    -- GetIconStatic path. Generic WP scaling shrinks them to about one
+    -- pixel on a normally zoomed minimap. Frame level 4 keeps the marker
+    -- and its objective number above the translucent quest-area layer.
     p:DefinePin("POI", {
-        drawMode = "WP",
-        w        = 20,
-        h        = 20,
-        onStamp  = stampQuestFrame,
+        drawMode  = "WP",
+        scaleMode = "navigation",
+        frameLvl  = 4,
+        w         = 16,
+        h         = 16,
+        onStamp   = stampQuestFrame,
     })
 
-    -- Distance-arrow pins stay smaller — they're directional
-    -- pointers along the edge of an objective area, drawn alongside
-    -- the main POI; matching POI size would crowd the map.
-    p:DefinePin("Arrow", {
-        drawMode = "WP",
-        w        = 14,
-        h        = 14,
-        onStamp  = stampQuestFrame,
+    -- The native Blizzard minimap draws quest POIs inside the Minimap render
+    -- object, so those icons cannot be reparented into Carbonite. LivePOI is
+    -- Carbonite's explicit mirror of that data. Its larger foreground level
+    -- prevents quest blobs and database-area pins from covering it.
+    p:DefinePin("LivePOI", {
+        drawMode  = "WP",
+        scaleMode = "navigation",
+        frameLvl  = 6,
+        w         = 24,
+        h         = 24,
+        onStamp   = stampQuestFrame,
     })
 
     -- Quest-objective area spans (the colored rectangles laid over
@@ -105,6 +148,7 @@ local function provider()
         drawMode = "WP",
         clipKind = "tl",
         rawSize  = true,
+        frameLvl = 0,
         onStamp  = stampQuestFrame,
     })
 
@@ -138,18 +182,18 @@ function Nx.Quest:AddPOI(wx, wy, opts)
     return p:Add("POI", wx, wy, opts)
 end
 
+function Nx.Quest:AddLivePOI(wx, wy, opts)
+    if not IsQuestPinRelevant(opts) then return nil end
+    local p = provider()
+    if not p then return nil end
+    return p:Add("LivePOI", wx, wy, opts)
+end
+
 function Nx.Quest:AddArea(wx, wy, opts)
     if not IsQuestPinRelevant(opts) then return nil end
     local p = provider()
     if not p then return nil end
     return p:Add("Area", wx, wy, opts)
-end
-
-function Nx.Quest:AddArrow(wx, wy, opts)
-    if not IsQuestPinRelevant(opts) then return nil end
-    local p = provider()
-    if not p then return nil end
-    return p:Add("Arrow", wx, wy, opts)
 end
 
 function Nx.Quest:ClearProviderPins()

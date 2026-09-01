@@ -95,7 +95,7 @@ local SetFrameScript, ClearFrameScripts
 ------------------------------------------------------------------------------
 -- @debug @
 local usedTables, usedFrames, usedTooltips = 0, 0, 0
---@end-debug@
+--@end-debug@]==]
 
 ------------------------------------------------------------------------------
 -- Internal constants to tweak the layout
@@ -173,7 +173,7 @@ local function AcquireFrame(parent)
     frame:SetParent(parent)
     --[===[@debug@
     usedFrames = usedFrames + 1
-    --@end-debug@]===]
+    --@end-debug@]==]]===]
     return frame
 end
 
@@ -188,7 +188,7 @@ local function ReleaseFrame(frame)
     tinsert(frameHeap, frame)
     --[===[@debug@
     usedFrames = usedFrames - 1
-    --@end-debug@]===]
+    --@end-debug@]==]]===]
 end
 
 ------------------------------------------------------------------------------
@@ -402,7 +402,7 @@ function AcquireTooltip()
 
     --[===[@debug@
     usedTooltips = usedTooltips + 1
-    --@end-debug@]===]
+    --@end-debug@]==]]===]
     return tooltip
 end
 
@@ -475,7 +475,7 @@ function ReleaseTooltip(tooltip)
 
     --[===[@debug@
     usedTooltips = usedTooltips - 1
-    --@end-debug@]===]
+    --@end-debug@]==]]===]
 end
 
 ------------------------------------------------------------------------------
@@ -525,7 +525,7 @@ function AcquireTable()
     local tbl = tremove(tableHeap) or {}
     --[===[@debug@
     usedTables = usedTables + 1
-    --@end-debug@]===]
+    --@end-debug@]==]]===]
     return tbl
 end
 
@@ -535,7 +535,7 @@ function ReleaseTable(tableInstance)
     tinsert(tableHeap, tableInstance)
     --[===[@debug@
     usedTables = usedTables - 1
-    --@end-debug@]===]
+    --@end-debug@]==]]===]
 end
 
 ------------------------------------------------------------------------------
@@ -1580,4 +1580,4 @@ end
 
 SLASH_LibQTip1 = "/qtip"
 _G.SlashCmdList["LibQTip"] = PrintStats
---@end-debug@
+--@end-debug@]==]

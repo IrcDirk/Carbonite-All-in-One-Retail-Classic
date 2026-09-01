@@ -149,6 +149,8 @@ local TRANSIENT_FIELDS = {
     "NXType", "NXData", "x2", "y2", "userData",
     "vertexColor", "showGlow", "label",
     "tx1", "ty1", "tx2", "ty2",
+    "displayAtlas", "displayTex", "displayTexCoord",
+    "displayWidth", "displayHeight",
 }
 
 function Provider:Add(kind, wx, wy, opts)
