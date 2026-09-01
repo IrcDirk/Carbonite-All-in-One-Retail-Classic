@@ -39,7 +39,7 @@ function Carbonite:L()
     return LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 end
 
-Carbonite.VERSION_STRING = "v12.1.0-00002"
+Carbonite.VERSION_STRING = "@project-version@"
 if Carbonite.VERSION_STRING:find("project%-version") then
     Carbonite.VERSION_STRING = "dev"
 end
