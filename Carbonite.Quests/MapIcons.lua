@@ -22,11 +22,39 @@ local bit_lshift = _G.bit.lshift or _G.bit_lshift
 local floor = _G.math.floor or _G.floor
 local format = _G.string.format or _G.format
 local gsub = _G.string.gsub or _G.gsub
+local lower = _G.string.lower or _G.lower
 local max = _G.math.max or _G.max
+local sort = _G.table.sort or _G.sort
 local wipe = _G.wipe or _G.wipe
 local issecretvalue = _G.issecretvalue
 local GetQuestObjectiveInfo = _G.GetQuestObjectiveInfo or _G.GetQuestObjectiveInfo
 local InCombatLockdown = _G.InCombatLockdown or _G.InCombatLockdown
+local QuestMapCompat = Nx.QuestMapCompatibility
+
+-- Every shipped TOC loads QuestMapCompatibility.lua first. Keep a minimal
+-- fallback for third-party loaders that execute this file directly.
+if not QuestMapCompat then
+    QuestMapCompat = {
+        AreQuestPOIsEnabled = function() return true end,
+        IsModernQuestDataProvider = function()
+            return C_QuestLog
+                and type(C_QuestLog.GetNextWaypointForMap) == "function"
+                or false
+        end,
+        ShouldUseQuestMapEntry = function() return true end,
+        GetQuestPinVisual = function(_, _, selected, complete, isWaypoint)
+            return {
+                tex = complete and "atlas:UI-QuestIcon-TurnIn-Normal"
+                    or (isWaypoint and "atlas:poi-traveldirections-arrow"
+                    or (selected
+                        and "atlas:Quest-In-Progress-Icon-Brown"
+                        or "atlas:Quest-In-Progress-Icon-yellow")),
+                width = selected and 24 or 20,
+                height = selected and 24 or 20,
+            }
+        end,
+    }
+end
 
 -- Promoted from NxQuest.lua's file-local compat shim.
 local GetQuestTagInfoCompat = Nx.Quest.GetQuestTagInfoCompat or function()
@@ -115,6 +143,456 @@ local function IsMapSameOrDescendant(mapID, ancestorMapID)
     return false
 end
 
+-- Campaign phases commonly publish objective coordinates on a stable parent
+-- Zone while the player is on a child/Micro map. This is a map relationship,
+-- not a quest exception: whenever the displayed map is a descendant of the
+-- source map, project the point onto the displayed canvas. ProjectObjectivePoint
+-- still has to prove that the coordinate lies on that child map, so unrelated
+-- dungeons do not inherit every outdoor objective from their parent zone.
+local function GetQuestRenderMapID(sourceMapID, viewMapID)
+    sourceMapID = GetSafeMapID(sourceMapID)
+    viewMapID = GetSafeMapID(viewMapID)
+    if not sourceMapID or not viewMapID then
+        return nil
+    end
+
+    if sourceMapID == viewMapID then
+        return sourceMapID
+    end
+
+    if IsMapSameOrDescendant(viewMapID, sourceMapID) then
+        return viewMapID
+    end
+
+    return IsQuestMapRelevant(sourceMapID, viewMapID)
+        and sourceMapID or nil
+end
+
+local function GetPublicVectorXY(vector)
+    if vector == nil or (issecretvalue and issecretvalue(vector)) then
+        return nil
+    end
+
+    local x, y
+    if type(vector.GetXY) == "function" then
+        local ok
+        ok, x, y = pcall(vector.GetXY, vector)
+        if not ok then return nil end
+    else
+        x, y = vector.x, vector.y
+    end
+
+    if type(x) ~= "number" or type(y) ~= "number"
+        or (issecretvalue and (issecretvalue(x) or issecretvalue(y))) then
+        return nil
+    end
+    return x, y
+end
+
+-- Convert a catalog coordinate from its source map to the canvas Carbonite is
+-- actually displaying. Blizzard's C_Map APIs are the authority here:
+-- GetWorldPosFromMapPos turns the parent-map point into a world vector and
+-- GetMapPosFromWorldPos projects that vector onto the phased child/Micro map.
+-- Carbonite's old code changed only the mapID while leaving the parent world
+-- coordinate untouched; ClipFrameMF then interpreted it as a child-local point
+-- and placed the icon far outside the fixed instance canvas.
+--
+-- GetMapRectOnMap is the supported fallback for child maps that do not expose
+-- a world vector. If both supported transforms fail, the point is rejected;
+-- blindly reusing parent-map normalized coordinates can place it confidently
+-- on the wrong instance floor.
+function Nx.Quest:ProjectObjectivePoint(map, sourceMapID, mapX, mapY,
+    viewMapID)
+    sourceMapID = GetSafeMapID(sourceMapID)
+    viewMapID = GetSafeMapID(viewMapID)
+    if not map or type(map.GetWorldPos) ~= "function"
+        or not sourceMapID or not viewMapID
+        or type(mapX) ~= "number" or type(mapY) ~= "number" then
+        return nil
+    end
+
+    local renderMapID = GetQuestRenderMapID(sourceMapID, viewMapID)
+    if not renderMapID then return nil end
+
+    local projectedX, projectedY = mapX * .01, mapY * .01
+    if renderMapID ~= sourceMapID then
+        projectedX, projectedY = nil, nil
+        local mapAPI = _G.C_Map
+        local makeVector = _G.CreateVector2D
+
+        if mapAPI and type(mapAPI.GetWorldPosFromMapPos) == "function"
+            and type(mapAPI.GetMapPosFromWorldPos) == "function"
+            and type(makeVector) == "function" then
+            local vectorOK, sourcePosition = pcall(
+                makeVector, mapX * .01, mapY * .01)
+            if vectorOK and sourcePosition then
+                local worldOK, continentID, worldPosition = pcall(
+                    mapAPI.GetWorldPosFromMapPos,
+                    sourceMapID,
+                    sourcePosition
+                )
+                continentID = worldOK and GetSafeMapID(continentID) or nil
+                if continentID and worldPosition then
+                    local mapOK, returnedMapID, mapPosition = pcall(
+                        mapAPI.GetMapPosFromWorldPos,
+                        continentID,
+                        worldPosition,
+                        renderMapID
+                    )
+                    returnedMapID = mapOK and GetSafeMapID(returnedMapID) or nil
+                    if returnedMapID == renderMapID then
+                        projectedX, projectedY = GetPublicVectorXY(mapPosition)
+                    end
+                end
+            end
+        end
+
+        if not projectedX and mapAPI
+            and type(mapAPI.GetMapRectOnMap) == "function" then
+            local ok, minX, maxX, minY, maxY = pcall(
+                mapAPI.GetMapRectOnMap, renderMapID, sourceMapID)
+            if ok and type(minX) == "number" and type(maxX) == "number"
+                and type(minY) == "number" and type(maxY) == "number"
+                and maxX ~= minX and maxY ~= minY then
+                projectedX = (mapX * .01 - minX) / (maxX - minX)
+                projectedY = (mapY * .01 - minY) / (maxY - minY)
+            end
+        end
+
+    end
+
+    if type(projectedX) ~= "number" or type(projectedY) ~= "number"
+        or (issecretvalue
+            and (issecretvalue(projectedX) or issecretvalue(projectedY)))
+        or projectedX < 0 or projectedX > 1
+        or projectedY < 0 or projectedY > 1 then
+        return nil
+    end
+
+    local ok, wx, wy = pcall(
+        map.GetWorldPos, map, renderMapID,
+        projectedX * 100, projectedY * 100)
+    if not ok or type(wx) ~= "number" or type(wy) ~= "number"
+        or (wx == 0 and wy == 0) then
+        return nil
+    end
+
+    return renderMapID, wx, wy, projectedX, projectedY
+end
+
+-- Choose one stable marker for an area-only objective. A quest objective can
+-- contain many small rectangles; stamping a numbered pin on every rectangle
+-- recreates the broken breadcrumb trail. Prefer the largest rectangle and run
+-- its centre through the same parent-to-phase projection as point objectives.
+local function GetAreaObjectiveMarker(map, objective, viewMapID)
+    if type(objective) ~= "table" then
+        return false, false
+    end
+
+    local hasPointPOI = false
+    local hasAreaPOI = false
+    local bestMapID, bestX, bestY, bestArea, bestOnView
+
+    for _, loc in pairs(objective) do
+        if type(loc) == "string" and loc ~= "" then
+            local _, poiMap, poiType = Nx.Quest:UnpackObjectiveNew(loc)
+            local renderMapID = GetQuestRenderMapID(poiMap, viewMapID)
+            if renderMapID then
+                if poiType == 32 then
+                    hasPointPOI = true
+                elseif poiType == 35 then
+                    hasAreaPOI = true
+                    local x, y, w, h = Nx.Quest:UnpackLocRect(loc)
+                    if x and y and w and h and w > 0 and h > 0 then
+                        local area = w * h
+                        local onView = renderMapID == viewMapID
+                        if not bestMapID
+                            or (onView and not bestOnView)
+                            or (onView == bestOnView and area > bestArea) then
+                            bestMapID = poiMap
+                            bestX = x + w / 1002 * 50
+                            bestY = y + h / 668 * 50
+                            bestArea = area
+                            bestOnView = onView
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if not bestMapID then
+        return hasPointPOI, hasAreaPOI
+    end
+
+    local renderMapID, wx, wy = Nx.Quest:ProjectObjectivePoint(
+        map,
+        bestMapID,
+        bestX,
+        bestY,
+        viewMapID
+    )
+    if not renderMapID then
+        return hasPointPOI, hasAreaPOI
+    end
+    return hasPointPOI, hasAreaPOI, renderMapID, wx, wy
+end
+
+-- Carbonite's catalog stores location records, not a guaranteed mirror of
+-- Blizzard's live objective array. One live objective can have several known
+-- locations, and those locations can occupy several catalog slots. Treating
+-- catalog slot N as live objective N hides valid locations as soon as an
+-- unrelated live row completes. Build identity groups from the objective text
+-- instead, then apply one live completion state to every location in a group.
+local function NormalizeObjectiveLabel(text)
+    if type(text) ~= "string"
+        or (issecretvalue and issecretvalue(text)) then
+        return nil, nil, 0
+    end
+
+    text = gsub(text, "|c%x%x%x%x%x%x%x%x", "")
+    text = gsub(text, "|r", "")
+    text = gsub(text, "%d+%s*/%s*%d+", " ")
+    text = lower(text)
+    text = gsub(text, "[^%w\128-\255]+", " ")
+
+    local tokens = {}
+    local tokenSet = {}
+    for token in string.gmatch(text, "[%w\128-\255]+") do
+        if #token > 4 and string.sub(token, -3) == "ies" then
+            token = string.sub(token, 1, -4) .. "y"
+        elseif #token > 3 and string.sub(token, -1) == "s"
+            and string.sub(token, -2) ~= "ss" then
+            token = string.sub(token, 1, -2)
+        end
+
+        if token ~= "" and not tokenSet[token] then
+            tokenSet[token] = true
+            tokens[#tokens + 1] = token
+        end
+    end
+
+    if #tokens == 0 then
+        return nil, nil, 0
+    end
+    return table.concat(tokens, " "), tokenSet, #tokens
+end
+
+local function GetCatalogObjectiveLabel(objective)
+    if type(objective) ~= "table" then return nil end
+
+    for _, location in ipairs(objective) do
+        if type(location) == "string" then
+            local label = string.match(location, "^([^|]*)")
+            local key = NormalizeObjectiveLabel(label)
+            if key and key ~= "nil" and key ~= "unknown" then
+                return label, key
+            end
+        end
+    end
+    return nil
+end
+
+local function ObjectiveLabelScore(group, live)
+    if not group.key or not live.key then return 0 end
+    if group.key == live.key then return 1000 end
+
+    local shared = 0
+    for token in pairs(group.tokens) do
+        if live.tokens[token] then shared = shared + 1 end
+    end
+
+    if shared == group.tokenCount and group.tokenCount >= 2 then
+        return 700 + shared * 10 - live.tokenCount
+    end
+    if shared == live.tokenCount and live.tokenCount >= 2 then
+        return 650 + shared * 10 - group.tokenCount
+    end
+    if shared >= 2 then
+        return 500 + shared * 10
+    end
+    return 0
+end
+
+local function GetLiveObjectiveRows(cur, questID)
+    local rows = {}
+    local questLog = _G.C_QuestLog
+    if questID and questLog
+        and type(questLog.GetQuestObjectives) == "function" then
+        local ok, objectives = pcall(questLog.GetQuestObjectives, questID)
+        if ok and type(objectives) == "table" then
+            for index, objective in ipairs(objectives) do
+                if index > 15 then break end
+                if type(objective) == "table" then
+                    local text = objective.text
+                    local finished = objective.finished
+                    if type(text) == "string"
+                        and not (issecretvalue and issecretvalue(text))
+                        and not (issecretvalue and issecretvalue(finished)) then
+                        local key, tokens, tokenCount =
+                            NormalizeObjectiveLabel(text)
+                        rows[#rows + 1] = {
+                            index = index,
+                            text = text,
+                            finished = finished and true or false,
+                            key = key,
+                            tokens = tokens or {},
+                            tokenCount = tokenCount,
+                        }
+                    end
+                end
+            end
+        end
+    end
+
+    -- Classic clients and a few protected quest states do not expose the
+    -- structured table. Carbonite already snapshots the equivalent text and
+    -- done flags on cur, so use that as the supported fallback.
+    if #rows == 0 and cur then
+        local liveCount = tonumber(cur.LBCnt) or 0
+        for index = 1, math.min(liveCount, 15) do
+            local text = cur[index]
+            if type(text) == "string"
+                and not (issecretvalue and issecretvalue(text)) then
+                local key, tokens, tokenCount = NormalizeObjectiveLabel(text)
+                rows[#rows + 1] = {
+                    index = index,
+                    text = text,
+                    finished = cur[index + 300] and true or false,
+                    key = key,
+                    tokens = tokens or {},
+                    tokenCount = tokenCount,
+                }
+            end
+        end
+    end
+
+    return rows
+end
+
+function Nx.Quest:BuildObjectiveRenderState(quest, cur, questID)
+    local states = {}
+    local objectives = quest and quest["Objectives"]
+    if type(objectives) ~= "table" then return states end
+
+    local groups = {}
+    local groupsByKey = {}
+    for slot = 1, 15 do
+        local objective = objectives[slot]
+        if objective then
+            local label, key = GetCatalogObjectiveLabel(objective)
+            local group
+            if key then
+                group = groupsByKey[key]
+            end
+            if not group then
+                local normalizedKey, tokens, tokenCount =
+                    NormalizeObjectiveLabel(label)
+                group = {
+                    key = normalizedKey,
+                    tokens = tokens or {},
+                    tokenCount = tokenCount,
+                    label = label,
+                    firstSlot = slot,
+                    slots = {},
+                    liveRows = {},
+                }
+                groups[#groups + 1] = group
+                if key then groupsByKey[key] = group end
+            end
+            group.slots[#group.slots + 1] = slot
+        end
+    end
+
+    local liveRows = GetLiveObjectiveRows(cur, questID)
+    local assignedRows = {}
+
+    -- Assign each named live objective to the best catalog identity. More than
+    -- one live row may legitimately feed the same group; the group remains
+    -- visible until all of those rows are complete.
+    for _, live in ipairs(liveRows) do
+        local bestGroup, bestScore
+        for _, group in ipairs(groups) do
+            local score = ObjectiveLabelScore(group, live)
+            if score > (bestScore or 0) then
+                bestGroup, bestScore = group, score
+            end
+        end
+        if bestGroup then
+            bestGroup.liveRows[#bestGroup.liveRows + 1] = live
+            assignedRows[live] = true
+        end
+    end
+
+    -- When the two feeds have equal cardinality, pair any remaining unnamed or
+    -- localized groups by order. This is deliberately gated on equal counts;
+    -- otherwise an index guess can once again hide unrelated locations.
+    if #groups == #liveRows then
+        local remainingGroups = {}
+        local remainingRows = {}
+        for _, group in ipairs(groups) do
+            if #group.liveRows == 0 then
+                remainingGroups[#remainingGroups + 1] = group
+            end
+        end
+        for _, live in ipairs(liveRows) do
+            if not assignedRows[live] then
+                remainingRows[#remainingRows + 1] = live
+            end
+        end
+        sort(remainingGroups, function(a, b)
+            return a.firstSlot < b.firstSlot
+        end)
+        sort(remainingRows, function(a, b)
+            return a.index < b.index
+        end)
+        if #remainingGroups == #remainingRows then
+            for index, group in ipairs(remainingGroups) do
+                group.liveRows[1] = remainingRows[index]
+            end
+        end
+    end
+
+    local questDone = cur and cur.CompleteMerge and true or false
+    for _, group in ipairs(groups) do
+        local selectedLive
+        local allDone = #group.liveRows > 0
+        for _, live in ipairs(group.liveRows) do
+            if not selectedLive or (selectedLive.finished and not live.finished) then
+                selectedLive = live
+            end
+            if not live.finished then allDone = false end
+        end
+
+        for _, slot in ipairs(group.slots) do
+            states[slot] = {
+                done = questDone or allDone,
+                objectiveIndex = selectedLive and selectedLive.index or slot,
+                text = selectedLive and selectedLive.text or group.label,
+                matched = selectedLive ~= nil,
+                groupFirstSlot = group.firstSlot,
+            }
+        end
+    end
+
+    return states
+end
+
+function Nx.Quest:BuildCatalogObjectiveMask(quest, cur, questID)
+    local mask = 0
+    local objectives = quest and quest["Objectives"]
+    if type(objectives) ~= "table" then return mask end
+
+    local states = self:BuildObjectiveRenderState(quest, cur, questID)
+    for slot = 1, 15 do
+        if objectives[slot]
+            and not (states[slot] and states[slot].done) then
+            mask = mask + bit_lshift(1, slot)
+        end
+    end
+    return mask
+end
+
 -- C_TaskQuest.GetQuestsOnMap can include watched, nearby, and map-indicator
 -- quests whose coordinates were projected onto the requested canvas. The
 -- feed's `mapID` alone is therefore not sufficient proof that the quest belongs
@@ -182,6 +660,287 @@ local function GetVisibleTaskMapID(info, viewMapID, trackedQuestID)
     return nil
 end
 
+-- Build the map candidates once per icon refresh. Blizzard's minimap quest
+-- icons are rendered inside the native Minimap object rather than as child
+-- frames, so Carbonite must mirror their public quest-POI coordinates. The
+-- shared feed cache prevents GetQuestsOnMap from being called once per watched
+-- quest when several quests are tracked in the same zone.
+local function BuildLiveQuestPOIContext(viewMapID)
+    local context = {
+        mapIDs = {},
+        seenMapIDs = {},
+        questsByMap = {},
+    }
+
+    local function addMapID(value)
+        value = GetSafeMapID(value)
+        if value and value ~= 9000 and not context.seenMapIDs[value] then
+            context.seenMapIDs[value] = true
+            context.mapIDs[#context.mapIDs + 1] = value
+        end
+    end
+
+    local function addMapWithParent(value)
+        value = GetSafeMapID(value)
+        addMapID(value)
+        if not value or not (C_Map and C_Map.GetMapInfo) then
+            return
+        end
+
+        -- Blizzard frequently reports an outdoor campaign phase as a Micro
+        -- map while GetQuestsOnMap publishes its quest POI on the parent Zone.
+        -- Query that immediate parent as a second canvas; the questID match
+        -- below prevents unrelated parent-map quests from being mirrored.
+        local ok, info = pcall(C_Map.GetMapInfo, value)
+        if ok and type(info) == "table" then
+            addMapID(info.parentMapID)
+        end
+    end
+
+    context.addMapWithParent = addMapWithParent
+
+    -- The Carbonite view is authoritative. The native minimap and player map
+    -- are fallbacks for micro-zones whose parent map is displayed by Carbonite.
+    addMapWithParent(viewMapID)
+    if C_Minimap and C_Minimap.GetUiMapID then
+        local ok, minimapID = pcall(C_Minimap.GetUiMapID)
+        if ok then addMapWithParent(minimapID) end
+    end
+    if C_Map and C_Map.GetBestMapForUnit then
+        local ok, playerMapID = pcall(C_Map.GetBestMapForUnit, "player")
+        if ok then addMapWithParent(playerMapID) end
+    end
+
+    return context
+end
+
+local function GetLiveQuestsOnMap(context, mapID)
+    local cached = context.questsByMap[mapID]
+    if cached ~= nil then
+        return cached ~= false and cached or nil
+    end
+
+    local quests
+    if C_QuestLog and C_QuestLog.GetQuestsOnMap then
+        local ok, value = pcall(C_QuestLog.GetQuestsOnMap, mapID)
+        if ok and type(value) == "table" then
+            quests = value
+        end
+    end
+    context.questsByMap[mapID] = quests or false
+    return quests
+end
+
+-- Return one watched quest's Blizzard-published coordinate in Carbonite world
+-- space. This follows the supplied QuestDataProvider sources precisely:
+-- GetQuestsOnMap is shared by all clients; Retail alone adds
+-- GetNextWaypointForMap, and only for the focused/super-tracked quest. The
+-- unrelated GetNextWaypoint API is intentionally not used as a fallback.
+local function GetLiveTrackedQuestPOI(map, questID, viewMapID, context,
+    activeQuestID)
+    questID = GetSafeMapID(questID)
+    if not questID or not C_QuestLog then
+        return
+    end
+
+    local function isPublicNumber(value)
+        return type(value) == "number"
+            and (not issecretvalue or not issecretvalue(value))
+    end
+
+    context = context or BuildLiveQuestPOIContext(viewMapID)
+    if C_TaskQuest and C_TaskQuest.GetQuestZoneID
+        and context.addMapWithParent then
+        local ok, questMapID = pcall(C_TaskQuest.GetQuestZoneID, questID)
+        if ok then context.addMapWithParent(questMapID) end
+    end
+    local mapIDs = context.mapIDs
+
+    local function convert(mapID, x, y)
+        if not mapID or not isPublicNumber(x) or not isPublicNumber(y)
+            or x < 0 or x > 1 or y < 0 or y > 1 then
+            return
+        end
+        local ok, wx, wy = pcall(map.GetWorldPos, map, mapID, x * 100, y * 100)
+        if ok and isPublicNumber(wx) and isPublicNumber(wy)
+            and (wx ~= 0 or wy ~= 0) then
+            return mapID, wx, wy
+        end
+    end
+
+    if not QuestMapCompat:AreQuestPOIsEnabled() then return end
+
+    local focusedQuestID
+    if type(_G.QuestMapFrame_GetFocusedQuestID) == "function" then
+        local ok, value = pcall(_G.QuestMapFrame_GetFocusedQuestID)
+        if ok then focusedQuestID = GetSafeMapID(value) end
+    end
+    local mayUseWaypoint = QuestMapCompat:IsModernQuestDataProvider()
+        and (questID == GetSafeMapID(activeQuestID)
+            or questID == focusedQuestID)
+
+    local poiMapID, worldX, worldY, isWaypoint
+    if mayUseWaypoint then
+        for _, mapID in ipairs(mapIDs) do
+            local ok, x, y = pcall(
+                C_QuestLog.GetNextWaypointForMap,
+                questID, mapID)
+            if ok and QuestMapCompat:ShouldUseQuestMapEntry(
+                questID, mapID, nil) then
+                poiMapID, worldX, worldY = convert(mapID, x, y)
+                if poiMapID then
+                    isWaypoint = true
+                    break
+                end
+            end
+        end
+    end
+
+    if not poiMapID and C_QuestLog.GetQuestsOnMap then
+        for _, mapID in ipairs(mapIDs) do
+            local quests = GetLiveQuestsOnMap(context, mapID)
+            if quests then
+                for _, info in ipairs(quests) do
+                    local infoQuestID = info and GetSafeMapID(info.questID)
+                    if infoQuestID == questID
+                        and QuestMapCompat:ShouldUseQuestMapEntry(
+                            questID, mapID, info) then
+                        poiMapID, worldX, worldY = convert(mapID, info.x, info.y)
+                        if poiMapID then break end
+                    end
+                end
+            end
+            if poiMapID then break end
+        end
+    end
+
+    if not poiMapID then
+        return
+    end
+
+    local title
+    if C_QuestLog.GetTitleForQuestID then
+        local ok, value = pcall(C_QuestLog.GetTitleForQuestID, questID)
+        if ok and type(value) == "string"
+            and (not issecretvalue or not issecretvalue(value)) then
+            title = value
+        end
+    end
+    title = GetCatalogQuestTitle(questID, title)
+
+    local objectiveText
+    if C_QuestLog.GetNextWaypointText then
+        local ok, value = pcall(C_QuestLog.GetNextWaypointText, questID)
+        if ok and type(value) == "string"
+            and (not issecretvalue or not issecretvalue(value)) then
+            objectiveText = value
+        end
+    end
+
+    local complete = false
+    if C_QuestLog.IsComplete then
+        local ok, value = pcall(C_QuestLog.IsComplete, questID)
+        if ok and (not issecretvalue or not issecretvalue(value)) then
+            complete = value == true
+        end
+    end
+
+    return questID, poiMapID, worldX, worldY, title, objectiveText,
+        complete, isWaypoint == true
+end
+
+local function FindCurForLiveQuestID(Quest, questID)
+    local cur = Quest.IdToCurQ and Quest.IdToCurQ[questID]
+    if cur then return cur end
+
+    for _, candidate in ipairs(Quest.CurQ or {}) do
+        local liveQID = Quest.ResolveCatalogQuestID
+            and Quest:ResolveCatalogQuestID(candidate.QId, candidate.QI)
+            or candidate.QId
+        if liveQID == questID then
+            return candidate
+        end
+    end
+end
+
+-- Collect every quest Carbonite or Blizzard considers tracked. Retail exposes
+-- indexed regular/world-quest watch lists; older clients are covered through
+-- Carbonite's tracking table and the legacy IsQuestWatched(logIndex) API.
+local function GetTrackedQuestIDs(Quest, activeQID)
+    local questIDs, seen = {}, {}
+    local function addQuestID(value)
+        value = GetSafeMapID(value)
+        if value and not seen[value] then
+            seen[value] = true
+            questIDs[#questIDs + 1] = value
+        end
+    end
+
+    addQuestID(activeQID)
+
+    local function addIndexedWatches(countFunc, idFunc)
+        if not countFunc or not idFunc then return end
+        local ok, count = pcall(countFunc)
+        if not ok or type(count) ~= "number"
+            or (issecretvalue and issecretvalue(count)) then
+            return
+        end
+        count = math.min(math.max(floor(count), 0), 100)
+        for index = 1, count do
+            local idOK, questID = pcall(idFunc, index)
+            if idOK then addQuestID(questID) end
+        end
+    end
+
+    if C_QuestLog then
+        addIndexedWatches(
+            C_QuestLog.GetNumQuestWatches,
+            C_QuestLog.GetQuestIDForQuestWatchIndex
+        )
+        addIndexedWatches(
+            C_QuestLog.GetNumWorldQuestWatches,
+            C_QuestLog.GetQuestIDForWorldQuestWatchIndex
+        )
+    end
+
+    -- Carbonite's own active/tracking state is authoritative on Classic and
+    -- also covers the brief Retail interval before QUEST_WATCH_LIST_CHANGED.
+    for trackID in pairs(Quest.Tracking or {}) do
+        local cur = Quest.IdToCurQ and Quest.IdToCurQ[trackID]
+        local liveQID = cur and Quest.ResolveCatalogQuestID
+            and Quest:ResolveCatalogQuestID(cur.QId, cur.QI)
+            or trackID
+        addQuestID(liveQID)
+    end
+
+    for _, cur in ipairs(Quest.CurQ or {}) do
+        local liveQID = Quest.ResolveCatalogQuestID
+            and Quest:ResolveCatalogQuestID(cur.QId, cur.QI)
+            or cur.QId
+        local watched = false
+
+        if liveQID and C_QuestLog and C_QuestLog.GetQuestWatchType then
+            local ok, watchType = pcall(C_QuestLog.GetQuestWatchType, liveQID)
+            if ok and (not issecretvalue or not issecretvalue(watchType)) then
+                watched = watchType ~= nil
+            end
+        elseif cur.QI and cur.QI > 0 and _G.IsQuestWatched then
+            local ok, value = pcall(_G.IsQuestWatched, cur.QI)
+            if ok and (not issecretvalue or not issecretvalue(value)) then
+                watched = value == true
+            end
+        end
+
+        if not watched and Quest.GetQuest then
+            local ok, status = pcall(Quest.GetQuest, Quest, cur.QId)
+            watched = ok and status == "W"
+        end
+        if watched then addQuestID(liveQID) end
+    end
+
+    return questIDs
+end
+
 -------------------------------------------------------------------------------
 -- Update map icons (called by map)
 -------------------------------------------------------------------------------
@@ -245,6 +1004,32 @@ if C_TaskQuest and C_TaskQuest.GetQuestsOnMap then
     end)
 end
 
+-- Blizzard's QuestLogMixin synchronizes the quest POI subsystem to the map
+-- before its QuestDataProvider asks for C_QuestLog.GetQuestsOnMap. Carbonite
+-- previously queried that feed without performing the synchronization, so a
+-- zone/phase transition could leave the feed describing the previous map
+-- until Blizzard's World Map happened to be opened. Cache by mapID to avoid
+-- writing the global POI map every frame.
+local synchronizedQuestPOIMapID
+function Nx.Quest:SyncQuestPOIMap(mapID, force)
+    mapID = GetSafeMapID(mapID)
+    if not mapID or not C_QuestLog
+        or type(C_QuestLog.SetMapForQuestPOIs) ~= "function" then
+        return false
+    end
+    if not force and synchronizedQuestPOIMapID == mapID then
+        return true
+    end
+
+    local ok = pcall(C_QuestLog.SetMapForQuestPOIs, mapID)
+    if ok then
+        synchronizedQuestPOIMapID = mapID
+        self._iconDirty = true
+        return true
+    end
+    return false
+end
+
 function Nx.Quest:UpdateIcons (map)
     if not Nx.QInit then
         return
@@ -253,6 +1038,7 @@ function Nx.Quest:UpdateIcons (map)
     local Quest = Nx.Quest
     local Map = Nx.Map
     local viewMapID = Map.UpdateMapID or map.MapId
+    Quest:SyncQuestPOIMap(viewMapID)
     local instanceIconContext = IsInstanceIconContext(viewMapID)
     local qLocColors = Quest.QLocColors
     local ptSz = 4 * map.ScaleDraw
@@ -265,6 +1051,7 @@ function Nx.Quest:UpdateIcons (map)
     -- with the character and only "snaps back" on the rare frame
     -- the dirty-check decides to rebuild.
     local navscale = Map.Maps[1].IconNavScale * 16
+    local isMinimizedMap = map.Win and not map.Win:IsSizeMax()
     local showOnMap = Quest.Watch.ButShowOnMap:GetPressed()
 
     local typ, tid = Map:GetTargetInfo()
@@ -305,6 +1092,7 @@ function Nx.Quest:UpdateIcons (map)
     local fp = (map.MapId or 0) .. "|" .. activeQID .. "|"
             .. (hoverCur and hoverCur.QId or 0) .. "|" .. hoverObjI
             .. "|" .. tickBucket .. "|" .. (instanceIconContext and 1 or 0)
+            .. "|" .. (isMinimizedMap and 1 or 0)
     -- The dirty-check now guards only the heavy per-quest walk
     -- (Pin/Layer-backed POIs). The BONUS TASKS / WORLD QUESTS block
     -- below uses the legacy direct-stamp pool (IconWQFrms), which the
@@ -319,6 +1107,8 @@ function Nx.Quest:UpdateIcons (map)
 
     if _walkDirty then
 
+    local authoritativeLiveQuestPins = {}
+
     -- Reset the Pin/Layer-backed POI provider for this pass. Every
     -- icon site below adds back into this same layer, so clearing
     -- before re-stamping mirrors the old HideExtraIcons cycle and
@@ -331,6 +1121,94 @@ function Nx.Quest:UpdateIcons (map)
     local showWatchAreas = Nx.qdb.profile.Quest.MapShowWatchAreas
     local trkR, trkG, trkB, trkA =  Nx.Quest.Cols["trkR"], Nx.Quest.Cols["trkG"], Nx.Quest.Cols["trkB"], Nx.Quest.Cols["trkA"]
     local hovR, hovG, hovB, hovA =  Nx.Quest.Cols["hovR"], Nx.Quest.Cols["hovG"], Nx.Quest.Cols["hovB"], Nx.Quest.Cols["hovA"]
+
+    -- Mirror Blizzard's one-pin-per-quest model onto both Carbonite map sizes.
+    -- Every supplied client uses C_QuestLog.GetQuestsOnMap. Retail alone adds
+    -- the focused/super-tracked quest's GetNextWaypointForMap result; the
+    -- compatibility adapter supplies Retail's composite POI atlases or the
+    -- legacy numbered textures used unchanged by Era/TBC/Mists. Once accepted,
+    -- that live pin is authoritative for the whole quest and the catalog is a
+    -- fallback only when Blizzard publishes no usable coordinate.
+    if Nx.Quest.AddLivePOI then
+        local liveContext = BuildLiveQuestPOIContext(viewMapID)
+        local trackedQuestIDs = GetTrackedQuestIDs(Quest, activeQID)
+        for questNumber, trackedQID in ipairs(trackedQuestIDs) do
+            local liveQID, liveMapID, liveX, liveY, liveTitle,
+                liveObjective, liveComplete, liveIsWaypoint =
+                GetLiveTrackedQuestPOI(
+                    map,
+                    trackedQID,
+                    viewMapID,
+                    liveContext,
+                    activeQID
+                )
+            if liveQID and liveMapID and liveX and liveY then
+                local cur = FindCurForLiveQuestID(Quest, liveQID)
+                local liveRenderMapID = GetQuestRenderMapID(
+                    liveMapID,
+                    viewMapID
+                )
+                if liveRenderMapID and liveRenderMapID ~= liveMapID then
+                    local liveMapX, liveMapY = map:GetZonePos(
+                        liveMapID, liveX, liveY)
+                    liveRenderMapID, liveX, liveY =
+                        Quest:ProjectObjectivePoint(
+                            map,
+                            liveMapID,
+                            liveMapX,
+                            liveMapY,
+                            viewMapID
+                        )
+                end
+                local isActive = liveQID == activeQID
+                local objectiveIndex = isActive
+                    and (tonumber(Quest.ActiveObjI) or 0) or 0
+                if objectiveIndex < 0 or objectiveIndex > 15 then
+                    objectiveIndex = 0
+                end
+
+                local tip = Nx.TXTBLUE .. L["Quest: "] .. liveTitle
+                if liveObjective and liveObjective ~= "" then
+                    tip = tip .. "\n" .. liveObjective
+                end
+                local visual = QuestMapCompat:GetQuestPinVisual(
+                    liveQID,
+                    isActive,
+                    liveComplete,
+                    liveIsWaypoint,
+                    questNumber
+                )
+                local texCoord = visual.texCoord
+                local livePin = liveRenderMapID and Nx.Quest:AddLivePOI(liveX, liveY, {
+                    tip         = tip,
+                    tex         = visual.tex,
+                    tx1         = texCoord and texCoord[1] or nil,
+                    ty1         = texCoord and texCoord[2] or nil,
+                    tx2         = texCoord and texCoord[3] or nil,
+                    ty2         = texCoord and texCoord[4] or nil,
+                    displayAtlas = visual.displayAtlas,
+                    displayTex = visual.displayTex,
+                    displayTexCoord = visual.displayTexCoord,
+                    displayWidth = visual.displayWidth,
+                    displayHeight = visual.displayHeight,
+                    NXType      = cur and (9000 + objectiveIndex) or 3000,
+                    NXData      = cur,
+                    mapID       = liveRenderMapID,
+                    vertexColor = {1, 1, 1, 1},
+                    -- Blizzard's selected/super-tracked ring already carries
+                    -- the active state. Do not add Carbonite's separate halo
+                    -- or an objective number over Blizzard's own display.
+                    showGlow    = false,
+                    label       = nil,
+                    w           = visual.width,
+                    h           = visual.height,
+                })
+                if livePin then
+                    authoritativeLiveQuestPins[liveQID] = true
+                end
+            end
+        end
+    end
 
     -- Blob
 
@@ -444,15 +1322,14 @@ function Nx.Quest:UpdateIcons (map)
         if not cur and not quest then
             -- tracking entry exists but quest data is gone, skip
         else
-            local isSuperTracked = false
-            if activeQID > 0 and cur then
-                local liveQID = Quest.ResolveCatalogQuestID
+            local resolvedQuestID
+            if cur then
+                resolvedQuestID = Quest.ResolveCatalogQuestID
                     and Quest:ResolveCatalogQuestID(cur.QId, cur.QI)
                     or cur.QId
-                if liveQID == activeQID then
-                    isSuperTracked = true
-                end
             end
+            local isSuperTracked = activeQID > 0
+                and resolvedQuestID == activeQID
             local qname = Nx.TXTBLUE .. L["Quest: "] .. (cur and cur.Title or Quest:UnpackName (quest["Quest"]))
 
             local mask = showOnMap and cur and cur.TrackMask or trackMode
@@ -558,20 +1435,29 @@ function Nx.Quest:UpdateIcons (map)
                     drawArea = showWatchAreas and qStatus == "W"
                 end
 
+                local objectiveStates = Quest:BuildObjectiveRenderState(
+                    quest, cur, resolvedQuestID or trackId)
+
                 for n = 1, 15 do
 
                     local obj = quest["Objectives"]
                     if obj then
                         obj = quest["Objectives"][n]
                     end
-                    if not obj then
-                        break
-                    end
+                    if obj then
 
                     local objName, objZone, typ = Nx.Quest:UnpackObjectiveNew (obj)
+                    local objectiveState = objectiveStates[n] or {}
+                    local objectiveIndex = tonumber(
+                        objectiveState.objectiveIndex) or n
+
+                    local objectiveRenderMapID = GetQuestRenderMapID(
+                        objZone,
+                        viewMapID
+                    )
 
                     if objZone and objZone ~= 9000
-                        and IsQuestMapRelevant(objZone, viewMapID) then
+                        and objectiveRenderMapID then
 
                         local mapId = objZone
 
@@ -587,17 +1473,17 @@ function Nx.Quest:UpdateIcons (map)
                         --     visible even when the user hasn't toggled
                         --     "Show on map" — matching the modern UX where
                         --     accepted quests draw their data automatically.
-                        local renderObj = bit_band (mask, bit_lshift (1, n)) > 0
+                        local renderObj = bit_band (
+                            mask, bit_lshift (1, n)) > 0
                             or (cur and cur.QI and cur.QI > 0)
-                        -- Skip completed objectives (and skip everything if
-                        -- the whole quest is complete) — there's no point
-                        -- showing a static area span / point you've already
-                        -- finished. cur[n+300] holds the per-objective done
-                        -- flag set during RecordQuestsLog.
-                        local objDone = cur and (cur.CompleteMerge or cur[n + 300])
+                        -- Completion comes from the identity group, not the
+                        -- catalog slot number. Every known location for one
+                        -- live objective therefore appears and disappears as
+                        -- a unit.
+                        local objDone = objectiveState.done == true
                         if objDone then renderObj = false end
                         if renderObj then
-                            local colI = n
+                            local colI = objectiveState.groupFirstSlot or n
 
                             if colorPerQ then
                                 colI = ((cur and cur.Index or 1) - 1) % colMax + 1
@@ -608,7 +1494,7 @@ function Nx.Quest:UpdateIcons (map)
                             local g = col[2]
                             local b = col[3]
 
-                            local oname = cur and cur[n] or objName
+                            local oname = objectiveState.text or objName or "?"
 
                             -- Per-POI dispatch. The objective list can mix
                             -- typ 32 (points) and typ 35 (area spans) — e.g.
@@ -618,66 +1504,41 @@ function Nx.Quest:UpdateIcons (map)
                             -- its own typ so the area span isn't hidden by
                             -- the first-POI dispatch.
 
-                            local hover = Quest.IconHoverCur == cur and Quest.IconHoverObjI == n
-                            local tracking = bit_band (trackMode, bit_lshift (1, n)) > 0
+                            local hover = Quest.IconHoverCur == cur
+                                and Quest.IconHoverObjI == n
+                            local tracking = bit_band (
+                                trackMode, bit_lshift (1, n)) > 0
                             local tip = format ("%s\nObj: %s", qname, oname)
-                            if cur and cur[n + 400] then
-                                tip = tip .. "\n" .. cur[n + 400]
+                            if cur and cur[objectiveIndex + 400] then
+                                tip = tip .. "\n" .. cur[objectiveIndex + 400]
                             end
 
-                            -- Distance arrow (per-objective). Draws an
-                            -- IconAreaArrows pointer at the closest edge
-                            -- of the objective area to the player. Only
-                            -- meaningful when the objective actually has a
-                            -- spannable area (typ 35) — for typ 32 point
-                            -- objectives the "closest edge" is the point
-                            -- itself, so the arrow icon ends up right on
-                            -- top of the real point and looks like a
-                            -- duplicate ghost icon next to it.
-                            local hasSpanForArrow = false
-                            for _, loc1 in pairs(obj) do
-                                if type(loc1) == "string" and loc1 ~= "" then
-                                    local _, _, poiTyp = Nx.Quest:UnpackObjectiveNew(loc1)
-                                    if poiTyp == 35 then hasSpanForArrow = true; break end
-                                end
-                            end
-                            if cur and hasSpanForArrow then
-                                local d = cur["OD"..n]
-                                if d and d > 0 then
-                                    local ax = cur["OX"..n]
-                                    local ay = cur["OY"..n]
-                                    if ax and ay then
-                                        if Nx.Quest.AddArrow then
-                                            local avc = tracking
-                                                and {.8, .8, .8, 1}
-                                                or  {r, g, b, .7}
-                                            Nx.Quest:AddArrow(ax, ay, {
-                                                tip         = tip,
-                                                tex         = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconAreaArrows",
-                                                NXType      = 9000 + n,
-                                                NXData      = cur,
-                                                mapID       = mapId,
-                                                vertexColor = avc,
-                                            })
-                                        else
-                                            local f = map:GetIcon (4)
-                                            local sz = navscale
-                                            if not hover then sz = sz * .8 end
-                                            if map:ClipFrameByMapType (f, ax, ay, sz, sz, 0) then
-                                                f.NXType = 9000 + n
-                                                f.NXData = cur
-                                                f.NxTip = tip
-                                                f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconAreaArrows")
-                                                if tracking then
-                                                    f.texture:SetVertexColor (.8, .8, .8, 1)
-                                                else
-                                                    f.texture:SetVertexColor (r, g, b, .7)
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
-                            end
+                            -- Blizzard's QuestDataProvider publishes one live
+                            -- marker for the quest rather than one marker for
+                            -- every possible object spawn. Suppress every
+                            -- catalog point for that quest only after the live
+                            -- pin has actually entered Carbonite's provider.
+                            -- Area geometry remains visible, and if the live
+                            -- pin is unavailable/rejected the catalog points
+                            -- below continue to provide the legacy fallback.
+                            local hasLiveQuestPin = resolvedQuestID
+                                and authoritativeLiveQuestPins[resolvedQuestID]
+                                == true
+
+                            -- Resolve the stable point/area geometry once.
+                            -- The old closest-edge IconAreaArrows marker used
+                            -- cur.OX/cur.OY, which changes with player position
+                            -- and produced the moving arrow trail. It is now
+                            -- intentionally disabled on both Carbonite map
+                            -- sizes; area-only objectives use the fixed center
+                            -- marker below instead.
+                            local hasPointPOI, hasSpanForArrow,
+                                areaMarkerMapID, areaMarkerX, areaMarkerY =
+                                GetAreaObjectiveMarker(
+                                    map,
+                                    obj,
+                                    viewMapID
+                                )
 
                             -- Spans always render when this objective has any
                             -- POI data. The original gating (only draw on
@@ -693,6 +1554,10 @@ function Nx.Quest:UpdateIcons (map)
                                 if loc1 ~= "" and type(loc1) == "string" then
                                     local _, poiMap, poiTyp = Nx.Quest:UnpackObjectiveNew (loc1)
                                     local pmap = poiMap or mapId
+                                    local poiRenderMapID = GetQuestRenderMapID(
+                                        pmap,
+                                        viewMapID
+                                    )
                                     -- PatchQuestFromBlizzard writes sentinel
                                     -- entries with mapId=0 when the live API
                                     -- hasn't returned coords yet (the watch
@@ -704,56 +1569,69 @@ function Nx.Quest:UpdateIcons (map)
                                     -- next to the real POI.
                                     if not poiMap or poiMap == 0 then
                                         -- skip
-                                    elseif not IsQuestMapRelevant(pmap, viewMapID) then
+                                    elseif not poiRenderMapID then
                                         -- The POI belongs to an outdoor or unrelated
                                         -- map and must not cross an instance boundary.
                                     elseif poiTyp == 32 then
-                                        -- Point objective POI
-                                        local px, py = Nx.Quest:UnpackLocPtOff (loc1)
-                                        if px and py then
-                                            local wx, wy = map:GetWorldPos (pmap, px, py)
-                                            if Nx.Quest.AddPOI then
-                                                local ptip = format ("%s\nObj: %s (%.1f %.1f)", qname, oname, px, py)
-                                                if cur and cur[n + 400] then
-                                                    ptip = ptip .. "\n" .. cur[n + 400]
-                                                end
-                                                local pvc = isSuperTracked
-                                                    and {1, 0.85, 0, 1}
-                                                    or  {r, g, b, .9}
-                                                Nx.Quest:AddPOI(wx, wy, {
-                                                    tip         = ptip,
-                                                    tex         = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQTarget",
-                                                    NXType      = 9000 + n,
-                                                    NXData      = cur,
-                                                    mapID       = pmap,
-                                                    vertexColor = pvc,
-                                                    showGlow    = isSuperTracked,
-                                                    label       = tostring(n),
-                                                })
-                                            else
-                                                local f = map:GetIconStatic (4)
-                                                if map:ClipFrameByMapType (f, wx, wy, navscale, navscale, 0) then
-                                                    f.NXType = 9000 + n
-                                                    f.NXData = cur
-                                                    f.NxTip = format ("%s\nObj: %s (%.1f %.1f)", qname, oname, px, py)
-                                                    if cur and cur[n + 400] then
-                                                        f.NxTip = f.NxTip .. "\n" .. cur[n + 400]
+                                        -- Catalog point fallback. A successful
+                                        -- live quest pin suppresses these so a
+                                        -- multi-location objective still shows
+                                        -- exactly one Blizzard-style marker.
+                                        if not hasLiveQuestPin then
+                                            local px, py = Nx.Quest:UnpackLocPtOff (loc1)
+                                            if px and py then
+                                                local projectedMapID, wx, wy =
+                                                    Quest:ProjectObjectivePoint(
+                                                        map,
+                                                        pmap,
+                                                        px,
+                                                        py,
+                                                        viewMapID
+                                                    )
+                                                if projectedMapID and Nx.Quest.AddPOI then
+                                                    local ptip = format ("%s\nObj: %s (%.1f %.1f)", qname, oname, px, py)
+                                                    if cur and cur[objectiveIndex + 400] then
+                                                        ptip = ptip .. "\n" .. cur[objectiveIndex + 400]
                                                     end
-                                                    f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQTarget")
-                                                    if isSuperTracked then
-                                                        f.texture:SetVertexColor (1, 0.85, 0, 1)
-                                                        if f.NxGlow then f.NxGlow:Show() end
-                                                    else
-                                                        f.texture:SetVertexColor (r, g, b, .9)
-                                                    end
-                                                    if f.NxLabel then
-                                                        f.NxLabel:SetText(tostring(n))
-                                                        f.NxLabel:Show()
+                                                    local pvc = isSuperTracked
+                                                        and {1, 0.85, 0, 1}
+                                                        or  {r, g, b, .9}
+                                                    Nx.Quest:AddPOI(wx, wy, {
+                                                        tip         = ptip,
+                                                        tex         = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQTarget",
+                                                        NXType      = 9000 + n,
+                                                        NXData      = cur,
+                                                        mapID       = projectedMapID,
+                                                        vertexColor = pvc,
+                                                        showGlow    = isSuperTracked,
+                                                        label       = tostring(objectiveIndex),
+                                                    })
+                                                elseif projectedMapID then
+                                                    local f = map:GetIconStatic (4)
+                                                    if map:ClipFrameByMapType (f, wx, wy, navscale, navscale, 0) then
+                                                        f.NXType = 9000 + n
+                                                        f.NXData = cur
+                                                        f.NxTip = format ("%s\nObj: %s (%.1f %.1f)", qname, oname, px, py)
+                                                        if cur and cur[objectiveIndex + 400] then
+                                                            f.NxTip = f.NxTip .. "\n" .. cur[objectiveIndex + 400]
+                                                        end
+                                                        f.texture:SetTexture ("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQTarget")
+                                                        if isSuperTracked then
+                                                            f.texture:SetVertexColor (1, 0.85, 0, 1)
+                                                            if f.NxGlow then f.NxGlow:Show() end
+                                                        else
+                                                            f.texture:SetVertexColor (r, g, b, .9)
+                                                        end
+                                                        if f.NxLabel then
+                                                            f.NxLabel:SetText(tostring(objectiveIndex))
+                                                            f.NxLabel:Show()
+                                                        end
                                                     end
                                                 end
                                             end
                                         end
-                                    elseif drawSpans then
+                                    elseif drawSpans
+                                        and poiRenderMapID == pmap then
                                         -- Span / area
                                         local scale = map:GetWorldZoneScale (pmap) / 10.02
                                         local x, y, w, h = Nx.Quest:UnpackLocRect (loc1)
@@ -779,7 +1657,7 @@ function Nx.Quest:UpdateIcons (map)
                                                     color       = (not areaTex) and avc or nil,
                                                     NXType      = 9000 + n,
                                                     NXData      = cur,
-                                                    mapID       = pmap,
+                                                    mapID       = poiRenderMapID,
                                                     w           = w * scale,
                                                     h           = h * scale,
                                                     vertexColor = areaTex and avc or nil,
@@ -818,8 +1696,48 @@ function Nx.Quest:UpdateIcons (map)
                                     end -- elseif drawSpans
                                 end -- if loc1 ~= ""
                             end -- for _, loc1 in pairs(obj)
+
+                            -- Area-only objectives use one stable numbered
+                            -- center marker on both the Carbonite map and
+                            -- minimap only when Blizzard did not supply the
+                            -- authoritative quest-level marker.
+                            if hasSpanForArrow and not hasPointPOI
+                                and not hasLiveQuestPin
+                                and areaMarkerMapID and areaMarkerX and areaMarkerY then
+                                local mvc = isSuperTracked
+                                    and {1, 0.85, 0, 1}
+                                    or  {r, g, b, .9}
+                                if Nx.Quest.AddPOI then
+                                    Nx.Quest:AddPOI(areaMarkerX, areaMarkerY, {
+                                        tip         = tip,
+                                        tex         = "Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQTarget",
+                                        NXType      = 9000 + n,
+                                        NXData      = cur,
+                                        mapID       = areaMarkerMapID,
+                                        vertexColor = mvc,
+                                        showGlow    = isSuperTracked,
+                                        label       = tostring(objectiveIndex),
+                                    })
+                                else
+                                    local f = map:GetIconStatic(4)
+                                    if map:ClipFrameByMapType(f, areaMarkerX,
+                                        areaMarkerY, navscale, navscale, 0) then
+                                        f.NXType = 9000 + n
+                                        f.NXData = cur
+                                        f.NxTip = tip
+                                        f.texture:SetTexture("Interface\\AddOns\\Carbonite\\Gfx\\Map\\IconQTarget")
+                                        f.texture:SetVertexColor(mvc[1], mvc[2], mvc[3], mvc[4])
+                                        if isSuperTracked and f.NxGlow then f.NxGlow:Show() end
+                                        if f.NxLabel then
+                                            f.NxLabel:SetText(tostring(objectiveIndex))
+                                            f.NxLabel:Show()
+                                        end
+                                    end
+                                end
+                            end
                         end -- if bit_band(mask, ...)
                     end -- if objZone
+                    end -- if objective slot exists
                 end -- for n
             end -- if quest
         end -- if not cur and not quest

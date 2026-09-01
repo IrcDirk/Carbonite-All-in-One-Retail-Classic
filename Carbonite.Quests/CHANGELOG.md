@@ -1,5 +1,104 @@
 # Carbonite Quests Project Changelog
 
+## 2026-09-01 — Classic quest-watch minimized-layout repair
+
+- Completed missing `MinW` and `MinH` values when the shared quest-watch
+  anchor creates its first minimized SavedVariables record.
+- Added centralized validation and repair for partial or invalid saved window
+  coordinates and dimensions before layout arithmetic or frame setters run.
+- Preserved valid saved anchors, positions, dimensions, and scaling while
+  retaining Carbonite's existing 125-by-28 minimized presentation.
+
+### Validation
+
+- Reproduced the reported Classic `NxQuestWatch` SavedVariables state and
+  verified shared, independent, and partial normal-layout recovery paths.
+- Lua parsing and three focused layout regression cases pass.
+
+## 2026-09-01 — Carbonite minimap launcher boundary attachment
+
+- Replaced the launcher's fixed 140x140 minimap geometry with the live Minimap
+  width, height, center, scale, and shape used by each Warcraft client.
+- Preserved the original visual overlap at Classic's 140x140 size while
+  correctly attaching to Retail 12.1's 198x198 minimap boundary.
+- Reprojects the launcher after Edit Mode resizing and Carbonite round/square
+  mask changes, while preserving the user's chosen angle around the minimap.
+- Added secret-value guards to the cursor and frame-coordinate drag path.
+- Left Carbonite's collected minimap-button window behavior unchanged.
+
+### Validation
+
+- Boundary tests cover Retail and Classic sizes, round and square masks,
+  saved-angle restoration, scaled cursor input, and non-Minimap parents.
+
+## 2026-09-01 — Redundant tracked-quest destination marker removed
+
+- Removed Carbonite's legacy `IconWayTarget` overlay while a quest is the
+  active navigation target. Blizzard's live quest POI, or Carbonite's catalog
+  fallback, remains the visible objective marker on both Carbonite map sizes.
+- Preserved the tracked quest, route calculations, direction/distance state,
+  quest blob, Blizzard-style objective pin, and full-map breadcrumb behavior.
+- Left non-quest destination markers unchanged for manual waypoints and other
+  navigation targets.
+
+### Validation
+
+- Regression coverage verifies the legacy marker is absent on combined,
+  standalone, and full-size quest maps, including inside the objective blob.
+- Non-quest target markers and routing remain present.
+
+## 2026-09-01 — Blizzard-native quest-map provider compatibility
+
+- Rechecked the implementation against the supplied Blizzard UI sources for
+  Retail 12.1.0, Mists Classic 5.5.4, Burning Crusade Classic 2.5.6, and
+  Classic Era 1.15.9.
+- Made `C_QuestLog.GetQuestsOnMap` the shared authoritative coordinate feed,
+  exactly as Blizzard does on all four clients.
+- Restricted Retail's `GetNextWaypointForMap` fallback to the focused or
+  super-tracked quest; watched non-active quests now use the normal map feed.
+- Reproduced Retail's two-layer POIButton presentation (quest ring plus
+  waypoint, in-progress, or completion glyph) on both Carbonite map sizes.
+- Reproduced the legacy Blizzard numbered-POI texture and texture coordinates
+  on Era, TBC, and Mists instead of attempting to use Retail-only atlases.
+- Matched Blizzard's `questPOI` / legacy `questHelper` visibility gates and
+  Retail map-indicator/bonus-objective filters, with feature detection rather
+  than quest IDs or client-version branches.
+- Probed the native `QuestPOIFrame` capability safely: Mists/Retail can use the
+  native quest blob; clients without the frame retain Carbonite's catalog area
+  fallback without a load-time error.
+- Kept one accepted Blizzard point authoritative for its quest while retaining
+  all Carbonite catalog points only when Blizzard publishes no usable point.
+
+### Validation
+
+- Added compatibility tests for Retail campaign/waypoint/completion POIs,
+  legacy numbered POIs, CVars, map filters, and optional atlas fallback.
+- Existing combined-minimap, standalone-minimap, full-map, phase projection,
+  moving-arrow suppression, native-blob, scale retention, provider/renderer,
+  and catalog fallback regressions remain passing.
+
+## 2026-09-01 — Blizzard-style quest blob and single objective marker
+
+- Mirrored Blizzard's `QuestDataProvider` model on both the full Carbonite map
+  and the minimized Carbonite map: one live marker per watched quest at the
+  coordinate published by `C_QuestLog`, alongside the native quest blob.
+- Made a successfully projected live marker authoritative for the quest so
+  repeated catalog locations (such as several possible object spawns) no
+  longer create a row of duplicate objective pins.
+- Kept Carbonite's catalog point and area-center markers as automatic fallbacks
+  when Blizzard publishes no usable coordinate or the coordinate is rejected
+  by map/instance isolation.
+- Applied the behavior by API capability and quest identity; no quest name,
+  objective name, or quest ID is hard-coded.
+
+### Validation
+
+- Regression coverage verifies identical behavior on combined, standalone,
+  and full-size Carbonite maps; one live marker suppresses all repeated point
+  pins while unavailable/rejected live data restores the catalog fallback.
+- Parent-zone to child-phase projection, completion grouping, quest blobs,
+  moving-arrow suppression, Lua parsing, and archive extraction all pass.
+
 ## 2026-08-21 — World Quest icons restricted to their owning zones
 
 - Cross-checked every task-map result against `C_TaskQuest.GetQuestZoneID`

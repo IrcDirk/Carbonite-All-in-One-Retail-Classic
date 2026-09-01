@@ -49,11 +49,30 @@ function Nx.NXMiniMapBut:Init()
         menu:AddItem (0, L["Toggle Profiling"], self.Menu_OnProfiling, self)
     end
 
-    -- Fix position if bad (does not work)
-
     NXMiniMapBut:SetClampedToScreen (true)
 
---    self:Move()
+    -- Blizzard's minimap is 198x198 on Retail 12.1 but remains 140x140 on
+    -- the supported Classic clients. Keep the launcher on the live minimap
+    -- boundary whenever Edit Mode or Carbonite changes those dimensions.
+    if not Nx.db.profile.MiniMap.ButOwn then
+        local mm = _G.Minimap
+        if mm and mm.HookScript and not f.NxBoundaryHooked then
+            f.NxBoundaryHooked = true
+            mm:HookScript("OnSizeChanged", function()
+                if not f.NXDrag then
+                    self:Move()
+                end
+            end)
+        end
+
+        if _G.C_Timer and type(_G.C_Timer.After) == "function" then
+            _G.C_Timer.After(0, function()
+                self:Move()
+            end)
+        else
+            self:Move()
+        end
+    end
 
     -- Ask to disable profiling
 
@@ -164,6 +183,86 @@ function Nx.NXMiniMapBut:OpenMenu()
     end
 end
 
+-- True means the corresponding minimap quadrant has a round edge. This is
+-- the shape contract used by minimap-button libraries and supports skinned
+-- minimaps without introducing a dependency on one of those libraries.
+local MINIMAP_SHAPE_QUADRANTS = {
+    ROUND = { true, true, true, true },
+    SQUARE = { false, false, false, false },
+    ["CORNER-TOPLEFT"] = { false, false, false, true },
+    ["CORNER-TOPRIGHT"] = { false, false, true, false },
+    ["CORNER-BOTTOMLEFT"] = { false, true, false, false },
+    ["CORNER-BOTTOMRIGHT"] = { true, false, false, false },
+    ["SIDE-LEFT"] = { false, true, false, true },
+    ["SIDE-RIGHT"] = { true, false, true, false },
+    ["SIDE-TOP"] = { false, false, true, true },
+    ["SIDE-BOTTOM"] = { true, true, false, false },
+    ["TRICORNER-TOPLEFT"] = { false, true, true, true },
+    ["TRICORNER-TOPRIGHT"] = { true, false, true, true },
+    ["TRICORNER-BOTTOMLEFT"] = { true, true, false, true },
+    ["TRICORNER-BOTTOMRIGHT"] = { true, true, true, false },
+}
+
+local function IsUsableNumber(value)
+    return type(value) == "number"
+        and (not _G.issecretvalue or not _G.issecretvalue(value))
+end
+
+local function GetActiveMinimapShape()
+    local db = Nx.db and Nx.db.profile and Nx.db.profile.MiniMap
+    local map = Nx.Map and Nx.Map.Maps and Nx.Map.Maps[1]
+
+    -- Carbonite replaces Blizzard's mask while the minimap is combined. Its
+    -- own live state is therefore authoritative over GetMinimapShape().
+    if map and map.MMOwn and db then
+        local square = map.MMZoomType == 0 and db.DockSquare or db.Square
+        return square and "SQUARE" or "ROUND"
+    end
+
+    if type(_G.GetMinimapShape) == "function" then
+        local ok, shape = pcall(_G.GetMinimapShape)
+        if ok and type(shape) == "string"
+            and (not _G.issecretvalue or not _G.issecretvalue(shape))
+            and MINIMAP_SHAPE_QUADRANTS[shape] then
+            return shape
+        end
+    end
+
+    return db and db.Square and "SQUARE" or "ROUND"
+end
+
+local function GetBoundaryOffset(width, height, padding, deltaX, deltaY, shape)
+    local distance = math.sqrt(deltaX * deltaX + deltaY * deltaY)
+    if distance <= 0 then
+        deltaX, deltaY, distance = 1, 0, 1
+    end
+
+    local unitX = deltaX / distance
+    local unitY = deltaY / distance
+    local radiusX = width * .5 + padding
+    local radiusY = height * .5 + padding
+
+    local quadrant = 1
+    if unitX < 0 then quadrant = quadrant + 1 end
+    if unitY > 0 then quadrant = quadrant + 2 end
+
+    local quadrants = MINIMAP_SHAPE_QUADRANTS[shape]
+        or MINIMAP_SHAPE_QUADRANTS.ROUND
+    if quadrants[quadrant] then
+        local divisor = math.sqrt(
+            unitX * unitX / (radiusX * radiusX)
+            + unitY * unitY / (radiusY * radiusY))
+        return unitX / divisor, unitY / divisor
+    end
+
+    local scaleX = unitX == 0 and math.huge
+        or radiusX / math.abs(unitX)
+    local scaleY = unitY == 0 and math.huge
+        or radiusY / math.abs(unitY)
+    local scale = math.min(scaleX, scaleY)
+    return unitX * scale, unitY * scale
+end
+
 ---
 -- Update handler for minimap button dragging
 -- @param frm  The button frame
@@ -181,7 +280,10 @@ function Nx.NXMiniMapBut:NXOnUpdate (frm)
 
         local x, y = GetCursorPosition()
         local s = mm:GetEffectiveScale()
-        self:Move (x / s, y / s)
+        if IsUsableNumber(x) and IsUsableNumber(y)
+            and IsUsableNumber(s) and s > 0 then
+            self:Move (x / s, y / s)
+        end
     end
 end
 
@@ -191,31 +293,48 @@ end
 -- @param y  Cursor Y position
 --
 function Nx.NXMiniMapBut:Move (x, y)
-    local but = NXMiniMapBut        -- 32x32
-
-    local mm = _G["Minimap"]
-
-    local l = mm:GetLeft() + 70        -- Minimap is 140x140
-    local b = mm:GetBottom() + 70
---[[
-    if not x then
-        x = but:GetLeft()
-        y = but:GetTop()
-        Nx.prt ("xy %s %s", x, y)
+    local but = _G.NXMiniMapBut
+    local mm = _G.Minimap
+    if not but or not mm or not but.GetParent
+        or but:GetParent() ~= mm then
+        return false
     end
---]]
-    x = x - l
-    y = y - b
 
-    local ang = atan2 (y, x)
-    local r = (x ^ 2 + y ^ 2) ^ .5
-    r = max (r, 79)
-    r = min (r, 110)
+    local centerX, centerY = mm:GetCenter()
+    local width, height = mm:GetWidth(), mm:GetHeight()
+    if not IsUsableNumber(centerX) or not IsUsableNumber(centerY)
+        or not IsUsableNumber(width) or not IsUsableNumber(height)
+        or width <= 0 or height <= 0 then
+        return false
+    end
 
-    x = r * cos (ang)
-    y = r * sin (ang)
-    but:SetPoint ("TOPLEFT", mm, "TOPLEFT", x + 54, y - 54)
+    if not IsUsableNumber(x) or not IsUsableNumber(y) then
+        x, y = but:GetCenter()
+    end
+    if not IsUsableNumber(x) or not IsUsableNumber(y) then
+        x, y = centerX + width * .5, centerY
+    end
+
+    local buttonWidth, buttonHeight = but:GetWidth(), but:GetHeight()
+    if not IsUsableNumber(buttonWidth) or buttonWidth <= 0 then
+        buttonWidth = 32
+    end
+    if not IsUsableNumber(buttonHeight) or buttonHeight <= 0 then
+        buttonHeight = 32
+    end
+
+    -- Nine pixels outside a 140x140 round minimap reproduces Carbonite's
+    -- original 79-pixel center radius. Scaling that overlap with the button
+    -- itself keeps custom-sized launchers visually attached to the rim.
+    local padding = math.min(buttonWidth, buttonHeight) * 9 / 32
+    local offsetX, offsetY = GetBoundaryOffset(
+        width, height, padding, x - centerX, y - centerY,
+        GetActiveMinimapShape())
+
+    but:ClearAllPoints()
+    but:SetPoint("CENTER", mm, "CENTER", offsetX, offsetY)
     but:SetUserPlaced (true)
+    return true
 end
 
 ---

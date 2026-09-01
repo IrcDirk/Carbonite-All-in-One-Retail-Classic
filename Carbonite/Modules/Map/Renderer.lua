@@ -163,7 +163,17 @@ local function renderWP(map, layer, cls, frameLvl, wpScale, wpMin)
     -- strings — area pins with table colors rendered invisible
     -- because SetColorTexture received nils.
     local c2rgb = Nx.Util_c2rgba
-    local scale = map.IconScale * (cls.scale or 1) * wpScale
+    -- Navigation pins (quest targets, start/end markers, area pointers)
+    -- historically used IconNavScale and stayed a readable pixel size on
+    -- the minimized map. Running them through the generic world-pin zoom
+    -- formula can collapse a 16px target to roughly 1px at normal minimap
+    -- scale, leaving only the quest-area blob visible.
+    local scale
+    if cls.scaleMode == "navigation" then
+        scale = (map.IconNavScale or 1) * (cls.scale or 1)
+    else
+        scale = map.IconScale * (cls.scale or 1) * wpScale
+    end
     local w = max((cls.w or 16) * scale, wpMin)
     local h = max((cls.h or 16) * scale, wpMin)
 

@@ -53,6 +53,65 @@ local function resolveDungeonEntrance(mapID)
     return outdoorID, entryX, entryY
 end
 
+-- Preserve a world point calculated from a stable parent map while associating
+-- the route with the player's active phased child map. This is derived from the
+-- C_Map parent chain for every quest; no quest-specific opt-in is required.
+function Nx.Quest:ResolveObjectivePhaseMapID(quest, mapID)
+    local function safeMapID(value)
+        if value == nil
+            or (_G.issecretvalue and _G.issecretvalue(value)) then
+            return nil
+        end
+        value = tonumber(value)
+        return value and value > 0 and value or nil
+    end
+
+    mapID = safeMapID(mapID)
+    if not mapID or not (_G.C_Map and _G.C_Map.GetBestMapForUnit
+            and _G.C_Map.GetMapInfo) then
+        return mapID
+    end
+
+    local ok, playerMapID = pcall(_G.C_Map.GetBestMapForUnit, "player")
+    playerMapID = ok and safeMapID(playerMapID) or nil
+    if not playerMapID then
+        return mapID
+    end
+
+    local currentMapID = playerMapID
+    for _ = 1, 16 do
+        if currentMapID == mapID then
+            return playerMapID
+        end
+
+        local infoOK, mapInfo = pcall(_G.C_Map.GetMapInfo, currentMapID)
+        local nextMapID = infoOK and type(mapInfo) == "table"
+            and safeMapID(mapInfo.parentMapID) or nil
+        if not nextMapID or nextMapID == currentMapID then
+            break
+        end
+        currentMapID = nextMapID
+    end
+
+    return mapID
+end
+
+local function HasCatalogPointObjective(questObj)
+    if type(questObj) ~= "table" then return false end
+
+    for _, location in ipairs(questObj) do
+        if type(location) == "string" then
+            local _, mapID, poiType = Nx.Quest:UnpackObjectiveNew(location)
+            local x, y = Nx.Quest:UnpackLocPtOff(location)
+            if poiType == 32 and tonumber(mapID) and tonumber(mapID) > 0
+                and type(x) == "number" and type(y) == "number" then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Track quest on map
@@ -341,7 +400,16 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                         -- stale-but-wrong coord, sending tracking to
                         -- the wrong place. The API knows the live
                         -- current-objective coord regardless.
-                        if C_QuestLog then
+                        -- Objectives with catalogued individual points must
+                        -- keep those exact points. Blizzard's public
+                        -- GetNextWaypoint/GetQuestsOnMap values are one
+                        -- representative quest POI, not one position per
+                        -- objective; replacing a Warding Totem coordinate with
+                        -- that quest-level value makes the route point away
+                        -- from the selected totem.
+                        local keepCatalogObjective =
+                            HasCatalogPointObjective(questObj)
+                        if C_QuestLog and not keepCatalogObjective then
                             local wpMapID, wpX, wpY
                             if C_QuestLog.GetNextWaypoint then
                                 wpMapID, wpX, wpY = C_QuestLog.GetNextWaypoint(qId)
@@ -546,6 +614,49 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                         x1, y1 = entryX, entryY
                         x2, y2 = entryX, entryY
                         name = name .. " |cff80c0ff" .. L["(dungeon entrance)"]
+                    end
+
+                    -- Campaign phases can expose points on a stable parent
+                    -- canvas even though the player is on a child map. Do not
+                    -- merely relabel that parent-world coordinate: the fixed
+                    -- child canvas interprets it as local and sends the target
+                    -- far off-map. Project both corners onto the child canvas
+                    -- through the same C_Map-backed transform used by the icon
+                    -- provider, then associate the route with that map.
+                    local sourceMapID = mId
+                    local phaseMapID = self:ResolveObjectivePhaseMapID(
+                        quest, sourceMapID)
+                    if phaseMapID and phaseMapID ~= sourceMapID
+                        and self.ProjectObjectivePoint then
+                        local zx1, zy1 = Map:GetZonePos(sourceMapID, x1, y1)
+                        local zx2, zy2 = Map:GetZonePos(sourceMapID, x2, y2)
+                        local projectedMapID, projectedX1, projectedY1 =
+                            self:ProjectObjectivePoint(
+                                Map:GetMap(1),
+                                sourceMapID,
+                                zx1,
+                                zy1,
+                                phaseMapID
+                            )
+                        local projectedMapID2, projectedX2, projectedY2 =
+                            self:ProjectObjectivePoint(
+                                Map:GetMap(1),
+                                sourceMapID,
+                                zx2,
+                                zy2,
+                                phaseMapID
+                            )
+                        if projectedMapID and projectedMapID2 then
+                            mId = projectedMapID
+                            x1, y1 = projectedX1, projectedY1
+                            x2, y2 = projectedX2, projectedY2
+                        else
+                            -- Projection failure is safer as an untracked
+                            -- point than a confidently wrong cross-map route.
+                            return
+                        end
+                    else
+                        mId = phaseMapID or sourceMapID
                     end
 
                     -- Zero-coord guard: if every coord resolved to 0,
