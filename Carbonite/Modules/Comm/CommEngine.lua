@@ -98,6 +98,19 @@ end
 
 local PLAYER_NOT_FOUND_PATTERN = _buildPlayerNotFoundPattern()
 
+-- Retail can protect UnitIsAFK() while chat-messaging lockdown is active.
+-- Return nil while the value is inaccessible so callers can preserve the
+-- last known AFK state without performing a boolean test on a secret value.
+local function _getAccessibleAFKState(unit)
+    local isAFK = UnitIsAFK(unit)
+
+    if _G.canaccessvalue and not _G.canaccessvalue(isAFK) then
+        return nil
+    end
+
+    return isAFK
+end
+
 ---------------------------------------------------------------------------------------
 -- Relocation note
 ---------------------------------------------------------------------------------------
@@ -906,8 +919,14 @@ function Nx.Com:UpdateChannelsTimer()
 
     local curMapId = Nx.Map:GetRealMapId()
 
-    -- Determine if we should be in a zone channel
-    if UnitIsAFK("player") or not Nx.db.profile.Comm.Zone then
+    -- Determine if we should be in a zone channel. During Retail's chat-
+    -- messaging lockdown, preserve the last accessible AFK state.
+    local isAFK = _getAccessibleAFKState("player")
+    if isAFK == nil then
+        isAFK = self.AFK
+    end
+
+    if isAFK or not Nx.db.profile.Comm.Zone then
         curMapId = nil
     else
         if Nx.Map:IsNormalMap(curMapId) then
@@ -1449,17 +1468,6 @@ function Nx.Com:OnUpdate(elapsed)
     local Nx = Nx
     local bgmap = Nx.InBG
 
-    local targetName = UnitName("target")
-    -- Retail hands back a "secret" target name inside instances; the bare
-    -- `if targetName then` test (and the name broadcast) below would otherwise
-    -- throw "boolean test on a secret value". This OnUpdate runs on Carbonite's
-    -- own frame, so it's self-taint (it aborts the comm tick + spams the taint
-    -- log, it does NOT leak onto secure frames), but we still can't encode a
-    -- secret name into the pals message, so probe once and drop it to nil.
-    if not pcall(function () return targetName and #targetName end) then
-        targetName = nil
-    end
-
     local tm = GetTime()
     local tdiff = tm - self.SendTime
 
@@ -1469,18 +1477,19 @@ function Nx.Com:OnUpdate(elapsed)
     end
 
     -- Handle AFK state changes
-    local isAFK = false
-    pcall(function() if UnitIsAFK("player") then isAFK = true end end)
-    if isAFK then
-        if not self.AFK then
-            self:UpdateChannels()
+    local isAFK = _getAccessibleAFKState("player")
+    if isAFK ~= nil then
+        if isAFK then
+            if not self.AFK then
+                self:UpdateChannels()
+            end
+            self.AFK = true
+        else
+            if self.AFK then
+                self:UpdateChannels()
+            end
+            self.AFK = nil
         end
-        self.AFK = true
-    else
-        if self.AFK then
-            self:UpdateChannels()
-        end
-        self.AFK = nil
     end
 
     -- Calculate position send delay based on state
@@ -1560,7 +1569,14 @@ function Nx.Com:OnUpdate(elapsed)
 
         local plyrLvl = min(UnitLevel("player"), 90)
 
-        -- Build target info string
+        -- Build target info only when a position update is due. Target names
+        -- can be secret inside Retail instances, so discard inaccessible names
+        -- before any boolean, length, or format operation.
+        local targetName = UnitName("target")
+        if _G.canaccessvalue and not _G.canaccessvalue(targetName) then
+            targetName = nil
+        end
+
         local tStr = ""
         if targetName then
             flgs = flgs + 2
@@ -1600,11 +1616,8 @@ function Nx.Com:OnUpdate(elapsed)
             end
             hper = min(floor(hper + .5), 20)
 
-            local nameLen = 0
-            local nameOk = pcall(function() nameLen = #targetName end)
-            if nameOk then
-                tStr = format("%c%c%c%c%c%s", tType + 35, tLvl + 35, tCls + 35, hper + 35, nameLen + 35, targetName)
-            end
+            local nameLen = #targetName
+            tStr = format("%c%c%c%c%c%s", tType + 35, tLvl + 35, tCls + 35, hper + 35, nameLen + 35, targetName)
         end
 
         -- Build quest string
