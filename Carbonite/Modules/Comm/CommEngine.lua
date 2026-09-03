@@ -732,7 +732,11 @@ function Nx.Com:OnChat_msg_addon(args, distribution, target)
 
             elseif id == 76 then    -- L (Level up)
                 if Nx.db.profile.Comm.LvlUpShow and #msg >= 2 then
-                    local s = format("%s " .. L["reached level"] .. " %d!", name, strbyte(msg, 2) - 35)
+                    msg = self:RestoreChars(msg)
+
+                    local level = strbyte(msg, 2) - 35
+                    local s = format("%s " .. L["reached level"] .. " %d!", name, level)
+
                     Nx.prt(s)
                     Nx.UEvents:AddInfo(s)
                 end
