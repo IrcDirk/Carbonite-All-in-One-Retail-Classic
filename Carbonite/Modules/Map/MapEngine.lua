@@ -16341,6 +16341,44 @@ end
 -- Functions for updating player/group member positions on the map
 -------------------------------------------------------------------------------
 
+local PVP_INACTIVE_QUERY_INTERVAL = 5
+local pvpInactiveStateByUnit = {}
+
+-- Blizzard's CheckColorOverrideForPVPInactive() stores its query result in a
+-- private cache. Calling it from addon execution can place a secret value in
+-- that cache and cause protected-field taint on the next read. Keep an
+-- addon-local cache containing only values confirmed accessible to Carbonite.
+local function _checkColorOverrideForPVPInactive(unit, timeNow, r, g, b)
+    local playerIsPVPInactive = _G.PlayerIsPVPInactive
+    if not playerIsPVPInactive then
+        return r, g, b
+    end
+
+    local state = pvpInactiveStateByUnit[unit]
+    if not state then
+        state = {
+            inactive = false,
+            nextQueryTime = 0,
+        }
+        pvpInactiveStateByUnit[unit] = state
+    end
+
+    if timeNow >= state.nextQueryTime then
+        state.nextQueryTime = timeNow + PVP_INACTIVE_QUERY_INTERVAL
+
+        local inactive = playerIsPVPInactive(unit)
+        if not _G.canaccessvalue or _G.canaccessvalue(inactive) then
+            state.inactive = inactive and true or false
+        end
+    end
+
+    if state.inactive then
+        return 0.5, 0.2, 0.8
+    end
+
+    return r, g, b
+end
+
 ---
 -- Update all player positions on the world map unit frame
 -- Based on Blizzard's internal implementation
@@ -16351,7 +16389,7 @@ function Nx.Map:UpdatePlayerPositions()
     NXWorldMapUnitPositionFrame:ClearUnits()
 
     -- Add player arrow
-    local r, g, b = CheckColorOverrideForPVPInactive("player", timeNow, 1, 1, 1)
+    local r, g, b = _checkColorOverrideForPVPInactive("player", timeNow, 1, 1, 1)
     NXWorldMapUnitPositionFrame:AddUnit("player", "Interface\\WorldMap\\WorldMapArrow",
         Nx.db.profile.Map.InstancePlayerSize, Nx.db.profile.Map.InstancePlayerSize, r, g, b, 1, 7, true)
 
@@ -16377,7 +16415,7 @@ function Nx.Map:UpdatePlayerPositions()
             if unitMapId and unitMapId == Nx.Map.RMapId then
                 local atlas = UnitInSubgroup(unit) and "WhiteCircle-RaidBlips" or "WhiteDotCircle-RaidBlips"
                 local class = select(2, UnitClass(unit))
-                local r, g, b = CheckColorOverrideForPVPInactive(unit, timeNow, GetClassColor(class))
+                local r, g, b = _checkColorOverrideForPVPInactive(unit, timeNow, GetClassColor(class))
                 NXWorldMapUnitPositionFrame:AddUnit(unit, atlas,
                     Nx.db.profile.Map.InstanceGroupSize, Nx.db.profile.Map.InstanceGroupSize, r, g, b, 1)
             end
@@ -16407,7 +16445,7 @@ function Nx.Map.NXWorldMapUnitPositionFrame_UpdateFull(timeNow)
     NXWorldMapUnitPositionFrame:ClearUnits()
 
     -- Add player arrow
-    local r, g, b = CheckColorOverrideForPVPInactive("player", timeNow, 1, 1, 1)
+    local r, g, b = _checkColorOverrideForPVPInactive("player", timeNow, 1, 1, 1)
     NXWorldMapUnitPositionFrame:AddUnit("player", "Interface\\WorldMap\\WorldMapArrow",
         Nx.db.profile.Map.InstancePlayerSize, Nx.db.profile.Map.InstancePlayerSize, r, g, b, 1, 7, true)
 
@@ -16433,7 +16471,7 @@ function Nx.Map.NXWorldMapUnitPositionFrame_UpdateFull(timeNow)
             if unitMapId and unitMapId == Nx.Map.RMapId then
                 local atlas = UnitInSubgroup(unit) and "WhiteCircle-RaidBlips" or "WhiteDotCircle-RaidBlips"
                 local class = select(2, UnitClass(unit))
-                local r, g, b = CheckColorOverrideForPVPInactive(unit, timeNow, GetClassColor(class))
+                local r, g, b = _checkColorOverrideForPVPInactive(unit, timeNow, GetClassColor(class))
                 NXWorldMapUnitPositionFrame:AddUnit(unit, atlas,
                     Nx.db.profile.Map.InstanceGroupSize, Nx.db.profile.Map.InstanceGroupSize, r, g, b, 1)
             end
@@ -16450,7 +16488,7 @@ end
 --
 function Nx.Map.NXWorldMapUnitPositionFrame_UpdatePeriodic(timeNow)
     -- Update player color
-    local r, g, b = CheckColorOverrideForPVPInactive("player", timeNow, 1, 1, 1)
+    local r, g, b = _checkColorOverrideForPVPInactive("player", timeNow, 1, 1, 1)
     NXWorldMapUnitPositionFrame:SetUnitColor("player", r, g, b, 1)
 
     -- Determine group type and size
@@ -16472,7 +16510,7 @@ function Nx.Map.NXWorldMapUnitPositionFrame_UpdatePeriodic(timeNow)
         if UnitExists(unit) and not UnitIsUnit(unit, "player") then
             local atlas = UnitInSubgroup(unit) and "WhiteCircle-RaidBlips" or "WhiteDotCircle-RaidBlips"
             local class = select(2, UnitClass(unit))
-            local r, g, b = CheckColorOverrideForPVPInactive(unit, timeNow, GetClassColor(class))
+            local r, g, b = _checkColorOverrideForPVPInactive(unit, timeNow, GetClassColor(class))
             NXWorldMapUnitPositionFrame:SetUnitColor(unit, r, g, b, 1)
         end
     end
