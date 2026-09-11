@@ -24,6 +24,7 @@ local strsub     = strsub   or string.sub
 local strbyte    = strbyte  or string.byte
 local format     = format   or string.format
 local tinsert    = tinsert  or table.insert
+local GetTime    = GetTime
 local UnitLevel  = UnitLevel
 local UnitName   = UnitName
 
@@ -972,6 +973,31 @@ end
 -- Party quests
 -------------------------------------------------------------------------------
 
+local PARTY_PROGRESS_REFRESH_DELAY = 0.1
+local QPartyUpdate
+local QPartyUpdateAt
+
+local function SchedulePartyUpdate (self, delay)
+    delay = delay or PARTY_PROGRESS_REFRESH_DELAY
+    local updateAt = GetTime() + delay
+
+    if QPartyUpdate then
+        if QPartyUpdateAt and QPartyUpdateAt <= updateAt then
+            return
+        end
+
+        Nx:CancelTimer (QPartyUpdate)
+        QPartyUpdate = nil
+    end
+
+    QPartyUpdate = Nx:ScheduleTimer (
+        self.PartyUpdateTimer,
+        delay,
+        self
+    )
+    QPartyUpdateAt = updateAt
+end
+
 function Nx.Quest.OnParty_members_changed()
     if not Nx.Quest.Initialized then
         return
@@ -1003,7 +1029,7 @@ function Nx.Quest.OnParty_members_changed()
             pq[name] = nil
 --            Nx.prt ("Old %s", name)
 
-            QPartyUpdate = Nx:ScheduleTimer(self.PartyUpdateTimer,1,self)
+            SchedulePartyUpdate (self, 1)
         end
     end
 
@@ -1038,11 +1064,6 @@ end
 -- Handle party message
 -------------------------------------------------------------------------------
 
-local pmsg_elapsed = 0
-local pmsg_lasttime
-local pmsg_ttl = 9999
-
--------------------------------------------------------------------------------
 -- Return one canonical objective-progress string for party synchronization.
 --
 -- Modern clients can put the numeric progress at the start of objective.text,
@@ -1093,6 +1114,143 @@ function Nx.Quest:NormalizeObjectiveProgressText (text, count, required)
     return format ("%s: %d/%d", text, count, required)
 end
 
+local PARTY_PROTOCOL_V2 = "V200"
+local MAX_PARTY_OBJECTIVES = 31
+
+local function EncodePartyText (text)
+    text = type (text) == "string" and text or "?"
+    text = string.gsub (text, "%%", "%%25")
+    return string.gsub (text, "|", "%%7C")
+end
+
+local function DecodePartyText (text)
+    if type (text) ~= "string" then
+        return "?"
+    end
+
+    return string.gsub (text, "%%(%x%x)", function (hex)
+        return string.char (tonumber (hex, 16))
+    end)
+end
+
+local function StorePartyQuestSnapshot (self, playerQuests, qId, flags, objectives)
+    if type (qId) ~= "number" or qId <= 0 or qId ~= floor (qId)
+            or not Nx.Quests[qId] then
+        return false
+    end
+
+    -- Each packet contains a complete snapshot for one quest. Build it away
+    -- from PartyQ and publish it once so the renderer cannot observe a partly
+    -- decoded objective list.
+    local questSnapshot = {}
+    flags = max (floor (tonumber (flags) or 0), 0)
+    questSnapshot.Complete = bit_band (flags, 1) == 1 and 1 or nil
+
+    for objectiveIndex, objective in ipairs (objectives) do
+        local count = max (floor (tonumber (objective.count) or 0), 0)
+        local required = max (floor (tonumber (objective.required) or 0), 0)
+        local desc = self:NormalizeObjectiveProgressText (
+            objective.desc,
+            count,
+            required
+        )
+
+        questSnapshot[objectiveIndex] = count
+        questSnapshot[objectiveIndex + 100] = required
+        questSnapshot[objectiveIndex + 200] = desc
+        questSnapshot[objectiveIndex + 300] = objective.done == true
+    end
+
+    playerQuests[qId] = questSnapshot
+    return true
+end
+
+local function DecodeExtendedPartyQuest (self, playerQuests, fields)
+    local qId = tonumber (fields[2])
+    local flags = tonumber (fields[3]) or 0
+    local objectiveCount = tonumber (fields[4])
+
+    if not qId or qId <= 0 or qId ~= floor (qId) or not objectiveCount
+            or objectiveCount ~= floor (objectiveCount)
+            or objectiveCount < 0 or objectiveCount > MAX_PARTY_OBJECTIVES
+            or #fields < 4 + objectiveCount * 4 then
+        return false
+    end
+
+    local objectives = {}
+    local fieldIndex = 5
+    for objectiveIndex = 1, objectiveCount do
+        objectives[objectiveIndex] = {
+            count = tonumber (fields[fieldIndex]) or 0,
+            required = tonumber (fields[fieldIndex + 1]) or 0,
+            done = tonumber (fields[fieldIndex + 2]) == 1,
+            desc = DecodePartyText (fields[fieldIndex + 3]),
+        }
+        fieldIndex = fieldIndex + 4
+    end
+
+    return StorePartyQuestSnapshot (
+        self,
+        playerQuests,
+        qId,
+        flags,
+        objectives
+    )
+end
+
+local function DecodeLegacyPartyQuests (self, playerQuests, msg, fields)
+    local off = 4
+    local objectiveTextIndex = 2
+
+    for _ = 1, 99 do
+        if #msg < off + 5 then
+            break
+        end
+
+        local flagsByte, objectiveCountByte = strbyte (msg, off + 4, off + 5)
+        if not flagsByte or not objectiveCountByte then
+            break
+        end
+
+        local qId = tonumber (strsub (msg, off, off + 3), 16) or 0
+        local flags = flagsByte - 35
+        local objectiveCount = objectiveCountByte - 35
+        if objectiveCount < 0 or objectiveCount > MAX_PARTY_OBJECTIVES
+                or #msg < off + 5 + objectiveCount * 4 then
+            break
+        end
+
+        local objectives = {}
+        for objectiveIndex = 1, objectiveCount do
+            local desc, done = Nx.Split ("^", fields[objectiveTextIndex] or "")
+            objectiveTextIndex = objectiveTextIndex + 1
+
+            local objectiveOffset = off + 6 + (objectiveIndex - 1) * 4
+            objectives[objectiveIndex] = {
+                count = tonumber (
+                    strsub (msg, objectiveOffset, objectiveOffset + 1),
+                    16
+                ) or 0,
+                required = tonumber (
+                    strsub (msg, objectiveOffset + 2, objectiveOffset + 3),
+                    16
+                ) or 0,
+                done = tonumber (done) == 1,
+                desc = desc,
+            }
+        end
+
+        StorePartyQuestSnapshot (
+            self,
+            playerQuests,
+            qId,
+            flags,
+            objectives
+        )
+        off = off + 6 + objectiveCount * 4
+    end
+end
+
 function Nx.Quest:OnPartyMsg (plName, msg)
 
     if Nx.qdb and Nx.qdb.profile and not Nx.qdb.profile.Quest.PartyShare then
@@ -1117,76 +1275,31 @@ function Nx.Quest:OnPartyMsg (plName, msg)
             pq[plName] = pl
         end
 
-        local Quest = Nx.Quest
-        local off = 4
-
-        for n = 1, 99 do
-
-            if #msg < off + 5 then    -- No more?
-                break
-            end
-
-            local qId = tonumber (strsub (msg, off, off + 3), 16) or 0
-            local flgs, oCnt = strbyte (msg, off + 4, off + 5)
-            flgs = flgs - 35
-            oCnt = oCnt - 35
-
-            if #msg < off + 5 + oCnt * 4 then    -- Too short?
-                break
-            end
-
-            local quest = Nx.Quests[qId]
-            if quest then
-
-                local q = pl[qId] or {}
-                pl[qId] = q
-
-                q.Complete = bit_band (flgs, 1) == 1 and 1 or nil
-
-    --            Nx.prt ("%s: %s %x %s", plName, qId, flgs, oCnt)
-
-                for i = 1, oCnt do
-
-                    local desc, done = Nx.Split("^", msgA[i + 1])
-
-                    local o = off + 6 + (i - 1) * 4
-                    local cnt = tonumber (strsub (msg, o, o + 1), 16) or 0
-                    local total = tonumber (strsub (msg, o + 2, o + 3), 16) or 0
-
-                    desc = self:NormalizeObjectiveProgressText (desc, cnt, total)
-
-                    q[i] = cnt
-                    q[i + 100] = total
-                    q[i + 200] = desc
-                    q[i + 300] = done == 1 and true or false
-                end
-            end
-
-            off = off + 6 + oCnt * 4
+        if strsub (msg, 4, 7) == PARTY_PROTOCOL_V2 then
+            DecodeExtendedPartyQuest (self, pl, msgA)
+        else
+            DecodeLegacyPartyQuests (self, pl, msg, msgA)
         end
     end
 
-    if pmsg_lasttime then
-        local curtime = debugprofilestop()
-        pmsg_elapsed = curtime - pmsg_lasttime
-        pmsg_lasttime = curtime
-    else
-        pmsg_lasttime = debugprofilestop()
-    end
-    pmsg_ttl = pmsg_ttl + pmsg_elapsed
-    if pmsg_ttl < 2000 then
-        return
-    end
-    pmsg_ttl = 0
-
-    QPartyUpdate = Nx:ScheduleTimer(self.PartyUpdateTimer,.5,self)
+    -- Rebuild once after the current packet burst. The old global two-second
+    -- throttle made every group member's progress visibly late and allowed
+    -- multiple uncancelled rebuild timers to replay obsolete presentation
+    -- state. A short earliest-deadline coalesce cannot be starved by a steady
+    -- combat packet stream; each individual quest packet is published atomically.
+    SchedulePartyUpdate (self)
 end
 
 ---
 -- Timer callback for party quest updates
 --
 function Nx.Quest:PartyUpdateTimer()
-    self:RecordQuests(0)
+    QPartyUpdate = nil
+    QPartyUpdateAt = nil
+    if not self:RecordQuests(0) then
+        SchedulePartyUpdate (self, 0.25)
+        return
+    end
     self.Watch:Update()
 end
 
@@ -1195,35 +1308,63 @@ end
 -- Share quest progress with party members
 -------------------------------------------------------------------------------
 
+local PARTY_SEND_BUILD_DELAY = 0.15
+local QSendParty
+local PartySendTimer
+
 ---
 -- Start sending quest data to party
 --
 function Nx.Quest:PartyStartSend()
 
-    if IsInRaid() or GetNumSubgroupMembers() == 0 then
+    local canSend = Nx.qdb.profile.Quest.PartyShare
+        and not IsInRaid() and GetNumSubgroupMembers() > 0
+    if not canSend then
+        if QSendParty then
+            Nx:CancelTimer (QSendParty)
+            QSendParty = nil
+        end
+        if PartySendTimer then
+            Nx:CancelTimer (PartySendTimer)
+            PartySendTimer = nil
+        end
         return
     end
 
-    if Nx.qdb.profile.Quest.PartyShare then
-        QSendParty = Nx:ScheduleTimer(self.PartyBuildSendData,.5,self)
+    if not QSendParty then
+        QSendParty = Nx:ScheduleTimer (
+            self.PartyBuildSendData,
+            PARTY_SEND_BUILD_DELAY,
+            self
+        )
     end
 end
 
-local PartySendTimer
 function Nx.Quest:PartyBuildSendData()
+
+    QSendParty = nil
+
+    if PartySendTimer then
+        Nx:CancelTimer (PartySendTimer)
+        PartySendTimer = nil
+    end
+
+    if not Nx.qdb.profile.Quest.PartyShare
+            or IsInRaid() or GetNumSubgroupMembers() == 0 then
+        return 0
+    end
 
     local data = {}
 
     self.PartySendData = data
     self.PartySendDataI = 1
 
-    local sendStr = ""
-
-    for n, cur in ipairs (self.CurQ) do
+    for _, cur in ipairs (self.CurQ) do
 
         local qId = cur.QId
 
-        if not cur.Goto and Nx.Quest:GetQuest (qId) == "W" then
+        if type (qId) == "number" and qId > 0
+                and not cur.Goto and Nx.Quest:GetQuest (qId) == "W" then
 
             local flgs = 0
 
@@ -1231,46 +1372,110 @@ function Nx.Quest:PartyBuildSendData()
                 flgs = flgs + 1
             end
 
-            local str = format ("%04x%c%c", qId, flgs + 35, cur.LBCnt + 35)
-            local strO = ""
+            local objectiveCount = min (
+                max (floor (tonumber (cur.LBCnt) or 0), 0),
+                MAX_PARTY_OBJECTIVES
+            )
+            local objectives = {}
+            local useExtended = qId > 0xffff
 
-            for n = 1, cur.LBCnt do
+            for objectiveIndex = 1, objectiveCount do
 
-                local _, _, parsedCnt, parsedTotal = strfind (cur[n] or "", "(%d+)%s*/%s*(%d+)")
-                local _, _, _, liveCnt, liveTotal = self:GetQuestObjectiveInfo (qId, n, false)
+                local _, _, parsedCnt, parsedTotal = strfind (
+                    cur[objectiveIndex] or "",
+                    "(%d+)%s*/%s*(%d+)"
+                )
+                local _, _, _, liveCnt, liveTotal = self:GetQuestObjectiveInfo (
+                    qId,
+                    objectiveIndex,
+                    false
+                )
                 local cnt = tonumber (liveCnt) or tonumber (parsedCnt) or 0
                 local total = tonumber (liveTotal) or tonumber (parsedTotal) or 0
 
-                local desc, done = self:CalcDesc (qId, n, cnt, total, cur[n])
+                local desc, done = self:CalcDesc (
+                    qId,
+                    objectiveIndex,
+                    cnt,
+                    total,
+                    cur[objectiveIndex]
+                )
 
-                if cnt and total then
-                    if cnt > 200 then
-                        cnt = 200
-                    end
-                else
-                    cnt = 0
-                    if cur[n + 100] then        -- Done?
-                        cnt = 1
-                    end
-                    total = 0
+                if total <= 0 and cur[objectiveIndex + 100] then
+                    cnt = 1
                 end
 
-                str = str .. format ("%02x%02x", cnt, total)
-
-                if desc then
-                    strO = strO .. "|" .. desc .. "^" .. (done and 1 or 0)
+                cnt = max (floor (cnt), 0)
+                total = max (floor (total), 0)
+                if cnt > 0xff or total > 0xff then
+                    useExtended = true
                 end
+
+                objectives[objectiveIndex] = {
+                    count = cnt,
+                    required = total,
+                    done = done == true,
+                    desc = desc or cur[objectiveIndex] or "?",
+                }
             end
 
-            sendStr = sendStr .. str .. strO
+            local packet
+            if useExtended then
+                -- "V200##" is deliberately shaped as a harmless zero-objective
+                -- legacy record. Older Carbonite builds ignore the extended
+                -- payload after the first pipe instead of misaligning every
+                -- field when a modern quest ID exceeds four hex digits.
+                local fields = {
+                    PARTY_PROTOCOL_V2 .. "##",
+                    tostring (qId),
+                    tostring (flgs),
+                    tostring (objectiveCount),
+                }
+                for objectiveIndex = 1, objectiveCount do
+                    local objective = objectives[objectiveIndex]
+                    tinsert (fields, tostring (objective.count))
+                    tinsert (fields, tostring (objective.required))
+                    tinsert (fields, objective.done and "1" or "0")
+                    tinsert (fields, (EncodePartyText (objective.desc)))
+                end
+                packet = table.concat (fields, "|")
+            else
+                local counts = ""
+                local descriptions = ""
+                for objectiveIndex = 1, objectiveCount do
+                    local objective = objectives[objectiveIndex]
+                    counts = counts .. format (
+                        "%02x%02x",
+                        objective.count,
+                        objective.required
+                    )
+                    descriptions = descriptions .. "|" .. objective.desc
+                        .. "^" .. (objective.done and 1 or 0)
+                end
+                packet = format (
+                    "%04x%c%c%s%s",
+                    qId,
+                    flgs + 35,
+                    objectiveCount + 35,
+                    counts,
+                    descriptions
+                )
+            end
 
-
-            tinsert (data, sendStr)
-            sendStr = ""
+            tinsert (data, packet)
         end
     end
 
-    PartySendTimer = Nx:ScheduleRepeatingTimer(self.PartySendTimer,0,self)
+    -- An empty snapshot still has to clear the recipient's stale party data.
+    if #data == 0 then
+        data[1] = ""
+    end
+
+    PartySendTimer = Nx:ScheduleRepeatingTimer(
+        self.PartySendTimer,
+        0.01,
+        self
+    )
 
     return 0
 end
@@ -1290,6 +1495,7 @@ function Nx.Quest:PartySendTimer()
 
     if not self.PartySendData[self.PartySendDataI] then
         Nx:CancelTimer(PartySendTimer)
+        PartySendTimer = nil
     end
 end
 

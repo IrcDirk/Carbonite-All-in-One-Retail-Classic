@@ -75,6 +75,11 @@ function Nx.Quest.List:Open()
     --CarboniteQuest:RegisterEvent ("UPDATE_FACTION", "OnQuestUpdate")
     --CarboniteQuest:RegisterEvent ("GARRISON_MISSION_COMPLETE_RESPONSE", "OnQuestUpdate")
     --CarboniteQuest:RegisterEvent ("WORLD_QUEST_COMPLETED_BY_SPELL", "OnQuestUpdate")
+    -- Blizzard's own objective trackers use QUEST_LOG_UPDATE as their
+    -- authoritative progress signal on every supported client. Keep the unit
+    -- event as a compatibility fallback, but filter it to the player in
+    -- OnQuestUpdate so party members cannot restart our local refresh timer.
+    CarboniteQuest:RegisterEvent ("QUEST_LOG_UPDATE", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("UNIT_QUEST_LOG_CHANGED", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("QUEST_PROGRESS", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("QUEST_COMPLETE", "OnQuestUpdate")
@@ -234,7 +239,10 @@ function Nx.Quest.List:Open()
             CarboniteQuest:RegisterEvent ("ACTIVE_DELVE_DATA_UPDATE", "OnQuestUpdate")
         end
     end
-    --CarboniteQuest:RegisterEvent ("QUEST_WATCH_UPDATE", "OnQuestUpdate")
+    -- Synchronous watched-objective signal retained by Retail, Mists, TBC and
+    -- Era. It is coalesced with QUEST_LOG_UPDATE below, so registering both
+    -- improves latency without causing duplicate scans.
+    CarboniteQuest:RegisterEvent ("QUEST_WATCH_UPDATE", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("WORLD_STATE_TIMER_START", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("WORLD_STATE_TIMER_STOP", "OnQuestUpdate")
     CarboniteQuest:RegisterEvent ("QUEST_POI_UPDATE", "OnQuestUpdate")
@@ -1662,6 +1670,7 @@ end
 -------------------------------------------------------------------------------
 
 local QUEST_ACCEPT_REFRESH_DELAY = 0.25
+local QUEST_PROGRESS_REFRESH_DELAY = 0.05
 local QUEST_REFRESH_RETRY_DELAY = 0.5
 local QUEST_REFRESH_RETRY_EVENT = "CARBONITE_QUEST_REFRESH_RETRY"
 
@@ -1681,14 +1690,41 @@ local function QueueAcceptedQuest (Quest, questId)
 end
 
 local QuestListRefreshTimer
+local QuestListRefreshAt
 function Nx.Quest.List:Refresh(event)
+    local delay
+    if event == "QUEST_LOG_UPDATE"
+            or event == "QUEST_WATCH_UPDATE"
+            or event == "UNIT_QUEST_LOG_CHANGED"
+            or event == "WORLD_QUEST_COMPLETED_BY_SPELL" then
+        delay = QUEST_PROGRESS_REFRESH_DELAY
+    elseif event == "QUEST_ACCEPTED" then
+        delay = QUEST_ACCEPT_REFRESH_DELAY
+    elseif event == QUEST_REFRESH_RETRY_EVENT then
+        delay = QUEST_REFRESH_RETRY_DELAY
+    else
+        delay = IsInInstance() and 2 or 1
+    end
+
+    -- Coalesce to the earliest pending deadline. Repeated progress events must
+    -- never slide the timer forward: in sustained combat that old debounce
+    -- behavior could postpone a visible update for several seconds. A faster
+    -- event may pre-empt a slower structural refresh, while later events share
+    -- the already scheduled scan.
+    local now = GetTime()
+    local refreshAt = now + delay
     if QuestListRefreshTimer then
+        if QuestListRefreshAt and QuestListRefreshAt <= refreshAt then
+            return
+        end
+
         QuestListRefreshTimer:Cancel()
         QuestListRefreshTimer = nil
     end
 
     local func = function ()
         QuestListRefreshTimer = nil
+        QuestListRefreshAt = nil
         Nx.prtD("Nx.Quest.List:Refresh")
 
         local isInst = IsInInstance()
@@ -1702,30 +1738,7 @@ function Nx.Quest.List:Refresh(event)
         Nx.Quest.List:LogUpdate()
     end
 
-    --Nx.Quest.List:LogUpdate()
-
-    --[[local func = function(timer)
-        C_Timer.After(.5, function()
-            --Nx.Quest:ScanBlizzQuestDataZone()
-            Nx.Quest:RecordQuests()
-            --Nx.Quest:RecordQuests(event == "QUEST_LOG_UPDATE" and true or nil)
-            Nx.Quest.List:LogUpdate()
-            Nx.prtD ("R %s", "Nx.Quest.List:Refresh")
-        end)
-    end]]--
-
-    local delay
-    if event == "QUEST_ACCEPTED" then
-        delay = QUEST_ACCEPT_REFRESH_DELAY
-    elseif event == QUEST_REFRESH_RETRY_EVENT then
-        delay = QUEST_REFRESH_RETRY_DELAY
-    else
-        delay = IsInInstance() and 2 or 1
-    end
-
-    -- Always coalesce through one timer. QUEST_ACCEPTED used to run an
-    -- immediate rebuild and then queue two more overlapping rebuilds, which
-    -- made a transient quest-log index state visible to the watch window.
+    QuestListRefreshAt = refreshAt
     QuestListRefreshTimer = C_Timer.NewTimer(delay, func)
 end
 
@@ -2055,7 +2068,16 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             Nx.prtD ("QUEST_DETAIL %s", detailQuestId)
             Nx.Quest.List:Refresh(event)
         --end
-    elseif event == "QUEST_LOG_UPDATE" or event == "UNIT_QUEST_LOG_CHANGED" or event == "WORLD_QUEST_COMPLETED_BY_SPELL" then
+    elseif event == "QUEST_LOG_UPDATE" or event == "QUEST_WATCH_UPDATE"
+            or event == "UNIT_QUEST_LOG_CHANGED" or event == "WORLD_QUEST_COMPLETED_BY_SPELL" then
+
+        -- UNIT_QUEST_LOG_CHANGED fires for party units as well as the player.
+        -- Blizzard's own quest frames explicitly ignore the non-player form;
+        -- doing the same prevents group combat activity from continually
+        -- postponing and rebuilding the player's local objective snapshot.
+        if event == "UNIT_QUEST_LOG_CHANGED" and arg1 ~= "player" then
+            return
+        end
 
 --        Nx.prtStack ("QUpdate")
 --        Nx.prt ("#%d", GetNumQuestLogEntries())
@@ -2064,7 +2086,7 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             Quest:AccessAllQuests()
             QLogUpdate = Nx:ScheduleTimer(self.LogUpdate,.5,self)    -- Small delay, so access works (0 does work)
         else
-            Nx.Quest.List:Refresh("QUEST_LOG_UPDATE")
+            Nx.Quest.List:Refresh(event)
             -- Objective progress doesn't fire SUPER_TRACKING_CHANGED, but
             -- the waypoint Blizzard's arrow targets advances each time an
             -- objective completes. Re-trigger OnSuperTrackChanged so our
