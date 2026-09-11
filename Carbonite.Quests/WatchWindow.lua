@@ -2178,9 +2178,9 @@ function Nx.Quest.Watch:UpdateList()
             else
                 _, i = GetNumQuestLogEntries()
             end
-            -- MAX_QUESTS is the legacy 25-quest cap; retail's log holds more,
-            -- so prefer the live API max (works on the 12.0 engine; falls back
-            -- to MAX_QUESTS/25 where the API is missing).
+            -- Show the player-facing accepted-quest cap, not Retail's larger
+            -- internal quest-log capacity. Fall back to MAX_QUESTS/25 where
+            -- the API is missing on older clients.
             local maxQ = (C_QuestLog and C_QuestLog.GetMaxNumQuestsCanAccept and C_QuestLog.GetMaxNumQuestsCanAccept()) or MAX_QUESTS or 25
             self.Win:SetTitle (format ("          |cff40af40%d/%d", i, maxQ))
         end

@@ -687,9 +687,12 @@ function Nx.Quest:RecordQuestsLog (validatedQuestCount)
                         cur.PartyCnt = 0
                         cur.PartyComplete = cur.Complete
 
-                        for n, cnt in ipairs (qT) do
+                        for n = 1, cur.LBCnt or 0 do
                             cur[n + 200] = cur[n + 100]
-                            cur[n + 400] = "\n|cfff080f0Me" .. s
+                            cur[n + 400] = format (
+                                "\n|cfff080f0Me|r %s",
+                                cur[n] or "?"
+                            )
                         end
                     end
 
@@ -698,31 +701,28 @@ function Nx.Quest:RecordQuestsLog (validatedQuestCount)
                     cur.PartyCnt = cur.PartyCnt + 1
                     cur.PartyComplete = cur.PartyComplete and qT.Complete
 
-                    local mask = (cur.PartyComplete or #qT == 0) and 1 or 0
-
-                    for n, cnt in ipairs (qT) do
-
-                        local total = qT[n + 100]
-
-                        --local desc, done = self:CalcDesc (qId, n, cnt, total)
-
-                        desc = qT[n + 200]
-                        cur[n] = desc
-
+                    for n in ipairs (qT) do
+                        local desc = qT[n + 200] or "?"
                         local done = qT[n + 300]
 
-                        done = cur[n + 200] and done
-                        cur[n + 200] = done
-
                         cur.PartyDesc = cur.PartyDesc .. "\n " .. desc
-                        cur[n + 400] = cur[n + 400] .. " " .. desc
-
-                        if not done then
-                            mask = mask + bit_lshift (1, n)
+                        if n <= (cur.LBCnt or 0) then
+                            -- Party progress is annotation only. The prior
+                            -- merge replaced cur[n] with the last remote
+                            -- player's text and replaced the local route mask
+                            -- with group state, which made a fresh local count
+                            -- visibly reverse whenever a delayed party packet
+                            -- arrived. Keep the remote aggregate in its own
+                            -- fields and leave cur[n], cur[n+100] and TrackMask
+                            -- authoritative for this character.
+                            cur[n + 200] = cur[n + 200] and done
+                            cur[n + 400] = (cur[n + 400] or "") .. format (
+                                "\n|cff8080f0%s|r %s",
+                                plName,
+                                desc
+                            )
                         end
                     end
-
-                    cur.TrackMask = mask
 
                 elseif quest then
 
@@ -783,20 +783,15 @@ function Nx.Quest:RecordQuestsLog (validatedQuestCount)
         end
     end
 
-    for curi, cur in ipairs (curq) do
-        if cur.PartyCnt then
-            cur.CompleteMerge = cur.PartyComplete
+    for _, cur in ipairs (curq) do
+        -- Shared progress only annotates a local quest. Completion, objective
+        -- colors and routing continue to use this character's live snapshot.
+        -- Party-only quest rows already store their remote state in these same
+        -- base fields, so the rule also remains correct for those entries.
+        cur.CompleteMerge = cur.Complete
 
-            for n, desc in ipairs (cur) do
-                cur[n + 300] = cur[n + 200]
-            end
-
-        else
-            cur.CompleteMerge = cur.Complete
-
-            for n, desc in ipairs (cur) do
-                cur[n + 300] = cur[n + 100]
-            end
+        for n = 1, cur.LBCnt or 0 do
+            cur[n + 300] = cur[n + 100]
         end
     end
 
