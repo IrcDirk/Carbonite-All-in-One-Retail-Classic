@@ -5936,43 +5936,48 @@ function Nx.Map:Update (elapsed)
                         local dx = abs (midX - self.PlyrX)
                         local dy = abs (midY - self.PlyrY)
 
-                        -- Minimum distance threshold to prevent extreme scaling
-                        -- When player is very close to target, don't auto-scale
-                        local MIN_DISTANCE = 10  -- Minimum world units before auto-scale kicks in
+                        -- Keep auto-scaling active through the final approach.
+                        -- Clamp only the divisor so reaching the exact target
+                        -- cannot cause division by zero or extreme scale values.
+                        local MIN_SCALE_DISTANCE = .1
 
-                        if dx < MIN_DISTANCE and dy < MIN_DISTANCE then
-                            -- Player is very close to target, just follow without scaling
-                            self:Move (plX, plY, nil, 30)
-                        else
-                            -- Ensure minimum distance to prevent division by tiny numbers
-                            dx = max(dx, MIN_DISTANCE)
-                            dy = max(dy, MIN_DISTANCE)
+                        local scaleDX = max(dx, MIN_SCALE_DISTANCE)
+                        local scaleDY = max(dy, MIN_SCALE_DISTANCE)
 
-                            local scaleX = self.MapW / dx
-                            local scaleY = self.MapH / dy
-                            local scale = min (scaleX, scaleY) * .5
+                        local scaleX = self.MapW / scaleDX
+                        local scaleY = self.MapH / scaleDY
+                        local scale = min(scaleX, scaleY) * .5
 
-                            -- Target rectangle scaling
-                            if dtx and dty then
-                                dtx = max(dtx, 1)
-                                dty = max(dty, 1)
-                                local targetScaleX = self.MapW / dtx
-                                local targetScaleY = self.MapH / dty
-                                scale = min (min (targetScaleX, targetScaleY), scale)
-                            end
+                        -- Include the target area when it has meaningful bounds.
+                        -- Point targets use the player-to-target distance alone.
+                        if dtx and dty and (dtx > 0 or dty > 0) then
+                            local targetWidth = max(dtx, MIN_SCALE_DISTANCE)
+                            local targetHeight = max(dty, MIN_SCALE_DISTANCE)
+                            local targetScaleX = self.MapW / targetWidth
+                            local targetScaleY = self.MapH / targetHeight
 
-                            local scmax = self.InstanceId and 800 or self.LOpts.NXAutoScaleMax
-                            local scmin = self.LOpts.NXAutoScaleMin
-
-                            -- Sanity check: don't change scale drastically in one frame
-                            local currentScale = self.Scale or 1
-                            local maxScaleChange = currentScale * 2  -- Max 2x change per update
-                            scale = max(min(scale, maxScaleChange), currentScale / 2)
-
-                            -- Apply final min/max limits
-                            scale = max (min (scale, scmax), scmin)
-                            self:Move (mX, mY, scale, 30)
+                            scale = min(
+                                scale,
+                                targetScaleX,
+                                targetScaleY
+                            )
                         end
+
+                        local scmax = self.InstanceId
+                            and 800
+                            or self.LOpts.NXAutoScaleMax
+                        local scmin = self.LOpts.NXAutoScaleMin
+
+                        -- Smooth large changes while still allowing the map
+                        -- to zoom progressively as the destination approaches.
+                        local currentScale = self.Scale or 1
+                        scale = max(
+                            min(scale, currentScale * 2),
+                            currentScale / 2
+                        )
+
+                        scale = max(min(scale, scmax), scmin)
+                        self:Move(mX, mY, scale, 30)
                     end
                 end
 
@@ -8284,9 +8289,35 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
             end
         end
 
-        local suppressMinimapQuestArrow = self.Win and not self.Win:IsSizeMax()
-            and target ~= nil and questTarget ~= nil
-        if suppressMinimapQuestArrow or insideQuestObjective then
+        local isMinimapView = self.Win
+            and not self.Win:IsSizeMax()
+
+        -- Keep the earlier protection for the combined Blizzard/Carbonite
+        -- minimap, where breadcrumb icons can duplicate Blizzard navigation
+        -- or become clipped into an upward-pointing arrow. Do not suppress
+        -- breadcrumbs on the standalone Carbonite minimap or full map.
+        local suppressCombinedMinimapQuestArrow = isMinimapView
+            and self.MMOwn
+            and target ~= nil
+            and questTarget ~= nil
+
+        -- Entering a large Blizzard quest blob does not necessarily mean the
+        -- selected destination has been reached. Remove the final breadcrumb
+        -- only when this is the active quest target and the player is also
+        -- within its configured arrival radius.
+        local reachedQuestDestination = false
+        if insideQuestObjective
+            and target == questTarget then
+
+            local arrivalRadius = questTarget.Radius or 7
+            local segmentDistanceYd = dist * 4.575
+
+            reachedQuestDestination =
+                segmentDistanceYd <= arrivalRadius * self.BaseScale
+        end
+
+        if suppressCombinedMinimapQuestArrow
+            or reachedQuestDestination then
             return
         end
 
