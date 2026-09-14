@@ -35,55 +35,83 @@ end
 -- Gather detection (herb / mining / artifact / gas / logging / opening)
 -------------------------------------------------------------------------------
 
---- UNIT_SPELLCAST_SENT for the player. Maps the spell name onto
---- one of Carbonite's gather kinds and records the node via UEvents.
---- pcall'd because Nx:IsGathering can be called before the gather
---- DB has fully initialised on a fresh install.
+-- Return the modern spell name for special gather casts while retaining the
+-- global API as a fallback for clients that do not expose C_Spell.
+local function resolveSpellName(spellID)
+    if not spellID then return end
+    if C_Spell and C_Spell.GetSpellInfo then
+        local info = C_Spell.GetSpellInfo(spellID)
+        if type(info) == "table" then return info.name end
+        if type(info) == "string" then return info end
+    end
+    if GetSpellInfo then
+        return GetSpellInfo(spellID)
+    end
+end
+
+local function getSpellName(spellID)
+    local ok, spellName = pcall(resolveSpellName, spellID)
+    return ok and spellName or nil
+end
+
+-- UNIT_SPELLCAST_SENT supplies (unit, target, castGUID, spellID) on every
+-- supported client. The target is the resource-node name and is authoritative.
+-- TooltipLastText is only a fallback for old/partial event payloads.
 function Nx:OnUnit_spellcast_sent(event, arg1, arg2, arg3, arg4)
     pcall(function()
         if arg1 ~= "player" then return end
         local NxL = Nx
+        local gatherKind = NxL:IsGathering(arg2)
+        local gatherTarget = gatherKind and arg2 or NxL.TooltipLastText
+        if not gatherKind and (not arg2 or arg2 == "") and gatherTarget then
+            gatherKind = NxL:IsGathering(gatherTarget)
+        end
+        local spellName = getSpellName(arg4)
 
-        if NxL:IsGathering(arg2) == L["Herb Gathering"] then
-            NxL.GatherTarget = NxL.TooltipLastText
+        if gatherKind == L["Herb Gathering"] then
+            NxL.GatherTarget = gatherTarget
             if NxL.db.profile.Debug.DBGather then
-                NxL.prt(L["Gather"] .. ": %s %s", arg2, NxL.GatherTarget or "nil")
+                NxL.prt(L["Gather"] .. ": %s %s", spellName or "?", NxL.GatherTarget or "nil")
             end
             if NxL.GatherTarget then
                 NxL.UEvents:AddHerb(NxL.GatherTarget)
                 NxL.GatherTarget = nil
             end
 
-        elseif NxL:IsGathering(arg2) == L["Mining"] then
-            NxL.GatherTarget = NxL.TooltipLastText
+        elseif gatherKind == L["Mining"] then
+            NxL.GatherTarget = gatherTarget
             if NxL.db.profile.Debug.DBGather then
-                NxL.prt(L["Gather"] .. ": %s %s", arg2, NxL.GatherTarget)
+                NxL.prt(L["Gather"] .. ": %s %s", spellName or "?", NxL.GatherTarget or "nil")
             end
             if NxL.GatherTarget then
                 NxL.UEvents:AddMine(NxL.GatherTarget)
                 NxL.GatherTarget = nil
             end
 
-        elseif arg2 == L["Searching for Artifacts"] then
-            NxL.UEvents:AddOpen("Art", arg4)
+        elseif arg2 == L["Small Timber"]
+            or arg2 == L["Timber"]
+            or arg2 == L["Medium Timber"]
+            or arg2 == L["Large Timber"] then
+            NxL.UEvents:AddTimber(arg2)
 
-        elseif arg2 == L["Extract Gas"] then
+        elseif spellName == L["Searching for Artifacts"] then
+            NxL.UEvents:AddOpen("Art", arg2 ~= "" and arg2 or spellName)
+
+        elseif spellName == L["Extract Gas"] then
             NxL.UEvents:AddOpen("Gas", L["Extract Gas"])
 
-        elseif arg2 == L["Logging"] then
+        elseif spellName == L["Logging"] then
             NxL.GatherTarget = NxL.TooltipLastText
             if NxL.GatherTarget then
                 NxL.UEvents:AddTimber(NxL.GatherTarget)
                 NxL.GatherTarget = nil
             end
 
-        elseif arg2 == L["Opening"] or arg2 == L["Opening - No Text"] then
-            NxL.GatherTarget = NxL.TooltipLastText
-            if arg4 == L["Glowcap"] then
-                NxL.UEvents:AddHerb(arg4)
-            elseif arg4 == L["Everfrost Chip"] then
-                NxL.UEvents:AddOpen("Everfrost", arg4)
-            end
+        elseif arg2 == L["Glowcap"] then
+            NxL.UEvents:AddHerb(arg2)
+
+        elseif arg2 == L["Everfrost Chip"] then
+            NxL.UEvents:AddOpen("Everfrost", arg2)
         end
     end)
 end

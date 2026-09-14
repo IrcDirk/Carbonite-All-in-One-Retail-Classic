@@ -229,6 +229,7 @@ local function renderWP(map, layer, cls, frameLvl, wpScale, wpMin)
     -- window doesn't apply). Used by Quest area-span pins where
     -- pin.w/h are world units already.
     local rawSize = cls.rawSize
+    local isGatherLayer = layer.name == "!Ga" or layer.name == "Gather"
     for i = 1, #layer.pins do
         local pin = layer.pins[i]
         local iconX, iconY = pin.x, pin.y
@@ -299,6 +300,16 @@ local function renderWP(map, layer, cls, frameLvl, wpScale, wpMin)
                     -- glow visibility, objective labels) without
                     -- bloating the renderer with class-specific code.
                     if pin.onStamp then pin.onStamp(pin, f) end
+
+                    -- MapEngine v14 keeps the docked Blizzard minimap one
+                    -- strata above Carbonite's map artwork so native tracking
+                    -- nodes cannot be covered on hover. Raise only gathering
+                    -- location pins with that surface; pooled frames are
+                    -- restored by GetIconStatic before their next use.
+                    if (isGatherLayer or pin.NxGatherLocation)
+                        and map.RegisterGatherOverlayFrame then
+                        map:RegisterGatherOverlayFrame(f)
+                    end
                 end
             end
         end

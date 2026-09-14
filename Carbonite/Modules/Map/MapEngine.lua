@@ -831,6 +831,15 @@ function Nx.Map:Create(index)
     m.IconNIFrms.Next = 1
     m.IconNIFrms.Used = 0
 
+    -- Active route-arrow frames that may need to render above a separately
+    -- parented Blizzard minimap during the combined docked view.
+    m.BreadcrumbFrms = {}
+
+    -- Active Carbonite gather pins that must remain visible above the live
+    -- Blizzard minimap surface while the minimaps are combined. These are
+    -- rebuilt by Renderer every update and synchronized after final docking.
+    m.GatherOverlayFrms = {}
+
     -- Static icon frames (persistent display)
     m.IconStaticFrms = {}
     m.IconStaticFrms.Next = 1
@@ -2414,10 +2423,25 @@ function Nx.Map:MinimapOwnInit()
     if not self.MMOriginalParent then
         self.MMOriginalParent = mm:GetParent()
         self.MMOriginalStrata = mm:GetFrameStrata()
+        self.MMOriginalLevel = mm:GetFrameLevel()
         self.MMOriginalPoints = {}
         for index = 1, mm:GetNumPoints() do
             self.MMOriginalPoints[index] = { mm:GetPoint(index) }
         end
+    end
+
+    -- Carbonite temporarily replaces the minimap's input scripts while the
+    -- live minimap is being used as a movable map overlay. Preserve the
+    -- Blizzard handlers so the docked minimap remains fully interactive and
+    -- disabling ownership can restore the exact native input behavior.
+    if not self.MMOriginalScripts then
+        self.MMOriginalScripts = {
+            OnMouseDown = mm:GetScript("OnMouseDown"),
+            OnMouseUp = mm:GetScript("OnMouseUp"),
+            OnMouseWheel = mm:GetScript("OnMouseWheel"),
+            OnEnter = mm:GetScript("OnEnter"),
+            OnLeave = mm:GetScript("OnLeave"),
+        }
     end
 
     if not self.MMOwn then
@@ -2431,7 +2455,18 @@ function Nx.Map:MinimapOwnInit()
             if self.MMOriginalStrata then
                 mm:SetFrameStrata(self.MMOriginalStrata)
             end
+            if self.MMOriginalLevel then
+                mm:SetFrameLevel(self.MMOriginalLevel)
+            end
         end
+        -- Restore Blizzard's native player texture defensively before
+        -- returning the minimap to its normal standalone owner.
+        if type(mm.SetPlayerTexture) == "function" then
+            mm:SetPlayerTexture("Interface\\Minimap\\MinimapArrow")
+        end
+        self.MMArrowName = nil
+        self.MMBlizzardPlayerArrowActive = false
+        self:MinimapSetInputMode("blizzard", true)
         self.Win:Show (self.StartupShown)
         Nx.Map:MinimapButtonShowUpdate()
         return
@@ -2464,10 +2499,14 @@ function Nx.Map:MinimapOwnInit()
     if type(mm.SetStaticPOIArrowTexture) == "function" then
         mm:SetStaticPOIArrowTexture(transparentPOITexture)
     end
-    mm:SetScript ("OnMouseDown", self.MinimapOnMouseDown)
-    mm:SetScript ("OnMouseUp", self.MinimapOnMouseUp)
-    mm:SetScript ("OnEnter", self.MinimapOnEnter)
-    mm:SetScript ("OnLeave", self.MinimapOnLeave)
+    -- Keep Blizzard's native click and hover handlers initially. The first
+    -- update switches to Carbonite routing only if the live minimap is being
+    -- used as an undocked map overlay.
+    self:MinimapSetInputMode("docked", true)
+
+    -- Force MouseEnable to apply the current mouse-ignore setting to the
+    -- newly owned minimap, including mouse-wheel input on Classic clients.
+    self.MouseEnabled = nil
 
 --    local prtFrameChildren = Nx.prtFrameChildren
 --    prtFrameChildren ("Minimap", mm)
@@ -2505,6 +2544,83 @@ function Nx.Map:MinimapOwnInit()
 
     hooksecurefunc("Minimap_ZoomIn", Nx.Map.Minimap_ZoomInClick)
     hooksecurefunc("Minimap_ZoomOut", Nx.Map.Minimap_ZoomOutClick)
+end
+
+---
+-- Select the input owner for the live Blizzard minimap.
+--
+-- "blizzard" restores every original script when Carbonite does not own it.
+-- "docked" preserves Blizzard clicks and hover behavior while routing the
+-- mouse wheel through Carbonite's docked zoom control.
+-- "carbonite" keeps the legacy Carbonite map controls for the undocked live
+-- minimap overlay.
+--
+-- @param mode   Input mode: "blizzard", "docked", or "carbonite"
+-- @param force  Reapply scripts even when the recorded mode is unchanged
+-- @return       True when the requested mode was applied
+--
+function Nx.Map:MinimapSetInputMode(mode, force)
+    local mm = self.MMFrm
+    local original = self.MMOriginalScripts
+    if not mm or not original then
+        return false
+    end
+
+    if mode ~= "blizzard" and mode ~= "docked" then
+        mode = "carbonite"
+    end
+
+    if not force and self.MMInputMode == mode then
+        return true
+    end
+
+    -- Avoid changing Blizzard frame scripts during combat. MinimapUpdate
+    -- retries the desired mode on the next safe update.
+    if InCombatLockdown() then
+        self.MMPendingInputMode = mode
+        return false
+    end
+
+    -- Avoid rewriting a native Blizzard handler when it is already installed.
+    -- This keeps the normal docked path in Blizzard's original script context.
+    local function setScript(scriptName, handler)
+        if mm:GetScript(scriptName) ~= handler then
+            mm:SetScript(scriptName, handler)
+        end
+    end
+
+    if mode == "blizzard" then
+        setScript("OnMouseDown", original.OnMouseDown)
+        setScript("OnMouseUp", original.OnMouseUp)
+        setScript("OnMouseWheel", original.OnMouseWheel)
+        setScript("OnEnter", original.OnEnter)
+        setScript("OnLeave", original.OnLeave)
+    elseif mode == "docked" then
+        local useCarboniteClick = original.OnMouseUp == nil
+
+        setScript(
+            "OnMouseDown",
+            useCarboniteClick and self.MinimapOnMouseDown
+                or original.OnMouseDown
+        )
+        setScript(
+            "OnMouseUp",
+            original.OnMouseUp or self.MinimapOnMouseUp
+        )
+        setScript("OnMouseWheel", self.MinimapOnMouseWheel)
+        setScript("OnEnter", original.OnEnter)
+        setScript("OnLeave", original.OnLeave)
+    else
+        setScript("OnMouseDown", self.MinimapOnMouseDown)
+        setScript("OnMouseUp", self.MinimapOnMouseUp)
+        setScript("OnMouseWheel", self.MinimapOnMouseWheel)
+        setScript("OnEnter", self.MinimapOnEnter)
+        setScript("OnLeave", self.MinimapOnLeave)
+    end
+
+    self.MMInputMode = mode
+    self.MMPendingInputMode = nil
+    return true
 end
 
 -------------------------------------------------------------------------------
@@ -2561,6 +2677,19 @@ end
 -------------------------------------------------------------------------------
 
 ---
+-- Route minimap wheel input through Carbonite's map-aware zoom handler.
+-- This also supplies mouse-wheel zoom on Classic minimaps whose Blizzard
+-- frame does not define an OnMouseWheel script.
+-- @param value  Mouse-wheel delta
+--
+function Nx.Map:MinimapOnMouseWheel(value)
+    local map = Nx.Map.Maps[1]
+    if map then
+        map:MouseWheel(value)
+    end
+end
+
+---
 -- Handle mouse down on minimap
 -- @param button  Mouse button pressed
 --
@@ -2590,9 +2719,9 @@ function Nx.Map:MinimapOnMouseUp(button)
     if this.NXPing then
         -- On retail, both Minimap:OnClick (which calls Minimap:PingLocation
         -- internally) and our own map:Ping (which also calls PingLocation)
-        -- are forbidden from this tainted Lua path. Skip the ping silently
-        -- on retail — Carbonite-merged minimap pings just aren't available.
-        -- The user can disable MMOwn to get natural Blizzard minimap pings.
+        -- are forbidden from this tainted Lua path. Skip Carbonite-routed
+        -- overlay pings silently on retail. Docked mode retains Blizzard's
+        -- native OnMouseUp script and therefore does not use this path.
         if not Nx.isRetail then
             if map.MMZoomType == 0 then
                 if _G.Minimap_OnClick then
@@ -2794,6 +2923,362 @@ function Nx.Map:MinimapNodeGlowSet(letter)
     self.MMFrm:SetBlipTexture("Interface\\AddOns\\Carbonite\\Gfx\\Map\\MMOIcons" .. letter)
 end
 
+local MINIMAP_STRATA_RANK = {
+    WORLD = 0,
+    BACKGROUND = 1,
+    LOW = 2,
+    MEDIUM = 3,
+    HIGH = 4,
+    DIALOG = 5,
+    FULLSCREEN = 6,
+    FULLSCREEN_DIALOG = 7,
+    TOOLTIP = 8,
+}
+
+-- A separately parented docked minimap must occupy a higher strata than the
+-- top-level Carbonite window. Frame level alone cannot reliably interleave it
+-- with Carbonite's alpha-composited child canvas on Classic clients.
+local MINIMAP_STRATA_ABOVE = {
+    WORLD = "BACKGROUND",
+    BACKGROUND = "LOW",
+    LOW = "MEDIUM",
+    MEDIUM = "HIGH",
+    HIGH = "DIALOG",
+    DIALOG = "FULLSCREEN",
+    FULLSCREEN = "FULLSCREEN_DIALOG",
+    FULLSCREEN_DIALOG = "FULLSCREEN_DIALOG",
+    TOOLTIP = "TOOLTIP",
+}
+
+---
+-- Synchronize the separately parented Blizzard minimap with NxMap1's visual
+-- layer. NxMap1's window and map canvas can report different strata because
+-- the canvas was originally created under UIParent before Window:Attach
+-- reparents it. Following only the window strata can therefore leave the
+-- minimap below the opaque canvas even at a higher frame level.
+--
+-- @param preferredLevel  Carbonite's normal level for this render pass
+-- @param hostOffset      Minimum levels above the Carbonite host frames
+-- @param aboveHost       Promote one strata above the Carbonite host
+-- @return                The frame level applied to the Blizzard minimap
+--
+function Nx.Map:MinimapSyncLayer(preferredLevel, hostOffset, aboveHost)
+    local mm = self.MMFrm
+    if not mm then
+        return preferredLevel or 1
+    end
+
+    local level = type(preferredLevel) == "number" and preferredLevel or 1
+    local offset = type(hostOffset) == "number" and hostOffset or 1
+    local winFrame = self.Win and self.Win.Frm
+    local mapFrame = self.Frm
+
+    if not InCombatLockdown() and mm.SetFrameStrata then
+        local targetStrata = winFrame and winFrame.GetFrameStrata
+            and winFrame:GetFrameStrata()
+        local targetRank = targetStrata
+            and MINIMAP_STRATA_RANK[targetStrata] or -1
+        local mapStrata = mapFrame and mapFrame.GetFrameStrata
+            and mapFrame:GetFrameStrata()
+        local mapRank = mapStrata and MINIMAP_STRATA_RANK[mapStrata] or -1
+
+        if mapStrata and mapRank > targetRank then
+            targetStrata = mapStrata
+        end
+
+        if aboveHost and targetStrata then
+            targetStrata = MINIMAP_STRATA_ABOVE[targetStrata] or targetStrata
+        end
+
+        if targetStrata and mm:GetFrameStrata() ~= targetStrata then
+            mm:SetFrameStrata(targetStrata)
+        end
+    end
+
+    if winFrame then
+        if winFrame.GetFrameLevel then
+            local winLevel = winFrame:GetFrameLevel()
+            if type(winLevel) == "number" then
+                level = max(level, winLevel + offset)
+            end
+        end
+    end
+
+    if mapFrame and mapFrame.GetFrameLevel then
+        local mapLevel = mapFrame:GetFrameLevel()
+        if type(mapLevel) == "number" then
+            level = max(level, mapLevel + offset)
+        end
+    end
+
+    mm:SetFrameLevel(level)
+    return level
+end
+
+---
+-- Return whether the owned Blizzard minimap is a meaningful visible surface.
+-- Carbonite deliberately leaves the frame shown at 2% scale when it is
+-- collapsed, which must not claim player-arrow or breadcrumb ownership.
+--
+function Nx.Map:MinimapIsVisibleSurface()
+    local mm = self.MMFrm
+    if not self.MMOwn or not mm or not mm:IsShown() then
+        return false
+    end
+
+    local scale = mm:GetScale()
+    if type(scale) == "number" and scale <= .02 then
+        return false
+    end
+
+    local alpha = mm:GetAlpha()
+    return type(alpha) ~= "number" or alpha > .02
+end
+
+---
+-- Decide whether Blizzard's player marker remains visible while the maps are
+-- combined. Blizzard is the primary marker in every mode and on every client.
+-- Carbonite's marker is layered independently and is retained only when the
+-- combined minimap is not full-size.
+--
+function Nx.Map:MinimapShouldUseBlizzardPlayerArrow()
+    return self.MMOwn and self.MMFrm ~= nil
+end
+
+---
+-- Apply player-marker layering only after the live minimap has received its
+-- final visibility, position, strata, and level for this render pass. Both
+-- markers remain visible in non-full combined mode. Full-size mode retains
+-- Blizzard's primary marker and suppresses Carbonite's duplicate.
+--
+function Nx.Map:MinimapSyncPlayerArrowLayer()
+    local playerFrame = self.PlyrFrm
+    local mm = self.MMFrm
+    if not playerFrame or not mm then
+        self.MMBlizzardPlayerArrowActive = false
+        return
+    end
+
+    local surfaceVisible = self:MinimapIsVisibleSurface()
+    local useBlizzardPlayerArrow
+
+    if InCombatLockdown() then
+        -- Protected minimap changes are deferred in combat. Preserve the last
+        -- successfully applied marker; nil means Blizzard's native default.
+        useBlizzardPlayerArrow = surfaceVisible
+            and self.MMBlizzardPlayerArrowActive ~= false
+    else
+        useBlizzardPlayerArrow = surfaceVisible
+            and self:MinimapShouldUseBlizzardPlayerArrow()
+        self.MMBlizzardPlayerArrowActive =
+            useBlizzardPlayerArrow and true or false
+    end
+
+    local fullSize = self.LOpts and self.LOpts.NXMMFull
+    local hideCarbonitePlayerArrow = surfaceVisible
+        and fullSize and useBlizzardPlayerArrow
+
+    if playerFrame.NxMinimapRaised
+        and (hideCarbonitePlayerArrow or not surfaceVisible) then
+        local strata = playerFrame.NxMinimapBaseStrata
+            or (self.Frm and self.Frm:GetFrameStrata())
+        if strata and playerFrame:GetFrameStrata() ~= strata then
+            playerFrame:SetFrameStrata(strata)
+        end
+        playerFrame.NxMinimapRaised = nil
+        playerFrame.NxMinimapBaseStrata = nil
+    end
+
+    if hideCarbonitePlayerArrow then
+        playerFrame:Hide()
+        return
+    end
+
+    if surfaceVisible and playerFrame:IsShown() then
+        if not playerFrame.NxMinimapRaised then
+            playerFrame.NxMinimapBaseStrata = playerFrame:GetFrameStrata()
+        end
+
+        local strata = mm:GetFrameStrata()
+        if strata and playerFrame:GetFrameStrata() ~= strata then
+            playerFrame:SetFrameStrata(strata)
+        end
+        playerFrame:SetFrameLevel(mm:GetFrameLevel() + 3)
+        playerFrame.NxMinimapRaised = true
+    end
+end
+
+---
+-- Put one Carbonite breadcrumb frame above the visible combined Blizzard
+-- minimap without raising Carbonite's map artwork or interactive POIs.
+--
+-- @param frame         Carbonite's non-interactive breadcrumb frame
+-- @param minimapLevel  Final Blizzard minimap level for this render pass
+-- @return              True when the breadcrumb layer was synchronized
+--
+function Nx.Map:MinimapSyncBreadcrumbFrame(frame, minimapLevel)
+    if not frame then
+        return false
+    end
+
+    if not self:MinimapIsVisibleSurface() then
+        if frame.NxBreadcrumbRaised then
+            local strata = self.Frm and self.Frm:GetFrameStrata()
+            if strata and frame:GetFrameStrata() ~= strata then
+                frame:SetFrameStrata(strata)
+            end
+            frame.NxBreadcrumbRaised = nil
+        end
+        return false
+    end
+
+    local mm = self.MMFrm
+    local strata = mm:GetFrameStrata()
+    if strata and frame:GetFrameStrata() ~= strata then
+        frame:SetFrameStrata(strata)
+    end
+
+    local level = type(minimapLevel) == "number"
+        and minimapLevel or mm:GetFrameLevel()
+    frame:SetFrameLevel(level + 2)
+    frame.NxBreadcrumbRaised = true
+    return true
+end
+
+---
+-- Register a breadcrumb drawn during this update and immediately preserve its
+-- layer during combat. The main update repeats synchronization after the
+-- minimap receives its final non-combat visibility, strata, and level.
+--
+function Nx.Map:RegisterBreadcrumbFrame(frame)
+    if not frame then
+        return
+    end
+
+    local frames = self.BreadcrumbFrms
+    if not frames then
+        frames = {}
+        self.BreadcrumbFrms = frames
+    end
+
+    frames[#frames + 1] = frame
+    self:MinimapSyncBreadcrumbFrame(frame)
+end
+
+---
+-- Synchronize every breadcrumb produced during the current render pass.
+--
+function Nx.Map:MinimapSyncBreadcrumbLayer(minimapLevel)
+    for _, frame in ipairs(self.BreadcrumbFrms or {}) do
+        self:MinimapSyncBreadcrumbFrame(frame, minimapLevel)
+    end
+end
+
+---
+-- Restore a pooled gather icon to Carbonite's normal map layer before that
+-- frame is reused for another pin or when the Blizzard minimap is not visible.
+--
+-- @param frame  A frame previously raised by MinimapSyncGatherFrame
+--
+function Nx.Map:MinimapRestoreGatherFrame(frame)
+    if not frame then
+        return
+    end
+
+    if not frame.NxGatherRaised then
+        frame.NxGatherOverlayActive = nil
+        return
+    end
+
+    local strata = frame.NxGatherBaseStrata
+        or (self.Frm and self.Frm:GetFrameStrata())
+    if strata and frame:GetFrameStrata() ~= strata then
+        frame:SetFrameStrata(strata)
+    end
+
+    local level = frame.NxGatherBaseLevel
+    if type(level) == "number" then
+        frame:SetFrameLevel(level)
+    end
+
+    frame.NxGatherRaised = nil
+    frame.NxGatherBaseStrata = nil
+    frame.NxGatherBaseLevel = nil
+    frame.NxGatherOverlayActive = nil
+end
+
+---
+-- Keep one Carbonite gathering-location pin above the separately parented
+-- Blizzard minimap. Blizzard's live terrain and tracking nodes remain the
+-- visible surface; the stored Carbonite herb, ore, timber, and related pin is
+-- placed one frame level above it without raising Carbonite's map artwork.
+--
+-- @param frame         Carbonite's interactive gather-pin frame
+-- @param minimapLevel  Final Blizzard minimap level for this render pass
+-- @return              True when the gather layer was synchronized
+--
+function Nx.Map:MinimapSyncGatherFrame(frame, minimapLevel)
+    if not frame then
+        return false
+    end
+
+    if not self:MinimapIsVisibleSurface() then
+        self:MinimapRestoreGatherFrame(frame)
+        return false
+    end
+
+    if not frame.NxGatherRaised then
+        frame.NxGatherBaseStrata = frame:GetFrameStrata()
+        frame.NxGatherBaseLevel = frame:GetFrameLevel()
+    end
+
+    local mm = self.MMFrm
+    local strata = mm:GetFrameStrata()
+    if strata and frame:GetFrameStrata() ~= strata then
+        frame:SetFrameStrata(strata)
+    end
+
+    local level = type(minimapLevel) == "number"
+        and minimapLevel or mm:GetFrameLevel()
+    frame:SetFrameLevel(level + 1)
+    frame.NxGatherRaised = true
+    return true
+end
+
+---
+-- Register a gathering-location pin drawn during this update. Synchronize it
+-- immediately for combat-safe continuity, then repeat after final docking.
+--
+function Nx.Map:RegisterGatherOverlayFrame(frame)
+    if not frame then
+        return
+    end
+
+    local frames = self.GatherOverlayFrms
+    if not frames then
+        frames = {}
+        self.GatherOverlayFrms = frames
+    end
+
+    frame.NxGatherOverlayActive = true
+    frames[#frames + 1] = frame
+    self:MinimapSyncGatherFrame(frame)
+end
+
+---
+-- Synchronize every gathering-location pin produced during this render pass.
+--
+function Nx.Map:MinimapSyncGatherLayer(minimapLevel)
+    for _, frame in ipairs(self.GatherOverlayFrms or {}) do
+        -- The static pool caps at 1,500 frames and can reuse its last frame
+        -- within a dense render pass. Do not re-raise it if a later non-gather
+        -- pin has already claimed that frame.
+        if frame.NxGatherOverlayActive then
+            self:MinimapSyncGatherFrame(frame, minimapLevel)
+        end
+    end
+end
+
 -------------------------------------------------------------------------------
 -- MINIMAP UPDATE
 -- Main update loop for minimap positioning and state
@@ -2941,6 +3426,13 @@ function Nx.Map:MinimapUpdate()
             Nx.Menu:CheckUpdate(self.MMMenuIFull)
         end
 
+        -- The automatic full-size settings above run after the initial dock
+        -- decision. Apply the new state during this same update so the live
+        -- minimap cannot spend a frame using its old detached screen anchor.
+        if lOpts.NXMMFull then
+            zoomType = 0
+        end
+
         if zoomType == 0 then
             al = 1
         end
@@ -2964,6 +3456,11 @@ function Nx.Map:MinimapUpdate()
             self.MMAlphaDelay = 2
         end
     end
+
+    -- A docked combined minimap should retain Blizzard's native clicks and
+    -- hover controls. Carbonite only owns the mouse while the live minimap is
+    -- acting as an undocked overlay inside the scrolling map.
+    self:MinimapSetInputMode(zoomType == 0 and "docked" or "carbonite")
 
     -- Process alpha delay
     if self.MMAlphaDelay > 0 then
@@ -2989,9 +3486,15 @@ function Nx.Map:MinimapUpdate()
             lvl = lvl + 15
         end
 
-        mm:SetFrameLevel(lvl)
+        lvl = self:MinimapSyncLayer(lvl, above and 15 or 1)
         self:MinimapUpdateDetachedFrms(lvl + 1)
-        self.Level = self.Level + 2
+        if above then
+            self.Level = self.Level + 2
+        else
+            -- Later Carbonite icon layers intentionally remain above the live
+            -- minimap when "Minimap is drawn above icons" is disabled.
+            self.Level = max(self.Level, lvl) + 2
+        end
     else
         -- Calculate docked scale
         local sc = self.MMFScale
@@ -3012,47 +3515,47 @@ function Nx.Map:MinimapUpdateEnd()
         return
     end
 
+    local mm = self.MMFrm
+
     -- Skip during combat
     if InCombatLockdown() then
         return
     end
 
-    local mm = self.MMFrm
-    local mmfull = self.LOpts.NXMMFull
-
-    -- Player zone, not hovered zone: with the cursor over a city on the map,
-    -- the hover-based id made info.City true and collapsed the docked
-    -- minimap to scale .02 (#538).
     local plyrZone = Nx.Map:GetPlayerMapAreaID()
-    local info = self:GetWorldZone(plyrZone)
-    local _, class = UnitClass("player")
+    local instanceMapVisible =
+        (self:IsInstanceMap(plyrZone) or self:IsBattleGroundMap(plyrZone))
+        and self.CurOpts.NXInstanceMaps
 
-    -- Check if we should hide minimap
-    if (self:IsInstanceMap(plyrZone) or self:IsBattleGroundMap(plyrZone)) and self.CurOpts.NXInstanceMaps then
-        -- Keep minimap visible in instances with instance maps enabled
-    else
-        -- Hide conditions: maximized, very small scale, in instance map, in city, or in garrison
-        if self.Win:IsSizeMax() and Nx.db.profile.MiniMap.HideOnMax
-                or self.MMFScale < .02
-                or Nx.Map.NInstMapId ~= nil
-                or info.City and not info.MMOutside
-                -- Ensure C_Garrison and GarrisonType enum is valid before calling IsPlayerInGarrison
-                or (C_Garrison and Enum.GarrisonType and (
-                (Enum.GarrisonType.Type_6_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_6_0_Garrison)) or
-                (Enum.GarrisonType.Type_7_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0_Garrison)) or
-                (Enum.GarrisonType.Type_8_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_8_0_Garrison)) or
-                (Enum.GarrisonType.Type_9_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_9_0_Garrison))
-                )) then
-            mm:SetScale(.02)
-            self:PositionOwnedMinimap(1, 0)
-            mm:SetFrameLevel(1)
+    -- Garrison and instance-art coordinates are not suitable for an undocked
+    -- live-minimap overlay. They do not prevent a docked Blizzard minimap,
+    -- whose pixels need no world-map alignment, from being shown or clicked.
+    local inGarrison = C_Garrison and Enum.GarrisonType and (
+        (Enum.GarrisonType.Type_6_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_6_0_Garrison)) or
+        (Enum.GarrisonType.Type_7_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0_Garrison)) or
+        (Enum.GarrisonType.Type_8_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_8_0_Garrison)) or
+        (Enum.GarrisonType.Type_9_0_Garrison and C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_9_0_Garrison))
+    )
+    local hideUnsupportedOverlay = self.MMZoomType ~= 0
+        and not instanceMapVisible
+        and (Nx.Map.NInstMapId ~= nil or inGarrison)
 
-            -- Also minimize model frames
-            for n, f in ipairs(self.MMModels) do
-                f:SetScale(.001)
-            end
-            return
+    -- City maps deliberately use MMScalesC above, so City is not a hide
+    -- condition. The former unconditional city collapse made several BCC
+    -- capitals (including Silvermoon, Exodar, Ironforge, and Undercity)
+    -- reduce the integrated Blizzard minimap to an unclickable 2% scale.
+    if self.Win:IsSizeMax() and Nx.db.profile.MiniMap.HideOnMax
+            or (self.MMFScale or 0) < .02
+            or hideUnsupportedOverlay then
+        mm:SetScale(.02)
+        self:PositionOwnedMinimap(1, 0)
+        self:MinimapSyncLayer(self.Level, 1)
+
+        -- Also minimize model frames
+        for n, f in ipairs(self.MMModels) do
+            f:SetScale(.001)
         end
+        return
     end
 
     -- Position docked minimap
@@ -3074,18 +3577,34 @@ function Nx.Map:MinimapUpdateEnd()
             y = (self.MapH - sz + 1)
         end
 
-        self:PositionOwnedMinimap(
+        local positioned = self:PositionOwnedMinimap(
             x + Nx.db.profile.MiniMap.DXO,
             -y - Nx.db.profile.MiniMap.DYO
         )
-        mm:Show()
-        if (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
-            mm:SetFrameLevel (self.Level + 50)
-        else
-            mm:SetFrameLevel (self.Level)
+        if not positioned then
+            -- Never expose the UIParent-owned minimap at its stale Blizzard
+            -- screen anchor while the Carbonite window is changing layout.
+            mm:Hide()
+            return
         end
-        self:MinimapUpdateDetachedFrms (self.Level + 1)
-        self.Level = self.Level + 2
+
+        -- Recover from Blizzard's toggle state and any earlier collapse only
+        -- after the frame is confirmed inside the Carbonite map.
+        mm:Show()
+
+        local lvl
+        if (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
+            lvl = self.Level + 50
+        else
+            lvl = self.Level
+        end
+        -- Docked/full-size mode uses Blizzard's live minimap as the visible
+        -- surface. Keep it one strata above Carbonite's top-level map canvas
+        -- so hover opacity cannot cover the player arrow or tracking
+        -- nodes. Overlay mode continues using normal same-strata ordering.
+        lvl = self:MinimapSyncLayer(lvl, 1, true)
+        self:MinimapUpdateDetachedFrms (lvl + 1)
+        self.Level = max(self.Level, lvl) + 2
     end
 
     if self.MMZoomChanged then
@@ -3137,28 +3656,34 @@ function Nx.Map:PositionOwnedMinimap(localX, localY)
 
     local mm = self.MMFrm
     local mapFrame = self.Frm
-    if not mm or not mapFrame or not mapFrame:GetLeft() or not mapFrame:GetTop() then
+    if not mm or not mapFrame then
         return false
     end
 
+    local mapLeft = mapFrame:GetLeft()
+    local mapTop = mapFrame:GetTop()
     local mapScale = mapFrame:GetEffectiveScale()
     local minimapScale = mm:GetEffectiveScale()
-    if type(mapScale) ~= "number" or mapScale <= 0
+    if type(mapLeft) ~= "number" or type(mapTop) ~= "number"
+        or type(mapScale) ~= "number" or mapScale <= 0
         or type(minimapScale) ~= "number" or minimapScale <= 0 then
         return false
     end
 
-    local left = (mapFrame:GetLeft() * mapScale + localX * mapScale) / minimapScale
-    local top = (mapFrame:GetTop() * mapScale + localY * mapScale) / minimapScale
+    -- SetPoint offsets are expressed in the positioned frame's scaled
+    -- coordinate space. Convert the Carbonite map position to screen pixels,
+    -- then divide by the minimap's effective scale. Using UIParent's scale
+    -- here applies DockIScale a second time and moves the minimap toward the
+    -- bottom-left instead of placing it inside the Carbonite viewport.
+    local left = (mapLeft + localX) * mapScale / minimapScale
+    local top = (mapTop + localY) * mapScale / minimapScale
 
     mm:ClearAllPoints()
     mm:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top)
 
     -- UIParent ownership means the minimap no longer inherits NxMap1's layer.
-    -- Mirror it explicitly so drag/resize raising stays visually consistent.
-    if mm.SetFrameStrata and self.Win and self.Win.Frm then
-        mm:SetFrameStrata(self.Win.Frm:GetFrameStrata())
-    end
+    -- MinimapSyncLayer applies both the host strata and the final relative
+    -- frame level after Carbonite finishes arranging the current map pass.
     return true
 end
 
@@ -3199,11 +3724,15 @@ function Nx.Map:MinimapUpdateMask (optName)
 --        Nx.prt ("MMmask %s", name)
     end
 
-    local name = self.MMZoomType == 0 and "Interface\\Minimap\\MinimapArrow" or "Interface\\Addons\\Carbonite\\Gfx\\Map\\32Transparent"
+    local useBlizzardPlayerArrow = self:MinimapShouldUseBlizzardPlayerArrow()
+    local name = useBlizzardPlayerArrow
+        and "Interface\\Minimap\\MinimapArrow"
+        or "Interface\\Addons\\Carbonite\\Gfx\\Map\\32Transparent"
     if self.MMArrowName ~= name then
         self.MMArrowName = name
         -- SetPlayerTexture was removed from Retail 12.1's MinimapFrame API.
-        -- Classic clients still use it for Carbonite's docked player arrow.
+        -- Where available, explicitly restore Blizzard's native player arrow;
+        -- Carbonite's independent marker is managed by the final layer pass.
         if name ~= "" and type(self.MMFrm.SetPlayerTexture) == "function" then
             self.MMFrm:SetPlayerTexture (name)
         end
@@ -4884,7 +5413,15 @@ function Nx.Map.OnUpdate(this, elapsed)
         map.Scrolling = false
     end
 
-    if map.MMZoomType == 0 and Nx.Util_IsMouseOver (map.MMFrm) then
+    -- The live Blizzard minimap is parented to UIParent, so Carbonite's
+    -- rectangle test also reports the map canvas underneath it as hovered.
+    -- Let the visible minimap own that region. Otherwise the background
+    -- target changes to full opacity below and visually fades the combined
+    -- Blizzard minimap and its tracking icons whenever the cursor enters it.
+    local overMinimap = map.MMFrm
+        and map.MMFrm:IsShown()
+        and Nx.Util_IsMouseOver (map.MMFrm)
+    if overMinimap and (map.MMOwn or map.MMZoomType == 0) then
         winx = nil
     end
 
@@ -6082,14 +6619,21 @@ function Nx.Map:Update (elapsed)
     self:UpdateInstanceMap()
     local instTime = debugProfile and (debugprofilestop() - instStart) or 0
 
+    local wmStart = debugProfile and debugprofilestop()
+    self:UpdateWorldMap()
+    local wmTime = debugProfile and (debugprofilestop() - wmStart) or 0
+
+    -- Establish the live Blizzard minimap layer after Carbonite's base map
+    -- art has received its final frame levels. Carbonite raises that art from
+    -- faded to opaque while the cursor is over the map. The previous order
+    -- let that opaque art cover the minimap's tracking icons on hover.
+    -- Interactive Carbonite POIs are rendered afterward, preserving the
+    -- AboveIcons option and their click/tooltip ownership.
     local mmStart = debugProfile and debugprofilestop()
     self:MinimapUpdate()
     local mmTime = debugProfile and (debugprofilestop() - mmStart) or 0
 
 --    self.MMFrm:GetParent():SetAlpha(0)
-    local wmStart = debugProfile and debugprofilestop()
-    self:UpdateWorldMap()
-    local wmTime = debugProfile and (debugprofilestop() - wmStart) or 0
 
     if debugProfile then
         local totalTime = zoneTime + instTime + mmTime + wmTime
@@ -6985,6 +7529,9 @@ function Nx.Map:Update (elapsed)
     self.Level = self.Level + 3
 
     self:MinimapUpdateEnd()        -- Uses 2 levels
+    self:MinimapSyncGatherLayer()
+    self:MinimapSyncBreadcrumbLayer()
+    self:MinimapSyncPlayerArrowLayer()
 
     self.LocTipFrm:SetFrameLevel (self.Level + 2)
 
@@ -8263,17 +8810,12 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
 
         self.TrackDir = dir
 
-        -- A minimized Carbonite map already shows the tracked objective marker.
-        -- Do not stamp the animated quest breadcrumb trail onto any minimap
-        -- view. In combined mode instance clipping can leave an arrow pointing
-        -- upward; in standalone mode a short route becomes one scrolling arrow
-        -- that starts at the player and travels beyond the minimap.
-        --
-        -- On the full map, stop the same trail as soon as Blizzard reports that
-        -- the player is inside the tracked quest's objective blob. A live POI
-        -- can remain at the blob centre, so distance-to-waypoint alone cannot
-        -- detect arrival. IsInsideQuestBlob is the authoritative Retail signal;
-        -- older clients simply skip this guarded branch.
+        -- Draw the route trail on the full map and in both minimap layouts.
+        -- Combined mode raises only these non-interactive breadcrumb frames
+        -- above Blizzard's live minimap surface; the map artwork stays below.
+        -- Stop the trail only when Blizzard reports that the player is inside
+        -- the tracked quest's objective blob and Carbonite's arrival radius is
+        -- also satisfied. Older clients simply skip the guarded blob check.
         local insideQuestObjective = false
         if target ~= nil and questTarget and questTarget.TargetId
             and _G.C_Minimap
@@ -8288,18 +8830,6 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
                 end
             end
         end
-
-        local isMinimapView = self.Win
-            and not self.Win:IsSizeMax()
-
-        -- Keep the earlier protection for the combined Blizzard/Carbonite
-        -- minimap, where breadcrumb icons can duplicate Blizzard navigation
-        -- or become clipped into an upward-pointing arrow. Do not suppress
-        -- breadcrumbs on the standalone Carbonite minimap or full map.
-        local suppressCombinedMinimapQuestArrow = isMinimapView
-            and self.MMOwn
-            and target ~= nil
-            and questTarget ~= nil
 
         -- Entering a large Blizzard quest blob does not necessarily mean the
         -- selected destination has been reached. Remove the final breadcrumb
@@ -8316,8 +8846,7 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
                 segmentDistanceYd <= arrivalRadius * self.BaseScale
         end
 
-        if suppressCombinedMinimapQuestArrow
-            or reachedQuestDestination then
+        if reachedQuestDestination then
             return
         end
 
@@ -8385,6 +8914,7 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
                         f.texture:SetVertexColor (1, 0, 0, 1)
                     end
 
+                    self:RegisterBreadcrumbFrame(f)
                     usedIcon = true
                 end
 
@@ -10166,7 +10696,10 @@ function Nx.Map:ClipMMW (frm, bx, by, w, h)
     self:MinimapSetScale (sc, isc)
 
 --    frm:SetScale (sc)
-    self:PositionOwnedMinimap(vx1, -vy1 - self.TitleH)
+    if not self:PositionOwnedMinimap(vx1, -vy1 - self.TitleH) then
+        frm:Hide()
+        return false
+    end
 
     frm:Show()
 
@@ -10649,6 +11182,8 @@ function Nx.Map:ResetIcons()
     local frms = self.IconNIFrms
     frms.Used = frms.Next - 1        -- Save last frame used
     frms.Next = 1
+    wipe(self.BreadcrumbFrms)
+    wipe(self.GatherOverlayFrms)
 
     local frms = self.IconStaticFrms
     frms.Used = frms.Next - 1        -- Save last frame used
@@ -10931,12 +11466,20 @@ function Nx.Map:GetIconNI (levelAdd)
         t:SetTexelSnappingBias(0)
     end
 
-    -- Explicitly disable mouse on every fetch. These frames are used
-    -- only for the directional path arrows from player -> goto target;
-    -- any click on them would otherwise eat clicks meant for quest
-    -- icons stacked underneath (the user reported clicks not
-    -- registering whenever the path arrows visually overlapped the
-    -- destination icon on TBC).
+    -- A pooled frame may have been promoted above the docked Blizzard
+    -- minimap as a breadcrumb during the previous update. Restore the normal
+    -- Carbonite strata before it is reused for any other decorative icon.
+    if f.NxBreadcrumbRaised then
+        local strata = self.Frm:GetFrameStrata()
+        if strata and f:GetFrameStrata() ~= strata then
+            f:SetFrameStrata(strata)
+        end
+        f.NxBreadcrumbRaised = nil
+    end
+
+    -- Explicitly disable mouse on every fetch. This pool contains decorative
+    -- breadcrumbs, trails, health bars, and map art; none should intercept
+    -- clicks intended for interactive quest or destination icons underneath.
     f:EnableMouse(false)
 
     local add = levelAdd or 0
@@ -11042,6 +11585,11 @@ function Nx.Map:GetIconStatic (levelAdd)
         lbl:SetShadowOffset(1, -1)
         lbl:Hide()
     end
+
+    -- A pooled frame may have represented a gathering location above the
+    -- separately parented Blizzard minimap on the previous update. Restore
+    -- Carbonite's normal layer before the frame is assigned to another pin.
+    self:MinimapRestoreGatherFrame(f)
 
     local add = levelAdd or 0
     f:SetFrameLevel (self.Level + add)

@@ -123,8 +123,7 @@ end
 function Nx.UEvents:AddHerb (name)
 
     local mapId, x, y, level = self:GetPlyrPos()
-    mapId = Nx.Map:GetCurrentMapAreaID()
-    if Nx.db.profile.Guide.GatherEnabled then
+    if Nx.db.profile.Guide.GatherEnabled and mapId and x and y then
         local id = Nx:HerbNameToId (name)
         if id then
             Nx:AddHerbEvent (name, Nx:Time(), mapId, x, y)
@@ -140,8 +139,7 @@ end
 --
 function Nx.UEvents:AddMine (name)
     local mapId, x, y, level = self:GetPlyrPos()
-    mapId = Nx.Map:GetCurrentMapAreaID()
-    if Nx.db.profile.Guide.GatherEnabled then
+    if Nx.db.profile.Guide.GatherEnabled and mapId and x and y then
         local id = Nx:MineNameToId (name)
         if id then
             Nx:AddMineEvent (name, Nx:Time(), mapId, x, y)
@@ -157,8 +155,7 @@ end
 --
 function Nx.UEvents:AddTimber (name)
     local mapId, x, y, level = self:GetPlyrPos()
-    mapId = Nx.Map:GetCurrentMapAreaID()
-    if Nx.db.profile.Guide.GatherEnabled then
+    if Nx.db.profile.Guide.GatherEnabled and mapId and x and y then
         local size = false
         if name == L["Small Timber"] then
             size = 1
@@ -185,8 +182,9 @@ function Nx.UEvents:AddOpen (typ, name)
     local mapId = self:AddInfo (name)
     if Nx.db.profile.Guide.GatherEnabled then
         local mapId, x, y, level = self:GetPlyrPos()
-        mapId = Nx.Map:GetCurrentMapAreaID()
-        Nx:Gather ("Misc", typ, mapId, x, y, level)
+        if mapId and x and y then
+            Nx:Gather ("Misc", typ, mapId, x, y, level, "ShowGatherA")
+        end
         self:UpdateAll()
     end
 end
@@ -196,7 +194,8 @@ end
 -- @return  mapId, x, y, dungeonLevel
 --
 function Nx.UEvents:GetPlyrPos()
-    local mapId = Nx.Map:GetRealMapId()
+    local mapId = Nx.Map.GetPlayerMapAreaID
+        and Nx.Map:GetPlayerMapAreaID() or Nx.Map:GetRealMapId()
     local map = Nx.Map:GetMap (1)
     if not map then
         return mapId, nil, nil, Nx.Map.DungeonLevel

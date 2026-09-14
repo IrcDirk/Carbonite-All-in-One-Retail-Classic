@@ -1488,7 +1488,9 @@ function Nx.Map.Guide:UpdateMapIcons()
     local a = Nx.db.profile.Map.IconGatherA
     map:SetIconTypeAlpha ("!Ga", a, a < 1 and a * .5)
     map:SetIconTypeChop ("!Ga", true)
-    map:SetIconTypeAtScale ("!Ga", Nx.db.profile.Map.IconGatherA)
+    -- Visibility uses the dedicated zoom threshold. IconGatherA controls only
+    -- transparency and must not silently override Gather Icons At Scale.
+    map:SetIconTypeAtScale ("!Ga", Nx.db.profile.Map.IconGatherAtScale)
     map:InitIconType ("!GQ", "WP", "", 16, 16)
     map:SetIconTypeChop ("!GQ", true)
     map:SetIconTypeLevel ("!GQ", 1)
@@ -1563,6 +1565,12 @@ function Nx.Map.Guide:UpdateMapIcons()
                         if level == dungeonLevel then
                             local wx, wy = Map:GetWorldPos (mapId, x, y)
                             icon = map:AddIconPt (iconType, wx, wy, level, nil, texPath, level)
+                            -- Mark every stored gathering location explicitly.
+                            -- Most use !Ga; archaeology artifacts retain !G's
+                            -- legacy appearance but still need v14 layering.
+                            if icon then
+                                icon.NxGatherLocation = true
+                            end
                             map:SetIconTip (icon, tipText)
                         end
                     end
