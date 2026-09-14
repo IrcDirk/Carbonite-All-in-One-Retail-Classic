@@ -835,6 +835,11 @@ function Nx.Map:Create(index)
     -- parented Blizzard minimap during the combined docked view.
     m.BreadcrumbFrms = {}
 
+    -- Active Carbonite gather pins that must remain visible above the live
+    -- Blizzard minimap surface while the minimaps are combined. These are
+    -- rebuilt by Renderer every update and synchronized after final docking.
+    m.GatherOverlayFrms = {}
+
     -- Static icon frames (persistent display)
     m.IconStaticFrms = {}
     m.IconStaticFrms.Next = 1
@@ -3166,6 +3171,111 @@ end
 function Nx.Map:MinimapSyncBreadcrumbLayer(minimapLevel)
     for _, frame in ipairs(self.BreadcrumbFrms or {}) do
         self:MinimapSyncBreadcrumbFrame(frame, minimapLevel)
+    end
+end
+
+---
+-- Restore a pooled gather icon to Carbonite's normal map layer before that
+-- frame is reused for another pin or when the Blizzard minimap is not visible.
+--
+-- @param frame  A frame previously raised by MinimapSyncGatherFrame
+--
+function Nx.Map:MinimapRestoreGatherFrame(frame)
+    if not frame then
+        return
+    end
+
+    if not frame.NxGatherRaised then
+        frame.NxGatherOverlayActive = nil
+        return
+    end
+
+    local strata = frame.NxGatherBaseStrata
+        or (self.Frm and self.Frm:GetFrameStrata())
+    if strata and frame:GetFrameStrata() ~= strata then
+        frame:SetFrameStrata(strata)
+    end
+
+    local level = frame.NxGatherBaseLevel
+    if type(level) == "number" then
+        frame:SetFrameLevel(level)
+    end
+
+    frame.NxGatherRaised = nil
+    frame.NxGatherBaseStrata = nil
+    frame.NxGatherBaseLevel = nil
+    frame.NxGatherOverlayActive = nil
+end
+
+---
+-- Keep one Carbonite gathering-location pin above the separately parented
+-- Blizzard minimap. Blizzard's live terrain and tracking nodes remain the
+-- visible surface; the stored Carbonite herb, ore, timber, and related pin is
+-- placed one frame level above it without raising Carbonite's map artwork.
+--
+-- @param frame         Carbonite's interactive gather-pin frame
+-- @param minimapLevel  Final Blizzard minimap level for this render pass
+-- @return              True when the gather layer was synchronized
+--
+function Nx.Map:MinimapSyncGatherFrame(frame, minimapLevel)
+    if not frame then
+        return false
+    end
+
+    if not self:MinimapIsVisibleSurface() then
+        self:MinimapRestoreGatherFrame(frame)
+        return false
+    end
+
+    if not frame.NxGatherRaised then
+        frame.NxGatherBaseStrata = frame:GetFrameStrata()
+        frame.NxGatherBaseLevel = frame:GetFrameLevel()
+    end
+
+    local mm = self.MMFrm
+    local strata = mm:GetFrameStrata()
+    if strata and frame:GetFrameStrata() ~= strata then
+        frame:SetFrameStrata(strata)
+    end
+
+    local level = type(minimapLevel) == "number"
+        and minimapLevel or mm:GetFrameLevel()
+    frame:SetFrameLevel(level + 1)
+    frame.NxGatherRaised = true
+    return true
+end
+
+---
+-- Register a gathering-location pin drawn during this update. Synchronize it
+-- immediately for combat-safe continuity, then repeat after final docking.
+--
+function Nx.Map:RegisterGatherOverlayFrame(frame)
+    if not frame then
+        return
+    end
+
+    local frames = self.GatherOverlayFrms
+    if not frames then
+        frames = {}
+        self.GatherOverlayFrms = frames
+    end
+
+    frame.NxGatherOverlayActive = true
+    frames[#frames + 1] = frame
+    self:MinimapSyncGatherFrame(frame)
+end
+
+---
+-- Synchronize every gathering-location pin produced during this render pass.
+--
+function Nx.Map:MinimapSyncGatherLayer(minimapLevel)
+    for _, frame in ipairs(self.GatherOverlayFrms or {}) do
+        -- The static pool caps at 1,500 frames and can reuse its last frame
+        -- within a dense render pass. Do not re-raise it if a later non-gather
+        -- pin has already claimed that frame.
+        if frame.NxGatherOverlayActive then
+            self:MinimapSyncGatherFrame(frame, minimapLevel)
+        end
     end
 end
 
@@ -7419,6 +7529,7 @@ function Nx.Map:Update (elapsed)
     self.Level = self.Level + 3
 
     self:MinimapUpdateEnd()        -- Uses 2 levels
+    self:MinimapSyncGatherLayer()
     self:MinimapSyncBreadcrumbLayer()
     self:MinimapSyncPlayerArrowLayer()
 
@@ -11072,6 +11183,7 @@ function Nx.Map:ResetIcons()
     frms.Used = frms.Next - 1        -- Save last frame used
     frms.Next = 1
     wipe(self.BreadcrumbFrms)
+    wipe(self.GatherOverlayFrms)
 
     local frms = self.IconStaticFrms
     frms.Used = frms.Next - 1        -- Save last frame used
@@ -11473,6 +11585,11 @@ function Nx.Map:GetIconStatic (levelAdd)
         lbl:SetShadowOffset(1, -1)
         lbl:Hide()
     end
+
+    -- A pooled frame may have represented a gathering location above the
+    -- separately parented Blizzard minimap on the previous update. Restore
+    -- Carbonite's normal layer before the frame is assigned to another pin.
+    self:MinimapRestoreGatherFrame(f)
 
     local add = levelAdd or 0
     f:SetFrameLevel (self.Level + add)

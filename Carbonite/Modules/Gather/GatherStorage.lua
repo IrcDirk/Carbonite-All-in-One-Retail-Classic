@@ -286,6 +286,58 @@ Nx.GatherInfo = {
     }
 }
 
+-- Midnight resource modifiers share the base node's icon, item, option, and
+-- stored ID. Keep that established storage layout while accepting every live
+-- localized target name supplied by UNIT_SPELLCAST_SENT.
+local GatherNameAliases = {}
+
+local function addGatherNameAliases(baseName, ...)
+    local base = L[baseName] or baseName
+    for index = 1, select("#", ...) do
+        local aliasName = select(index, ...)
+        local localizedAlias = L[aliasName] or aliasName
+        GatherNameAliases[localizedAlias] = base
+    end
+end
+
+addGatherNameAliases(
+    "Argentleaf", "Lush Argentleaf", "Lightfused Argentleaf",
+    "Primal Argentleaf", "Voidbound Argentleaf", "Wild Argentleaf")
+addGatherNameAliases(
+    "Azeroot", "Lush Azeroot", "Lightfused Azeroot", "Primal Azeroot",
+    "Voidbound Azeroot", "Wild Azeroot")
+addGatherNameAliases(
+    "Mana Lily", "Lush Mana Lily", "Lightfused Mana Lily", "Primal Mana Lily",
+    "Voidbound Mana Lily", "Wild Mana Lily")
+addGatherNameAliases(
+    "Sanguithorn", "Lush Sanguithorn", "Lightfused Sanguithorn",
+    "Primal Sanguithorn", "Voidbound Sanguithorn", "Wild Sanguithorn")
+addGatherNameAliases(
+    "Tranquility Bloom", "Lush Tranquility Bloom",
+    "Lightfused Tranquility Bloom", "Primal Tranquility Bloom",
+    "Voidbound Tranquility Bloom", "Wild Tranquility Bloom")
+addGatherNameAliases(
+    "Brilliant Silver", "Rich Brilliant Silver", "Lightfused Brilliant Silver",
+    "Primal Brilliant Silver", "Voidbound Brilliant Silver",
+    "Wild Brilliant Silver")
+addGatherNameAliases(
+    "Refulgent Copper", "Rich Refulgent Copper", "Lightfused Refulgent Copper",
+    "Primal Refulgent Copper", "Voidbound Refulgent Copper",
+    "Wild Refulgent Copper")
+addGatherNameAliases(
+    "Umbral Tin", "Rich Umbral Tin", "Lightfused Umbral Tin",
+    "Primal Umbral Tin", "Voidbound Umbral Tin", "Wild Umbral Tin")
+
+local function getGatherNameAlias(name)
+    return GatherNameAliases[name]
+end
+
+local function normalizeGatherName(name)
+    if type(name) ~= "string" then return name end
+    local ok, aliasName = pcall(getGatherNameAlias, name)
+    return ok and (aliasName or name) or name
+end
+
 Nx.GatherRemap = {
     ["NXHerb"] = {
         [47] = 46,        -- Icethorn
@@ -353,6 +405,7 @@ function Nx:IsGathering(nodename)
         end
     end
     if type(nodename) ~= "string" then return end
+    nodename = normalizeGatherName(nodename)
     local isHerb, isMine = false, false
     pcall(function() isHerb = Nx.GatherCache.H[nodename] end)
     pcall(function() isMine = Nx.GatherCache.M[nodename] end)
@@ -366,6 +419,7 @@ end
 -- @return      Herb ID or nil if not found
 --
 function Nx:HerbNameToId (name)
+    name = normalizeGatherName(name)
     for k, v in ipairs (Nx.GatherInfo["H"]) do
         if v[3] == name then
             return k
@@ -384,6 +438,7 @@ end
 --
 function Nx:MineNameToId (name)
 
+    name = normalizeGatherName(name)
     name = gsub (name, L["Ooze Covered"] .. " ", "")
     if name == L["Thorium Vein"] then                -- Created when Ooze Covered removed
         name = L["Small Thorium Vein"]
@@ -420,7 +475,7 @@ end
 -- @param level  Dungeon level
 --
 function Nx:GatherHerb (id, mapId, x, y, level)
-    self:Gather ("NXHerb", id, mapId, x, y, level)
+    self:Gather ("NXHerb", id, mapId, x, y, level, "ShowGatherH")
 end
 
 ---
@@ -432,7 +487,7 @@ end
 -- @param level  Dungeon level
 --
 function Nx:GatherMine (id, mapId, x, y, level)
-    self:Gather ("NXMine", id, mapId, x, y, level)
+    self:Gather ("NXMine", id, mapId, x, y, level, "ShowGatherM")
 end
 
 ---
@@ -444,7 +499,7 @@ end
 -- @param level  Dungeon level
 --
 function Nx:GatherTimber (id, mapId, x, y, level)
-    self:Gather ("NXTimber", id, mapId, x, y, level)
+    self:Gather ("NXTimber", id, mapId, x, y, level, "ShowGatherL")
 end
 
 ---
@@ -456,8 +511,9 @@ end
 -- @param x         Zone X (0-100)
 -- @param y         Zone Y (0-100)
 -- @param level     Dungeon level
+-- @param showSetting  Optional live-map visibility setting to refresh
 --
-function Nx:Gather (nodeType, id, mapId, x, y, level)
+function Nx:Gather (nodeType, id, mapId, x, y, level, showSetting)
     level = level or 0  -- Default to 0 if not provided
     local remap = self.GatherRemap[nodeType]
     if remap then
@@ -471,7 +527,10 @@ function Nx:Gather (nodeType, id, mapId, x, y, level)
 
     local zoneT = data[mapId]
 
-    if not zoneT or not Nx.Map.MapWorldInfo[mapId] then
+    -- Saved gather data is valid even when Carbonite has not resolved this
+    -- map's render metadata yet. Replacing zoneT in that state discarded the
+    -- previously recorded locations on every subsequent gather.
+    if not zoneT then
 --        Nx.prt ("Gather new %d", mapId)
         zoneT = {}
         data[mapId] = zoneT
@@ -504,6 +563,18 @@ function Nx:Gather (nodeType, id, mapId, x, y, level)
         local nx,xy, level = Nx.Split ("|", nodeT[index])
     end
     nodeT[index] = format ("%f|%f|%d", x, y, level)
+
+    -- Live gathers should appear on the currently displayed Carbonite map
+    -- immediately. Imports omit showSetting and keep their single batch-end
+    -- refresh, avoiding a full icon rebuild for every imported node.
+    local mapSettings = Nx.db.char and Nx.db.char.Map
+    if showSetting and mapSettings and mapSettings[showSetting] then
+        local guide = Nx.Map and Nx.Map.Guide
+        local map = guide and guide.Map
+        if map and map:GetCurrentMapId() == mapId then
+            guide:UpdateMapIcons()
+        end
+    end
 end
 
 ---
@@ -1093,4 +1164,3 @@ function Nx:GatherImportBatch()
         Nx.prt("Import progress: %d%% (%d/%d)", progress, state.currentIndex, state.totalCount)
     end
 end
-

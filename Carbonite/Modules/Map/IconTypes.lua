@@ -108,6 +108,9 @@ local function acquireLegacyPin(name, x, y, level, color, texture, tx1, ty1, tx2
     pin.tex            = texture
     pin.Tex            = texture
     pin.iconType       = name
+    -- Source-specific flags must never leak through the recycled legacy-pin
+    -- pool. NxMapGuide marks stored gather locations after AddIconPt returns.
+    pin.NxGatherLocation = nil
     -- Legacy AddIconPt only kept texcoords when all four were given.
     -- NxMapGuide:1565 passes a stray `level` into the tx1 slot, so a
     -- truthy tx1 alone isn't sufficient to mean "caller wants
