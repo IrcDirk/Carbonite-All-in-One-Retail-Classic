@@ -831,6 +831,10 @@ function Nx.Map:Create(index)
     m.IconNIFrms.Next = 1
     m.IconNIFrms.Used = 0
 
+    -- Active route-arrow frames that may need to render above a separately
+    -- parented Blizzard minimap during the combined docked view.
+    m.BreadcrumbFrms = {}
+
     -- Static icon frames (persistent display)
     m.IconStaticFrms = {}
     m.IconStaticFrms.Next = 1
@@ -2999,6 +3003,64 @@ function Nx.Map:MinimapSyncLayer(preferredLevel, hostOffset, aboveHost)
     return level
 end
 
+---
+-- Put one Carbonite breadcrumb frame above the visible docked Blizzard
+-- minimap without raising Carbonite's map artwork or interactive POIs.
+--
+-- @param frame         Carbonite's non-interactive breadcrumb frame
+-- @param minimapLevel  Final Blizzard minimap level for this render pass
+-- @return              True when the breadcrumb layer was synchronized
+--
+function Nx.Map:MinimapSyncBreadcrumbFrame(frame, minimapLevel)
+    local mm = self.MMFrm
+    if not frame or not mm or not self.MMOwn
+        or self.MMZoomType ~= 0
+        or not self.MMBlizzardPlayerArrowActive
+        or not mm:IsShown() then
+        return false
+    end
+
+    local strata = mm:GetFrameStrata()
+    if strata and frame:GetFrameStrata() ~= strata then
+        frame:SetFrameStrata(strata)
+    end
+
+    local level = type(minimapLevel) == "number"
+        and minimapLevel or mm:GetFrameLevel()
+    frame:SetFrameLevel(level + 2)
+    frame.NxBreadcrumbRaised = true
+    return true
+end
+
+---
+-- Register a breadcrumb drawn during this update and immediately preserve its
+-- layer during combat. MinimapUpdateEnd repeats the synchronization after the
+-- docked minimap receives its final non-combat strata and level.
+--
+function Nx.Map:RegisterBreadcrumbFrame(frame)
+    if not frame then
+        return
+    end
+
+    local frames = self.BreadcrumbFrms
+    if not frames then
+        frames = {}
+        self.BreadcrumbFrms = frames
+    end
+
+    frames[#frames + 1] = frame
+    self:MinimapSyncBreadcrumbFrame(frame)
+end
+
+---
+-- Synchronize every breadcrumb produced during the current render pass.
+--
+function Nx.Map:MinimapSyncBreadcrumbLayer(minimapLevel)
+    for _, frame in ipairs(self.BreadcrumbFrms or {}) do
+        self:MinimapSyncBreadcrumbFrame(frame, minimapLevel)
+    end
+end
+
 -------------------------------------------------------------------------------
 -- MINIMAP UPDATE
 -- Main update loop for minimap positioning and state
@@ -3344,6 +3406,7 @@ function Nx.Map:MinimapUpdateEnd()
         -- nodes. Overlay mode continues using normal same-strata ordering.
         lvl = self:MinimapSyncLayer(lvl, 1, true)
         self:MinimapUpdateDetachedFrms (lvl + 1)
+        self:MinimapSyncBreadcrumbLayer(lvl)
         self.Level = max(self.Level, lvl) + 2
     end
 
@@ -8543,17 +8606,12 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
 
         self.TrackDir = dir
 
-        -- A minimized Carbonite map already shows the tracked objective marker.
-        -- Do not stamp the animated quest breadcrumb trail onto any minimap
-        -- view. In combined mode instance clipping can leave an arrow pointing
-        -- upward; in standalone mode a short route becomes one scrolling arrow
-        -- that starts at the player and travels beyond the minimap.
-        --
-        -- On the full map, stop the same trail as soon as Blizzard reports that
-        -- the player is inside the tracked quest's objective blob. A live POI
-        -- can remain at the blob centre, so distance-to-waypoint alone cannot
-        -- detect arrival. IsInsideQuestBlob is the authoritative Retail signal;
-        -- older clients simply skip this guarded branch.
+        -- Draw the route trail on the full map and in both minimap layouts.
+        -- Combined mode raises only these non-interactive breadcrumb frames
+        -- above Blizzard's live minimap surface; the map artwork stays below.
+        -- Stop the trail only when Blizzard reports that the player is inside
+        -- the tracked quest's objective blob and Carbonite's arrival radius is
+        -- also satisfied. Older clients simply skip the guarded blob check.
         local insideQuestObjective = false
         if target ~= nil and questTarget and questTarget.TargetId
             and _G.C_Minimap
@@ -8568,18 +8626,6 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
                 end
             end
         end
-
-        local isMinimapView = self.Win
-            and not self.Win:IsSizeMax()
-
-        -- Keep the earlier protection for the combined Blizzard/Carbonite
-        -- minimap, where breadcrumb icons can duplicate Blizzard navigation
-        -- or become clipped into an upward-pointing arrow. Do not suppress
-        -- breadcrumbs on the standalone Carbonite minimap or full map.
-        local suppressCombinedMinimapQuestArrow = isMinimapView
-            and self.MMOwn
-            and target ~= nil
-            and questTarget ~= nil
 
         -- Entering a large Blizzard quest blob does not necessarily mean the
         -- selected destination has been reached. Remove the final breadcrumb
@@ -8596,8 +8642,7 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
                 segmentDistanceYd <= arrivalRadius * self.BaseScale
         end
 
-        if suppressCombinedMinimapQuestArrow
-            or reachedQuestDestination then
+        if reachedQuestDestination then
             return
         end
 
@@ -8665,6 +8710,7 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
                         f.texture:SetVertexColor (1, 0, 0, 1)
                     end
 
+                    self:RegisterBreadcrumbFrame(f)
                     usedIcon = true
                 end
 
@@ -10932,6 +10978,7 @@ function Nx.Map:ResetIcons()
     local frms = self.IconNIFrms
     frms.Used = frms.Next - 1        -- Save last frame used
     frms.Next = 1
+    wipe(self.BreadcrumbFrms)
 
     local frms = self.IconStaticFrms
     frms.Used = frms.Next - 1        -- Save last frame used
@@ -11214,12 +11261,20 @@ function Nx.Map:GetIconNI (levelAdd)
         t:SetTexelSnappingBias(0)
     end
 
-    -- Explicitly disable mouse on every fetch. These frames are used
-    -- only for the directional path arrows from player -> goto target;
-    -- any click on them would otherwise eat clicks meant for quest
-    -- icons stacked underneath (the user reported clicks not
-    -- registering whenever the path arrows visually overlapped the
-    -- destination icon on TBC).
+    -- A pooled frame may have been promoted above the docked Blizzard
+    -- minimap as a breadcrumb during the previous update. Restore the normal
+    -- Carbonite strata before it is reused for any other decorative icon.
+    if f.NxBreadcrumbRaised then
+        local strata = self.Frm:GetFrameStrata()
+        if strata and f:GetFrameStrata() ~= strata then
+            f:SetFrameStrata(strata)
+        end
+        f.NxBreadcrumbRaised = nil
+    end
+
+    -- Explicitly disable mouse on every fetch. This pool contains decorative
+    -- breadcrumbs, trails, health bars, and map art; none should intercept
+    -- clicks intended for interactive quest or destination icons underneath.
     f:EnableMouse(false)
 
     local add = levelAdd or 0
