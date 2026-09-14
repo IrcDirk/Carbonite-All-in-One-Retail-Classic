@@ -2454,6 +2454,13 @@ function Nx.Map:MinimapOwnInit()
                 mm:SetFrameLevel(self.MMOriginalLevel)
             end
         end
+        -- Restore Blizzard's native player texture defensively before
+        -- returning the minimap to its normal standalone owner.
+        if type(mm.SetPlayerTexture) == "function" then
+            mm:SetPlayerTexture("Interface\\Minimap\\MinimapArrow")
+        end
+        self.MMArrowName = nil
+        self.MMBlizzardPlayerArrowActive = false
         self:MinimapSetInputMode("blizzard", true)
         self.Win:Show (self.StartupShown)
         Nx.Map:MinimapButtonShowUpdate()
@@ -3004,7 +3011,100 @@ function Nx.Map:MinimapSyncLayer(preferredLevel, hostOffset, aboveHost)
 end
 
 ---
--- Put one Carbonite breadcrumb frame above the visible docked Blizzard
+-- Return whether the owned Blizzard minimap is a meaningful visible surface.
+-- Carbonite deliberately leaves the frame shown at 2% scale when it is
+-- collapsed, which must not claim player-arrow or breadcrumb ownership.
+--
+function Nx.Map:MinimapIsVisibleSurface()
+    local mm = self.MMFrm
+    if not self.MMOwn or not mm or not mm:IsShown() then
+        return false
+    end
+
+    local scale = mm:GetScale()
+    if type(scale) == "number" and scale <= .02 then
+        return false
+    end
+
+    local alpha = mm:GetAlpha()
+    return type(alpha) ~= "number" or alpha > .02
+end
+
+---
+-- Decide whether Blizzard's player marker remains visible while the maps are
+-- combined. Blizzard is the primary marker in every mode and on every client.
+-- Carbonite's marker is layered independently and is retained only when the
+-- combined minimap is not full-size.
+--
+function Nx.Map:MinimapShouldUseBlizzardPlayerArrow()
+    return self.MMOwn and self.MMFrm ~= nil
+end
+
+---
+-- Apply player-marker layering only after the live minimap has received its
+-- final visibility, position, strata, and level for this render pass. Both
+-- markers remain visible in non-full combined mode. Full-size mode retains
+-- Blizzard's primary marker and suppresses Carbonite's duplicate.
+--
+function Nx.Map:MinimapSyncPlayerArrowLayer()
+    local playerFrame = self.PlyrFrm
+    local mm = self.MMFrm
+    if not playerFrame or not mm then
+        self.MMBlizzardPlayerArrowActive = false
+        return
+    end
+
+    local surfaceVisible = self:MinimapIsVisibleSurface()
+    local useBlizzardPlayerArrow
+
+    if InCombatLockdown() then
+        -- Protected minimap changes are deferred in combat. Preserve the last
+        -- successfully applied marker; nil means Blizzard's native default.
+        useBlizzardPlayerArrow = surfaceVisible
+            and self.MMBlizzardPlayerArrowActive ~= false
+    else
+        useBlizzardPlayerArrow = surfaceVisible
+            and self:MinimapShouldUseBlizzardPlayerArrow()
+        self.MMBlizzardPlayerArrowActive =
+            useBlizzardPlayerArrow and true or false
+    end
+
+    local fullSize = self.LOpts and self.LOpts.NXMMFull
+    local hideCarbonitePlayerArrow = surfaceVisible
+        and fullSize and useBlizzardPlayerArrow
+
+    if playerFrame.NxMinimapRaised
+        and (hideCarbonitePlayerArrow or not surfaceVisible) then
+        local strata = playerFrame.NxMinimapBaseStrata
+            or (self.Frm and self.Frm:GetFrameStrata())
+        if strata and playerFrame:GetFrameStrata() ~= strata then
+            playerFrame:SetFrameStrata(strata)
+        end
+        playerFrame.NxMinimapRaised = nil
+        playerFrame.NxMinimapBaseStrata = nil
+    end
+
+    if hideCarbonitePlayerArrow then
+        playerFrame:Hide()
+        return
+    end
+
+    if surfaceVisible and playerFrame:IsShown() then
+        if not playerFrame.NxMinimapRaised then
+            playerFrame.NxMinimapBaseStrata = playerFrame:GetFrameStrata()
+        end
+
+        local strata = mm:GetFrameStrata()
+        if strata and playerFrame:GetFrameStrata() ~= strata then
+            playerFrame:SetFrameStrata(strata)
+        end
+        playerFrame:SetFrameLevel(mm:GetFrameLevel() + 3)
+        playerFrame.NxMinimapRaised = true
+    end
+end
+
+---
+-- Put one Carbonite breadcrumb frame above the visible combined Blizzard
 -- minimap without raising Carbonite's map artwork or interactive POIs.
 --
 -- @param frame         Carbonite's non-interactive breadcrumb frame
@@ -3012,14 +3112,22 @@ end
 -- @return              True when the breadcrumb layer was synchronized
 --
 function Nx.Map:MinimapSyncBreadcrumbFrame(frame, minimapLevel)
-    local mm = self.MMFrm
-    if not frame or not mm or not self.MMOwn
-        or self.MMZoomType ~= 0
-        or not self.MMBlizzardPlayerArrowActive
-        or not mm:IsShown() then
+    if not frame then
         return false
     end
 
+    if not self:MinimapIsVisibleSurface() then
+        if frame.NxBreadcrumbRaised then
+            local strata = self.Frm and self.Frm:GetFrameStrata()
+            if strata and frame:GetFrameStrata() ~= strata then
+                frame:SetFrameStrata(strata)
+            end
+            frame.NxBreadcrumbRaised = nil
+        end
+        return false
+    end
+
+    local mm = self.MMFrm
     local strata = mm:GetFrameStrata()
     if strata and frame:GetFrameStrata() ~= strata then
         frame:SetFrameStrata(strata)
@@ -3034,8 +3142,8 @@ end
 
 ---
 -- Register a breadcrumb drawn during this update and immediately preserve its
--- layer during combat. MinimapUpdateEnd repeats the synchronization after the
--- docked minimap receives its final non-combat strata and level.
+-- layer during combat. The main update repeats synchronization after the
+-- minimap receives its final non-combat visibility, strata, and level.
 --
 function Nx.Map:RegisterBreadcrumbFrame(frame)
     if not frame then
@@ -3294,7 +3402,6 @@ end
 --
 function Nx.Map:MinimapUpdateEnd()
     if not self.MMOwn then
-        self.MMBlizzardPlayerArrowActive = false
         return
     end
 
@@ -3302,17 +3409,8 @@ function Nx.Map:MinimapUpdateEnd()
 
     -- Skip during combat
     if InCombatLockdown() then
-        -- A successfully docked minimap continues drawing Blizzard's native
-        -- player arrow while its protected placement cannot be refreshed.
-        if self.MMBlizzardPlayerArrowActive and mm:IsShown() and self.PlyrFrm then
-            self.PlyrFrm:Hide()
-        end
         return
     end
-
-    -- Re-established below only after docked placement succeeds. Keeping this
-    -- false on collapse or placement failure leaves Carbonite's arrow visible.
-    self.MMBlizzardPlayerArrowActive = false
 
     local plyrZone = Nx.Map:GetPlayerMapAreaID()
     local instanceMapVisible =
@@ -3384,16 +3482,6 @@ function Nx.Map:MinimapUpdateEnd()
         -- after the frame is confirmed inside the Carbonite map.
         mm:Show()
 
-        -- The docked Blizzard minimap supplies its own centered player arrow.
-        -- Carbonite's world-map arrow was shown earlier in this update, so
-        -- suppress that duplicate only after the native minimap is confirmed
-        -- visible. Normal overlay updates restore Carbonite's arrow, and the
-        -- state flag preserves this single-arrow policy during combat.
-        self.MMBlizzardPlayerArrowActive = true
-        if self.PlyrFrm then
-            self.PlyrFrm:Hide()
-        end
-
         local lvl
         if (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
             lvl = self.Level + 50
@@ -3406,7 +3494,6 @@ function Nx.Map:MinimapUpdateEnd()
         -- nodes. Overlay mode continues using normal same-strata ordering.
         lvl = self:MinimapSyncLayer(lvl, 1, true)
         self:MinimapUpdateDetachedFrms (lvl + 1)
-        self:MinimapSyncBreadcrumbLayer(lvl)
         self.Level = max(self.Level, lvl) + 2
     end
 
@@ -3527,11 +3614,15 @@ function Nx.Map:MinimapUpdateMask (optName)
 --        Nx.prt ("MMmask %s", name)
     end
 
-    local name = self.MMZoomType == 0 and "Interface\\Minimap\\MinimapArrow" or "Interface\\Addons\\Carbonite\\Gfx\\Map\\32Transparent"
+    local useBlizzardPlayerArrow = self:MinimapShouldUseBlizzardPlayerArrow()
+    local name = useBlizzardPlayerArrow
+        and "Interface\\Minimap\\MinimapArrow"
+        or "Interface\\Addons\\Carbonite\\Gfx\\Map\\32Transparent"
     if self.MMArrowName ~= name then
         self.MMArrowName = name
         -- SetPlayerTexture was removed from Retail 12.1's MinimapFrame API.
-        -- Classic clients still use it for Carbonite's docked player arrow.
+        -- Where available, explicitly restore Blizzard's native player arrow;
+        -- Carbonite's independent marker is managed by the final layer pass.
         if name ~= "" and type(self.MMFrm.SetPlayerTexture) == "function" then
             self.MMFrm:SetPlayerTexture (name)
         end
@@ -7328,6 +7419,8 @@ function Nx.Map:Update (elapsed)
     self.Level = self.Level + 3
 
     self:MinimapUpdateEnd()        -- Uses 2 levels
+    self:MinimapSyncBreadcrumbLayer()
+    self:MinimapSyncPlayerArrowLayer()
 
     self.LocTipFrm:SetFrameLevel (self.Level + 2)
 
