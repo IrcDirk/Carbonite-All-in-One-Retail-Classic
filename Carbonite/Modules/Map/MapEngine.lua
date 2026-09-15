@@ -12457,7 +12457,7 @@ function Nx.Map:IconOnUpdateTooltip()
 
                     -- Skip TooltipProcess for quest offer icons to avoid adding wrong quest data
                     if Nx.Quest and not f.NxQuestOffer then
-                        Nx.Quest:TooltipProcess()
+                        Nx.Quest:TooltipProcess(nil, Nx.TooltipText)
                     end
                 end
 
@@ -12533,7 +12533,7 @@ function Nx.Map:IconOnUpdateTooltip()
 
             -- Skip TooltipProcess for quest offer icons to avoid adding wrong quest data
             if Nx.Quest and not f.NxQuestOffer then
-                Nx.Quest:TooltipProcess()
+                Nx.Quest:TooltipProcess(nil, Nx.TooltipText)
             end
         end
     end
