@@ -500,6 +500,77 @@ local function GetBlizzardQuestWatchState (questId, questIndex)
     return nil
 end
 
+-- Burning Crusade Classic exposes only five native quest-watch slots while
+-- Carbonite can retain a much larger independent watch list. Keep the native
+-- limit and Blizzard's temporary auto-watch bookkeeping isolated here so the
+-- BCC compatibility path never changes Retail or later Classic clients.
+local BCC_NATIVE_WATCH_LIMIT_FALLBACK = 5
+local BCC_NATIVE_WATCH_SWAP_SECONDS = .25
+
+local function IsBCCLimitedQuestWatchClient()
+    return Nx.isTBCClassic == true
+end
+
+local function GetNativeQuestWatchCount()
+    if not GetNumQuestWatches then
+        return nil
+    end
+
+    local count = GetNumQuestWatches()
+    if type (count) == "number" and count >= 0 then
+        return count
+    end
+
+    return nil
+end
+
+local function GetBCCNativeQuestWatchLimit()
+    local limit = _G.MAX_WATCHABLE_QUESTS
+    if type (limit) ~= "number" or limit <= 0 then
+        limit = BCC_NATIVE_WATCH_LIMIT_FALLBACK
+    end
+    return limit
+end
+
+local function GetBCCNativeWatchTimer (questId)
+    local watchList = _G.QUEST_WATCH_LIST
+    if type (watchList) ~= "table" then
+        return nil, false
+    end
+
+    for _, watch in ipairs (watchList) do
+        if type (watch) == "table" and watch.id == questId then
+            return watch.timer, true
+        end
+    end
+
+    return nil, false
+end
+
+local function IsBCCNativeAutomaticWatch (questId)
+    local timer, found = GetBCCNativeWatchTimer (questId)
+    local noExpire = _G.QUEST_WATCH_NO_EXPIRE
+    return found and type (timer) == "number" and type (noExpire) == "number"
+        and timer ~= noExpire
+end
+
+local function IsBCCNativeWatchExpiry (questId)
+    local timer, found = GetBCCNativeWatchTimer (questId)
+    local noExpire = _G.QUEST_WATCH_NO_EXPIRE
+    return found and type (timer) == "number" and type (noExpire) == "number"
+        and timer ~= noExpire and timer < 0
+end
+
+function Nx.Quest.Watch:NoteCarboniteWatchState (questId)
+    if not IsBCCLimitedQuestWatchClient()
+            or type (questId) ~= "number" or questId <= 0 then
+        return
+    end
+
+    self.BCCNativeAutomaticOnly = self.BCCNativeAutomaticOnly or {}
+    self.BCCNativeAutomaticOnly[questId] = nil
+end
+
 local function GetLiveQuestIndex (questId, fallbackIndex)
     local questIndex
 
@@ -552,6 +623,16 @@ function Nx.Quest.Watch:SyncBlizzardWatch (questId, questIndex, watched)
     local currentlyWatched = GetBlizzardQuestWatchState (questId, questIndex)
     if currentlyWatched == watched then
         return false
+    end
+
+    -- Never push a sixth Carbonite watch into BCC's five-slot native tracker.
+    -- The quest remains watched in Carbonite and can be mirrored later after
+    -- a native slot becomes available; no Blizzard entry is evicted.
+    if IsBCCLimitedQuestWatchClient() and watched then
+        local nativeCount = GetNativeQuestWatchCount()
+        if nativeCount and nativeCount >= GetBCCNativeQuestWatchLimit() then
+            return false
+        end
     end
 
     local Quest = Nx.Quest
@@ -607,6 +688,23 @@ function Nx.Quest.Watch:OnBlizzardWatchChanged (questId, added)
     if not profile or not profile.QuestWatch or not profile.QuestWatch.Sync
             or not Quest.CurCharacter or not Quest.CurCharacter.Q then
         return
+    end
+
+    local limitedBCCWatch = IsBCCLimitedQuestWatchClient()
+    if limitedBCCWatch then
+        self.BCCNativeAutomaticOnly = self.BCCNativeAutomaticOnly or {}
+        self.BCCPendingWatchRemovals = self.BCCPendingWatchRemovals or {}
+    end
+
+    local function RefreshWatchWindows()
+        self.ForceListRefresh = true
+        self:Update()
+
+        local questList = Quest.List
+        if questList and questList.Win and questList.Win.IsShown
+                and questList.Win:IsShown() then
+            questList:Update()
+        end
     end
 
     local function ApplyWatchState (changedQuestId, questIndex, watched)
@@ -666,6 +764,89 @@ function Nx.Quest.Watch:OnBlizzardWatchChanged (questId, added)
         return changed
     end
 
+    local function NoteBCCNativeAddition (changedQuestId)
+        if not limitedBCCWatch then
+            return
+        end
+
+        local now = GetTime()
+        local nativeCount = GetNativeQuestWatchCount()
+        local nativeLimit = GetBCCNativeQuestWatchLimit()
+
+        -- BCC's AutoQuestWatch_Insert removes an expiring entry and adds its
+        -- replacement synchronously. Correlate that near-capacity swap so the
+        -- displaced Carbonite watch is not mistaken for a user unwatch. Accept
+        -- both four and five here because the event may fire immediately before
+        -- or after the native count is committed, depending on the BCC build.
+        for removedQuestId, removal in pairs (self.BCCPendingWatchRemovals) do
+            if removedQuestId == changedQuestId then
+                removal.Readded = true
+            elseif nativeCount and nativeCount >= nativeLimit
+                    and removal.NativeCount
+                    and removal.NativeCount >= nativeLimit - 1
+                    and now - removal.Time <= BCC_NATIVE_WATCH_SWAP_SECONDS then
+                removal.CapacitySwap = true
+            end
+        end
+
+        local currentStatus = Quest:GetQuest (changedQuestId)
+        if IsBCCNativeAutomaticWatch (changedQuestId)
+                and currentStatus ~= "W" then
+            self.BCCNativeAutomaticOnly[changedQuestId] = true
+        else
+            self.BCCNativeAutomaticOnly[changedQuestId] = nil
+        end
+    end
+
+    local function QueueBCCNativeRemoval (changedQuestId, questIndex)
+        self.BCCWatchRemovalGeneration = (self.BCCWatchRemovalGeneration or 0) + 1
+        local generation = self.BCCWatchRemovalGeneration
+        local pending = {
+            Generation = generation,
+            NativeCount = GetNativeQuestWatchCount(),
+            NativeExpiry = IsBCCNativeWatchExpiry (changedQuestId),
+            QuestIndex = questIndex,
+            Time = GetTime(),
+        }
+        self.BCCPendingWatchRemovals[changedQuestId] = pending
+
+        local function FinalizeRemoval()
+            local current = self.BCCPendingWatchRemovals[changedQuestId]
+            if not current or current.Generation ~= generation then
+                return
+            end
+            self.BCCPendingWatchRemovals[changedQuestId] = nil
+
+            local automaticOnly = self.BCCNativeAutomaticOnly[changedQuestId] == true
+            local preserveCarboniteWatch = current.Readded
+                or ((current.NativeExpiry or current.CapacitySwap)
+                    and not automaticOnly)
+
+            if preserveCarboniteWatch then
+                return
+            end
+
+            self.BCCNativeAutomaticOnly[changedQuestId] = nil
+            ApplyWatchState (
+                changedQuestId,
+                GetLiveQuestIndex (changedQuestId, current.QuestIndex),
+                false
+            )
+
+            -- Preserve the existing authoritative-event behavior even when
+            -- saved state already matched, so stale rendered rows are removed.
+            RefreshWatchWindows()
+        end
+
+        -- QUEST_WATCH_LIST_CHANGED is synchronous on BCC. Deferring one frame
+        -- lets a capacity-driven remove/add pair be classified as one swap.
+        if C_Timer and C_Timer.After then
+            C_Timer.After (0, FinalizeRemoval)
+        else
+            FinalizeRemoval()
+        end
+    end
+
     local changed = false
     local refresh = false
     if type (questId) == "number" and questId > 0 then
@@ -683,6 +864,15 @@ function Nx.Quest.Watch:OnBlizzardWatchChanged (questId, added)
         if added == nil then
             added = GetBlizzardQuestWatchState (questId, questIndex)
         end
+
+        if limitedBCCWatch and added == false then
+            QueueBCCNativeRemoval (questId, questIndex)
+            return
+        end
+
+        if added then
+            NoteBCCNativeAddition (questId)
+        end
         changed = ApplyWatchState (questId, questIndex, added)
 
         -- The event itself is authoritative. Rebuild even when Carbonite's
@@ -697,7 +887,15 @@ function Nx.Quest.Watch:OnBlizzardWatchChanged (questId, added)
                 seenQuestIds[currentQuestId] = true
                 local questIndex = GetLiveQuestIndex (currentQuestId, cur.QI)
                 local watched = GetBlizzardQuestWatchState (currentQuestId, questIndex)
-                changed = ApplyWatchState (currentQuestId, questIndex, watched) or changed
+                -- A nil-ID BCC event is only a native snapshot. Its five-slot
+                -- absence cannot prove that a Carbonite watch was removed, so
+                -- import positive membership without applying negative state.
+                if not limitedBCCWatch or watched then
+                    if watched then
+                        NoteBCCNativeAddition (currentQuestId)
+                    end
+                    changed = ApplyWatchState (currentQuestId, questIndex, watched) or changed
+                end
             end
         end
     end
@@ -706,14 +904,7 @@ function Nx.Quest.Watch:OnBlizzardWatchChanged (questId, added)
         return
     end
 
-    self.ForceListRefresh = true
-    self:Update()
-
-    local questList = Quest.List
-    if questList and questList.Win and questList.Win.IsShown
-            and questList.Win:IsShown() then
-        questList:Update()
-    end
+    RefreshWatchWindows()
 end
 
 function Nx.Quest.Watch:RemoveWatch (qId, qI)
@@ -2653,6 +2844,13 @@ function Nx.Quest.Watch:Add (curi,addnew)
     end
 
     local qId = cur.QId > 0 and cur.QId or cur.Title
+    if type (qId) == "number" and qId > 0 then
+        -- Watch:Add can run after Blizzard's synchronous auto-watch event has
+        -- already set status "W". Claim Carbonite ownership even when no saved
+        -- membership transition remains for SetQuest to report.
+        self:NoteCarboniteWatchState (qId)
+    end
+
     local qStatus = Nx.Quest:GetQuest (qId)
     if qStatus ~= "W" then
         Nx.Quest:SetQuest (qId, "W")

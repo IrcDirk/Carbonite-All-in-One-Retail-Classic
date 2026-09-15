@@ -1591,6 +1591,14 @@ function Nx.Quest:SetQuest(qId, qStatus, qTime)
     if watch then
         watch.ForceListRefresh = true
 
+        -- Record Carbonite membership intent separately from Blizzard-origin
+        -- watch events. BCC's temporary native watches can then expire without
+        -- removing a quest the player or Carbonite explicitly kept watched.
+        if not watch.ApplyingBlizzardWatch and watch.NoteCarboniteWatchState
+                and type(qId) == "number" and qId > 0 then
+            watch:NoteCarboniteWatchState(qId)
+        end
+
         if watch.Opened and watch.SyncBlizzardWatch
                 and not watch.ApplyingBlizzardWatch
                 and type(qId) == "number" and qId > 0 then

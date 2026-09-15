@@ -2264,33 +2264,37 @@ end
 function Nx.Map.Guide:GetSecondaryTrainer (profName)
     return " " .. L["Trainer"]
 end
+local canaccessvalue = _G.canaccessvalue
+local issecretvalue = _G.issecretvalue
+local function CanUseGuideTooltipText(value)
+    if canaccessvalue and not canaccessvalue(value) then
+        return false
+    end
+    return not (issecretvalue and issecretvalue(value))
+end
+
 function Nx.Map.Guide:SavePlayerNPCTarget()
     -- local visible = GameTooltip:IsVisible()
     -- GameTooltip:SetOwner(MerchantFrame)
     -- GameTooltip:SetUnit("NPC")
-    local tag = GameTooltipTextLeft2 and GameTooltipTextLeft2:GetText() or ""
-    local lvl = GameTooltipTextLeft3 and GameTooltipTextLeft3:GetText() or ""
-    local faction = GameTooltipTextLeft4 and GameTooltipTextLeft4:GetText() or ""
-    local nameLine = GameTooltipTextLeft1 and GameTooltipTextLeft1:GetText() or ""
+    local tag = GameTooltipTextLeft2 and GameTooltipTextLeft2:GetText()
+    local lvl = GameTooltipTextLeft3 and GameTooltipTextLeft3:GetText()
+    local faction = GameTooltipTextLeft4 and GameTooltipTextLeft4:GetText()
+    local nameLine = GameTooltipTextLeft1 and GameTooltipTextLeft1:GetText()
 
-    -- On retail, GameTooltip lines can be "secret" strings the runtime refuses
-    -- to convert (strfind / format throw "attempt to perform string conversion
-    -- on a secret string value"). That aborts the whole event-callback chain,
-    -- which is how Krowi_AchievementFilter's MERCHANT_SHOW dispatch ends up
-    -- pointing at us. Run the risky bits under pcall and skip the capture if
-    -- any line is secret — a missed NPC capture is far less harmful than
-    -- breaking other addons' event handlers downstream.
-    local ok, str = pcall(function()
-        if strfind(tag, "^" .. L["Level"] .. " ") or strfind(tag, "^|c%x%x%x%x%x%x%x%x" .. L["Level"] .. " ") then
-            tag = ""
-            faction = lvl
-        end
-        return format("%s~%s~%s", tag, nameLine, faction)
-    end)
-    if not ok then
+    -- Ignore inaccessible tooltip rows before string conversion. The NPC
+    -- capture is optional; it must not break the merchant event chain.
+    if not CanUseGuideTooltipText(tag) or not CanUseGuideTooltipText(lvl)
+        or not CanUseGuideTooltipText(faction) or not CanUseGuideTooltipText(nameLine) then
         return
     end
-    self.PlayerNPCTarget = str
+    tag, faction, nameLine = tag or "", faction or "", nameLine or ""
+    if strfind(tag, "^" .. L["Level"] .. " ")
+        or strfind(tag, "^|c%x%x%x%x%x%x%x%x" .. L["Level"] .. " ") then
+        tag = ""
+        faction = lvl or ""
+    end
+    self.PlayerNPCTarget = format("%s~%s~%s", tag, nameLine, faction)
     -- if not visible then
     --     GameTooltip:Hide()
     -- end

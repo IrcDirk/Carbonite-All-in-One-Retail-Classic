@@ -41,6 +41,15 @@
 -- Localization library reference
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
+local canaccessvalue = _G.canaccessvalue
+local issecretvalue = _G.issecretvalue
+local function CanUseComValue(value)
+    if canaccessvalue and not canaccessvalue(value) then
+        return false
+    end
+    return not (issecretvalue and issecretvalue(value))
+end
+
 -- Localised classic clients (RU, KR, ...) deliver player/realm strings
 -- with a trailing " (RU)" / " (EN)" / ... locale tag attached: e.g.
 -- arg2 from CHAT_MSG_CHANNEL = "Name-Realm (RU)" and
@@ -1449,17 +1458,6 @@ function Nx.Com:OnUpdate(elapsed)
     local Nx = Nx
     local bgmap = Nx.InBG
 
-    local targetName = UnitName("target")
-    -- Retail hands back a "secret" target name inside instances; the bare
-    -- `if targetName then` test (and the name broadcast) below would otherwise
-    -- throw "boolean test on a secret value". This OnUpdate runs on Carbonite's
-    -- own frame, so it's self-taint (it aborts the comm tick + spams the taint
-    -- log, it does NOT leak onto secure frames), but we still can't encode a
-    -- secret name into the pals message, so probe once and drop it to nil.
-    if not pcall(function () return targetName and #targetName end) then
-        targetName = nil
-    end
-
     local tm = GetTime()
     local tdiff = tm - self.SendTime
 
@@ -1468,19 +1466,21 @@ function Nx.Com:OnUpdate(elapsed)
         return
     end
 
-    -- Handle AFK state changes
-    local isAFK = false
-    pcall(function() if UnitIsAFK("player") then isAFK = true end end)
-    if isAFK then
-        if not self.AFK then
-            self:UpdateChannels()
+    -- An inaccessible AFK result is unknown; retain the last confirmed
+    -- state so we do not send a false status transition or reset its delay.
+    local isAFK = UnitIsAFK("player")
+    if CanUseComValue(isAFK) then
+        if isAFK then
+            if not self.AFK then
+                self:UpdateChannels()
+            end
+            self.AFK = true
+        else
+            if self.AFK then
+                self:UpdateChannels()
+            end
+            self.AFK = nil
         end
-        self.AFK = true
-    else
-        if self.AFK then
-            self:UpdateChannels()
-        end
-        self.AFK = nil
     end
 
     -- Calculate position send delay based on state
@@ -1560,7 +1560,12 @@ function Nx.Com:OnUpdate(elapsed)
 
         local plyrLvl = min(UnitLevel("player"), 90)
 
-        -- Build target info string
+        -- Only query a target when sending position data. Never inspect or
+        -- encode a secret name in the communication packet.
+        local targetName = UnitName("target")
+        if not CanUseComValue(targetName) then
+            targetName = nil
+        end
         local tStr = ""
         if targetName then
             flgs = flgs + 2
@@ -1600,11 +1605,8 @@ function Nx.Com:OnUpdate(elapsed)
             end
             hper = min(floor(hper + .5), 20)
 
-            local nameLen = 0
-            local nameOk = pcall(function() nameLen = #targetName end)
-            if nameOk then
-                tStr = format("%c%c%c%c%c%s", tType + 35, tLvl + 35, tCls + 35, hper + 35, nameLen + 35, targetName)
-            end
+            local nameLen = #targetName
+            tStr = format("%c%c%c%c%c%s", tType + 35, tLvl + 35, tCls + 35, hper + 35, nameLen + 35, targetName)
         end
 
         -- Build quest string
