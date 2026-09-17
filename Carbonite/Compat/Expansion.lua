@@ -27,8 +27,18 @@ local PROJECT_IDS = {
 
 local function project(id) return _G.WOW_PROJECT_ID == id end
 
+-- WoW Forever ("camelot") runs the mainline code base but versions itself
+-- 1.60.x, so it is identified by TOC version, not by WOW_PROJECT_ID. See the
+-- matching comment in Carbonite.lua.
+local function camelotToc()
+    local _, _, _, toc = GetBuildInfo()
+    toc = toc or 0
+    return toc >= 16000 and toc < 19999
+end
+
 Expansion.projectId    = _G.WOW_PROJECT_ID
-Expansion.isMainline   = project(PROJECT_IDS.MAINLINE)
+Expansion.isCamelot    = camelotToc()
+Expansion.isMainline   = project(PROJECT_IDS.MAINLINE) and not Expansion.isCamelot
 Expansion.isClassic    = not Expansion.isMainline
 Expansion.isClassicEra = project(PROJECT_IDS.CLASSIC)
 Expansion.isTBC        = project(PROJECT_IDS.BURNING_CRUSADE_CLASSIC)
@@ -106,6 +116,7 @@ end
 -- with a runtime-selected path. The data files themselves stay where
 -- they are.
 function Expansion:GetMapDataFolder()
+    if self.isCamelot    then return "camelot" end
     if self.isClassicEra then return "classic" end
     if self.isTBC        then return "tbc" end
     if self.isWrath      then return "wrath" end
@@ -121,6 +132,7 @@ function Expansion:GetMaxGatherSkill()
     if self.isWrath    then return 450 end
     if self.isTBC      then return 375 end
     if self.isClassicEra then return 300 end
+    if self.isCamelot    then return 300 end    -- TODO verify in-game: Forever keeps the 300 vanilla cap?
     return 9999
 end
 
@@ -130,6 +142,7 @@ end
 Carbonite.isRetail       = Expansion.isMainline
 Carbonite.isClassic      = Expansion.isClassic
 Carbonite.isClassicEra   = Expansion.isClassicEra
+Carbonite.isCamelot      = Expansion.isCamelot
 Carbonite.isTBCClassic   = Expansion.isTBC
 Carbonite.isWotlkClassic = Expansion.isWrath
 Carbonite.isCataClassic  = Expansion.isCata

@@ -563,7 +563,10 @@ function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
             if not done then
                 local first = type(obj) == "table" and obj[1] or obj
                 local _, zone = self:UnpackObjectiveNew(first)
-                if zone then
+                -- Zone 0 is PatchQuestFromBlizzard's "text only, no coords"
+                -- sentinel (see Tooltips.lua); picking it as the super-track
+                -- objective leaves the arrow with nothing to point at.
+                if zone and zone ~= 0 then
                     pickedObj = n
                     break
                 end
@@ -714,7 +717,10 @@ function Nx.Quest:OnSuperTrackChanged()
             if not done then
                 local first = type(obj) == "table" and obj[1] or obj
                 local _, zone = self:UnpackObjectiveNew(first)
-                if zone then
+                -- Zone 0 is PatchQuestFromBlizzard's "text only, no coords"
+                -- sentinel (see Tooltips.lua); picking it as the super-track
+                -- objective leaves the arrow with nothing to point at.
+                if zone and zone ~= 0 then
                     pickedObj = n
                     break
                 end

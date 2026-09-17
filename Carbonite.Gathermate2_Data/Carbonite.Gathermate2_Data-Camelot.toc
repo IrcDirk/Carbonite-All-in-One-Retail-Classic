@@ -1,0 +1,15 @@
+## Interface: 16001
+## X-Camelot-Toc: dash
+## Notes: Wowhead Data dump for GatherMate2
+## Title: Carbonite GatherMate2Data - Camelot (Forever) @project-version@
+## Version: @project-version@
+## Author: kagaro, Xinhuan, Rythal (repackaging for Carb), IrcDirk (new versions for Carb)
+## X-Category: Map
+## X-Email: sal.scotto@gmail.com
+## Dependencies: Carbonite
+## LoadOnDemand: 1
+
+Data\camelot\MiningData.lua
+Data\camelot\HerbalismData.lua
+Data\camelot\FishData.lua
+Data\camelot\TreasureData.lua

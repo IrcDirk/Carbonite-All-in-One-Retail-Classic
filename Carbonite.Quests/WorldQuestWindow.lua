@@ -1003,8 +1003,13 @@ local function UpdateListColumnWidths(list, listWidth)
 end
 
 function Nx.Quest.WQList:IsAvailable()
-    if _G.WOW_PROJECT_ID and _G.WOW_PROJECT_MAINLINE
-        and _G.WOW_PROJECT_ID ~= _G.WOW_PROJECT_MAINLINE then
+    -- Forever ("camelot") reports WOW_PROJECT_ID == WOW_PROJECT_MAINLINE even
+    -- though it is a vanilla world with no world quests at all, so the raw
+    -- project comparison that used to live here classified it as retail and
+    -- offered the world-quest window. Nx.isRetail is the guarded flag - it
+    -- excludes camelot by TOC version - and is what every other retail-only
+    -- feature gates on.
+    if not (_G.Nx and _G.Nx.isRetail) then
         return false
     end
 

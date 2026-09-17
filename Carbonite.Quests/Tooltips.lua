@@ -188,10 +188,26 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
                     if mapId and x and y then
                         obj = format ("%s|%s|32|%f|%f|6|6", objText, mapId, x, y)
                     else
-                        -- Best-effort: text-only entry with sentinel zone 0.
-                        -- Watch list shows it; map can't pin it until we get
-                        -- coords on a later QUEST_POI_UPDATE.
-                        obj = format ("%s|0|32|0|0|6|6", objText)
+                        -- No live coords (the usual case on TBC/Era, where
+                        -- GetQuestObjectives answers but there is no POI
+                        -- data). Borrow the quest's own End/Start position
+                        -- rather than writing the zone-0 sentinel: that
+                        -- sentinel shadowed perfectly good bundled coords,
+                        -- because a synthesized Objectives table makes
+                        -- TrackOnMap stop falling back to Start/End, and
+                        -- zone 0 then resolves to no map at all.
+                        local _, seMap, _, seX, seY =
+                            self:UnpackSE (quest["End"] or quest["Start"])
+                        if seMap and seMap ~= 0 and seX and seY then
+                            obj = format ("%s|%s|32|%f|%f|6|6",
+                                objText, seMap, seX, seY)
+                        else
+                            -- Last resort: text-only entry with sentinel
+                            -- zone 0. The watch list shows it; the map
+                            -- cannot pin it until coords arrive on a later
+                            -- QUEST_POI_UPDATE.
+                            obj = format ("%s|0|32|0|0|6|6", objText)
+                        end
                     end
                     quest["Objectives"][i] = { obj }
                     touched = true

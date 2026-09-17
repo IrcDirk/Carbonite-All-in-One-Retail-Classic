@@ -299,7 +299,17 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
             -- goto block would silently skip. Use the quest's End
             -- (or Start) coord so the click still resolves to a
             -- usable target.
-            if not zone then
+            --
+            -- Zone 0 counts as "no zone" here: PatchQuestFromBlizzard
+            -- writes "<text>|0|32|0|0|6|6" when the live API knows an
+            -- objective's text but no coordinates (every TBC quest,
+            -- where GetQuestObjectives answers but there is no POI
+            -- data). Lua treats 0 as true, so the guard used to accept
+            -- that sentinel, skip this fallback and hand mId = 0 to the
+            -- goto block, which nils it and reports "This objective
+            -- zone is not in the database" - on quests whose Start/End
+            -- coords were right there (reported for quest 11020).
+            if not zone or zone == 0 then
                 local qse = useEnd and quest["End"] or quest["Start"]
                 if qse then
                     questObj = qse

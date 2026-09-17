@@ -1653,19 +1653,50 @@ function Nx.Info.Combat:_FirstTimeOpen()
 
 	f:SetScript ("OnEvent", self.OnEvent)
 
-	if not Nx.isRetail then
-		f:RegisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
-		f:RegisterEvent ("CHAT_MSG_COMBAT_XP_GAIN")
-		f:RegisterEvent ("CHAT_MSG_COMBAT_HONOR_GAIN")
-		f:RegisterEvent ("CHAT_MSG_LOOT")
-		f:RegisterEvent ("PLAYER_REGEN_DISABLED")
-		f:RegisterEvent ("PLAYER_REGEN_ENABLED")
+	-- Forever ("camelot") enforces the retail restrictions while reporting a
+	-- pre-BFA TOC, so the old `not Nx.isRetail` gate let it through and the
+	-- very first RegisterEvent threw ADDON_ACTION_FORBIDDEN - which aborted
+	-- _FirstTimeOpen and left the window without its OnUpdate, textures and
+	-- graph. Register through pcall so a refusal only costs that one event,
+	-- and skip the combat log outright where the engine says it is restricted
+	-- (both COMBAT_LOG_EVENT and COMBAT_LOG_EVENT_UNFILTERED are documented
+	-- HasRestrictions = true on the 12.0 engine).
+	local refused = 0
 
-		for k, v in pairs (self.EventTable) do
-			f:RegisterEvent (k)
+	local function tryEvent (event)
+		if not pcall (f.RegisterEvent, f, event) then
+			refused = refused + 1
+			return false
+		end
+		return true
+	end
+
+	if not Nx.isRetail then
+		local combatLogUsable = true
+		if C_CombatLog and C_CombatLog.IsCombatLogRestricted then
+			local ok, restricted = pcall (C_CombatLog.IsCombatLogRestricted)
+			combatLogUsable = ok and restricted ~= true
 		end
 
-		f:RegisterEvent ("PLAYER_DEAD")
+		if combatLogUsable then
+			tryEvent ("COMBAT_LOG_EVENT_UNFILTERED")
+		end
+
+		tryEvent ("CHAT_MSG_COMBAT_XP_GAIN")
+		tryEvent ("CHAT_MSG_COMBAT_HONOR_GAIN")
+		tryEvent ("CHAT_MSG_LOOT")
+		tryEvent ("PLAYER_REGEN_DISABLED")
+		tryEvent ("PLAYER_REGEN_ENABLED")
+
+		for k, v in pairs (self.EventTable) do
+			tryEvent (k)
+		end
+
+		tryEvent ("PLAYER_DEAD")
+	end
+
+	if refused > 0 and Nx.prtD then
+		Nx.prtD ("Info combat: %s event registration(s) refused by the client", refused)
 	end
 
 	f:SetScript ("OnUpdate", self.OnUpdate)

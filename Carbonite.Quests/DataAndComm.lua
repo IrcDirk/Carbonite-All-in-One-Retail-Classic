@@ -278,7 +278,8 @@ function Nx.Quest:GetSEPos (str)
 
     local name, zone, typ, x, y = self:UnpackSE (str)
 
-    if zone then
+    -- Zone 0 is the "no coords" sentinel, not a map; see Tooltips.lua.
+    if zone and zone ~= 0 then
         return name, tonumber(zone), self:GetPosLoc (str)        -- x, y
     end
 end
@@ -291,7 +292,8 @@ function Nx.Quest:GetObjectivePos (str)
 
     local name, zone, typ, x, y = self:UnpackObjective (str)
 
-    if zone then
+    -- Zone 0 is the "no coords" sentinel, not a map; see Tooltips.lua.
+    if zone and zone ~= 0 then
         return name, tonumber(zone), self:GetPosLoc (str)        -- x, y
     end
 end
@@ -429,7 +431,7 @@ function Nx.Quest:CalcDistances (n1, n2)
                         end
                     end
 
-                    if zone then
+                    if zone and zone ~= 0 then
 
                         local mId = zone
                         if mId and mId ~= 9000 then

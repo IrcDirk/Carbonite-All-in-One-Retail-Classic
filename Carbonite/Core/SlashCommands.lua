@@ -40,9 +40,21 @@ function SlashCommands:Init()
     -- The legacy Carbonite.lua already owns `/Carb` via SlashCmdList["Carbonite"].
     -- We register `/cb` (and `/carb2`) for the new subcommand router so the two
     -- systems coexist while migration is in progress.
-    _G.SLASH_CARBONITE2_1 = "/cb"
-    _G.SLASH_CARBONITE2_2 = "/carb2"
-    _G.SlashCmdList["CARBONITE2"] = dispatch
+    --
+    -- The alias globals must be named "SLASH_" .. key .. index with *no*
+    -- separator: Blizzard's importer walks _G["SLASH_"..k..i] for the key it
+    -- finds in SlashCmdList (ChatFrameUtil.ImportListToHash). The old names
+    -- here were SLASH_CARBONITE2_1/_2 for key "CARBONITE2", which the importer
+    -- looked for as SLASH_CARBONITE21 - so nothing was ever imported into
+    -- hash_SlashCmdList and /cb silently did nothing on every flavor. The key
+    -- deliberately ends in a letter so "<key><index>" cannot be misread.
+    _G.SLASH_CARBONITECMD1 = "/cb"
+    _G.SLASH_CARBONITECMD2 = "/carb2"
+    _G.SlashCmdList["CARBONITECMD"] = dispatch
+
+    -- Stale globals from the broken naming, in case a session already set them.
+    _G.SLASH_CARBONITE2_1 = nil
+    _G.SLASH_CARBONITE2_2 = nil
 end
 
 -- Built-in subcommand: toggle debug log level.

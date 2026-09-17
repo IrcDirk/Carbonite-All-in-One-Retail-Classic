@@ -94,13 +94,27 @@ BINDING_NAME_NxMAPSKIPTARGET    = L["NxMAPSKIPTARGET"]
 -- Flags for different WoW client versions
 -------------------------------------------------------------------------------
 
-Nx.isClassic      = (WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE)
+-- WoW Forever (internal game type "camelot") ships on the mainline/Midnight
+-- code base but numbers itself 1.60.x, so its TOC version (16001) lands
+-- between Classic Era (11508) and TBC (20506). Detect it from the TOC
+-- version instead of WOW_PROJECT_ID: the project constant it reports is not
+-- knowable ahead of time, and if it ever reports MAINLINE the retail code
+-- paths would fight the vanilla-era map/quest data we actually ship for it.
+Nx.isCamelot      = (select(4, GetBuildInfo()) or 0) >= 16000
+                    and (select(4, GetBuildInfo()) or 0) < 19999
+
+Nx.isClassic      = (WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE) or Nx.isCamelot
 Nx.isClassicEra   = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
 Nx.isTBCClassic   = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
 Nx.isWotlkClassic = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC)
 Nx.isCataClassic  = (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC)
 Nx.isMoPClassic   = (WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC)
-Nx.isRetail       = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
+Nx.isRetail       = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) and not Nx.isCamelot
+
+-- Flavors whose world is vanilla Azeroth: Classic Era and Forever. Use this
+-- for content-shaped checks (map data, quest data, skill caps); keep
+-- Nx.isClassicEra strict for genuinely Era-only client quirks.
+Nx.isVanillaWorld = Nx.isClassicEra or Nx.isCamelot
 
 Nx.OldMapIDs  = select(4, GetBuildInfo()) < 49999
 
@@ -116,7 +130,13 @@ Nx.DFMaps     = select(4, GetBuildInfo()) > 99999
 Nx.TWWMaps    = select(4, GetBuildInfo()) > 109999
 Nx.MidMaps    = select(4, GetBuildInfo()) > 119999
 
-Nx.BlobsAvailable = select(4, GetBuildInfo()) > 39999
+-- Quest objective blobs are a widget capability, not an expansion feature:
+-- Forever ("camelot") reports TOC 16001 and still ships QuestPOIFrame, so the
+-- old ">39999" threshold switched them off on a client that supports them.
+-- Probe the widget type itself; Nx.Map:UpdateWorld demotes this again if the
+-- frame cannot be built or lacks DrawBlob/SetMapID.
+local blobProbeOK = pcall(CreateFrame, "QuestPOIFrame")
+Nx.BlobsAvailable = blobProbeOK or select(4, GetBuildInfo()) > 39999
 Nx.OldRidingSkill = select(4, GetBuildInfo()) < 40000
 Nx.MaxPlayerLevel = GetMaxLevelForExpansionLevel(LE_EXPANSION_LEVEL_CURRENT)
 

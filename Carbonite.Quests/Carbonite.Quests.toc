@@ -35,6 +35,7 @@ Tooltips.lua
 CheckMapAndCom.lua
 Detection.lua
 BlizzardLog.lua
+ObjectiveCapture.lua
 SuperTrack.lua
 WatchHider.lua
 QuestWatchSurface.lua

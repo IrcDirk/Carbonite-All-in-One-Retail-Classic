@@ -1,0 +1,32 @@
+## Interface: 16001
+## X-Camelot-Toc: dash
+## Title: Carbonite Maps - Camelot (Forever) @project-version@
+## Version: @project-version@
+## Author: No one
+## Notes: Released Under GPL
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: CarbData
+## SavedVariablesPerCharacter: CarbMigr
+## X-Curse-Project-ID: 342147
+## X-WoWI-ID: 25328
+
+Libs\libs.xml
+Locales\Locales.xml
+Taintless.xml
+
+Core\Core.xml
+Compat\Compat.xml
+Util\Util.xml
+UI\UI.xml
+
+Carbonite.lua
+
+Data\camelot\data.xml
+Data\camelot\NxMapData.lua
+
+Data\Shared\NxMapGuide.lua
+
+Modules\Modules.xml
+
+Carbonite.xml

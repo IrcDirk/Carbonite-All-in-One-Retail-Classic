@@ -1540,17 +1540,26 @@ function Nx.Com:OnUpdate(elapsed)
         x = max(min(self.PlyrX, .999), 0) * 0xfff
         y = max(min(self.PlyrY, 9.999), 0) * 0xfff
 
-        -- Calculate health percentage
+        -- Calculate health percentage.
+        --
+        -- Health is a contextually secret value on the 12.0 engine, and a
+        -- secret number can neither be compared nor used in arithmetic from
+        -- tainted code. The old guard asked Nx.MidMaps, but that is a TOC
+        -- threshold: Forever reports 16001, so the flag reads false while the
+        -- restriction very much applies ("attempt to perform arithmetic on
+        -- local 'h' (a secret number value)"). Ask about the value itself -
+        -- CanUseComValue already wraps canaccessvalue / issecretvalue - and
+        -- fall back to the same neutral 1 the Midnight branch used.
         local h = UnitHealth("player")
-        if UnitIsDeadOrGhost("player") then
-            h = 0
-        end
         local hm = UnitHealthMax("player")
-        if hm < 1 then
-            hm = 1
-        end
-	local hper = 1
-	if not Nx.MidMaps then
+        local hper = 1
+        if CanUseComValue(h) and CanUseComValue(hm) then
+            if UnitIsDeadOrGhost("player") then
+                h = 0
+            end
+            if hm < 1 then
+                hm = 1
+            end
             hper = h / hm * 20
         end
         if hper > 0 then
@@ -1589,16 +1598,17 @@ function Nx.Com:OnUpdate(elapsed)
             local _, tCls = UnitClass("target")
             tCls = self.ClassNames[tCls] or 0
 
-            -- Calculate target health
+            -- Calculate target health. Same secrecy rule as the player's
+            -- own health above: ask the value, not the TOC version.
             local h = UnitHealth("target")
-            if UnitIsDeadOrGhost("target") then
-                h = 0
-            end
             local hm = UnitHealthMax("target")
             local hper = 1
-	    if not Nx.MidMaps then
+            if CanUseComValue(h) and CanUseComValue(hm) then
+                if UnitIsDeadOrGhost("target") then
+                    h = 0
+                end
+                hm = max(hm, 1)
                 hper = h / hm * 20
-		hm = max(UnitHealthMax("target"), 1)
             end
             if hper > 0 then
                 hper = max(hper, 1)

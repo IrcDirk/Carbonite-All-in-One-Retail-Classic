@@ -367,3 +367,8 @@ L["Stormheim Invasion"] = true
 L["Azsuna Invasion"] = true
 L["Val'sharah Invasion"] = true
 L["Highmountain Invasion"] = true
+-- WoW Forever ("camelot") zones
+L["Zephras Isle"] = true
+L["Darkspear Islands"] = true
+L["Riverglades"] = true
+L["Shen'dralas"] = true

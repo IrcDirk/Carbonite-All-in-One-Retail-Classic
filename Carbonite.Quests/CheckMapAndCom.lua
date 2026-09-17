@@ -196,19 +196,41 @@ function Nx.Quest:Abandon (qIndex, qId)
                 text,
                 YES,
                 function(self)
-                    if not Nx.isClassic then
-                        C_QuestLog.SetSelectedQuest (C_QuestLog.GetQuestIDForLogIndex(qIndex))				
+                    -- Pick the path by what the client actually has, not by
+                    -- flavor: on the 12.0 engine the bare SetAbandonQuest /
+                    -- AbandonQuest globals are gone and only C_QuestLog has
+                    -- them, while Nx.isClassic is true on Forever - which sent
+                    -- abandon straight into a nil call.
+                    if C_QuestLog and C_QuestLog.SetAbandonQuest
+                        and C_QuestLog.AbandonQuest then
+
+                        local abandonId = qId
+                        if (not abandonId or abandonId <= 0)
+                            and C_QuestLog.GetQuestIDForLogIndex then
+                            abandonId = C_QuestLog.GetQuestIDForLogIndex(qIndex)
+                        end
+                        if abandonId and abandonId > 0 and C_QuestLog.SetSelectedQuest then
+                            C_QuestLog.SetSelectedQuest (abandonId)
+                        elseif _G.SelectQuestLogEntry then
+                            SelectQuestLogEntry (qIndex)
+                        end
+
                         C_QuestLog.SetAbandonQuest()
                         -- native blizz
-                        C_QuestLog.AbandonQuest();
-                        if ( QuestLogPopupDetailFrame:IsShown() ) then
-                            HideUIPanel(QuestLogPopupDetailFrame);
+                        C_QuestLog.AbandonQuest()
+
+                        local popup = _G.QuestLogPopupDetailFrame
+                        if popup and popup:IsShown() then
+                            HideUIPanel (popup)
                         end
-                    else
+
+                    elseif _G.SelectQuestLogEntry and _G.SetAbandonQuest
+                        and _G.AbandonQuest then
+
                          SelectQuestLogEntry (qIndex)
                          SetAbandonQuest()
                          -- native blizz
-                         AbandonQuest();
+                         AbandonQuest()
                     end
 
                     PlaySound(SOUNDKIT.IG_QUEST_LOG_ABANDON_QUEST);

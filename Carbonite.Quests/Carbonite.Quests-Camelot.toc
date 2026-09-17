@@ -1,0 +1,42 @@
+## Interface: 16001
+## X-Camelot-Toc: dash
+## Title: Carbonite Quest - Camelot (Forever) @project-version@
+## Version: @project-version@
+## Author: No One
+## Notes: Released Under GPL
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: NXQuest
+## RequiredDeps: Carbonite
+
+Locales\locales.xml
+Data\Shared\QuestCats.lua
+Data\Shared\QuestFreq.lua
+Data\Shared\QuestReward.lua
+Data\Shared\QuestPrev.lua
+Data\camelot\QuestNPC.lua
+Data\camelot\QuestStartEnd.xml
+Data\camelot\QuestData.xml
+NxQuest.lua
+# Extracted modules (load after NxQuest.lua so Nx.Quest namespace + Nx.Quest.defaults are set up).
+Options.lua
+Init.lua
+TrackerHider.lua
+MapIcons.lua
+QuestProvider.lua
+WorldQuestWindow.lua
+WatchWindow.lua
+QuestWindow.lua
+DataAndComm.lua
+Tracking.lua
+Tooltips.lua
+CheckMapAndCom.lua
+Detection.lua
+BlizzardLog.lua
+ObjectiveCapture.lua
+SuperTrack.lua
+WatchHider.lua
+QuestWatchSurface.lua
+QuestRouting.lua
+Plugin.lua
+Data\Shared\QuestDataLoader.lua

@@ -8782,7 +8782,26 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
     -- creates the redundant grey/white arrow reported as NxIcon1 in /fstack.
     -- Keep the route target and its direction/distance state intact, but do
     -- not allocate the legacy destination overlay for quest navigation.
-    if target and not questTarget then
+    --
+    -- That substitution only holds where the client actually draws the blob.
+    -- Nx.BlobsAvailable is now a widget probe (Forever has QuestPOIFrame even
+    -- at TOC 16001), but Classic Era and TBC have no blob support at all, so
+    -- there nothing replaced the legacy marker and a quest target drew no
+    -- destination: clicking a quest zoomed the map and left no arrow,
+    -- while "Route > Current Goto Targets" appeared to fix it because it
+    -- re-creates the same point as a "Route" target and takes this branch.
+    -- Mirror the blob's own preconditions (see Nx.Quest:TrackOnMap) so retail
+    -- keeps the single Blizzard marker and every other flavor keeps ours.
+    local blobDrawsDestination = false
+    if questTarget and Nx.BlobsAvailable then
+        local mapOpts = Nx.db and Nx.db.char and Nx.db.char.Map
+        if mapOpts and mapOpts.ShowQuestBlobs and Nx.Quests then
+            local blobQuestId = floor ((tonumber (questTarget.TargetId) or 0) / 100)
+            blobDrawsDestination = blobQuestId > 0 and Nx.Quests[-blobQuestId] ~= nil
+        end
+    end
+
+    if target and (not questTarget or not blobDrawsDestination) then
         local f = self:GetIcon (1)
         f.NxTarget = target;
 

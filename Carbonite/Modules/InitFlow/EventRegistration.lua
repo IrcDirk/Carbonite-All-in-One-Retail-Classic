@@ -6,6 +6,42 @@
 -- Nx:InitEvents() during PLAYER_LOGIN.
 
 ---
+-- Guarded event registration.
+--
+-- The 12.0 engine ships one UI codebase for every flavor, so an event's
+-- existence no longer follows from the expansion. Forever ("camelot") reports
+-- TOC 16001, which reads as pre-BFA in every Nx.*Maps flag, yet it runs the
+-- modern auction house and therefore has no AUCTION_ITEM_LIST_UPDATE at all.
+-- AceEvent turns an unknown event into a hard error, and because all of
+-- InitEvents is one call that error aborted the run - every registration after
+-- the failing line silently never happened. Validate first (C_EventUtils knows
+-- the client's real event list), fall back to pcall on clients without it, and
+-- never let one missing event take the rest down.
+local skippedEvents = {}
+
+local function safeRegister(target, event, handler)
+    if not target or not target.RegisterEvent then
+        return false
+    end
+
+    local valid = true
+    if C_EventUtils and C_EventUtils.IsEventValid then
+        local ok, result = pcall(C_EventUtils.IsEventValid, event)
+        valid = not ok or result ~= false
+    end
+
+    if valid then
+        local ok = pcall(target.RegisterEvent, target, event, handler)
+        if ok then
+            return true
+        end
+    end
+
+    skippedEvents[#skippedEvents + 1] = event
+    return false
+end
+
+---
 -- Register all addon events
 -- Uses Ace3 event system for various game events
 --
@@ -24,66 +60,69 @@ function Nx:InitEvents()
     ---------------------------------------------------------------------------
     -- Core Events (all versions)
     ---------------------------------------------------------------------------
-    Nx:RegisterEvent("PLAYER_LOGIN", "OnPlayer_login")
-    Nx:RegisterEvent("UPDATE_MOUSEOVER_UNIT", "OnUpdate_mouseover_unit")
-    Nx:RegisterEvent("PLAYER_REGEN_DISABLED", "OnPlayer_regen_disabled")
-    Nx:RegisterEvent("PLAYER_REGEN_ENABLED", "OnPlayer_regen_enabled")
-    Nx:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnZone_changed_new_area")
-    Nx:RegisterEvent("PLAYER_LEVEL_UP", "OnPlayer_level_up")
-    Nx:RegisterEvent("GROUP_ROSTER_UPDATE", "OnParty_members_changed")
-    Nx:RegisterEvent("UPDATE_BATTLEFIELD_SCORE", "OnUpdate_battlefield_score")
+    safeRegister(Nx, "PLAYER_LOGIN", "OnPlayer_login")
+    safeRegister(Nx, "UPDATE_MOUSEOVER_UNIT", "OnUpdate_mouseover_unit")
+    safeRegister(Nx, "PLAYER_REGEN_DISABLED", "OnPlayer_regen_disabled")
+    safeRegister(Nx, "PLAYER_REGEN_ENABLED", "OnPlayer_regen_enabled")
+    safeRegister(Nx, "ZONE_CHANGED_NEW_AREA", "OnZone_changed_new_area")
+    safeRegister(Nx, "PLAYER_LEVEL_UP", "OnPlayer_level_up")
+    safeRegister(Nx, "GROUP_ROSTER_UPDATE", "OnParty_members_changed")
+    safeRegister(Nx, "UPDATE_BATTLEFIELD_SCORE", "OnUpdate_battlefield_score")
 
     ---------------------------------------------------------------------------
     -- Communication Events
     ---------------------------------------------------------------------------
-    Com:RegisterEvent("PLAYER_LEAVING_WORLD", "OnEvent")
-    Com:RegisterEvent("FRIENDLIST_UPDATE", "OnFriendguild_update")
-    Com:RegisterEvent("GUILD_ROSTER_UPDATE", "OnFriendguild_update")
-    Com:RegisterEvent("BN_FRIEND_LIST_SIZE_CHANGED", "OnFriendguild_update")
-    Com:RegisterEvent("GROUP_ROSTER_UPDATE", "OnFriendguild_update")
-    Com:RegisterEvent("CHAT_MSG_CHANNEL_JOIN", "OnChatEvent")
-    Com:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE", "OnChatEvent")
-    Com:RegisterEvent("CHAT_MSG_CHANNEL_LEAVE", "OnChatEvent")
-    Com:RegisterEvent("CHAT_MSG_CHANNEL", "OnChat_msg_channel")
+    safeRegister(Com, "PLAYER_LEAVING_WORLD", "OnEvent")
+    safeRegister(Com, "FRIENDLIST_UPDATE", "OnFriendguild_update")
+    safeRegister(Com, "GUILD_ROSTER_UPDATE", "OnFriendguild_update")
+    safeRegister(Com, "BN_FRIEND_LIST_SIZE_CHANGED", "OnFriendguild_update")
+    safeRegister(Com, "GROUP_ROSTER_UPDATE", "OnFriendguild_update")
+    safeRegister(Com, "CHAT_MSG_CHANNEL_JOIN", "OnChatEvent")
+    safeRegister(Com, "CHAT_MSG_CHANNEL_NOTICE", "OnChatEvent")
+    safeRegister(Com, "CHAT_MSG_CHANNEL_LEAVE", "OnChatEvent")
+    safeRegister(Com, "CHAT_MSG_CHANNEL", "OnChat_msg_channel")
     -- Retail 12.1 can deliver CHAT_MSG_SYSTEM text as a secret string. The
     -- unavailable-whisper parser is optional social-cache cleanup and must not
     -- receive that protected payload on Mainline. Classic clients retain the
     -- legacy accessible system-message path.
     if not Nx.isRetail then
-        Com:RegisterEvent("CHAT_MSG_SYSTEM", "OnChat_msg_channel")
+        safeRegister(Com, "CHAT_MSG_SYSTEM", "OnChat_msg_channel")
     end
 
     -- SOCIAL_QUEUE_UPDATE: Available from Legion+ (group finder social queues)
     if Nx.LegionMaps then
-        Com:RegisterEvent("SOCIAL_QUEUE_UPDATE", "OnFriendguild_update")
+        safeRegister(Com, "SOCIAL_QUEUE_UPDATE", "OnFriendguild_update")
     end
 
     ---------------------------------------------------------------------------
     -- Auction House Events (API changed in BFA 8.3)
     ---------------------------------------------------------------------------
-    AuctionAssist:RegisterEvent("AUCTION_HOUSE_SHOW", "OnAuction_house_show")
-    AuctionAssist:RegisterEvent("AUCTION_HOUSE_CLOSED", "OnAuction_house_closed")
+    safeRegister(AuctionAssist, "AUCTION_HOUSE_SHOW", "OnAuction_house_show")
+    safeRegister(AuctionAssist, "AUCTION_HOUSE_CLOSED", "OnAuction_house_closed")
 
-    -- REPLICATE_ITEM_LIST_UPDATE: New auction house API (BFA 8.3+)
-    -- AUCTION_ITEM_LIST_UPDATE: Classic auction house API (pre-BFA)
-    if Nx.BFAMaps then
-        AuctionAssist:RegisterEvent("REPLICATE_ITEM_LIST_UPDATE", "OnAuction_item_list_update")
-    else
-        AuctionAssist:RegisterEvent("AUCTION_ITEM_LIST_UPDATE", "OnAuction_item_list_update")
+    -- REPLICATE_ITEM_LIST_UPDATE is the post-8.3 auction API, and
+    -- AUCTION_ITEM_LIST_UPDATE the pre-BFA one. Which exists is a property of
+    -- the client's auction house, not of its TOC version: Forever numbers
+    -- itself 1.60.1 but ships the modern AH. Ask for the modern event first
+    -- and only fall back when this client really has the legacy one.
+    if not safeRegister(AuctionAssist, "REPLICATE_ITEM_LIST_UPDATE",
+            "OnAuction_item_list_update") then
+        safeRegister(AuctionAssist, "AUCTION_ITEM_LIST_UPDATE",
+            "OnAuction_item_list_update")
     end
 
     ---------------------------------------------------------------------------
     -- Guide Events (all versions)
     ---------------------------------------------------------------------------
-    Guide:RegisterEvent("MERCHANT_SHOW", "OnMerchant_show")
-    Guide:RegisterEvent("MERCHANT_UPDATE", "OnMerchant_update")
-    Guide:RegisterEvent("GOSSIP_SHOW", "OnGossip_show")
-    Guide:RegisterEvent("TRAINER_SHOW", "OnTrainer_show")
+    safeRegister(Guide, "MERCHANT_SHOW", "OnMerchant_show")
+    safeRegister(Guide, "MERCHANT_UPDATE", "OnMerchant_update")
+    safeRegister(Guide, "GOSSIP_SHOW", "OnGossip_show")
+    safeRegister(Guide, "TRAINER_SHOW", "OnTrainer_show")
 
     ---------------------------------------------------------------------------
     -- Travel Events (all versions)
     ---------------------------------------------------------------------------
-    Travel:RegisterEvent("TAXIMAP_OPENED", "OnTaximap_opened")
+    safeRegister(Travel, "TAXIMAP_OPENED", "OnTaximap_opened")
 
     ---------------------------------------------------------------------------
     -- Spellcast (player) via a dedicated unit-filtered frame, NOT AceEvent.
@@ -114,8 +153,17 @@ function Nx:InitEvents()
         -- arg1 ~= "player", so behaviour is unchanged.
         local ok = pcall(f.RegisterUnitEvent, f, "UNIT_SPELLCAST_SENT", "player")
         if not ok then
-            f:RegisterEvent("UNIT_SPELLCAST_SENT")
+            pcall(f.RegisterEvent, f, "UNIT_SPELLCAST_SENT")
         end
         Nx.SpellcastSentFrame = f
+    end
+
+    -- One line per session, so a flavor that lacks an event is visible in the
+    -- log instead of being guessed at from missing behaviour.
+    if #skippedEvents > 0 and Carbonite and Carbonite.Core
+            and Carbonite.Core.Logger then
+        Carbonite.Core.Logger:Get("InitFlow"):info(
+            "events not available on this client, skipped: %s",
+            table.concat(skippedEvents, ", "))
     end
 end
