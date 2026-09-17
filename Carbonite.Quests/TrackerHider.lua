@@ -505,11 +505,11 @@ function Nx.Quest:Init()
     -- Hook tooltip
 
     if TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall and Enum and Enum.TooltipDataType then
-        -- Retail/DF+ secure tooltip API: avoids tainting GameTooltip layout state,
-        -- which otherwise breaks Blizzard code like AddSuppressedPinsToTooltip.
+        -- Retail tooltip callbacks inspect the shared tooltip, while
+        -- Carbonite quest additions render in its own isolated tooltip.
         local function questPostCall(tooltip)
             if tooltip == GameTooltip then
-                Nx.Quest:TooltipProcess()
+                Nx.Quest:TooltipProcess(nil, tooltip)
             end
         end
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, questPostCall)

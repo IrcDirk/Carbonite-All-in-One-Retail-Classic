@@ -25,6 +25,59 @@ local UnitGUID   = UnitGUID
 -- Promoted from NxQuest.lua.
 local GetCachedDifficultyColorStr = Nx.Quest.GetCachedDifficultyColorStr
 
+-- Check accessibility before string operations or retaining tooltip data.
+-- Classic clients do not expose these APIs and keep their existing behavior.
+local canaccessvalue = _G.canaccessvalue
+local issecretvalue = _G.issecretvalue
+local function CanUseValue(value)
+    if canaccessvalue and not canaccessvalue(value) then
+        return false
+    end
+    return not (issecretvalue and issecretvalue(value))
+end
+
+-- Return a tooltip's left text region without assuming Blizzard's global
+-- GameTooltip naming. Carbonite's private tooltip uses NxTooltipTextLeftN.
+local function GetTooltipLeftLine (tooltip, index)
+    if not tooltip then
+        return nil
+    end
+
+    local line = tooltip["TextLeft" .. index]
+    if not line and tooltip.GetName then
+        local name = tooltip:GetName()
+        if name then
+            line = _G[name .. "TextLeft" .. index]
+        end
+    end
+    return line
+end
+
+local function NormalizeTooltipLineCount (count)
+    if count < 0 then
+        return 0
+    end
+    return floor (count)
+end
+
+-- Tooltip counts can be secret on current Retail clients. Copy only an
+-- accessible count into addon execution before using it as a loop bound.
+local function GetSafeTooltipLineCount (tooltip)
+    if not tooltip or not tooltip.NumLines then
+        return 0
+    end
+
+    local ok, count = pcall (tooltip.NumLines, tooltip)
+    if not ok then
+        return 0
+    end
+
+    if not CanUseValue(count) or type(count) ~= "number" then
+        return 0
+    end
+    return NormalizeTooltipLineCount(count)
+end
+
 -------------------------------------------------------------------------------
 -- Synthesize Carbonite quest data from Blizzard's live API.
 --
@@ -302,6 +355,42 @@ end
 -- Quest tooltips
 -------------------------------------------------------------------------------
 
+local function GetQuestTooltipFrame()
+    local tip = _G.NxQuestTooltipText
+    if tip then
+        return tip
+    end
+
+    tip = CreateFrame("GameTooltip", "NxQuestTooltipText", UIParent, "GameTooltipTemplate")
+    tip:SetFrameStrata("TOOLTIP")
+    tip:SetScript("OnUpdate", function(self)
+        local source = self.NxSourceTooltip
+        if not source then
+            self:Hide()
+            return
+        end
+        local shown = source:IsShown()
+        if not CanUseValue(shown) or not shown then
+            self:Hide()
+            self.NxSourceTooltip = nil
+        end
+    end)
+    _G.NxQuestTooltipText = tip
+    return tip
+end
+
+local function PrepareQuestTooltipFrame(sourceTip)
+    local tip = GetQuestTooltipFrame()
+    tip:Hide()
+    tip:ClearLines()
+    -- Never own or anchor an addon frame to Blizzard's GameTooltip on Retail.
+    -- The reverse anchor dependency taints its UIWidget layout state and makes
+    -- GetNumPoints/GetSize return secret values during AreaPOI cleanup.
+    tip:SetOwner(UIParent, "ANCHOR_CURSOR")
+    tip.NxSourceTooltip = sourceTip
+    return tip
+end
+
 function    Nx.Quest.TooltipHook()
 
     --Nx.prt ("TooltipHook")
@@ -309,87 +398,101 @@ function    Nx.Quest.TooltipHook()
     Nx.Quest:TooltipProcess()
 end
 
-function    Nx.Quest:TooltipProcess (stripColor)
+function    Nx.Quest:TooltipProcess (stripColor, sourceTooltip)
 
-    -- Don't augment tooltips during combat. Adding quest info mutates
-    -- GameTooltip from our insecure code (AddLine/Show/SetText below),
-    -- which taints the frame. In combat the hovered tooltip can carry
-    -- "secret" values -- e.g. an action button's money line -- and the
-    -- tainted frame then makes Blizzard's secret-money arithmetic throw
-    -- ("arithmetic on a secret number value, tainted by Carbonite.Quests"
-    -- in MoneyFrame_Update, fired on every action-button hover). The
-    -- quest-info append is purely cosmetic, so skip it while locked down.
     if InCombatLockdown() then
         return
     end
 
-    local tipStr = GameTooltipTextLeft1:GetText()
-    if not tipStr then        -- Happens in WotLK on empty slots
-        --return
+    local sourceTip = sourceTooltip or GameTooltip
+    if not sourceTip then
+        return
     end
 
---    Nx.prt ("TooltipProcess %s", tipStr)
+    -- Blizzard's shared tooltip is read-only to Carbonite on Retail. Carbonite
+    -- UI can pass Nx.TooltipText explicitly and safely render into that frame.
+    local usePrivateTip = Nx.isRetail and sourceTip == GameTooltip
+    local firstLine = GetTooltipLeftLine (sourceTip, 1)
+    local tipStr = firstLine and firstLine:GetText()
+    if not CanUseValue(tipStr) then
+        Nx.TooltipLastDiffText = nil
+        Nx.TooltipLastDiffNumLines = 0
+        if usePrivateTip and _G.NxQuestTooltipText then
+            _G.NxQuestTooltipText:Hide()
+            _G.NxQuestTooltipText.NxSourceTooltip = nil
+        end
+        return
+    end
 
     Nx.TooltipLastDiffText = tipStr
+    local outputTip = usePrivateTip and PrepareQuestTooltipFrame(sourceTip) or sourceTip
+    local show = Nx.Quest:TooltipProcess2(stripColor, tipStr, outputTip, sourceTip)
 
---    local sTime = GetTime()
-
-    local show = Nx.Quest:TooltipProcess2 (stripColor, tipStr)
-
-    if show then
-        GameTooltip:Show()    -- Adjusts size
+    if usePrivateTip then
+        if show then
+            outputTip:Show()
+        else
+            outputTip:Hide()
+        end
+    elseif show then
+        sourceTip:Show()
     end
 
-    --Nx.prt ("TTProcess %f secs", GetTime() - sTime)
-
-    Nx.TooltipLastDiffNumLines = GameTooltip:NumLines()    -- Stop multiple checks
+    Nx.TooltipLastDiffNumLines = GetSafeTooltipLineCount (sourceTip)
 end
 
-function Nx.Quest:TooltipProcess2 (stripColor, tipStr)
+function Nx.Quest:TooltipProcess2 (stripColor, tipStr, outputTip, sourceTip)
 
     if not Nx.QInit then
         return
     end
-    if not Nx.qdb.profile.Quest.AddTooltip then
+    if not Nx.qdb.profile.Quest.AddTooltip or not CanUseValue(tipStr) then
         return
     end
 
-    local tip = GameTooltip
+    local tip = outputTip or GameTooltip
+    local source = sourceTip or GameTooltip
 
     -- Check if already added
-    local textName = "GameTooltipTextLeft"
     local questStr = format (L["|cffffffffQ%suest:"], Nx.TXTBLUE)
 
-    for n = 2, tip:NumLines() do
-        local s = _G[textName .. n]:GetText()
-        if s then
-            local ok, s1 = pcall(strfind, s, questStr)
-            if ok and s1 then
---                Nx.prt ("TTM #%s", GameTooltip:NumLines())
+    for n = 2, GetSafeTooltipLineCount (source) do
+        local textLine = GetTooltipLeftLine (source, n)
+        local s = textLine and textLine:GetText()
+        if CanUseValue(s) and s then
+            if strfind(s, questStr) then
                 return
             end
-            local ok2, sub3 = pcall(strsub, s, 1, 3)
-            if ok2 and sub3 == " - " then    -- Blizz added quest info?
+            if strsub(s, 1, 3) == " - " then    -- Blizz added quest info?
 
-                local fstr = _G[textName .. (n - 1)]
-                local qTitle = fstr:GetText()
+                local fstr = GetTooltipLeftLine (source, n - 1)
+                local qTitle = fstr and fstr:GetText()
 
-                local i, cur = self:FindCur (qTitle)
+                local i, cur
+                if CanUseValue(qTitle) and qTitle then
+                    i, cur = self:FindCur (qTitle)
+                end
                 if cur then
                     local color = GetCachedDifficultyColorStr(cur.Level)
-                    fstr:SetText (format ("%s %s%d %s", questStr, color, cur.Level, cur.Title))
+                    local line = format ("%s %s%d %s", questStr, color, cur.Level, cur.Title)
+                    if tip == source then
+                        if fstr then
+                            fstr:SetText (line)
+                        end
+                        tip:AddLine (" ")
+                    else
+                        tip:AddLine (line)
+                    end
+                    return true
                 end
 
-                tip:AddLine (" ")        -- Add blank or same tip will not add info again
-                return true;
+                if tip == source then
+                    tip:AddLine (" ")        -- Preserve legacy Classic behavior
+                    return true
+                end
+                return
             end
         end
-    end
-
-    -- Guard against secret string taint from GetText()
-    if tipStr then
-        local ok = pcall(function() local _ = #tipStr end)
-        if not ok then tipStr = nil end
     end
 
     if tipStr and #tipStr >= 5 and #tipStr < 100 and not self.TTIgnore[tipStr] then
@@ -397,17 +500,16 @@ function Nx.Quest:TooltipProcess2 (stripColor, tipStr)
         local tipStrLower = strlower (tipStr)
 
         local curq = self.CurQ
-        local unitName, unit = tip:GetUnit()
+        local unitName, unit = source:GetUnit()
         local tipAddSuccess = false
         -- Check if our tooltip is on a unit first
-        if unit then
-            -- Retail UnitGUID for player units can be a secure-tainted
-            -- "secret" string; strsplit on it raises ("attempt to index a
-            -- secret string value, while execution tainted by 'Carbonite'").
-            -- pcall lets the tooltip processor skip that case silently.
-            local rawGuid = UnitGUID(unit) or ''
-            local ok, unitType, _2, _3, _4, _5, npcID = pcall(strsplit, '-', rawGuid)
-            if not ok then unitType, npcID = nil, nil end
+        if CanUseValue(unit) and unit then
+            local rawGuid = UnitGUID(unit)
+            local npcID
+            if CanUseValue(rawGuid) and rawGuid then
+                local _, _2, _3, _4, _5, parsedID = strsplit('-', rawGuid)
+                npcID = parsedID
+            end
             local unitQuests = Nx.Units2Quests[tonumber(npcID)]
             if npcID and unitQuests then
                 local npcQuests = {Nx.Split('|', unitQuests)};

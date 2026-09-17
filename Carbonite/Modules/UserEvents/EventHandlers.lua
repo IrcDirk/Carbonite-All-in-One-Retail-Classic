@@ -17,6 +17,15 @@
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 
+local canaccessvalue = _G.canaccessvalue
+local issecretvalue = _G.issecretvalue
+local function CanUseGatherValue(value)
+    if canaccessvalue and not canaccessvalue(value) then
+        return false
+    end
+    return not (issecretvalue and issecretvalue(value))
+end
+
 -------------------------------------------------------------------------------
 -- Combat lockdown
 -------------------------------------------------------------------------------
@@ -51,7 +60,10 @@ end
 
 local function getSpellName(spellID)
     local ok, spellName = pcall(resolveSpellName, spellID)
-    return ok and spellName or nil
+    if not ok or not CanUseGatherValue(spellName) then
+        return nil
+    end
+    return spellName
 end
 
 -- UNIT_SPELLCAST_SENT supplies (unit, target, castGUID, spellID) on every
@@ -59,14 +71,22 @@ end
 -- TooltipLastText is only a fallback for old/partial event payloads.
 function Nx:OnUnit_spellcast_sent(event, arg1, arg2, arg3, arg4)
     pcall(function()
-        if arg1 ~= "player" then return end
+        -- A secret target cannot safely identify a node. Keep the modern
+        -- target-name authority and avoid recording a stale tooltip fallback.
+        if not CanUseGatherValue(arg1) or arg1 ~= "player"
+            or not CanUseGatherValue(arg2) then return end
         local NxL = Nx
+        local fallbackText = NxL.TooltipLastText
+        if not CanUseGatherValue(fallbackText) then
+            fallbackText = nil
+        end
         local gatherKind = NxL:IsGathering(arg2)
-        local gatherTarget = gatherKind and arg2 or NxL.TooltipLastText
+        local gatherTarget = gatherKind and arg2 or fallbackText
         if not gatherKind and (not arg2 or arg2 == "") and gatherTarget then
             gatherKind = NxL:IsGathering(gatherTarget)
         end
-        local spellName = getSpellName(arg4)
+        local spellID = CanUseGatherValue(arg4) and arg4 or nil
+        local spellName = getSpellName(spellID)
 
         if gatherKind == L["Herb Gathering"] then
             NxL.GatherTarget = gatherTarget
@@ -95,13 +115,13 @@ function Nx:OnUnit_spellcast_sent(event, arg1, arg2, arg3, arg4)
             NxL.UEvents:AddTimber(arg2)
 
         elseif spellName == L["Searching for Artifacts"] then
-            NxL.UEvents:AddOpen("Art", arg2 ~= "" and arg2 or spellName)
+            NxL.UEvents:AddOpen("Art", arg2 and arg2 ~= "" and arg2 or spellName)
 
         elseif spellName == L["Extract Gas"] then
             NxL.UEvents:AddOpen("Gas", L["Extract Gas"])
 
         elseif spellName == L["Logging"] then
-            NxL.GatherTarget = NxL.TooltipLastText
+            NxL.GatherTarget = fallbackText
             if NxL.GatherTarget then
                 NxL.UEvents:AddTimber(NxL.GatherTarget)
                 NxL.GatherTarget = nil
