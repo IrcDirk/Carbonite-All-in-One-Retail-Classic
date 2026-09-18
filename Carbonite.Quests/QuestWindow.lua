@@ -160,10 +160,8 @@ function Nx.Quest.List:Open()
                         -- separate WorldMapBlobFrame (QMap.QuestWin) and
                         -- doesn't auto-hide on super-track clear; do it
                         -- explicitly so the area stops shading the map.
-                        local f = NxMap1 and NxMap1.NxMap
-                        if f and f.QuestWin then
-                            if f.QuestWin.DrawNone then f.QuestWin:DrawNone() end
-                            if f.QuestWin.Hide then f.QuestWin:Hide() end
+                        if Nx.Quest.UpdateQuestBlob then
+                            Nx.Quest:UpdateQuestBlob (nil)
                         end
                     end)
                     Nx.Quest.ActiveQID = 0
@@ -1985,13 +1983,8 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                     end
                 end
 
-                if (wasActive or wasSuperTracked)
-                   and Nx.BlobsAvailable and not InCombatLockdown() then
-                    local QMap = NxMap1 and NxMap1.NxMap
-                    if QMap and QMap.QuestWin then
-                        QMap.QuestWin:DrawNone()
-                        QMap.QuestWin:Hide()
-                    end
+                if (wasActive or wasSuperTracked) and Quest.UpdateQuestBlob then
+                    Quest:UpdateQuestBlob (nil)
                 end
             end
 
@@ -2041,12 +2034,8 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                 Quest.Map:ClearTargets()
             end
             -- Hide a lingering blob if this was the one being drawn.
-            if Nx.BlobsAvailable and not InCombatLockdown() then
-                local QMap = NxMap1 and NxMap1.NxMap
-                if QMap and QMap.QuestWin then
-                    QMap.QuestWin:DrawNone()
-                    QMap.QuestWin:Hide()
-                end
+            if Nx.Quest.UpdateQuestBlob then
+                Nx.Quest:UpdateQuestBlob (nil)
             end
             if Nx.Quest.Watch and Nx.Quest.Watch.Update then
                 Nx.Quest.Watch:Update()

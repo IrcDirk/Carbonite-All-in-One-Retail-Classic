@@ -75,6 +75,19 @@ local function db()
 
     local d = sv.Cap2
     if not d or d.Version ~= SV_VERSION then
+        local why
+        if not d then
+            why = "no Cap2 in SavedVariables at first use"
+        else
+            why = format("format version %s, expected %s",
+                tostring(d.Version), tostring(SV_VERSION))
+            local n = 0
+            for _ in pairs(d.Q or {}) do n = n + 1 end
+            why = format("%s (parked %d quests in NXQuest.Cap2Old)", why, n)
+            sv.Cap2Old = d
+        end
+
+        local prevAudit = d and d.Audit
         d = {
             Version = SV_VERSION,
             Q   = {},   -- [questID] = quest record
@@ -86,7 +99,25 @@ local function db()
             ITEM = {},  -- [itemID]  = name, so objectives can be written by name
             ZONELVL = {},   -- [mapID] = { min, max, sum, n }  mob levels seen
         }
+        d.Audit = prevAudit or {}
+        d.Audit.resets = (d.Audit.resets or 0) + 1
+        d.Audit.lastReset = time and time() or nil
+        d.Audit.lastResetWhy = why
         sv.Cap2 = d
+
+        local log = Carbonite and Carbonite.Core and Carbonite.Core.Logger
+            and Carbonite.Core.Logger:Get("ObjectiveCapture")
+        if log then log:warn("capture reset: %s", why) end
+    end
+
+    d.Audit = d.Audit or {}
+    if not d.Audit.thisSession then
+        d.Audit.thisSession = true
+        d.Audit.sessions = (d.Audit.sessions or 0) + 1
+        d.Audit.lastLogin = time and time() or nil
+        local n = 0
+        for _ in pairs(d.Q or {}) do n = n + 1 end
+        d.Audit.questsAtLogin = n
     end
 
     -- Sections added after the first release of this format.
@@ -134,6 +165,21 @@ local enabled = false
 local function refreshEnabled()
     local d = db()
     enabled = (d and d.Enabled) == true
+
+    if not d and C_Timer and C_Timer.After and not ObjCap._svRetry then
+        ObjCap._svRetry = true
+        C_Timer.After(5, function()
+            ObjCap._svRetry = nil
+            if not db() then
+                refreshEnabled()
+            else
+                refreshEnabled()
+                local log = Carbonite and Carbonite.Core and Carbonite.Core.Logger
+                    and Carbonite.Core.Logger:Get("ObjectiveCapture")
+                if log then log:info("SavedVariables arrived late; capture armed") end
+            end
+        end)
+    end
 end
 
 function ObjCap:IsEnabled()
@@ -148,6 +194,7 @@ end
 
 function ObjCap:Wipe()
     local sv = _G.NXQuest
+    if sv and sv.Cap2 then sv.Cap2Old = sv.Cap2 end
     if sv then sv.Cap2 = nil end
     if ObjCap.ResetSnapshots then ObjCap.ResetSnapshots() end
     db()
@@ -289,6 +336,31 @@ local function pushCause(kind, data)
     causeNext = causeNext % CAUSE_KEEP + 1
 end
 
+local function findItemCause(objText)
+    local now = GetTime()
+    local d = db()
+    local names = d and d.ITEM
+    local best, bestT, fallback, fallbackT
+
+    for i = 1, CAUSE_KEEP do
+        local c = causes[i]
+        if c and c.kind == "item" and (now - c.t) <= CAUSE_WINDOW then
+            if not fallbackT or c.t > fallbackT then
+                fallback, fallbackT = c, c.t
+            end
+            local name = c.item and names and names[c.item]
+            if objText and name and name ~= ""
+                and objText:find(name, 1, true) then
+                if not bestT or c.t > bestT then
+                    best, bestT = c, c.t
+                end
+            end
+        end
+    end
+
+    return best or fallback
+end
+
 -- Most recent cause of `kind` still inside the correlation window.
 local function findCause(kind)
     local best, bestT
@@ -412,7 +484,7 @@ local function attribute(rec, index, snap, delta)
         end
 
     elseif typ == "item" then
-        local c = findCause("item")
+        local c = findItemCause(snap.text)
         if c and c.item then
             o.items = o.items or {}
             local it = o.items[c.item]
@@ -427,6 +499,7 @@ local function attribute(rec, index, snap, delta)
                 it.src = it.src or {}
                 local key = format("%s:%d", c.srcKind, c.srcID)
                 bumpCount(it.src, key, delta)
+                if c.approxSrc then it.approxSrc = true end
                 if c.srcKind == "Creature" then
                     noteNPC(c.srcID, c.srcName, nil, c.map, c.x, c.y)
                 end
@@ -948,11 +1021,28 @@ local function onLoot()
             local d = db()
             local iname = link:match("%[(.-)%]")
             if d and iname and iname ~= "" then d.ITEM[itemID] = d.ITEM[itemID] or iname end
-            local srcKind, srcID, srcName
+            local srcKind, srcID, srcName, approxSrc
+
             if _G.GetLootSourceInfo then
                 local guid = plain((GetLootSourceInfo(slot)))
                 srcKind, srcID = guidKind(guid)
             end
+
+            if not srcID then
+                local kind, id = guidKind(plain(UnitGUID("target")))
+                if id and (kind == "Creature" or kind == "Vehicle"
+                    or kind == "GameObject") then
+                    srcKind, srcID = kind, id
+                end
+            end
+
+            if not srcID then
+                local recent = hostileFallback()
+                if recent and recent.npc then
+                    srcKind, srcID, approxSrc = "Creature", recent.npc, true
+                end
+            end
+
             if not srcID then
                 -- Herb/mineral nodes and chests answer through the loot
                 -- window title rather than a GUID on some clients.
@@ -960,7 +1050,7 @@ local function onLoot()
             end
             pushCause("item", {
                 item = itemID, srcKind = srcKind, srcID = srcID, srcName = srcName,
-                map = mapID, x = x, y = y,
+                approxSrc = approxSrc, map = mapID, x = x, y = y,
             })
             if srcKind == "GameObject" and srcID then
                 pushCause("object", {
@@ -1181,7 +1271,6 @@ for _, e in ipairs({
 end
 -- Player-filtered, so we never see another unit's secret quest payload.
 pcall(frame.RegisterUnitEvent, frame, "UNIT_QUEST_LOG_CHANGED", "player")
-
 
 
 -------------------------------------------------------------------------------

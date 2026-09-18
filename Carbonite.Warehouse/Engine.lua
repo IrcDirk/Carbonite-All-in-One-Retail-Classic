@@ -2097,7 +2097,7 @@ function Nx.Warehouse:CaptureInvDurabilityTimer()
 
     local ch = Nx.Warehouse.CurCharacter
 
-    ch["DurPercent"] = durAll / durAllMax * 100
+    ch["DurPercent"] = durAllMax > 0 and (durAll / durAllMax * 100) or 100
     ch["DurLowPercent"] = durLow * 100
 
     ch["DurPercent"] = ch["DurPercent"] == math.huge and 0 or ch["DurPercent"]

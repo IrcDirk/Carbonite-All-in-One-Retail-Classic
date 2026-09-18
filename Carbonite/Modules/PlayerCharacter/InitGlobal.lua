@@ -16,15 +16,26 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 -- Creates/migrates character data, options, travel data, gather data, etc.
 --
 function Nx:InitGlobal()
-    if Nx.db.profile.Version.OptionsVersion < Nx.VERSIONDATA then
+    local savedVer = tonumber (Nx.db.profile.Version.OptionsVersion) or 0
 
-        if Nx.db.profile.Version.OptionsVersion > 0 then
-            Nx.prt (L["Reset old data"] .. " %f", Nx.db.profile.Version.OptionsVersion)
-        end
+    if savedVer == 0 then
 
+        Nx.db.profile.Version.OptionsVersion = Nx.VERSIONGOPTS
+        Nx.db.global.Characters = Nx.db.global.Characters or {}
+
+    elseif savedVer < Nx.VERSIONDATA then
+
+        Nx.prt (L["Reset old data"] .. " %f", savedVer)
         Nx.db:ResetDB("Default")
-        Nx.db.profile.Version.OptionsVersion = Nx.VERSIONDATA
+        Nx.db.profile.Version.OptionsVersion = Nx.VERSIONGOPTS
         Nx.db.global.Characters = {}        -- Indexed by "Server.Name"
+
+    elseif savedVer < Nx.VERSIONGOPTS then
+
+        Nx.prt (L["Reset old global options"] .. " %f", savedVer)
+        Nx:ShowMessage (L["Options have been reset for the new version."] .. "\n" .. L["Privacy or other settings may have changed."], "OK")
+        Nx.db:ResetDB("Default")
+        Nx.db.profile.Version.OptionsVersion = Nx.VERSIONGOPTS
     end
 
     if not Nx.db.profile.Version.NXVer1 then
@@ -40,20 +51,6 @@ function Nx:InitGlobal()
     -- Global options
 
     local opts = Nx.db.profile
-
-    if not opts or opts.Version.OptionsVersion < Nx.VERSIONGOPTS then
-
-        if opts and opts.Version.OptionsVersion < Nx.VERSIONGOPTS then
-            Nx.prt (L["Reset old global options"] .. " %f", opts.Version.OptionsVersion)
-            Nx:ShowMessage (L["Options have been reset for the new version."] .. "\n" .. L["Privacy or other settings may have changed."], "OK")
-        end
-
-        opts = {}
-        Nx.db:ResetDB("Default")
-        Nx.db.profile.Version.OptionsVersion = Nx.VERSIONGOPTS
-
---        Nx.Opts:Reset()
-    end
 
     -- Clean old junk
 

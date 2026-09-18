@@ -493,6 +493,21 @@ end
 
 Nx.Quest.ActiveQID = 0
 
+local USER_PICK_TTL = 1.0
+
+function Nx.Quest:GetUserObjPick(qId)
+    local pick = self.UserObjPick
+    if not pick then return nil end
+    if pick.qId ~= qId and pick.liveQId ~= qId then return nil end
+
+    local now = GetTime and GetTime() or 0
+    if now - (pick.t or 0) > USER_PICK_TTL then
+        self.UserObjPick = nil
+        return nil
+    end
+    return pick.qObj, pick.mask
+end
+
 function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
     -- Suppress the AddQuestWatch hook for the duration of this call.
     -- TrackOnMap below calls AddQuestWatch(BlizIndex) when QuestWatch.Sync
@@ -513,8 +528,9 @@ function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
         cur = self:FindCurByIndex(qIndex)
     end
 
-    -- Click again on the same active quest = clear it.
-    if self.ActiveQID == qId then
+    local repointObj = self:GetUserObjPick(qId)
+    if repointObj and repointObj > 0 and repointObj ~= self.ActiveObjI then
+    elseif self.ActiveQID == qId then
         self.ActiveQID = 0
         self.Tracking = {}
         if not InCombatLockdown() then
@@ -530,8 +546,13 @@ function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
         return
     end
 
+    local pickObj, pickMask = self:GetUserObjPick(qId)
+
     local mask = cur and cur.TrackMask
     if not mask or mask == 0 then mask = 0xffffffff end
+    if pickObj and pickObj > 0 and pickMask and pickMask ~= 0 then
+        mask = pickMask
+    end
 
     self.ActiveQID = qId
     self.Tracking = {}
@@ -555,7 +576,9 @@ function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
     -- 9663 "The Kessel Run" hit this — three pickup waypoints, only
     -- one Blizzard leaderboard, last-index alternate got picked.
     local pickedObj = 0
-    if cur and not cur.Complete and cur.Q and cur.Q["Objectives"] then
+    if pickObj and pickObj > 0 then
+        pickedObj = pickObj
+    elseif cur and not cur.Complete and cur.Q and cur.Q["Objectives"] then
         for n = 1, 15 do
             local obj = cur.Q["Objectives"][n]
             if not obj then break end
@@ -610,11 +633,8 @@ function Nx.Quest:OnSuperTrackChanged()
         -- auto-hide on super-track clear, so explicitly hide it here. Skips
         -- in combat lockdown — the secure frame would refuse the call.
         local function clearBlob()
-            if InCombatLockdown() then return end
-            local f = NxMap1 and NxMap1.NxMap
-            if f and f.QuestWin then
-                if f.QuestWin.DrawNone then f.QuestWin:DrawNone() end
-                if f.QuestWin.Hide then f.QuestWin:Hide() end
+            if Nx.Quest.UpdateQuestBlob then
+                Nx.Quest:UpdateQuestBlob (nil)
             end
         end
         if self.UserClearedActive then
@@ -694,8 +714,13 @@ function Nx.Quest:OnSuperTrackChanged()
     -- to a mask that draws everything so the click is never invisible.
     -- TrackOnMap uses this qId as the key for DrawBlob — must be the
     -- live questID or the WorldMapBlobFrame won't have data for it.
+    local pickObj, pickMask = self:GetUserObjPick(liveQID)
+
     local mask = cur.TrackMask
     if not mask or mask == 0 then mask = 0xffffffff end
+    if pickObj and pickObj > 0 and pickMask and pickMask ~= 0 then
+        mask = pickMask
+    end
     self.Tracking = {}
     self.Tracking[liveQID] = mask
 
@@ -709,7 +734,9 @@ function Nx.Quest:OnSuperTrackChanged()
     -- way the arrow follows the actual work, not the ender.
     local quest = cur.Q
     local pickedObj = 0
-    if quest and quest["Objectives"] then
+    if pickObj and pickObj > 0 then
+        pickedObj = pickObj
+    elseif quest and quest["Objectives"] then
         for n = 1, 15 do
             local obj = quest["Objectives"][n]
             if not obj then break end

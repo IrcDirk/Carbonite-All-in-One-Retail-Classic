@@ -77,9 +77,11 @@ local function provider()
         end
         if display then
             display:Hide()
+            local hasDisplay = false
             if pin.displayAtlas and type(display.SetAtlas) == "function" then
                 display:SetTexCoord(0, 1, 0, 1)
                 display:SetAtlas(pin.displayAtlas)
+                hasDisplay = true
             elseif pin.displayTex and type(display.SetTexture) == "function" then
                 display:SetTexture(pin.displayTex)
                 if pin.displayTexCoord then
@@ -87,12 +89,15 @@ local function provider()
                 else
                     display:SetTexCoord(0, 1, 0, 1)
                 end
+                hasDisplay = true
             end
-            if pin.displayWidth and pin.displayHeight
-                and type(display.SetSize) == "function" then
-                display:SetSize(pin.displayWidth, pin.displayHeight)
+            if hasDisplay then
+                if pin.displayWidth and pin.displayHeight
+                    and type(display.SetSize) == "function" then
+                    display:SetSize(pin.displayWidth, pin.displayHeight)
+                end
+                display:Show()
             end
-            display:Show()
         end
 
         local glow = frame.NxGlow

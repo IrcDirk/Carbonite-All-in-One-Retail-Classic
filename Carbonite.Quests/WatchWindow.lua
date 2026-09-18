@@ -2901,6 +2901,24 @@ function Nx.Quest.Watch:Set (data, on, track)
             self:ClearCompleted (qId)
         end
 
+        if qObj > 0 and Quest.Tracking[qId] and Quest.Tracking[qId] ~= 0 then
+            local liveQId = qId
+            if qIndex and qIndex > 0 and C_QuestLog
+                and C_QuestLog.GetQuestIDForLogIndex then
+                local id = C_QuestLog.GetQuestIDForLogIndex (qIndex)
+                if id and id > 0 then liveQId = id end
+            end
+            Quest.UserObjPick = {
+                qId     = qId,
+                liveQId = liveQId,
+                qObj    = qObj,
+                mask    = Quest.Tracking[qId],
+                t       = GetTime and GetTime() or 0,
+            }
+        else
+            Quest.UserObjPick = nil
+        end
+
         Quest:TrackOnMap (qId, qObj, qIndex > 0, track)
 
         self:Update()

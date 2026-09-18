@@ -21,6 +21,7 @@ NxQuest.lua
 Options.lua
 Init.lua
 TrackerHider.lua
+QuestMapCompatibility.lua
 MapIcons.lua
 QuestProvider.lua
 WorldQuestWindow.lua

@@ -27,7 +27,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 -- super-zoomed-out continent image (https://github.com/dratr/Carbonite/commits/map-zonesdocs)
 
 -- Support maps with multiple level
-Map.ContCnt = 2
+Map.ContCnt = 3
 
 -- Which of the 4x3 continent tiles get drawn. The two outer columns are
 -- deliberately off: that is how the continent canvas is cropped, same as
@@ -51,15 +51,15 @@ Map.ContBlks = {
         1,1,1,1
     },
     {
-        1,1,1,1,
-        1,1,1,1,
-        1,1,1,1
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,0
     }
 }
 
 
 Map.MapZones = {
-    [0] = {12,13,1945,113,0,-1},
+    [0] = {12,13,2521,113,0,-1},
     -- 2482 Mount Hyjal and 2652 Shen'dralas are carved out of the Kalimdor
     -- instance map, 2548 Riverglades out of Eastern Kingdoms. Membership here
     -- is not cosmetic: UpdateWorld walks these lists to stamp winfo[4]/winfo[5]
@@ -71,16 +71,9 @@ Map.MapZones = {
     [1] = {1411,1412,1413,1438,1439,1440,1441,1442,1443,1444,1445,1446,1447,1448,1449,1450,1451,1452,1454,1456,1457,2482,2652},
     [2] = {1416,1417,1418,1419,1420,1421,1422,1423,1424,1425,1426,1427,1428,1429,1430,1431,1432,1433,1434,1435,1436,1437,1453,1455,1458,2548},
 
-    -- Bucket for maps that are not on a continent at all. UpdateWorld gives
-    -- these their world anchor from MapInfo[90] and stamps Cont = 90, which is
-    -- what lets a standalone map render while the player is inside it.
-    -- 2521 Zephras Isle (instance map 2991) and 2524 Darkspear Islands (2997)
-    -- belong here: build 1.60.1.69893 has no UiMapAssignment row placing them
-    -- on the Azeroth world map (947 only carries Kalimdor and Eastern
-    -- Kingdoms), so there is nowhere on the continent canvas to put them.
-    -- The legacy 91/92/93/... ids below are pre-uiMapID battlegrounds and have
-    -- no MapWorldInfo entry on this flavor, so they are inert.
-    [90] = {91,92,93,112,128,169,206,275,397,417,423,519,623,2521,2524},
+    [3] = {2521},
+
+    [90] = {91,92,93,112,128,169,206,275,397,417,423,519,623,2524},
     [100] = {},
 }
 
@@ -107,9 +100,14 @@ Map.MapInfo = {
         X = 2000,
         Y = -200,
     },
+    [3] = {
+        Name = L["Zephras Isle"],
+        X = 440,
+        Y = 620,
+    },
     [90] = {
         Name = "BG",
-        X = 2000,
+        X = 8000,
         Y = 200,
     },
     [100] = {
@@ -585,27 +583,23 @@ Map.MapWorldInfo = {
         Overlay = "riverlands",
         Name = L["Riverglades"],
     },
-    -- Zephras Isle sits on its own instance map (2991) and hangs off the
-    -- Azeroth world map rather than a continent, so its real world offsets
-    -- (X = -846.25, Y = -991.25) are not in Kalimdor/EK space. Parked
-    -- off-canvas like the battlegrounds until we see where it belongs.
-    -- TODO place it once we have been there in-game.
     [2521] = {
-        MId = 2991,       -- own minimap tileset (world/minimaps/2991)
+        MId = 2991,
         Name = L["Zephras Isle"],
         Scale = 11.125,
-        X = 16000,
-        Y = -1000,
+        X = -846.25,
+        Y = -991.25,
         Overlay = "zephrasisle",
+        Explored = true,
     },
-    -- New battleground on its own instance map (2997).
     [2524] = {
-        MId = 2997,       -- own minimap tileset (world/minimaps/2997)
+        MId = 2997,
         Name = L["Darkspear Islands"],
         Scale = 3.85,
-        X = -16000,
-        Y = -1000,
+        X = -583.75,
+        Y = -89.5832,
         Short = "DI",
+        Explored = true,
     },
 }
 
@@ -3802,22 +3796,18 @@ Map.MiniMapBlks = {
         Map.MapWorldInfo[14].X + Map.MapInfo[2].X -1080, Map.MapWorldInfo[14].Y + Map.MapInfo[2].Y - 1308,
         "World\\Minimaps\\Azeroth"
     },
-    -- Forever islands, keyed by MapWorldInfo[..].MId so GetMiniInfo finds them
-    -- without going through a continent. The canvas offsets are placeholders:
-    -- both zones are still parked off-canvas (X = +-16000), so they have to be
-    -- re-measured in-game together with their MapWorldInfo placement.
     [2991] = {
         Map.ZephrasMapBlks,
         2522,
         25, 22,
-        Map.MapWorldInfo[2521].X, Map.MapWorldInfo[2521].Y,    -- TODO verify in-game
+        Map.MapWorldInfo[2521].X + Map.MapInfo[3].X + 99.58, Map.MapWorldInfo[2521].Y + Map.MapInfo[3].Y + -75.42,
         "World\\Minimaps\\2991"
     },
     [2997] = {
         Map.DarkspearMapBlks,
         2630,
         26, 30,
-        Map.MapWorldInfo[2524].X, Map.MapWorldInfo[2524].Y,    -- TODO verify in-game
+        Map.MapWorldInfo[2524].X + Map.MapInfo[90].X + -56.25, Map.MapWorldInfo[2524].Y + Map.MapInfo[90].Y + -123.75,
         "World\\Minimaps\\2997"
     }
 }

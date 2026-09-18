@@ -395,20 +395,23 @@ function Nx.Map:Open()
     local Map = Nx.Map
     local m = self.Maps[1]
 
-    -- Initialize settings storage if missing
-    if not Nx.db.profile.MapSettings then
-        Nx.db.profile.MapSettings = {}
-        Nx.db.profile.MapSettings.Version = 0
+    local function installMapDefaults()
+        local copy = _G.CopyTable
+        Nx.db.profile.MapSettings = copy and copy(NxMapOptsDefaults) or NxMapOptsDefaults
+        Nx.db.profile.MapSettings.Maps = copy and copy(NXMapOptsMapsDefault) or NXMapOptsMapsDefault
+        Nx.db.profile.MapSettings.Version = NxMAPOPTS_VERSION
     end
 
-    -- Check for settings version upgrade
-    if Nx.db.profile.MapSettings.Version < NxMAPOPTS_VERSION then
-        if Nx.db.profile.MapSettings.Version > 0 then
-            Nx.prt("Reset map options %f", NxMAPOPTS_VERSION)
-        end
-        Nx.prt("RESETTING MAP OPTIONS")
-        Nx.db.profile.MapSettings = NxMapOptsDefaults
-        Nx.db.profile.MapSettings.Maps = NXMapOptsMapsDefault
+    local mapOpts = Nx.db.profile.MapSettings
+    local mapOptsVer = tonumber(mapOpts and mapOpts.Version) or 0
+
+    if not mapOpts then
+        installMapDefaults()
+    elseif mapOptsVer == 0 then
+        mapOpts.Version = NxMAPOPTS_VERSION
+    elseif mapOptsVer < NxMAPOPTS_VERSION then
+        Nx.prt("Reset map options %f", NxMAPOPTS_VERSION)
+        installMapDefaults()
     end
 
     -- Toggle visibility if already created
@@ -2221,7 +2224,8 @@ function Nx.Map:InitFrames()
 
         local mapFileName = self.MapInfo[n].FileName
         local rootMapID = self.MapZones[0] and self.MapZones[0][n]
-        local artTextures = Nx.isRetail and rootMapID
+        local artTextures = rootMapID
+            and (Nx.isRetail or (Nx.isCamelot and rootMapID > 1000))
             and self:GetArtLayerTextures(rootMapID, 1)
         local artLayers = artTextures and self:GetArtLayers(rootMapID)
         local artLayer = artLayers and artLayers[1]
@@ -8795,9 +8799,10 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
     local blobDrawsDestination = false
     if questTarget and Nx.BlobsAvailable then
         local mapOpts = Nx.db and Nx.db.char and Nx.db.char.Map
-        if mapOpts and mapOpts.ShowQuestBlobs and Nx.Quests then
+        if mapOpts and mapOpts.ShowQuestBlobs then
             local blobQuestId = floor ((tonumber (questTarget.TargetId) or 0) / 100)
-            blobDrawsDestination = blobQuestId > 0 and Nx.Quests[-blobQuestId] ~= nil
+            blobDrawsDestination = blobQuestId > 0
+                and self.QuestBlobQId == blobQuestId
         end
     end
 
@@ -11968,15 +11973,6 @@ function Nx.Map:IconOnMouseDown(button)
                                 Nx.Quest.ActiveObjI = 0
                                 if Nx.Quest.Tracking then
                                     Nx.Quest.Tracking[qId] = nil
-                                end
-                                -- Drop watch so the next refresh tick
-                                -- doesn't see the quest as still-watched
-                                -- and re-create the goto arrow target
-                                -- via Watch:Update / RecordQuestsLog.
-                                local id = cur and cur.QId or qId
-                                if id and Nx.Quest:GetQuest(id) == "W"
-                                   and Nx.Quest.Watch and Nx.Quest.Watch.RemoveWatch then
-                                    Nx.Quest.Watch:RemoveWatch(qId, cur.QI)
                                 end
                             end
                             -- Clear the goto arrow so it doesn't keep

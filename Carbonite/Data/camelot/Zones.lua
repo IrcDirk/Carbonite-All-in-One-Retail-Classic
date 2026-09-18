@@ -89,10 +89,7 @@ Nx.Zones = {
     [2482] = L["Mount Hyjal"] .. "|0|0|2|1||",        -- TODO levels/faction
     [2652] = L["Shen'dralas"] .. "|0|0|2|1||",        -- TODO levels/faction
     [2548] = L["Riverglades"] .. "|0|0|2|2||",        -- TODO levels/faction
-    -- Own instance map (2991), hangs off the Azeroth world map rather than a
-    -- continent. Parked in the off-world bucket (cont 4) together with its
-    -- off-canvas MapWorldInfo placement. TODO once we know where it sits.
-    [2521] = L["Zephras Isle"] .. "|0|0|2|4||",
+    [2521] = L["Zephras Isle"] .. "|0|0|2|3||",
     -- New battleground, same shape as AV/WSG/AB.
     [2524] = L["Darkspear Islands"] .. "|0|0|3|4||",
 

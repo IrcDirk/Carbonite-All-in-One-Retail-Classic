@@ -22,6 +22,188 @@ local floor      = math.floor
 local abs        = math.abs
 local InCombatLockdown = InCombatLockdown
 
+Nx.Quest.TrackDebug = Nx.Quest.TrackDebug or false
+
+local TRACK_LOG_MAX = 600
+
+local logBuf
+local lastKey
+local repeatIdx, repeatN, repeatT0
+
+local function tpush (msg)
+    local sv = _G.NXQuest
+    if not sv then return end
+    local log = sv.TrackLog
+    if not log then
+        log = {}
+        sv.TrackLog = log
+    end
+
+    log[#log + 1] = ("%.3f %s"):format (GetTime and GetTime() or 0, msg)
+
+    if #log > TRACK_LOG_MAX then
+        local keep, cut = {}, floor (TRACK_LOG_MAX / 4)
+        for n = cut + 1, #log do
+            keep[#keep + 1] = log[n]
+        end
+        sv.TrackLog = keep
+        repeatIdx = nil
+    end
+end
+
+local function tflush ()
+    local buf = logBuf
+    logBuf = nil
+    if not buf or #buf == 0 then return end
+
+    local key = table.concat (buf, "|")
+    local now = GetTime and GetTime() or 0
+
+    if key == lastKey then
+        local sv = _G.NXQuest
+        local log = sv and sv.TrackLog
+        if log then
+            repeatN = (repeatN or 0) + 1
+            local line = ("%.3f   ...block above repeated x%d over %.1fs")
+                :format (repeatT0 or now, repeatN, now - (repeatT0 or now))
+            if repeatIdx and log[repeatIdx] then
+                log[repeatIdx] = line
+            else
+                log[#log + 1] = line
+                repeatIdx = #log
+            end
+        end
+        return
+    end
+
+    lastKey, repeatIdx, repeatN, repeatT0 = key, nil, 0, now
+    for _, m in ipairs (buf) do
+        tpush (m)
+    end
+end
+
+local function tbegin ()
+    tflush()
+    logBuf = Nx.Quest.TrackDebug and {} or nil
+end
+
+function Nx.Quest.TrackLogWrite (msg)
+    tflush()
+    lastKey = nil
+    tpush (msg)
+end
+
+local function tdbg (fmt, ...)
+    if not Nx.Quest.TrackDebug then return end
+    local ok, msg = pcall (string.format, fmt, ...)
+    if not ok then return end
+    if DEFAULT_CHAT_FRAME then
+        DEFAULT_CHAT_FRAME:AddMessage ("|cff40c0ff[qtrack]|r " .. msg)
+    end
+    if logBuf then
+        logBuf[#logBuf + 1] = msg
+    else
+        tpush (msg)
+    end
+end
+
+local function CanDrawQuestBlob(qId)
+    if not qId or qId <= 0 then return false end
+    if _G.GetCVarBool and not _G.GetCVarBool("questPOI") then return false end
+
+    local logIdx
+    if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
+        logIdx = C_QuestLog.GetLogIndexForQuestID (qId)
+    elseif _G.GetQuestLogIndexByID then
+        logIdx = _G.GetQuestLogIndexByID (qId)
+    end
+    if not logIdx or logIdx <= 0 then return false end
+
+    if _G.QuestUtils_IsQuestBonusObjective
+        and _G.QuestUtils_IsQuestBonusObjective (qId)
+        and not (C_QuestLog and C_QuestLog.IsThreatQuest
+                 and C_QuestLog.IsThreatQuest (qId)) then
+        return false
+    end
+    return true
+end
+
+local function questBlobMap()
+    local QMap = _G.NxMap1 and _G.NxMap1.NxMap
+    if not QMap or not QMap.QuestWin then return nil end
+    return QMap
+end
+
+function Nx.Quest:UpdateQuestBlob (qId)
+
+    if InCombatLockdown() then
+        tdbg ("  blob(%s): skip - combat lockdown", tostring(qId))
+        return
+    end
+    if not Nx.BlobsAvailable then
+        tdbg ("  blob(%s): skip - Nx.BlobsAvailable false", tostring(qId))
+        return
+    end
+
+    local QMap = questBlobMap()
+    if not QMap then
+        tdbg ("  blob(%s): skip - no NxMap1.NxMap.QuestWin", tostring(qId))
+        return
+    end
+
+    if QMap.ShowingWorldQuestBlob then
+        tdbg ("  blob(%s): skip - MapEngine owns it (ShowingWorldQuestBlob)",
+            tostring(qId))
+        return
+    end
+
+    local mapOpts = Nx.db and Nx.db.char and Nx.db.char.Map
+    if not qId or not (mapOpts and mapOpts.ShowQuestBlobs)
+        or not CanDrawQuestBlob (qId) then
+        local logIdx
+        if qId and C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
+            logIdx = C_QuestLog.GetLogIndexForQuestID (qId)
+        elseif qId and _G.GetQuestLogIndexByID then
+            logIdx = _G.GetQuestLogIndexByID (qId)
+        end
+        tdbg ("  blob(%s): HIDE (showOpt=%s questPOI=%s logIdx=%s) was=%s",
+            tostring(qId),
+            tostring(mapOpts and mapOpts.ShowQuestBlobs),
+            tostring(_G.GetCVarBool and _G.GetCVarBool("questPOI")),
+            tostring(logIdx), tostring(QMap.QuestBlobQId))
+        if QMap.QuestBlobQId then
+            QMap.QuestWin:DrawNone()
+            QMap.QuestWin:Hide()
+            QMap.QuestBlobQId = nil
+        end
+        return
+    end
+
+    QMap.QuestWin:DrawNone()
+
+    local isZooming = abs (QMap.ScaleDraw - QMap.Scale) > 0.001
+    if isZooming or QMap.Scrolling then
+        tdbg ("  blob(%s): HIDE - zooming=%s scrolling=%s",
+            tostring(qId), tostring(isZooming), tostring(QMap.Scrolling))
+        QMap.QuestWin:Hide()
+        QMap.QuestBlobQId = nil
+        return
+    end
+
+    QMap.QuestWin:DrawBlob (qId, true)
+    QMap.QuestWin:SetFrameLevel (QMap.Level)
+    QMap.QuestWin:SetFillAlpha (255 * QMap.QuestAlpha)
+    QMap.QuestWin:SetBorderAlpha (255 * QMap.QuestAlpha)
+    QMap.QuestWin:SetMapID (QMap.Zone)
+    QMap.QuestWin:Show()
+    QMap:ClipZoneFrm (QMap.Cont, QMap.Zone, QMap.QuestWin, 1)
+
+    tdbg ("  blob(%s): DRAW on displayed zone %s (cont %s), was=%s",
+        tostring(qId), tostring(QMap.Zone), tostring(QMap.Cont),
+        tostring(QMap.QuestBlobQId))
+    QMap.QuestBlobQId = qId
+end
+
 -- Walks `mapID`'s parent chain in Nx.Map.MapWorldInfo until it hits
 -- a non-instance map (or runs out of parents). Returns the outdoor
 -- ancestor's mapID plus the world-space (X, Y) of the *innermost*
@@ -250,6 +432,16 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
             end
         end
     end
+    tbegin()
+    tdbg ("call qId=%s qObj=%s useEnd=%s target=%s skipSame=%s inDB=%s",
+        tostring(qId), tostring(qObj), tostring(useEnd), tostring(target),
+        tostring(skipSame), tostring(quest ~= nil))
+
+    if not quest then
+        tdbg ("  BAIL: Nx.Quests[%s] is nil (quest not in bundled DB and not patched)",
+            tostring(qId))
+    end
+
     if quest then
 
         local tbits = Quest.Tracking[qId] or 0
@@ -278,6 +470,13 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
             track = (tbits ~= 0) and 1 or 0
         else
             track = bit_band (tbits, bit_lshift (1, qObj))
+        end
+
+        if track > 0 then
+            local QMapNow = _G.NxMap1 and _G.NxMap1.NxMap
+            if QMapNow and QMapNow.QuestBlobQId and QMapNow.QuestBlobQId ~= qId then
+                Quest:UpdateQuestBlob (nil)
+            end
         end
 
         local questObj
@@ -320,45 +519,20 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
 
 --        Nx.prt ("TrackOnMap %s %s %s %s %s", qId, qObj, track, name, zone)
 
+        tdbg ("  tbits=0x%x track=%s name=%s zone=%s",
+            tbits, tostring(track), tostring(name), tostring(zone))
+        if not (track > 0 and zone) then
+            tdbg ("  BAIL: %s -> falls into the clear-tracking branch",
+                track > 0 and "zone unresolved" or "tracking bit not set")
+        end
+
         if track > 0 and zone then
             if BlizIndex and Quest:GetQuest (qId) == "W"
                     and Quest.Watch and Quest.Watch.SyncBlizzardWatch then
                 Quest.Watch:SyncBlizzardWatch (qId, BlizIndex, true)
             end
-    local QMap = NxMap1.NxMap
-    if not InCombatLockdown() then
-        local cur = self.QIds[qId]
-        if cur then
-            -- Don't draw regular quest blob if a world quest blob is being shown
-            if not cur.Complete and Nx.BlobsAvailable and not QMap.ShowingWorldQuestBlob then
-                QMap.QuestWin:DrawNone();
-                -- Hide quest blobs during zoom animation or manual scrolling to prevent position/scale mismatch
-                -- Note: We check for scale change rather than StepTime != 0, because StepTime is also set
-                -- when following the player (position change only), and we want blobs visible during that
-                local isZooming = math.abs(QMap.ScaleDraw - QMap.Scale) > 0.001
-                if isZooming or QMap.Scrolling then
-                    QMap.QuestWin:Hide()
-                elseif Nx.db.char.Map.ShowQuestBlobs and Nx.Quests[-qId] then
-                    QMap.QuestWin:DrawBlob(qId,true)
-                    QMap.QuestWin:SetFrameLevel(QMap.Level)
-                    QMap.QuestWin:SetFillAlpha(255 * QMap.QuestAlpha)
-                    QMap.QuestWin:SetBorderAlpha( 255 * QMap.QuestAlpha )
-                    QMap.QuestWin:SetMapID(QMap.Zone)
-                    QMap.QuestWin:Show()
-                    -- Re-anchor AFTER Show() — on retail the
-                    -- QuestPOIFrame's internal SetMapID/Show path
-                    -- repositions itself relative to the player,
-                    -- producing the "blob follows character, snaps
-                    -- back" symptom when ClipZoneFrm runs before.
-                    -- Putting our clip last gives us the final word
-                    -- on position.
-                    QMap:ClipZoneFrm( QMap.Cont, QMap.Zone, QMap.QuestWin, 1 )
-                else
-                    QMap.QuestWin:Hide()
-                end
-            end
-        end
-    end
+            local curBlob = self.QIds[qId]
+            Quest:UpdateQuestBlob ((curBlob and not curBlob.Complete) and qId or nil)
 
             local mId = zone
             -- Reject sentinel mapId 0: bundled DB writes "<npc>|0|32|0|0"
@@ -366,7 +540,14 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
             -- through would call GetWorldPos(0, ...) which returns (0,0)
             -- and the arrow snaps to world origin.
             if mId == 0 then mId = nil end
+            if not mId then
+                tdbg ("  BAIL: mapId sentinel 0 -> 'objective zone not in database'")
+            end
             if mId then
+
+                if not target then
+                    tdbg ("  no target requested (target=false) - blob only")
+                end
 
                 if target then
 
@@ -663,6 +844,8 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                         else
                             -- Projection failure is safer as an untracked
                             -- point than a confidently wrong cross-map route.
+                            tdbg ("  BAIL: phase projection failed (%s -> %s)",
+                                tostring(sourceMapID), tostring(phaseMapID))
                             return
                         end
                     else
@@ -678,17 +861,22 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                     -- thrashing the path on every CalcAutoTrack tick.
                     if (not x1) or (not y1)
                         or (x1 == 0 and y1 == 0 and x2 == 0 and y2 == 0) then
+                        tdbg ("  BAIL: zero/nil world coords (mId=%s x1=%s y1=%s)",
+                            tostring(mId), tostring(x1), tostring(y1))
                         return
                     end
 
                     if skipSame then
                         if self:IsTargeted (qId, qObj, x1, y1, x2, y2) then
 
+                            tdbg ("  same target, name refresh only")
                             Map:SetTargetName (name)
                             return
                         end
                     end
 
+                    tdbg ("  SET TARGET mId=%s x=%.0f y=%.0f name=%s",
+                        tostring(mId), x1 or 0, y1 or 0, tostring(name))
                     self.Map:SetTarget ("Q", x1, y1, x2, y2, false, qId * 100 + qObj, name, false, mId)
 --                    Nx.prt ("TrackOnMap %s %s %s", qId, qObj, name)
 
@@ -722,17 +910,78 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
                         -- Clearing an active map target is independent from
                         -- removing a quest from either watch list.
                         self.Map:ClearTargets()
-                        if not InCombatLockdown() and Nx.BlobsAvailable then
-                            local QMap = NxMap1.NxMap
-                            -- Only clear if not showing a world quest blob
-                            if not QMap.ShowingWorldQuestBlob then
-                                QMap.QuestWin:DrawNone();
-                                QMap.QuestWin:Hide()
-                            end
-                        end
+                        Quest:UpdateQuestBlob (nil)
                     end
                 end
             end
         end
     end
+end
+
+
+local Carbonite = _G.Carbonite
+if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
+    Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
+        if not (Carbonite.Core.SlashCommands and Carbonite.Core.Logger) then return end
+        local log = Carbonite.Core.Logger:Get("Tracking")
+        Carbonite.Core.SlashCommands:Register("qtrack", function(rest)
+            local cmd = tostring(rest or ""):lower():match("^%s*(%S*)")
+
+            if cmd == "on" then
+                Nx.Quest.TrackDebug = true
+                log:info("trace ON - lines also go to NXQuest.TrackLog in")
+                log:info("  WTF/Account/<acct>/SavedVariables/Carbonite.Quests.lua")
+                log:info("  (written on /reload or logout)")
+                return
+            elseif cmd == "off" then
+                Nx.Quest.TrackDebug = false
+            elseif cmd == "wipe" then
+                if _G.NXQuest then _G.NXQuest.TrackLog = nil end
+                log:info("TrackLog wiped")
+                return
+            elseif cmd == "state" or cmd == "" then
+                local function say(fmt, ...)
+                    local ok, msg = pcall(string.format, fmt, ...)
+                    if not ok then return end
+                    log:info("%s", msg)
+                    Nx.Quest.TrackLogWrite(msg)
+                end
+
+                local QMap = _G.NxMap1 and _G.NxMap1.NxMap
+                local typ, tid = Nx.Map:GetTargetInfo()
+                say("state: trace %s", Nx.Quest.TrackDebug and "ON" or "OFF")
+                say("  blobs=%s showQuestBlobs=%s questPOI=%s blobQId=%s worldBlob=%s",
+                    tostring(Nx.BlobsAvailable),
+                    tostring(Nx.db and Nx.db.char and Nx.db.char.Map
+                        and Nx.db.char.Map.ShowQuestBlobs),
+                    tostring(_G.GetCVarBool and _G.GetCVarBool("questPOI")),
+                    tostring(QMap and QMap.QuestBlobQId),
+                    tostring(QMap and QMap.ShowingWorldQuestBlob))
+                say("  autoTarget=%s target=%s/%s superTracked=%s activeQID=%s",
+                    tostring(Nx.Quest.Watch and Nx.Quest.Watch.ButATarget
+                        and Nx.Quest.Watch.ButATarget:GetPressed()),
+                    tostring(typ), tostring(tid),
+                    tostring(C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
+                        and C_SuperTrack.GetSuperTrackedQuestID()),
+                    tostring(Nx.Quest.ActiveQID))
+                say("  stLastSet=%s stLockoutUntil=%s now=%s",
+                    tostring(Nx.Quest._stLastSet),
+                    tostring(Nx.Quest._stLockoutUntil),
+                    tostring(GetTime and GetTime()))
+                local n = 0
+                for id, mask in pairs(Nx.Quest.Tracking or {}) do
+                    n = n + 1
+                    say("  Tracking[%s] = 0x%x", tostring(id), mask or 0)
+                end
+                if n == 0 then say("  Tracking is empty") end
+                log:info("TrackLog: %d lines (in SavedVariables/Carbonite.Quests.lua)",
+                    _G.NXQuest and _G.NXQuest.TrackLog and #_G.NXQuest.TrackLog or 0)
+                return
+            else
+                log:info("usage: /cb qtrack [on|off|state|wipe]")
+                return
+            end
+            log:info("trace %s", Nx.Quest.TrackDebug and "ON" or "OFF")
+        end, "trace quest tracking decisions (on|off|state|wipe)")
+    end)
 end
