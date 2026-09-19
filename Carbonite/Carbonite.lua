@@ -135,7 +135,16 @@ Nx.MidMaps    = select(4, GetBuildInfo()) > 119999
 -- old ">39999" threshold switched them off on a client that supports them.
 -- Probe the widget type itself; Nx.Map:UpdateWorld demotes this again if the
 -- frame cannot be built or lacks DrawBlob/SetMapID.
-local blobProbeOK = pcall(CreateFrame, "QuestPOIFrame")
+-- Skip the probe entirely on Classic Era / Forever: QuestPOIFrame is not a
+-- registered widget type there, so pcall() still lets the C-side
+-- "Unknown frame type" message print to chat before the Lua error is
+-- caught. Era build numbers have also climbed past the old ">39999"
+-- Cataclysm threshold, so that fallback alone can no longer be trusted
+-- to keep blobs off on Era/Forever - gate it on Nx.isVanillaWorld too.
+local blobProbeOK = false
+if not Nx.isVanillaWorld then
+    blobProbeOK = pcall(CreateFrame, "QuestPOIFrame")
+end
 Nx.BlobsAvailable = blobProbeOK or select(4, GetBuildInfo()) > 39999
 Nx.OldRidingSkill = select(4, GetBuildInfo()) < 40000
 Nx.MaxPlayerLevel = GetMaxLevelForExpansionLevel(LE_EXPANSION_LEVEL_CURRENT)
