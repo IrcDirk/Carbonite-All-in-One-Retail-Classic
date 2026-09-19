@@ -58,6 +58,7 @@ Nx.ZoneConnections = {
     "7|1||1412|38.97|19.09||1456|51.17|31.54", -- [55]
     "7|1||1412|42.13|20.2||1456|51.17|31.54", -- [56]
     "3|2|"..L["Boat to Menethil Harbor"].."|1445|71.54|56.37|"..L["Boat to Dustwallow Marsh"].."|1437|5.03|63.46", -- [57]
+    "3|2|"..L["Boat to Stormwind City"].."|1439|32.39|43.82|"..L["Boat to Darkshore"].."|1453|22.42|55.95", -- [87]
     "3|2|"..L["Tram to Stormwind City"].."|1455|72.78|50.24|"..L["Tram to Ironforge"].."|1453|63.8|8.3", -- [58]
     "3|2|"..L["Boat to Menethil Harbor"].."|1439|32.39|43.82|"..L["Boat to Darkshore"].."|1437|4.5|57.7", -- [59]
     "3|2|"..L["Boat to Teldrassil"].."|1439|33.18|40.1|"..L["Boat to Darkshore"].."|1438|54.87|96.8", -- [60]
@@ -65,5 +66,6 @@ Nx.ZoneConnections = {
     "5|2|"..L["Zeppelin to Undercity"].."|1411|50.88|13.87|"..L["Zeppelin to Orgrimmar"].."|1420|60.7|58.78", -- [62]
     "5|2|"..L["Zeppelin to Stranglethorn Vale"].."|1411|50.57|12.64|"..L["Zeppelin to Orgrimmar"].."|1434|31.37|30.15", -- [63]
     "7|2|"..L["Boat to Stranglethorn Vale"].."|1413|63.68|38.63|"..L["Boat to The Barrens"].."|1434|26.04|73.24", -- [64]
+    "2|0|"..L["Portal to Stormwind"].."|1416|12.0|56.2|"..L["Portal to Dalaran"].."|1453|50.0|87.0", -- [77]
 }
 
