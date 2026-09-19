@@ -130,13 +130,7 @@ Nx.DFMaps     = select(4, GetBuildInfo()) > 99999
 Nx.TWWMaps    = select(4, GetBuildInfo()) > 109999
 Nx.MidMaps    = select(4, GetBuildInfo()) > 119999
 
--- Quest objective blobs are a widget capability, not an expansion feature:
--- Forever ("camelot") reports TOC 16001 and still ships QuestPOIFrame, so the
--- old ">39999" threshold switched them off on a client that supports them.
--- Probe the widget type itself; Nx.Map:UpdateWorld demotes this again if the
--- frame cannot be built or lacks DrawBlob/SetMapID.
-local blobProbeOK = pcall(CreateFrame, "QuestPOIFrame")
-Nx.BlobsAvailable = blobProbeOK or select(4, GetBuildInfo()) > 39999
+Nx.BlobsAvailable = select(4, GetBuildInfo()) > 39999 or (Nx.isCamelot and pcall(CreateFrame, "QuestPOIFrame")) or false
 Nx.OldRidingSkill = select(4, GetBuildInfo()) < 40000
 Nx.MaxPlayerLevel = GetMaxLevelForExpansionLevel(LE_EXPANSION_LEVEL_CURRENT)
 
