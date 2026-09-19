@@ -89,14 +89,14 @@ Nx.Zones = {
     [2482] = L["Mount Hyjal"] .. "|0|0|2|1||",        -- TODO levels/faction
     [2652] = L["Shen'dralas"] .. "|0|0|2|1||",        -- TODO levels/faction
     [2548] = L["Riverglades"] .. "|0|0|2|2||",        -- TODO levels/faction
-    [2521] = L["Zephras Isle"] .. "|0|0|2|3||",
+    [2521] = L["Zephras Isle"] .. "|1|20|2|3||",
     -- New battleground, same shape as AV/WSG/AB.
     [2524] = L["Darkspear Islands"] .. "|0|0|3|4||",
 
     [213] = L["Ragefire Chasm"] .. "|13|18|3|5|1454|51.9|58.4|5",
     [219] = L["Zul'Farrak"] .. "|44|54|3|5|1446|39.2|21.4|5",
     [220] = L["The Temple of Atal'Hakkar"] .. "|50|60|3|5|1435|69.83|54.14|5",
-    [225] = L["The Stockade"] .. "|22|32|3|5|1453|40.1|54.9|5",
+    [225] = L["The Stockade"] .. "|22|32|3|5|1453|51.4|68.3|5",
     [226] = L["Gnomeregan"] .. "|24|34|3|5|1426|24.38|39.8|5",
     [221] = L["Blackfathom Deeps"] .. "|22|32|3|5|1440|14.15|13.9|5",
     [230] = L["Uldaman"] .. "|41|51|3|5|1418|44.44|12.19|5",

@@ -2083,6 +2083,40 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             -- the new objective. Cheap: it just re-runs TrackOnMap for
             -- the active quest.
             Nx.Quest:OnSuperTrackChanged()
+
+            do
+                local typ, tid = Nx.Map:GetTargetInfo()
+                if typ == "Q" and tid then
+                    local tq = math.floor(tid / 100)
+                    local tobj = tid % 100
+                    local _, tcur = Nx.Quest:FindCur(tq)
+                    if tcur and tcur.Q and tcur.Q["Objectives"]
+                        and tobj > 0 and tcur[tobj + 300] then
+                        local nextObj
+                        for n = 1, 15 do
+                            local obj = tcur.Q["Objectives"][n]
+                            if not obj then break end
+                            if not tcur[n + 300] then
+                                local first = type(obj) == "table" and obj[1] or obj
+                                local _, zone = Nx.Quest:UnpackObjectiveNew(first)
+                                if zone and zone ~= 0 then
+                                    nextObj = n
+                                    break
+                                end
+                            end
+                        end
+                        if nextObj then
+                            if nextObj ~= tobj then
+                                Nx.Quest:TrackOnMap(tq, nextObj,
+                                    tcur.QI and tcur.QI > 0, true)
+                            end
+                        else
+                            Nx.Quest.Tracking[tq] = tcur.TrackMask
+                            Nx.Quest:TrackOnMap(tq, 0, true, true)
+                        end
+                    end
+                end
+            end
             -- Broad cur.QId self-heal. OnSuperTrackChanged only
             -- repairs the cur tied to the live super-tracked quest;
             -- other cur entries can still hold a stale QId from
