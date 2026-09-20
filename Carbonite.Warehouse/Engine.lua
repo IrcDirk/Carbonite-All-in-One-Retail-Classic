@@ -493,7 +493,7 @@ function Nx.Warehouse:Update()
     list:Empty()
 
     list:ItemAdd (99)
-    list:ItemSetButton ("Warehouse", false, "Interface\\Addons\\\Carbonite\\Gfx\\Icons\\INV_Misc_GroupNeedMore")
+    list:ItemSetButton ("Warehouse", false, "Interface\\Addons\\Carbonite\\Gfx\\Icons\\INV_Misc_GroupNeedMore")
     local allIndex = list:ItemGetNum()
 
     --[[local ware = Nx.wdb.profile.WarehouseData

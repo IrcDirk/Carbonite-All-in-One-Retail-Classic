@@ -1590,6 +1590,8 @@ function Nx.Map:Create(index)
             and type(questwin.SetMapID) == "function" then
             m.QuestWin = questwin
             m.QuestWin:SetParent(m.TextScFrm:GetScrollChild())
+            -- Decorative blobs must not intercept map dragging.
+            m.QuestWin:EnableMouse(false)
             m.QuestWin:Hide()
             m.QuestWin:SetSize(1002, 668)
             m.QuestWin:SetFillAlpha(255 * m.QuestAlpha)
@@ -11691,6 +11693,7 @@ function Nx.Map:GetIconStatic (levelAdd)
     f.NXType = nil            -- 1000 plyr, 2000 BG, 3000 POI, 8000 debug, 8500 quest offer, 9000+ quest
     f.NXData = nil
     f.NXData2 = nil
+    f.NxPin = nil
     f.NxQuestOffer = nil      -- Clear quest offer flag
     f.NxPoiInfo = nil         -- Clear POI data to prevent stale tooltips on reused frames
     f.NxWidgetSet = nil
@@ -11796,6 +11799,13 @@ function Nx.Map:IconOnMouseDown(button)
     if button == "LeftButton" then
         -- Determine icon category (type / 1000)
         local cat = floor((this.NXType or 0) / 1000)
+
+        -- Preserve area hover input while passing left-dragging to the map.
+        local pin = this.NxPin
+        if cat == 9 and pin and pin.rawSize and pin.clipKind == "tl" then
+            map.OnMouseDown(map.Frm, button)
+            return
+        end
 
         if cat == 2 and shift then
             -- BG location with shift - increment incoming counter
