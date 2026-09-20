@@ -24,7 +24,7 @@ function Nx.ModQuests:Data5()
             End = "1470|1432|32|37.07|49.38",
             Objectives = {
                 [1] = {
-                    "Magenta Fungus Cap|231|32|0|0|5.01|3.34",
+                    "Magenta Fungus Cap|230|32|0|0|5.01|3.34",
                 },
             },
         },
@@ -594,11 +594,6 @@ function Nx.ModQuests:Data5()
             Quest = [=[Filling the Soul Gem|2|46|1|0|0|0]=],
             Start = "2530|1434|32|39.02|58.35",
             End = "2530|1434|32|39.02|58.35",
-            Objectives = {
-                [1] = {
-                    "Soul Gem|1946|32|0|0|5.01|3.34",
-                },
-            },
         },
         [594] = {
             Quest = [=[Message in a Bottle||42|42|630|0|0]=],
@@ -2068,7 +2063,7 @@ function Nx.ModQuests:Data5()
             End = "2918|1455|32|77.34|9.71",
             Objectives = {
                 [1] = {
-                    "Tablet of Will|231|32|0|0|5.01|3.34",
+                    "Tablet of Will|230|32|0|0|5.01|3.34",
                 },
             },
         },
@@ -2380,7 +2375,7 @@ function Nx.ModQuests:Data5()
             End = "6294|1455|32|74.19|9.39",
             Objectives = {
                 [1] = {
-                    "Krom Stoutarm's Treasure|231|32|0|0|5.01|3.34",
+                    "Krom Stoutarm's Treasure|230|32|0|0|5.01|3.34",
                 },
             },
         },
@@ -3289,13 +3284,13 @@ function Nx.ModQuests:Data5()
             End = "112877|230|32|-1.00|-1.00",
             Objectives = {
                 [1] = {
-                    "Shattered Necklace Ruby|231|32|0|0|5.01|3.34",
+                    "Shattered Necklace Ruby|230|32|0|0|5.01|3.34",
                 },
                 [2] = {
-                    "Shattered Necklace Sapphire|231|32|0|0|5.01|3.34",
+                    "Shattered Necklace Sapphire|230|32|0|0|5.01|3.34",
                 },
                 [3] = {
-                    "Shattered Necklace Topaz|231|32|0|0|5.01|3.34",
+                    "Shattered Necklace Topaz|230|32|0|0|5.01|3.34",
                 },
             },
         },
@@ -3340,7 +3335,7 @@ function Nx.ModQuests:Data5()
             End = "6826|1455|32|36.38|3.61",
             Objectives = {
                 [1] = {
-                    "Shattered Necklace Power Source|231|32|0|0|5.01|3.34",
+                    "Shattered Necklace Power Source|230|32|0|0|5.01|3.34",
                 },
             },
         },
@@ -5701,7 +5696,7 @@ function Nx.ModQuests:Data5()
         },
         [2963] = {
             Quest = [=[Portents of Uldum|1|50|45|2946|0|0]=],
-            Start = "24473|117|32|30.42|26.18",
+            Start = "24473|0|32|0|0",
             End = "2916|1455|32|77.54|11.82",
         },
         [2964] = {
@@ -6723,13 +6718,6 @@ function Nx.ModQuests:Data5()
             Objectives = {
                 [1] = {
                     "Mana Potion|1445|32|64.07|47.67|5.01|3.34",
-                },
-                [2] = {
-                    "Coal|1948|35|61|29.5|5.01|3.34",
-                    "Coal|1948|35|29|30.5|5.01|3.34",
-                    "Coal|1948|35|36.5|56|5.01|3.34",
-                    "Coal|1948|35|55.5|59|5.01|3.34",
-                    "Coal|1948|35|65|86.5|5.01|3.34",
                 },
                 [3] = {
                     "Sweet Nectar|1445|35|36.5|30.5|5.01|13.36",
@@ -7791,9 +7779,6 @@ function Nx.ModQuests:Data5()
                     "Dark Iron Geologist|1427|35|62.5|59|15.03|20.04",
                     "Dark Iron Geologist|1427|35|62.5|62|10.02|3.34",
                 },
-                [2] = {
-                    "Silk Cloth|1954|32|65.37|46.99|5.01|3.34",
-                },
             },
         },
         [4450] = {
@@ -8162,11 +8147,6 @@ function Nx.ModQuests:Data5()
                     "Zesty Clam Meat|1446|35|67.5|37.5|10.02|10.02",
                     "Zesty Clam Meat|1446|35|70.5|55|10.02|6.68",
                 },
-                [3] = {
-                    "Alterac Swiss|1949|35|62|40|5.01|3.34",
-                    "Alterac Swiss|1949|35|27.5|58|5.01|3.34",
-                    "Alterac Swiss|1949|35|60.5|68|5.01|3.34",
-                },
             },
         },
         [6611] = {
@@ -8279,11 +8259,11 @@ function Nx.ModQuests:Data5()
             End = "11715|1443|32|68.50|8.88",
             Objectives = {
                 [1] = {
-                    "Vylestem Vines healed|281|35|6|1.5|10.02|3.34",
-                    "Vylestem Vines healed|281|35|0|79|5.01|3.34",
+                    "Vylestem Vines healed|280|35|6|1.5|10.02|3.34",
+                    "Vylestem Vines healed|280|35|0|79|5.01|3.34",
                 },
                 [2] = {
-                    "Filled Cerulean Vial|281|32|0|0|5.01|3.34",
+                    "Filled Cerulean Vial|280|32|0|0|5.01|3.34",
                 },
             },
         },
@@ -8339,7 +8319,7 @@ function Nx.ModQuests:Data5()
             End = "4967|1445|32|45.20|24.40",
             Objectives = {
                 [1] = {
-                    "Shadowshard Fragment|281|32|0|0|5.01|3.34",
+                    "Shadowshard Fragment|280|32|0|0|5.01|3.34",
                 },
             },
         },
@@ -9588,177 +9568,6 @@ function Nx.ModQuests:Data5()
                     "Hippogryph Egg|1444|35|56.5|78|10.02|3.34",
                 },
             },
-        },
-        [9469] = {
-            Quest = [=[Featherbeard's Endorsement|1|46|42|9476|0|0]=],
-            Start = "17223|1425|32|15.11|47.21",
-            End = "181649|1425|32|13.44|55.25",
-        },
-        [9470] = {
-            Quest = [=[A Gesture of Goodwill|1|46|42|0|0|0]=],
-            Start = "17223|1425|32|15.11|47.21",
-            End = "17223|1425|32|15.11|47.21",
-            Objectives = {
-                [1] = {
-                    "Witch Doctor Mai'jin|1425|32|24.63|65.58|5.01|3.34",
-                },
-                [2] = {
-                    "Tcha'kaz|1425|32|24.68|65.47|5.01|3.34",
-                },
-            },
-        },
-        [9471] = {
-            Quest = [=[Preying on the Predators|1|44|40|0|0|0]=],
-            Start = "17223|1425|32|15.11|47.21",
-            End = "17223|1425|32|15.11|47.21",
-            Objectives = {
-                [1] = {
-                    "Mangy Silvermane|1425|35|18|46.5|20.04|3.34",
-                    "Mangy Silvermane|1425|35|17.5|47|30.06|3.34",
-                    "Mangy Silvermane|1425|35|17|47.5|60.12|3.34",
-                    "Mangy Silvermane|1425|35|16.5|48|65.13|3.34",
-                    "Mangy Silvermane|1425|35|16|48.5|70.14|6.68",
-                    "Mangy Silvermane|1425|35|15.5|49.5|80.16|3.34",
-                    "Mangy Silvermane|1425|35|15|50|90.18|3.34",
-                    "Mangy Silvermane|1425|35|14.5|50.5|95.19|3.34",
-                    "Mangy Silvermane|1425|35|14|51|100.2|10.02",
-                    "Mangy Silvermane|1425|35|14|52.5|85.17|3.34",
-                    "Mangy Silvermane|1425|35|14.5|53|75.15|3.34",
-                    "Mangy Silvermane|1425|35|14.5|53.5|70.14|10.02",
-                    "Mangy Silvermane|1425|35|15|55|65.13|10.02",
-                    "Mangy Silvermane|1425|35|16.5|56.5|45.09|3.34",
-                    "Mangy Silvermane|1425|35|18.5|57|25.05|3.34",
-                    "Mangy Silvermane|1425|35|19|57.5|15.03|3.34",
-                },
-                [2] = {
-                    "Silvermane Wolf|1425|35|36.5|44|10.02|3.34",
-                    "Silvermane Wolf|1425|35|36|44.5|15.03|3.34",
-                    "Silvermane Wolf|1425|35|36|45|20.04|13.36",
-                    "Silvermane Wolf|1425|35|36|47|15.03|3.34",
-                    "Silvermane Wolf|1425|35|36|47.5|10.02|10.02",
-                    "Silvermane Wolf|1425|35|35.5|49|15.03|6.68",
-                    "Silvermane Wolf|1425|35|23.5|50|15.03|6.68",
-                    "Silvermane Wolf|1425|35|35|50|20.04|6.68",
-                    "Silvermane Wolf|1425|35|23.5|51|20.04|6.68",
-                    "Silvermane Wolf|1425|35|35|51|25.05|3.34",
-                    "Silvermane Wolf|1425|35|34.5|51.5|35.07|3.34",
-                    "Silvermane Wolf|1425|35|24|52|15.03|3.34",
-                    "Silvermane Wolf|1425|35|34|52|45.09|3.34",
-                    "Silvermane Wolf|1425|35|24.5|52.5|10.02|3.34",
-                    "Silvermane Wolf|1425|35|30.5|52.5|80.16|3.34",
-                    "Silvermane Wolf|1425|35|25|53|5.01|3.34",
-                    "Silvermane Wolf|1425|35|30.5|53|75.15|3.34",
-                    "Silvermane Wolf|1425|35|25.5|53.5|5.01|3.34",
-                    "Silvermane Wolf|1425|35|30|53.5|75.15|3.34",
-                    "Silvermane Wolf|1425|35|26|54|5.01|3.34",
-                    "Silvermane Wolf|1425|35|29.5|54|75.15|3.34",
-                    "Silvermane Wolf|1425|35|26|54.5|105.21|3.34",
-                    "Silvermane Wolf|1425|35|26|55|100.2|3.34",
-                    "Silvermane Wolf|1425|35|26|55.5|15.03|3.34",
-                    "Silvermane Wolf|1425|35|31|55.5|45.09|3.34",
-                    "Silvermane Wolf|1425|35|26|56|10.02|3.34",
-                    "Silvermane Wolf|1425|35|31.5|56|40.08|3.34",
-                    "Silvermane Wolf|1425|35|26|56.5|5.01|23.38",
-                    "Silvermane Wolf|1425|35|32|56.5|35.07|20.04",
-                    "Silvermane Wolf|1425|35|31.5|59.5|40.08|3.34",
-                    "Silvermane Wolf|1425|35|25.5|60|15.03|3.34",
-                    "Silvermane Wolf|1425|35|31|60|45.09|3.34",
-                    "Silvermane Wolf|1425|35|25.5|60.5|20.04|3.34",
-                    "Silvermane Wolf|1425|35|30.5|60.5|45.09|3.34",
-                    "Silvermane Wolf|1425|35|25.5|61|90.18|10.02",
-                    "Silvermane Wolf|1425|35|26|62.5|80.16|13.36",
-                    "Silvermane Wolf|1425|35|26|64.5|60.12|3.34",
-                    "Silvermane Wolf|1425|35|26|65|55.11|3.34",
-                    "Silvermane Wolf|1425|35|26|65.5|50.1|6.68",
-                    "Silvermane Wolf|1425|35|26|66.5|15.03|3.34",
-                },
-            },
-        },
-        [9475] = {
-            Quest = [=[Reclaiming the Eggs|1|46|42|0|0|0]=],
-            Start = "181643|1425|32|37.15|71.55",
-            End = "17223|1425|32|15.11|47.21",
-            Objectives = {
-                [1] = {
-                    "Gryphon Egg|1425|35|34|72.5|5.01|10.02",
-                    "Gryphon Egg|1425|35|33.5|74|5.01|10.02",
-                },
-            },
-        },
-        [9476] = {
-            Quest = [=[In Pursuit of Featherbeard|1|46|42|9475|0|0]=],
-            Start = "181649|1425|32|13.44|55.25",
-            End = "181643|1425|32|37.15|71.55",
-        },
-        [9610] = {
-            Quest = [=[Pool of Tears|1|43|38|0|0|0]=],
-            Start = "18221|1435|32|25.87|32.42",
-            End = "18221|1435|32|25.87|32.42",
-            Objectives = {
-                [1] = {
-                    "Atal'ai Artifact|1435|32|65|55|5.01|3.34",
-                },
-            },
-        },
-        [10373] = {
-            Quest = [=[A Call to Arms: The Plaguelands!|1|50|50|5092|0|0]=],
-            Start = "20722|1947|32|55.43|47.23",
-            End = "10838|1422|32|42.70|84.03",
-        },
-        [10374] = {
-            Quest = [=[A Call to Arms: The Plaguelands!|2|50|50|5096|0|0]=],
-            Start = "20724|1954|32|59.32|64.75",
-            End = "10837|1420|32|83.13|68.94",
-        },
-        [10520] = {
-            Quest = [=[Assisting Arch Druid Staghelm|1|50|47|3764|0|0]=],
-            Start = "16739|1947|32|59.59|19.40",
-            End = "3516|1457|32|34.81|9.26",
-        },
-        [10891] = {
-            Quest = [=[Imperial Plate Armor||50|50|0|0|0]=],
-            Start = "11145|1455|32|51.71|41.41",
-            End = "14567|1446|32|51.38|28.67",
-        },
-        [10892] = {
-            Quest = [=[Imperial Plate Armor||50|50|0|0|0]=],
-            Start = "11176|1454|32|79.96|23.34",
-            End = "14567|1446|32|51.38|28.67",
-        },
-        [11159] = {
-            Quest = [=[Spirits of Stonemaul Hold||41|35|11162|0|0]=],
-            Start = "23579|1445|32|41.86|73.97",
-            End = "23579|1445|32|41.86|73.97",
-            Objectives = {
-                [1] = {
-                    "Stonemaul Spirits laid to rest|1445|35|42|66|20.04|3.34",
-                    "Stonemaul Spirits laid to rest|1445|35|42|66.5|25.05|6.68",
-                },
-            },
-        },
-        [11162] = {
-            Quest = [=[Challenge to the Black Flight||41|35|0|0|0]=],
-            Start = "23579|1445|32|41.86|73.97",
-            End = "23579|1445|32|41.86|73.97",
-            Objectives = {
-                [1] = {
-                    "Stonemaul Clan Avenged|1445|32|52.8|76.2|5.01|3.34",
-                },
-            },
-        },
-        [11948] = {
-            Quest = [=[Striking Back||43|39|0|32|0]=],
-            End = "26221|1458|32|66.90|13.53",
-            Objectives = {
-                [1] = {
-                    "Chillwind Lieutenant|1434|35|21|22.5|5.01|6.68",
-                },
-            },
-        },
-        [14355] = {
-            Quest = [=[Into The Scarlet Monastery|2|42|30|0|0|0]=],
-            Start = "36273|1458|32|56.25|92.21",
-            End = "36273|1458|32|56.25|92.21",
         },
     }
     return ModQuests

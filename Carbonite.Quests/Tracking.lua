@@ -23,6 +23,7 @@ local abs        = math.abs
 local InCombatLockdown = InCombatLockdown
 
 Nx.Quest.TrackDebug = Nx.Quest.TrackDebug or false
+Nx.Quest.TrackQuiet = Nx.Quest.TrackQuiet or false
 
 local TRACK_LOG_MAX = 600
 
@@ -97,7 +98,7 @@ local function tdbg (fmt, ...)
     if not Nx.Quest.TrackDebug then return end
     local ok, msg = pcall (string.format, fmt, ...)
     if not ok then return end
-    if DEFAULT_CHAT_FRAME then
+    if DEFAULT_CHAT_FRAME and not Nx.Quest.TrackQuiet then
         DEFAULT_CHAT_FRAME:AddMessage ("|cff40c0ff[qtrack]|r " .. msg)
     end
     if logBuf then
@@ -224,7 +225,7 @@ local function resolveDungeonEntrance(mapID)
     -- Walk parents until we land on a non-instance ancestor. Most
     -- dungeons hit their continent in one hop, but nested cases
     -- (e.g. raid wings inside an instance) need the loop.
-    local outdoorID = info.parentMapID
+    local outdoorID = info.parentMapID or info.EntryMId
     local guard = 0
     while outdoorID and winfo[outdoorID] and winfo[outdoorID].Instance and guard < 8 do
         outdoorID = winfo[outdoorID].parentMapID
@@ -278,20 +279,186 @@ function Nx.Quest:ResolveObjectivePhaseMapID(quest, mapID)
     return mapID
 end
 
-local function HasCatalogPointObjective(questObj)
-    if type(questObj) ~= "table" then return false end
+local LIVE_CACHE_TTL = 0.5
+local liveCache = {}
 
-    for _, location in ipairs(questObj) do
-        if type(location) == "string" then
-            local _, mapID, poiType = Nx.Quest:UnpackObjectiveNew(location)
-            local x, y = Nx.Quest:UnpackLocPtOff(location)
-            if poiType == 32 and tonumber(mapID) and tonumber(mapID) > 0
-                and type(x) == "number" and type(y) == "number" then
-                return true
+local function LiveQuestPos(qId)
+    if not (qId and C_QuestLog) then return nil end
+
+    local now = GetTime and GetTime() or 0
+    local hit = liveCache[qId]
+    if hit and now - hit.t < LIVE_CACHE_TTL then
+        return hit.mapID, hit.x, hit.y
+    end
+
+    local mapID, x, y
+    if C_QuestLog.GetNextWaypoint then
+        mapID, x, y = C_QuestLog.GetNextWaypoint(qId)
+    end
+
+    if not mapID and C_QuestLog.GetQuestsOnMap then
+        local function tryMap(m)
+            if mapID or not m then return end
+            local list = C_QuestLog.GetQuestsOnMap(m)
+            if not list then return end
+            for _, e in ipairs(list) do
+                if e.questID == qId and e.x and e.y then
+                    mapID, x, y = m, e.x, e.y
+                    return
+                end
+            end
+        end
+        if C_TaskQuest and C_TaskQuest.GetQuestZoneID then
+            tryMap(C_TaskQuest.GetQuestZoneID(qId))
+        end
+        tryMap(C_Map and C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player"))
+    end
+
+    if not (mapID and x and y) then
+        mapID, x, y = nil, nil, nil
+    end
+    liveCache[qId] = { t = now, mapID = mapID, x = x, y = y }
+    return mapID, x, y
+end
+
+local function KnownZone(zone)
+    return Nx.Quest:IsKnownZone (zone)
+end
+
+local function IsInstanceZone(zone)
+    return Nx.Quest:IsInstanceZone (zone)
+end
+
+local cityZones
+
+local function ZoneContains(mapID, wx, wy)
+    local zx, zy = Nx.Map:GetZonePos (mapID, wx, wy)
+    return zx and zy and zx >= 0 and zx <= 100 and zy >= 0 and zy <= 100
+end
+
+local function RefineLiveMapId(mapID, wx, wy)
+    local winfo = Nx.Map.MapWorldInfo
+    local src = winfo[mapID]
+    if not src or src.City or src.Instance then return mapID end
+
+    local playerMap = Nx.Map.GetDisplayableMapForPlayer
+        and Nx.Map:GetDisplayableMapForPlayer()
+    local pinfo = playerMap and winfo[playerMap]
+    if pinfo and playerMap ~= mapID and pinfo.City and pinfo.Cont == src.Cont
+        and ZoneContains (playerMap, wx, wy) then
+        return playerMap
+    end
+
+    if not cityZones then
+        cityZones = {}
+        for id, info in pairs (winfo) do
+            if type(info) == "table" and info.City and not info.Instance then
+                cityZones[#cityZones + 1] = id
             end
         end
     end
+    for _, id in ipairs (cityZones) do
+        local info = winfo[id]
+        if id ~= mapID and info and info.Cont == src.Cont and ZoneContains (id, wx, wy) then
+            return id
+        end
+    end
+    return mapID
+end
+
+local function HasInstanceMap(mapID)
+    local info = Nx.Map.InstanceInfo
+    if info and info[mapID] then return true end
+    if Nx.isRetail and C_Map and C_Map.MapHasArt then
+        local ok, has = pcall (C_Map.MapHasArt, mapID)
+        return ok and has == true
+    end
     return false
+end
+
+local function CatalogEndpoint(self, quest, useEnd)
+    local se = (useEnd and quest["End"]) or quest["Start"]
+    if not self:IsUsableLocation (se) then return nil end
+
+    local name, zone, loc = self:UnpackSE (se)
+    local x1, y1, x2, y2 = self:GetObjectiveRect (se, loc)
+    x1, y1 = Nx.Map:GetWorldPos (zone, x1, y1)
+    x2, y2 = Nx.Map:GetWorldPos (zone, x2, y2)
+    if not x1 or not y1 or (x1 == 0 and y1 == 0) then return nil end
+
+    return { mId = zone, x1 = x1, y1 = y1, x2 = x2, y2 = y2, name = name, source = "db-se" }
+end
+
+local function CatalogObjective(self, quest, qObj, px, py)
+    local objs = quest["Objectives"]
+    local questObj = objs and objs[qObj]
+    local first = type(questObj) == "table" and questObj[1] or nil
+    if not first then return nil, false end
+
+    local name, zone, loc = self:UnpackObjectiveNew (first)
+    if not self:IsUsableObjective (questObj, zone) then
+        return nil, KnownZone (zone)
+    end
+
+    local x, y, closeMapId, inside = self:GetClosestObjectivePos (questObj, loc, zone, px, py)
+    if not x or not y or (x == 0 and y == 0) then return nil, false end
+
+    return {
+        mId = closeMapId or zone, x1 = x, y1 = y, x2 = x, y2 = y,
+        name = name, inside = inside, source = "db",
+    }
+end
+
+local function LiveTarget(qId)
+    local mapID, lx, ly = LiveQuestPos (qId)
+    if not mapID or not KnownZone (mapID) then return nil end
+
+    local wx, wy = Nx.Map:GetWorldPos (mapID, lx * 100, ly * 100)
+    if not wx or not wy or (wx == 0 and wy == 0) then return nil end
+
+    return {
+        mId = RefineLiveMapId (mapID, wx, wy),
+        x1 = wx, y1 = wy, x2 = wx, y2 = wy, source = "live",
+    }
+end
+
+local function ResolveTrackTarget(self, quest, qId, qObj, useEnd)
+    local map = Nx.Map:GetMap (1)
+    local res, inDungeon
+
+    if qObj > 0 then
+        res, inDungeon = CatalogObjective (self, quest, qObj, map.PlyrX, map.PlyrY)
+        if not res then
+            res = LiveTarget (qId)
+        end
+        if not res and not inDungeon then
+            res = CatalogEndpoint (self, quest, useEnd)
+        end
+    else
+        res = CatalogEndpoint (self, quest, useEnd) or LiveTarget (qId)
+    end
+
+    if not res then
+        return nil, inDungeon and "objective is inside a dungeon, no position" or "no position"
+    end
+
+    if IsInstanceZone (res.mId) then
+        if IsInInstance and IsInInstance() then
+            if not HasInstanceMap (res.mId) then
+                return nil, "inside a dungeon without a map"
+            end
+        else
+            local outdoorID, entryX, entryY = resolveDungeonEntrance (res.mId)
+            if outdoorID then
+                res.mId = outdoorID
+                res.x1, res.y1, res.x2, res.y2 = entryX, entryY, entryX, entryY
+                res.inside = nil
+                res.entrance = true
+            end
+        end
+    end
+
+    return res
 end
 
 -------------------------------------------------------------------------------
@@ -440,482 +607,187 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
     if not quest then
         tdbg ("  BAIL: Nx.Quests[%s] is nil (quest not in bundled DB and not patched)",
             tostring(qId))
+        return
     end
 
-    if quest then
+    local tbits = Quest.Tracking[qId] or 0
 
-        local tbits = Quest.Tracking[qId] or 0
---[[
-        if tbits == 0 then    -- Nothing tracked?
+    -- For qObj > 0 (a specific objective): tracking bit must be set.
+    -- For qObj == 0 (title-row / "the whole quest"): any tracking bit
+    -- counts. cur.TrackMask only ever sets bits 1-15 (per-objective),
+    -- never bit 0.
+    local track
+    if qObj == 0 then
+        track = (tbits ~= 0) and 1 or 0
+    else
+        track = bit_band (tbits, bit_lshift (1, qObj))
+    end
 
-            local typ, tid = Map:GetTargetInfo()
-            if typ == "Q" then
-
-                local tqid = floor (tid / 100)
-                if tqid == qId then        -- Same as us?
-                    self.Map:ClearTargets()
-                end
-            end
-            return
-        end
---]]
-        -- For qObj > 0 (a specific objective): tracking bit must be set.
-        -- For qObj == 0 (title-row / "the whole quest"): any tracking bit
-        -- counts. cur.TrackMask only ever sets bits 1-15 (per-objective),
-        -- never bit 0, so the legacy `tbits & 1` test was always 0 and
-        -- the blob/target draw block below silently no-op'd whenever a
-        -- click came in via the title row (super-track flow).
-        local track
-        if qObj == 0 then
-            track = (tbits ~= 0) and 1 or 0
-        else
-            track = bit_band (tbits, bit_lshift (1, qObj))
-        end
-
-        if track > 0 then
-            local QMapNow = _G.NxMap1 and _G.NxMap1.NxMap
-            if QMapNow and QMapNow.QuestBlobQId and QMapNow.QuestBlobQId ~= qId then
+    local function clearOwnTarget (force)
+        local typ, tid = Map:GetTargetInfo()
+        if typ == "Q" and floor (tid / 100) == qId then
+            if force or tbits == 0 or (tid == qId * 100 + qObj) then
+                -- Clearing an active map target is independent from
+                -- removing a quest from either watch list.
+                self.Map:ClearTargets()
                 Quest:UpdateQuestBlob (nil)
             end
         end
+    end
 
-        local questObj
-        local name, zone, loc
+    if track <= 0 then
+        tdbg ("  tracking bit not set -> clear own target (tbits=0x%x)", tbits)
+        clearOwnTarget()
+        return
+    end
 
-        if qObj == 0 then
-            questObj = useEnd and quest["End"] or quest["Start"]
-            name, zone, loc = Quest:UnpackSE (questObj)
-        else
-            if quest["Objectives"] ~= nil then
-                questObj = quest["Objectives"][qObj]
-                if questObj and questObj[1] then
-                    name, zone, loc = Nx.Quest:UnpackObjectiveNew (questObj[1])
-                end
+    local QMapNow = _G.NxMap1 and _G.NxMap1.NxMap
+    if QMapNow and QMapNow.QuestBlobQId and QMapNow.QuestBlobQId ~= qId then
+        Quest:UpdateQuestBlob (nil)
+    end
+
+    local res, why = ResolveTrackTarget (self, quest, qId, qObj, useEnd)
+    if not res then
+        tdbg ("  NO TARGET: %s", tostring(why))
+        clearOwnTarget (true)
+        if not skipSame and why == "no position" then
+            if not Nx.Quest:PatchQuestFromBlizzard (qId) then
+                Nx.Quest:MsgNotInDB ("Z")
             end
-            -- Fallback for quests that ship with Start/End only (no
-            -- Objectives entries, e.g. MoP 31477). Clicking an
-            -- objective row would otherwise leave zone nil and the
-            -- goto block would silently skip. Use the quest's End
-            -- (or Start) coord so the click still resolves to a
-            -- usable target.
-            --
-            -- Zone 0 counts as "no zone" here: PatchQuestFromBlizzard
-            -- writes "<text>|0|32|0|0|6|6" when the live API knows an
-            -- objective's text but no coordinates (every TBC quest,
-            -- where GetQuestObjectives answers but there is no POI
-            -- data). Lua treats 0 as true, so the guard used to accept
-            -- that sentinel, skip this fallback and hand mId = 0 to the
-            -- goto block, which nils it and reports "This objective
-            -- zone is not in the database" - on quests whose Start/End
-            -- coords were right there (reported for quest 11020).
-            if not zone or zone == 0 then
-                local qse = useEnd and quest["End"] or quest["Start"]
-                if qse then
-                    questObj = qse
-                    name, zone, loc = Quest:UnpackSE (qse)
+        end
+        return
+    end
+
+    tdbg ("  tbits=0x%x source=%s zone=%s inside=%s",
+        tbits, tostring(res.source), tostring(res.mId), tostring(res.inside))
+
+    if BlizIndex and Quest:GetQuest (qId) == "W"
+            and Quest.Watch and Quest.Watch.SyncBlizzardWatch then
+        Quest.Watch:SyncBlizzardWatch (qId, BlizIndex, true)
+    end
+    local curBlob = self.QIds[qId]
+    Quest:UpdateQuestBlob ((curBlob and not curBlob.Complete) and qId or nil)
+
+    if not target then
+        tdbg ("  no target requested (target=false) - blob only")
+        self.Map:GotoPlayer()
+        return
+    end
+
+    local mId = res.mId
+    local x1, y1, x2, y2 = res.x1, res.y1, res.x2, res.y2
+    local name = res.name
+
+    if qObj == 0 and C_QuestLog then
+        local curHere = self.QIds and self.QIds[qId]
+        local titlePart = curHere and curHere.Title
+            or (C_QuestLog.GetTitleForQuestID and C_QuestLog.GetTitleForQuestID (qId))
+            or name
+
+        -- GetNextWaypointText is only set for quests with explicit waypoint
+        -- scripting; fall back to the first unfinished objective text.
+        local wpText = C_QuestLog.GetNextWaypointText
+            and C_QuestLog.GetNextWaypointText (qId)
+        if (not wpText or wpText == "") and C_QuestLog.GetQuestObjectives then
+            local objs = C_QuestLog.GetQuestObjectives (qId)
+            if objs then
+                for _, o in ipairs (objs) do
+                    if o and not o.finished and o.text and o.text ~= "" then
+                        wpText = o.text
+                        break
+                    end
+                end
+                if (not wpText or wpText == "") and #objs > 0 then
+                    wpText = objs[#objs] and objs[#objs].text
                 end
             end
         end
 
---        Nx.prt ("TrackOnMap %s %s %s %s %s", qId, qObj, track, name, zone)
-
-        tdbg ("  tbits=0x%x track=%s name=%s zone=%s",
-            tbits, tostring(track), tostring(name), tostring(zone))
-        if not (track > 0 and zone) then
-            tdbg ("  BAIL: %s -> falls into the clear-tracking branch",
-                track > 0 and "zone unresolved" or "tracking bit not set")
-        end
-
-        if track > 0 and zone then
-            if BlizIndex and Quest:GetQuest (qId) == "W"
-                    and Quest.Watch and Quest.Watch.SyncBlizzardWatch then
-                Quest.Watch:SyncBlizzardWatch (qId, BlizIndex, true)
-            end
-            local curBlob = self.QIds[qId]
-            Quest:UpdateQuestBlob ((curBlob and not curBlob.Complete) and qId or nil)
-
-            local mId = zone
-            -- Reject sentinel mapId 0: bundled DB writes "<npc>|0|32|0|0"
-            -- when an extractor couldn't resolve a position. Letting it
-            -- through would call GetWorldPos(0, ...) which returns (0,0)
-            -- and the arrow snaps to world origin.
-            if mId == 0 then mId = nil end
-            if not mId then
-                tdbg ("  BAIL: mapId sentinel 0 -> 'objective zone not in database'")
-            end
-            if mId then
-
-                if not target then
-                    tdbg ("  no target requested (target=false) - blob only")
-                end
-
-                if target then
-
-                    local x1, y1, x2, y2
-
-                    if qObj > 0 then
-
-                        local map = Map:GetMap (1)
-                        local px = map.PlyrX
-                        local py = map.PlyrY
-
-                        -- FIX!!!!!!!!!!!!
-
---                        x1, y1, x2, y2 = Quest:GetClosestObjectiveRect (questObj, mId, px, py)
-                        -- The third return value is the zone of the
-                        -- winning entry. Necessary when a multi-zone
-                        -- Objectives[] list (e.g. an area straddling
-                        -- a zone border) puts the geometrically
-                        -- closest entry in a different zone than the
-                        -- first-listed one. Without this, mId stays
-                        -- on the first entry's zone and CalcTracking
-                        -- sees src/dst on different maps -> router
-                        -- builds a detour through whatever transit
-                        -- zone connects them (e.g. Azuremyst player +
-                        -- Exodar-tagged first entry sent the path
-                        -- through Exodar even when the closest
-                        -- Azuremyst entry was 10y away).
-                        local closeMapId
-                        x1, y1, closeMapId = Quest:GetClosestObjectivePos (questObj, loc, mId, px, py)
-                        if closeMapId then
-                            mId = closeMapId
-                        end
-
-                        -- On retail/Wrath+, prefer Blizzard's live
-                        -- waypoint over the bundled coord whenever
-                        -- the API has one. Bundled DB carries legacy
-                        -- mapIds that may no longer resolve (e.g.
-                        -- quest 37444 "Inoculation" lists mapId 468
-                        -- but retail Azuremyst Isle is uiMapID 97)
-                        -- — GetWorldPos either returns 0,0 or a
-                        -- stale-but-wrong coord, sending tracking to
-                        -- the wrong place. The API knows the live
-                        -- current-objective coord regardless.
-                        -- Objectives with catalogued individual points must
-                        -- keep those exact points. Blizzard's public
-                        -- GetNextWaypoint/GetQuestsOnMap values are one
-                        -- representative quest POI, not one position per
-                        -- objective; replacing a Warding Totem coordinate with
-                        -- that quest-level value makes the route point away
-                        -- from the selected totem.
-                        local keepCatalogObjective =
-                            HasCatalogPointObjective(questObj)
-                        if C_QuestLog and not keepCatalogObjective then
-                            local wpMapID, wpX, wpY
-                            if C_QuestLog.GetNextWaypoint then
-                                wpMapID, wpX, wpY = C_QuestLog.GetNextWaypoint(qId)
-                            end
-                            if not wpMapID and C_QuestLog.GetQuestsOnMap then
-                                local function tryMap(m)
-                                    if wpMapID or not m then return end
-                                    local list = C_QuestLog.GetQuestsOnMap(m)
-                                    if not list then return end
-                                    for _, e in ipairs(list) do
-                                        if e.questID == qId and e.x and e.y then
-                                            wpMapID, wpX, wpY = m, e.x, e.y
-                                            return
-                                        end
-                                    end
-                                end
-                                if C_TaskQuest and C_TaskQuest.GetQuestZoneID then
-                                    tryMap(C_TaskQuest.GetQuestZoneID(qId))
-                                end
-                                -- Use the PLAYER's actual zone, NOT
-                                -- Map:GetCurrentMapId() (returns the
-                                -- displayed map, which Carbonite swaps
-                                -- on mouseover) and NOT MapUtil's
-                                -- GetDisplayableMapForPlayer (can also
-                                -- follow WorldMapFrame's override on
-                                -- retail). C_Map.GetBestMapForUnit
-                                -- always returns the player's true
-                                -- zone, independent of UI state.
-                                tryMap(C_Map and C_Map.GetBestMapForUnit
-                                    and C_Map.GetBestMapForUnit("player"))
-                            end
-                            if wpMapID and wpX and wpY then
-                                -- Retail's MapWorldInfo is keyed by the
-                                -- same uiMapIDs that Blizzard hands us,
-                                -- so use wpMapID directly. Earlier code
-                                -- ran wpMapID through GetLegacyMapInfo,
-                                -- which translates to HBD's legacy ids
-                                -- (e.g. uiMapID 103 -> 471). Those
-                                -- collide with unrelated Carbonite
-                                -- mapIds — 471 in Carbonite is the
-                                -- Mogu'shan Vaults raid-entry record,
-                                -- so the translated GetWorldPos call
-                                -- handed back the Pandaria dungeon
-                                -- entrance and the arrow snapped to
-                                -- the wrong continent.
-                                local mapForPos = wpMapID
-                                local nx, ny = Map:GetWorldPos(mapForPos, wpX * 100, wpY * 100)
-                                if nx and ny and (nx ~= 0 or ny ~= 0) then
-                                    x1, y1 = nx, ny
-                                    mId = mapForPos
-                                end
-                            end
-                        end
-
-                        x2 = x1
-                        y2 = y1
-                    else
-
-                        x1, y1, x2, y2 = Quest:GetObjectiveRect (questObj, loc)
-                        x1, y1 = Map:GetWorldPos (mId, x1, y1)
-                        x2, y2 = Map:GetWorldPos (mId, x2, y2)
-                    end
-
-                    -- Title-row click on retail / Wrath+: prefer Blizzard's
-                    -- live next-waypoint over the static End coord. Blizz's
-                    -- own arrow uses GetNextWaypoint(questID) and advances
-                    -- it as objectives complete; using the same call makes
-                    -- the goto arrow follow the *current* objective rather
-                    -- than parking at one fixed turn-in point.
-                    -- The arrow label is composed as "Quest Title\n
-                    -- Objective Hint" so the user sees both.
-                    -- Title-row click on retail / Wrath+: compose a richer
-                    -- arrow label, and when Blizzard knows a live waypoint
-                    -- for this quest also override the static End coords
-                    -- so the arrow follows the *current* objective.
-                    --
-                    -- The two are independent: most quests have no scripted
-                    -- waypoint (GetNextWaypoint returns nil) but they still
-                    -- have objective text from GetQuestObjectives, so we
-                    -- always try to add the objective to the label even
-                    -- when the coords stay static.
-                    if qObj == 0 and C_QuestLog then
-                        local overrideMID, overrideX, overrideY
-                        if C_QuestLog.GetNextWaypoint then
-                            local wpMapID, wpX, wpY = C_QuestLog.GetNextWaypoint(qId)
-                            if wpMapID and wpX and wpY then
-                                overrideMID, overrideX, overrideY = wpMapID, wpX, wpY
-                            end
-                        end
-                        -- Fallback: walk the live POI list for the relevant
-                        -- map and pick this quest's current entry. Most
-                        -- non-scripted quests have no GetNextWaypoint but
-                        -- their POI x/y in GetQuestsOnMap *does* advance as
-                        -- objectives complete, so this keeps the arrow
-                        -- pointed at the current objective.
-                        if not overrideMID and C_QuestLog.GetQuestsOnMap then
-                            local function tryMap(m)
-                                if overrideMID or not m then return end
-                                local list = C_QuestLog.GetQuestsOnMap(m)
-                                if not list then return end
-                                for _, e in ipairs(list) do
-                                    if e.questID == qId and e.x and e.y then
-                                        overrideMID, overrideX, overrideY = m, e.x, e.y
-                                        return
-                                    end
-                                end
-                            end
-                            if C_TaskQuest and C_TaskQuest.GetQuestZoneID then
-                                tryMap(C_TaskQuest.GetQuestZoneID(qId))
-                            end
-                            tryMap(Map.GetCurrentMapId and Map:GetCurrentMapId())
-                        end
-                        if overrideMID then
-                            -- See the matching note in the qObj>0 path
-                            -- above: use the Blizzard uiMapID directly,
-                            -- not the GetLegacyMapInfo translation.
-                            -- That HBD-legacy id collides with
-                            -- unrelated Carbonite mapIds (uiMapID 103
-                            -- -> 471 = Mogu'shan Vaults instance),
-                            -- which is the "arrow snaps to wrong
-                            -- continent / world origin" symptom.
-                            local mapForPos = overrideMID
-                            local nx, ny = Map:GetWorldPos(mapForPos,
-                                overrideX * 100, overrideY * 100)
-                            -- Reject 0,0: GetWorldPos returns that when
-                            -- the mapForPos can't be resolved, and the
-                            -- bundled End coord (already converted above)
-                            -- is then clobbered by a world-origin point,
-                            -- sending the arrow ~15000y across the map.
-                            if nx and ny and (nx ~= 0 or ny ~= 0) then
-                                x1, y1, x2, y2 = nx, ny, nx, ny
-                                mId = mapForPos
-                            end
-                        end
-
-                        local titlePart
-                        local curHere = self.QIds and self.QIds[qId]
-                        if curHere and curHere.Title then
-                            titlePart = curHere.Title
-                        else
-                            local titleFromAPI = C_QuestLog.GetTitleForQuestID
-                                and C_QuestLog.GetTitleForQuestID(qId)
-                            titlePart = titleFromAPI or name
-                        end
-
-                        -- GetNextWaypointText is only set for quests with
-                        -- explicit waypoint scripting (rare); fall back to
-                        -- the first unfinished objective from the live
-                        -- objective list (covers the common case).
-                        local wpText = C_QuestLog.GetNextWaypointText
-                            and C_QuestLog.GetNextWaypointText(qId)
-                        if (not wpText or wpText == "") and C_QuestLog.GetQuestObjectives then
-                            local objs = C_QuestLog.GetQuestObjectives(qId)
-                            if objs then
-                                for _, o in ipairs(objs) do
-                                    if o and not o.finished and o.text and o.text ~= "" then
-                                        wpText = o.text
-                                        break
-                                    end
-                                end
-                                if (not wpText or wpText == "") and #objs > 0 then
-                                    wpText = objs[#objs] and objs[#objs].text
-                                end
-                            end
-                        end
-
-                        -- Prefer the objective text (it's the actionable
-                        -- bit); fall back to the quest title when no
-                        -- objective is available.
-                        if wpText and wpText ~= "" then
-                            name = wpText
-                        elseif titlePart then
-                            name = titlePart
-                        end
-                    end
-
-                    local cur = self.QIds[qId]
---                    local _, cur = self:FindCur (qId)
-                    if cur then
-                        if qObj > 0 then
-                            name = cur[qObj] or name
---                            Nx.prt ("TrackOnMap name %s", name)
-                        end
-
-                        if cur.Complete then
-                            name = name .. " |cff80ff80" ..L["(Complete)"]
-                        end
-                    end
-
-                    -- If the resolved objective sits inside a dungeon
-                    -- (instance map), the interior coords are unreachable
-                    -- from the open world — the player can't run there.
-                    -- Substitute the dungeon's entrance on the outdoor
-                    -- parent map so the arrow points to where the player
-                    -- actually needs to go. Title-row overrides above
-                    -- (GetNextWaypoint / GetQuestsOnMap) may already have
-                    -- handed us an outdoor mapID; only redirect when the
-                    -- target is still inside the instance.
-                    local outdoorID, entryX, entryY = resolveDungeonEntrance(mId)
-                    if outdoorID then
-                        mId = outdoorID
-                        x1, y1 = entryX, entryY
-                        x2, y2 = entryX, entryY
-                        name = name .. " |cff80c0ff" .. L["(dungeon entrance)"]
-                    end
-
-                    -- Campaign phases can expose points on a stable parent
-                    -- canvas even though the player is on a child map. Do not
-                    -- merely relabel that parent-world coordinate: the fixed
-                    -- child canvas interprets it as local and sends the target
-                    -- far off-map. Project both corners onto the child canvas
-                    -- through the same C_Map-backed transform used by the icon
-                    -- provider, then associate the route with that map.
-                    local sourceMapID = mId
-                    local phaseMapID = self:ResolveObjectivePhaseMapID(
-                        quest, sourceMapID)
-                    if phaseMapID and phaseMapID ~= sourceMapID
-                        and self.ProjectObjectivePoint then
-                        local zx1, zy1 = Map:GetZonePos(sourceMapID, x1, y1)
-                        local zx2, zy2 = Map:GetZonePos(sourceMapID, x2, y2)
-                        local projectedMapID, projectedX1, projectedY1 =
-                            self:ProjectObjectivePoint(
-                                Map:GetMap(1),
-                                sourceMapID,
-                                zx1,
-                                zy1,
-                                phaseMapID
-                            )
-                        local projectedMapID2, projectedX2, projectedY2 =
-                            self:ProjectObjectivePoint(
-                                Map:GetMap(1),
-                                sourceMapID,
-                                zx2,
-                                zy2,
-                                phaseMapID
-                            )
-                        if projectedMapID and projectedMapID2 then
-                            mId = projectedMapID
-                            x1, y1 = projectedX1, projectedY1
-                            x2, y2 = projectedX2, projectedY2
-                        else
-                            -- Projection failure is safer as an untracked
-                            -- point than a confidently wrong cross-map route.
-                            tdbg ("  BAIL: phase projection failed (%s -> %s)",
-                                tostring(sourceMapID), tostring(phaseMapID))
-                            return
-                        end
-                    else
-                        mId = phaseMapID or sourceMapID
-                    end
-
-                    -- Zero-coord guard: if every coord resolved to 0,
-                    -- the source data is unusable (typical for the
-                    -- "<npc>|0|32|0|0" sentinel that backfillers write
-                    -- when no live position was available). Bailing
-                    -- here keeps the arrow on the previous target
-                    -- rather than snapping it to world origin and
-                    -- thrashing the path on every CalcAutoTrack tick.
-                    if (not x1) or (not y1)
-                        or (x1 == 0 and y1 == 0 and x2 == 0 and y2 == 0) then
-                        tdbg ("  BAIL: zero/nil world coords (mId=%s x1=%s y1=%s)",
-                            tostring(mId), tostring(x1), tostring(y1))
-                        return
-                    end
-
-                    if skipSame then
-                        if self:IsTargeted (qId, qObj, x1, y1, x2, y2) then
-
-                            tdbg ("  same target, name refresh only")
-                            Map:SetTargetName (name)
-                            return
-                        end
-                    end
-
-                    tdbg ("  SET TARGET mId=%s x=%.0f y=%.0f name=%s",
-                        tostring(mId), x1 or 0, y1 or 0, tostring(name))
-                    self.Map:SetTarget ("Q", x1, y1, x2, y2, false, qId * 100 + qObj, name, false, mId)
---                    Nx.prt ("TrackOnMap %s %s %s", qId, qObj, name)
-
-                    self.Map.Guide:ClearAll()
-                end
-
-                self.Map:GotoPlayer()
-
-            else
-                -- No zone resolved for the objective. Try a live patch
-                -- first; if it filled in coords the next refresh will
-                -- pick them up and the user never sees the message.
-                -- PatchQuestFromBlizzard self-checks API availability;
-                -- when it returns false (no API or no Blizzard data),
-                -- fall back to the legacy toast.
-                if not Nx.Quest:PatchQuestFromBlizzard(qId) then
-                    Nx.Quest:MsgNotInDB ("Z")
-                end
---                Nx.prt ("quest zone %s", zone)
-            end
-
-        else    -- Clear tracking
-
-            local typ, tid = Map:GetTargetInfo()
-            if typ == "Q" then
-
-                local tqid = floor (tid / 100)
-                if tqid == qId then        -- Same quest as us?
-
-                    if tbits == 0 or (tid == qId * 100 + qObj) then
-                        -- Clearing an active map target is independent from
-                        -- removing a quest from either watch list.
-                        self.Map:ClearTargets()
-                        Quest:UpdateQuestBlob (nil)
-                    end
-                end
-            end
+        if wpText and wpText ~= "" then
+            name = wpText
+        elseif titlePart then
+            name = titlePart
         end
     end
+
+    local cur = self.QIds[qId]
+    if cur then
+        if qObj > 0 then
+            name = cur[qObj] or name
+        end
+        name = name or cur.Title
+        if cur.Complete then
+            name = (name or "") .. " |cff80ff80" .. L["(Complete)"]
+        end
+    end
+    name = name or "?"
+
+    if res.entrance then
+        name = name .. " |cff80c0ff" .. L["(dungeon entrance)"]
+    end
+
+    -- Campaign phases can expose points on a stable parent canvas even
+    -- though the player is on a child map. Project both corners onto the
+    -- child canvas, then associate the route with that map.
+    local sourceMapID = mId
+    local phaseMapID = self:ResolveObjectivePhaseMapID (quest, sourceMapID)
+    if phaseMapID and phaseMapID ~= sourceMapID and self.ProjectObjectivePoint then
+        local zx1, zy1 = Map:GetZonePos (sourceMapID, x1, y1)
+        local zx2, zy2 = Map:GetZonePos (sourceMapID, x2, y2)
+        local projectedMapID, projectedX1, projectedY1 =
+            self:ProjectObjectivePoint (Map:GetMap (1), sourceMapID, zx1, zy1, phaseMapID)
+        local projectedMapID2, projectedX2, projectedY2 =
+            self:ProjectObjectivePoint (Map:GetMap (1), sourceMapID, zx2, zy2, phaseMapID)
+        if projectedMapID and projectedMapID2 then
+            mId = projectedMapID
+            x1, y1 = projectedX1, projectedY1
+            x2, y2 = projectedX2, projectedY2
+        else
+            tdbg ("  BAIL: phase projection failed (%s -> %s)",
+                tostring(sourceMapID), tostring(phaseMapID))
+            return
+        end
+    else
+        mId = phaseMapID or sourceMapID
+    end
+
+    if (not x1) or (not y1)
+        or (x1 == 0 and y1 == 0 and x2 == 0 and y2 == 0) then
+        tdbg ("  BAIL: zero/nil world coords (mId=%s x1=%s y1=%s)",
+            tostring(mId), tostring(x1), tostring(y1))
+        return
+    end
+
+    -- A target that sits inside an objective area follows the player, so the
+    -- arrow reads "you are here" instead of chasing a stale point. Update it
+    -- in place: re-adding it would rebuild the route every frame.
+    local tar = self.Map.Targets and self.Map.Targets[1]
+    if tar and tar.TargetType == "Q" and tar.TargetId == qId * 100 + qObj
+        and (res.inside or tar.Inside) then
+        tar.TargetX1, tar.TargetY1, tar.TargetX2, tar.TargetY2 = x1, y1, x2, y2
+        tar.TargetMX = (x1 + x2) * .5
+        tar.TargetMY = (y1 + y2) * .5
+        tar.MapId = mId
+        tar.Inside = res.inside or nil
+        Map:SetTargetName (name)
+        return
+    end
+
+    if skipSame and self:IsTargeted (qId, qObj, x1, y1, x2, y2) then
+        tdbg ("  same target, name refresh only")
+        Map:SetTargetName (name)
+        return
+    end
+
+    tdbg ("  SET TARGET mId=%s x=%.0f y=%.0f name=%s",
+        tostring(mId), x1 or 0, y1 or 0, tostring(name))
+    local newTar = self.Map:SetTarget ("Q", x1, y1, x2, y2, false, qId * 100 + qObj, name, false, mId)
+    if newTar then
+        newTar.Inside = res.inside or nil
+    end
+
+    self.Map.Guide:ClearAll()
+    self.Map:GotoPlayer()
 end
 
 
@@ -924,17 +796,42 @@ if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
     Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
         if not (Carbonite.Core.SlashCommands and Carbonite.Core.Logger) then return end
         local log = Carbonite.Core.Logger:Get("Tracking")
+        local sv = _G.NXQuest
+        if sv and sv.TrackDebug then
+            Nx.Quest.TrackDebug = true
+            Nx.Quest.TrackQuiet = sv.TrackQuiet and true or false
+            log:info("trace restored from SavedVariables (%s)",
+                Nx.Quest.TrackQuiet and "quiet" or "chat")
+        end
         Carbonite.Core.SlashCommands:Register("qtrack", function(rest)
             local cmd = tostring(rest or ""):lower():match("^%s*(%S*)")
 
-            if cmd == "on" then
+            local function persist()
+                local db = _G.NXQuest
+                if not db then return end
+                db.TrackDebug = Nx.Quest.TrackDebug or nil
+                db.TrackQuiet = Nx.Quest.TrackQuiet or nil
+            end
+
+            if cmd == "quiet" then
                 Nx.Quest.TrackDebug = true
+                Nx.Quest.TrackQuiet = true
+                persist()
+                log:info("trace ON (quiet) - lines only to NXQuest.TrackLog in")
+                log:info("  WTF/Account/<acct>/SavedVariables/Carbonite.Quests.lua")
+                log:info("  (written on /reload or logout)")
+                return
+            elseif cmd == "on" then
+                Nx.Quest.TrackDebug = true
+                Nx.Quest.TrackQuiet = false
+                persist()
                 log:info("trace ON - lines also go to NXQuest.TrackLog in")
                 log:info("  WTF/Account/<acct>/SavedVariables/Carbonite.Quests.lua")
                 log:info("  (written on /reload or logout)")
                 return
             elseif cmd == "off" then
                 Nx.Quest.TrackDebug = false
+                persist()
             elseif cmd == "wipe" then
                 if _G.NXQuest then _G.NXQuest.TrackLog = nil end
                 log:info("TrackLog wiped")

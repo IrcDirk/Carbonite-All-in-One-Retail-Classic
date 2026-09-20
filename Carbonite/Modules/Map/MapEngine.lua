@@ -5731,9 +5731,10 @@ function Nx.Map.OnUpdate(this, elapsed)
 
         if Nx.db.profile.Map.ShowTitle2 then
             local s = GetSubZoneText()
-            local pvpType = GetZonePVPInfo()
-            if pvpType then
-                s = s .. " (" .. L[pvpType] .. ")"
+            local getPVPInfo = (C_PvP and C_PvP.GetZonePVPInfo) or _G.GetZonePVPInfo
+            local pvpType = getPVPInfo and getPVPInfo()
+            if pvpType and pvpType ~= "" then
+                s = (s or "") .. " (" .. (rawget (L, pvpType) or pvpType) .. ")"
             end
             local t2 = format ("%s %s", s, cursorLocXY)
             if t2 ~= map.LastTitle2 then
@@ -6039,7 +6040,8 @@ function Nx.Map:Update (elapsed)
     self.Level = self.Frm:GetFrameLevel() + 1
     self.Cont, self.Zone = self:IdToContZone (mapId)
 
-    Nx.InSanctuary = C_PvP.GetZonePVPInfo() == "sanctuary"
+    local zonePVPInfo = (C_PvP and C_PvP.GetZonePVPInfo) or _G.GetZonePVPInfo
+    Nx.InSanctuary = zonePVPInfo ~= nil and zonePVPInfo() == "sanctuary"
 
     local doSetCurZone
     local mapChange
@@ -8781,6 +8783,13 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
         target.dist = dist
     end
 
+    if target and target.Inside then
+        target.dist = 0
+        self.TrackDistYd = 0
+        self.TrackDir = self.PlyrDir or 0
+        return
+    end
+
     -- Blizzard's live quest POI (or Carbonite's catalog fallback) is the
     -- destination marker for a tracked quest.  Drawing IconWayTarget as well
     -- creates the redundant grey/white arrow reported as NxIcon1 in /fstack.
@@ -11340,6 +11349,47 @@ end
 ------
 -- Get next available map icon for WorldQuest or create one
 -- ret: icon frame
+function Nx.Map:WorldQuestIconOnEnter (frm)
+    local questID = frm and frm.questID
+    if type(questID) ~= "number" then return end
+
+    local lines
+    local wqList = Nx.Quest and Nx.Quest.WQList
+    if wqList and wqList.GenWQTip then
+        local ok, tip = pcall (wqList.GenWQTip, wqList, questID)
+        if ok and type(tip) == "string" and tip ~= "" then
+            lines = tip
+        end
+    end
+
+    if not lines then
+        local title
+        if C_TaskQuest and C_TaskQuest.GetQuestInfoByQuestID then
+            local ok, name = pcall (C_TaskQuest.GetQuestInfoByQuestID, questID)
+            if ok and type(name) == "string" and not (issecretvalue and issecretvalue (name)) then
+                title = name
+            end
+        end
+        if not title and C_QuestLog and C_QuestLog.GetTitleForQuestID then
+            title = C_QuestLog.GetTitleForQuestID (questID)
+        end
+        lines = title or RETRIEVING_DATA or "?"
+    end
+
+    Nx.TooltipText:SetOwner (frm, "ANCHOR_RIGHT")
+    Nx:SetTooltipText (lines)
+
+    if C_TaskQuest and C_TaskQuest.GetQuestUIWidgetSetByType
+        and Enum and Enum.MapIconUIWidgetSetType then
+        local ok, setID = pcall (C_TaskQuest.GetQuestUIWidgetSetByType,
+            questID, Enum.MapIconUIWidgetSetType.Tooltip)
+        if ok and setID then
+            Nx.Map:AddTooltipWidgetText (Nx.TooltipText, setID)
+            Nx.TooltipText:Show()
+        end
+    end
+end
+
 
 function Nx.Map:GetIconWQ (levelAdd)
 
@@ -11430,9 +11480,11 @@ function Nx.Map:GetIconWQ (levelAdd)
 
         -- Set scripts only once on creation (not every frame)
         f:SetScript ("OnEnter", function (self)
-            TaskPOI_OnEnter(self)
+            Nx.Map:WorldQuestIconOnEnter (self)
         end)
-        f:SetScript ("OnLeave", TaskPOI_OnLeave)
+        f:SetScript ("OnLeave", function ()
+            Nx.TooltipText:Hide()
+        end)
     end
 
     -- Only update highlight texture if it exists (rare case)
@@ -11873,164 +11925,11 @@ function Nx.Map:IconOnMouseDown(button)
                         end
                     end
                 elseif cat == 9 then
-                    -- Quest icon left-click → set the active quest. On retail /
-                    -- Wrath+ Classic where C_SuperTrack exists this calls
-                    -- Blizzard's super-track API and Carbonite's
-                    -- OnSuperTrackChanged listener mirrors it into our
-                    -- Tracking table. On Classic Era / TBC we polyfill by
-                    -- toggling Carbonite tracking directly so the user gets
-                    -- the same one-click "make this the active quest" UX.
-                    local cur = this.NXData
-                    local qId = cur and cur.QId
-                    -- Encode the per-objective index in NXType (renderer uses
-                    -- 9000 for start/end icons and 9000+N for objective N).
-                    -- Capture it so we can re-target the arrow at the actual
-                    -- objective the user clicked, not whatever default the
-                    -- super-track listener picks (which on classic falls back
-                    -- to the static End coord).
-                    local objI = ((this.NXType or 0) - 9000)
-                    if objI < 0 or objI > 15 then objI = 0 end
-                    if qId and qId > 0 then
-                        -- cur.QId can drift (saved-vars, etc.); resolve the
-                        -- live questID from the log index before calling
-                        -- Blizzard's API or it will silently reject.
-                        local liveQID = qId
-                        local qIndex = cur.QI
-                        if qIndex and qIndex > 0 then
-                            if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
-                                local q = C_QuestLog.GetQuestIDForLogIndex(qIndex)
-                                if q and q > 0 then liveQID = q end
-                            elseif GetQuestIDFromLogIndex then
-                                local q = GetQuestIDFromLogIndex(qIndex)
-                                if q and q > 0 then liveQID = q end
-                            end
-                        end
-                        -- Compute toggle state BEFORE invoking any setter.
-                        -- The "click the active icon to clear" UX matches the
-                        -- whole pair (qId, objI), so clicking objective 1
-                        -- while objective 2 is active switches arrows rather
-                        -- than toggling the quest off, and clicking the same
-                        -- objective twice clears both super-track + arrow.
-                        local activeQID = (C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
-                                            and C_SuperTrack.GetSuperTrackedQuestID()) or 0
-                        if activeQID == 0 and Nx.Quest then
-                            activeQID = Nx.Quest.ActiveQID or 0
-                        end
-                        local activeObjI = (Nx.Quest and Nx.Quest.ActiveObjI) or 0
-                        local toggleOff = (activeQID == liveQID and activeObjI == objI)
-
-                        local _prevAddWatchSuppress
-                        if Nx.Quest then
-                            _prevAddWatchSuppress = Nx.Quest._addWatchSuppress
-                            Nx.Quest._addWatchSuppress = true
-                        end
-
-                        -- Defer the secure C_SuperTrack mutations to next
-                        -- tick. Calling them synchronously from this
-                        -- click stack carries Carbonite taint through
-                        -- Blizzard's super-track CallbackRegistry chain
-                        -- and trips SetPassThroughButtons in
-                        -- QuestDataProvider:RefreshAllData (same pattern
-                        -- as the WQ-pin click fix). _addWatchSuppress
-                        -- has to stay TRUE through the deferred call so
-                        -- the AddQuestWatch hooksecurefunc doesn't
-                        -- double-toggle Carbonite's active quest, so the
-                        -- restore moves inside the closure; the outer
-                        -- restore below only fires on the classic /
-                        -- no-C_SuperTrack path that stays synchronous.
-                        local _deferredRestore = false
-
-                        if toggleOff then
-                            -- Mark the clear as user-initiated so
-                            -- OnSuperTrackChanged's "restore previous"
-                            -- guard doesn't immediately re-apply the
-                            -- quest. Cleared again inside the listener.
-                            if Nx.Quest then
-                                Nx.Quest.UserClearedActive = true
-                            end
-                            if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
-                                local _restore = _prevAddWatchSuppress
-                                _deferredRestore = true
-                                C_Timer.After(0, function()
-                                    -- Combat may have started within the
-                                    -- tick; SuperTrackSafe re-defers to
-                                    -- PLAYER_REGEN_ENABLED then (the
-                                    -- tainted SUPER_TRACKING_CHANGED chain
-                                    -- trips protected SetPassThroughButtons
-                                    -- in combat).
-                                    Nx.SuperTrackSafe(function()
-                                        C_SuperTrack.SetSuperTrackedQuestID(0)
-                                        if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
-                                    end)
-                                end)
-                            elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
-                                -- Polyfill on classic — second call with the
-                                -- same id clears (toggle behavior).
-                                Nx.Quest:SetActiveCarboniteQuest(qId, cur.QI)
-                            end
-                            if Nx.Quest then
-                                Nx.Quest.ActiveQID = 0
-                                Nx.Quest.ActiveObjI = 0
-                                if Nx.Quest.Tracking then
-                                    Nx.Quest.Tracking[qId] = nil
-                                end
-                            end
-                            -- Clear the goto arrow so it doesn't keep
-                            -- pointing at the now-deactivated objective.
-                            if map.ClearTargets then map:ClearTargets() end
-                            if PlaySound and SOUNDKIT then
-                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-                            end
-                        else
-                            if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
-                                local _restore = _prevAddWatchSuppress
-                                local _live = liveQID
-                                _deferredRestore = true
-                                C_Timer.After(0, function()
-                                    -- Combat re-check at fire time (see
-                                    -- toggle-off branch above).
-                                    Nx.SuperTrackSafe(function()
-                                        if C_SuperTrack.SetSuperTrackedUserWaypoint
-                                           and C_SuperTrack.IsSuperTrackingUserWaypoint
-                                           and C_SuperTrack.IsSuperTrackingUserWaypoint() then
-                                            C_SuperTrack.SetSuperTrackedUserWaypoint(false)
-                                        end
-                                        if C_SuperTrack.ClearAllSuperTracked then
-                                            C_SuperTrack.ClearAllSuperTracked()
-                                        end
-                                        C_SuperTrack.SetSuperTrackedQuestID(_live)
-                                        if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
-                                    end)
-                                end)
-                            elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
-                                -- Classic Era / TBC: no C_SuperTrack. Use
-                                -- Carbonite's own active-quest state. The
-                                -- polyfill toggles, so call it only when
-                                -- the quest isn't already active to avoid
-                                -- clearing here.
-                                if activeQID ~= qId then
-                                    Nx.Quest:SetActiveCarboniteQuest(qId, cur.QI)
-                                end
-                            else
-                                map.OnMouseDown(map.Frm, button)
-                            end
-                            if Nx.Quest then Nx.Quest.ActiveObjI = objI end
-                            -- Re-target the arrow at the specific objective
-                            -- the user clicked (super-track + classic active
-                            -- both default to qObj=0 routing, which on
-                            -- classic falls back to the static End coord).
-                            if objI > 0 and Nx.Quest and Nx.Quest.TrackOnMap then
-                                Nx.Quest:TrackOnMap(qId, objI,
-                                    cur.QI and cur.QI > 0, true)
-                            end
-                            if PlaySound and SOUNDKIT then
-                                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                            end
-                        end
-                        if Nx.Quest and not _deferredRestore then
-                            Nx.Quest._addWatchSuppress = _prevAddWatchSuppress
-                        end
+                    if IsShiftKeyDown() or IsControlKeyDown() or IsAltKeyDown() then
+                        map:QuestIconClick (this, button)
                     else
+                        local cx, cy = GetCursorPosition()
+                        map.PendingQuestClick = { Frm = this, X = cx, Y = cy }
                         map.OnMouseDown(map.Frm, button)
                     end
                 else
@@ -12125,13 +12024,182 @@ function Nx.Map:BuildPlyrLists()
     Map.PlyrNamesTipStr = tipStr
 end
 
+function Nx.Map:QuestIconClick (this, button)
+    local map = self
+    local cur = this.NXData
+    local qId = cur and cur.QId
+    -- Encode the per-objective index in NXType (renderer uses
+    -- 9000 for start/end icons and 9000+N for objective N).
+    -- Capture it so we can re-target the arrow at the actual
+    -- objective the user clicked, not whatever default the
+    -- super-track listener picks (which on classic falls back
+    -- to the static End coord).
+    local objI = ((this.NXType or 0) - 9000)
+    if objI < 0 or objI > 15 then objI = 0 end
+    if qId and qId > 0 then
+        -- cur.QId can drift (saved-vars, etc.); resolve the
+        -- live questID from the log index before calling
+        -- Blizzard's API or it will silently reject.
+        local liveQID = qId
+        local qIndex = cur.QI
+        if qIndex and qIndex > 0 then
+            if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
+                local q = C_QuestLog.GetQuestIDForLogIndex(qIndex)
+                if q and q > 0 then liveQID = q end
+            elseif GetQuestIDFromLogIndex then
+                local q = GetQuestIDFromLogIndex(qIndex)
+                if q and q > 0 then liveQID = q end
+            end
+        end
+        -- Compute toggle state BEFORE invoking any setter.
+        -- The "click the active icon to clear" UX matches the
+        -- whole pair (qId, objI), so clicking objective 1
+        -- while objective 2 is active switches arrows rather
+        -- than toggling the quest off, and clicking the same
+        -- objective twice clears both super-track + arrow.
+        local activeQID = (C_SuperTrack and C_SuperTrack.GetSuperTrackedQuestID
+                            and C_SuperTrack.GetSuperTrackedQuestID()) or 0
+        if activeQID == 0 and Nx.Quest then
+            activeQID = Nx.Quest.ActiveQID or 0
+        end
+        local activeObjI = (Nx.Quest and Nx.Quest.ActiveObjI) or 0
+        local toggleOff = (activeQID == liveQID and activeObjI == objI)
+
+        if not toggleOff and Nx.Quest and Nx.Quest.Watch
+            and Nx.Quest.Watch.SuspendAutoTarget then
+            Nx.Quest.Watch:SuspendAutoTarget()
+        end
+
+        local _prevAddWatchSuppress
+        if Nx.Quest then
+            _prevAddWatchSuppress = Nx.Quest._addWatchSuppress
+            Nx.Quest._addWatchSuppress = true
+        end
+
+        -- Defer the secure C_SuperTrack mutations to next
+        -- tick. Calling them synchronously from this
+        -- click stack carries Carbonite taint through
+        -- Blizzard's super-track CallbackRegistry chain
+        -- and trips SetPassThroughButtons in
+        -- QuestDataProvider:RefreshAllData (same pattern
+        -- as the WQ-pin click fix). _addWatchSuppress
+        -- has to stay TRUE through the deferred call so
+        -- the AddQuestWatch hooksecurefunc doesn't
+        -- double-toggle Carbonite's active quest, so the
+        -- restore moves inside the closure; the outer
+        -- restore below only fires on the classic /
+        -- no-C_SuperTrack path that stays synchronous.
+        local _deferredRestore = false
+
+        if toggleOff then
+            -- Mark the clear as user-initiated so
+            -- OnSuperTrackChanged's "restore previous"
+            -- guard doesn't immediately re-apply the
+            -- quest. Cleared again inside the listener.
+            if Nx.Quest then
+                Nx.Quest.UserClearedActive = true
+            end
+            if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
+                local _restore = _prevAddWatchSuppress
+                _deferredRestore = true
+                C_Timer.After(0, function()
+                    -- Combat may have started within the
+                    -- tick; SuperTrackSafe re-defers to
+                    -- PLAYER_REGEN_ENABLED then (the
+                    -- tainted SUPER_TRACKING_CHANGED chain
+                    -- trips protected SetPassThroughButtons
+                    -- in combat).
+                    Nx.SuperTrackSafe(function()
+                        C_SuperTrack.SetSuperTrackedQuestID(0)
+                        if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
+                    end)
+                end)
+            elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
+                -- Polyfill on classic — second call with the
+                -- same id clears (toggle behavior).
+                Nx.Quest:SetActiveCarboniteQuest(qId, cur.QI)
+            end
+            if Nx.Quest then
+                Nx.Quest.ActiveQID = 0
+                Nx.Quest.ActiveObjI = 0
+                if Nx.Quest.Tracking then
+                    Nx.Quest.Tracking[qId] = nil
+                end
+            end
+            -- Clear the goto arrow so it doesn't keep
+            -- pointing at the now-deactivated objective.
+            if map.ClearTargets then map:ClearTargets() end
+            if PlaySound and SOUNDKIT then
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+            end
+        else
+            if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
+                local _restore = _prevAddWatchSuppress
+                local _live = liveQID
+                _deferredRestore = true
+                C_Timer.After(0, function()
+                    -- Combat re-check at fire time (see
+                    -- toggle-off branch above).
+                    Nx.SuperTrackSafe(function()
+                        if C_SuperTrack.SetSuperTrackedUserWaypoint
+                           and C_SuperTrack.IsSuperTrackingUserWaypoint
+                           and C_SuperTrack.IsSuperTrackingUserWaypoint() then
+                            C_SuperTrack.SetSuperTrackedUserWaypoint(false)
+                        end
+                        if C_SuperTrack.ClearAllSuperTracked then
+                            C_SuperTrack.ClearAllSuperTracked()
+                        end
+                        C_SuperTrack.SetSuperTrackedQuestID(_live)
+                        if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
+                    end)
+                end)
+            elseif Nx.Quest and Nx.Quest.SetActiveCarboniteQuest then
+                -- Classic Era / TBC: no C_SuperTrack. Use
+                -- Carbonite's own active-quest state. The
+                -- polyfill toggles, so call it only when
+                -- the quest isn't already active to avoid
+                -- clearing here.
+                if activeQID ~= qId then
+                    Nx.Quest:SetActiveCarboniteQuest(qId, cur.QI)
+                end
+            end
+            if Nx.Quest then Nx.Quest.ActiveObjI = objI end
+            -- Re-target the arrow at the specific objective
+            -- the user clicked (super-track + classic active
+            -- both default to qObj=0 routing, which on
+            -- classic falls back to the static End coord).
+            if objI > 0 and Nx.Quest and Nx.Quest.TrackOnMap then
+                Nx.Quest:TrackOnMap(qId, objI,
+                    cur.QI and cur.QI > 0, true)
+            end
+            if PlaySound and SOUNDKIT then
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+            end
+        end
+        if Nx.Quest and not _deferredRestore then
+            Nx.Quest._addWatchSuppress = _prevAddWatchSuppress
+        end
+    end
+end
+
 ---
 -- Handle mouse up on an icon
 -- @param button  Mouse button released
 --
 function Nx.Map:IconOnMouseUp(button)
     local this = self
-    this.NxMap.OnMouseUp(this.NxMap.Frm, button)
+    local map = this.NxMap
+    local pending = map.PendingQuestClick
+    map.PendingQuestClick = nil
+
+    map.OnMouseUp(map.Frm, button)
+
+    if pending and pending.Frm == this and button == "LeftButton" then
+        local cx, cy = GetCursorPosition()
+        if abs (cx - pending.X) < 5 and abs (cy - pending.Y) < 5 then
+            map:QuestIconClick (this, button)
+        end
+    end
 
     -- Fire target callback if present
     local target = this.NxTarget

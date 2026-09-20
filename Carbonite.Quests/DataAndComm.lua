@@ -431,23 +431,22 @@ function Nx.Quest:CalcDistances (n1, n2)
                         end
                     end
 
-                    if zone and zone ~= 0 then
+                    if zone and zone ~= 0 and self:IsUsableObjective (questObj, zone) then
 
                         local mId = zone
                         if mId and mId ~= 9000 then
                             local x, y = self:GetClosestObjectivePos (questObj, loc, mId, px, py)
-                            if not x or not y then
-                                return
-                            end
-                            local dist = ((x - px) ^ 2 + (y - py) ^ 2) ^ .5
+                            if x and y then
+                                local dist = ((x - px) ^ 2 + (y - py) ^ 2) ^ .5
 
-                            if dist < cur.Distance then
-                                cur.CloseObjI = qObj
-                                cur.Distance = dist
+                                if dist < cur.Distance then
+                                    cur.CloseObjI = qObj
+                                    cur.Distance = dist
+                                end
+                                cur["OX"..qObj] = x
+                                cur["OY"..qObj] = y
+                                cur["OD"..qObj] = dist
                             end
-                            cur["OX"..qObj] = x
-                            cur["OY"..qObj] = y
-                            cur["OD"..qObj] = dist
                         end
                     end
                 end
@@ -497,6 +496,38 @@ end
 -- to set the goto target's mapId, otherwise CalcTracking sees src vs
 -- dst on different maps and the router detours through whatever
 -- transit zone connects them.
+function Nx.Quest:IsInstanceZone (zone)
+    local winfo = zone and Nx.Map.MapWorldInfo and Nx.Map.MapWorldInfo[zone]
+    return winfo ~= nil and winfo.Instance == true
+end
+
+function Nx.Quest:IsKnownZone (zone)
+    if not zone or zone == 0 then return false end
+    return Nx.Map.MapWorldInfo ~= nil and Nx.Map.MapWorldInfo[zone] ~= nil
+end
+
+function Nx.Quest:IsUsableLocation (location, fallbackZone)
+    if type(location) ~= "string" then return false end
+    local _, zone, _, x, y = Nx.Split ("|", location)
+    zone = tonumber(zone) or fallbackZone
+    if not self:IsKnownZone (zone) then return false end
+    if self:IsInstanceZone (zone) then return true end
+    return (tonumber(x) or 0) > 0 or (tonumber(y) or 0) > 0
+end
+
+function Nx.Quest:IsUsableObjective (questObj, fallbackZone)
+    if type(questObj) == "string" then
+        return self:IsUsableLocation (questObj, fallbackZone)
+    end
+    if type(questObj) ~= "table" then return false end
+    for _, location in pairs (questObj) do
+        if self:IsUsableLocation (location, fallbackZone) then
+            return true
+        end
+    end
+    return false
+end
+
 function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
     local Map = Nx.Map
     if type(str) == "string" then
@@ -524,7 +555,7 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
                 y = wy1
                 if px >= wx1 and px <= wx2 then
                     if py >= wy1 and py <= wy2 then        -- Within span?
-                        return px, py, mapId
+                        return px, py, mapId, true
                     end
                     x = px
                 elseif px >= wx2 then    -- Right of span?
@@ -556,7 +587,8 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
             local pX = tonumber(x); local pY = tonumber(y)
             -- Skip sentinel entries with mapId=0 (PatchQuestFromBlizzard
             -- writes these when live coords aren't available yet).
-            if not pX or not pY or poiMap == 0 then
+            if not pX or not pY or poiMap == 0
+                or not self:IsUsableLocation (b, mapId) then
                 -- skip
             elseif poiTyp <= 33 then
                 -- Point: compare against the bare coord, no bounding box.
@@ -583,7 +615,7 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
             y = wy1
             if px >= wx1 and px <= wx2 then
                 if py >= wy1 and py <= wy2 then        -- Within span?
-                    return px, py, poiMap
+                    return px, py, poiMap, true
                 end
                 x = px
             elseif px >= wx2 then    -- Right of span?
@@ -1592,14 +1624,6 @@ function Nx.Quest:SetQuest(qId, qStatus, qTime)
     local watch = self.Watch
     if watch then
         watch.ForceListRefresh = true
-
-        -- Record Carbonite membership intent separately from Blizzard-origin
-        -- watch events. BCC's temporary native watches can then expire without
-        -- removing a quest the player or Carbonite explicitly kept watched.
-        if not watch.ApplyingBlizzardWatch and watch.NoteCarboniteWatchState
-                and type(qId) == "number" and qId > 0 then
-            watch:NoteCarboniteWatchState(qId)
-        end
 
         if watch.Opened and watch.SyncBlizzardWatch
                 and not watch.ApplyingBlizzardWatch

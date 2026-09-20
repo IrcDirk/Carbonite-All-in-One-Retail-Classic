@@ -61,6 +61,8 @@ local CAUSE_KEEP    = 32
 local MAX_POS       = 12
 -- Two samples closer than this (in map percent) count as the same spot.
 local POS_GRID      = 0.6
+local TALK_GRID     = 0.15
+local MAX_TALK      = 64
 local SV_VERSION    = 2
 -- Quest-log rescans are coalesced; QUEST_LOG_UPDATE can fire in bursts.
 local SCAN_DELAY    = 0.25
@@ -247,26 +249,29 @@ end
 
 -- Append a position sample, collapsing near-duplicates so standing in one
 -- spot killing twenty mobs stores one entry, not twenty.
-local function addPos(rec, mapID, x, y)
+local function addPos(rec, mapID, x, y, field, grid, maxn)
     if not mapID then return end
-    rec.pos = rec.pos or {}
-    local list = rec.pos
+    field = field or "pos"
+    grid = grid or POS_GRID
+    rec[field] = rec[field] or {}
+    local list = rec[field]
     for i = 1, #list do
         local p = list[i]
         if p[1] == mapID and (not x or not p[2]
-            or (abs(p[2] - x) < POS_GRID and abs(p[3] - y) < POS_GRID)) then
+            or (abs(p[2] - x) < grid and abs(p[3] - y) < grid)) then
             p[4] = (p[4] or 1) + 1      -- how often we saw this spot
             return
         end
     end
-    if #list < MAX_POS then
+    if #list < (maxn or MAX_POS) then
         list[#list + 1] = { mapID, x, y, 1 }
     end
 end
 
 -- "Creature-0-3299-0-6-448-000082C98F" -> "Creature", 448
 local function guidKind(guid)
-    if not guid then return nil end
+    guid = plain(guid)
+    if type(guid) ~= "string" then return nil end
     local kind, _, _, _, _, id = strsplit("-", guid)
     if kind == "Creature" or kind == "Vehicle" or kind == "Pet"
         or kind == "GameObject" or kind == "Vignette" then
@@ -607,7 +612,8 @@ end
 
 -- Merge a role into d.U2Q: "a" offered by this NPC, "e" turned in here.
 local function noteU2Q(npcID, questID, role)
-    if not npcID or not questID or questID <= 0 then return end
+    questID = plain(questID)
+    if not npcID or type(questID) ~= "number" or questID <= 0 then return end
     local d = db()
     if not d then return end
     local t = d.U2Q[npcID]
@@ -626,7 +632,8 @@ end
 -- Gossip hands us title/level/repeat flags for free; keep them in the harvest
 -- table so a quest we never accept still gets a name.
 local function noteHarvestFromGossip(questID, info)
-    if not questID or questID <= 0 then return end
+    questID = plain(questID)
+    if type(questID) ~= "number" or questID <= 0 then return end
     local d = db()
     if not d then return end
     local h = d.H[questID]
@@ -636,19 +643,19 @@ local function noteHarvestFromGossip(questID, info)
     end
     h.title = h.title or plain(info.title)
     h.lvl   = h.lvl or plain(info.questLevel)
-    if info.frequency and info.frequency > 1 then h.freq = info.frequency end
-    if info.repeatable then h.rep = true end
+    local freq = plain(info.frequency)
+    if type(freq) == "number" and freq > 1 then h.freq = freq end
+    if plain(info.repeatable) then h.rep = true end
     h.src = h.src or "gossip"
 end
 
 local function scanQuestGiver()
     if not enabled then return end
-    local guid = UnitGUID("npc")
-    local kind, npcID = guidKind(guid)
+    local kind, npcID = guidKind(UnitGUID("npc"))
     if not npcID then return end
 
     local mapID, x, y = playerPos()
-    noteNPC(kind == "Creature" and npcID or nil, UnitName("npc"), UnitLevel("npc"), mapID, x, y)
+    noteNPC(kind == "Creature" and npcID or nil, plain(UnitName("npc")), plain(UnitLevel("npc")), mapID, x, y)
 
     local d = db()
     if not d then return end
@@ -672,16 +679,17 @@ local function scanQuestGiver()
     -- the active side exposes IDs here; available quests give us a title, so
     -- record those by name for the offline matcher.
     if _G.GetNumActiveQuests and _G.GetActiveQuestID then
-        for i = 1, GetNumActiveQuests() do
+        for i = 1, plain(GetNumActiveQuests()) or 0 do
             local ok, qid = pcall(GetActiveQuestID, i)
-            if ok and qid and qid > 0 then noteU2Q(npcID, qid, "e") end
+            if ok then noteU2Q(npcID, qid, "e") end
         end
     end
     if _G.GetNumAvailableQuests and _G.GetAvailableTitle then
         local names
-        for i = 1, GetNumAvailableQuests() do
+        for i = 1, plain(GetNumAvailableQuests()) or 0 do
             local ok, title = pcall(GetAvailableTitle, i)
-            if ok and title and title ~= "" then
+            title = ok and plain(title) or nil
+            if type(title) == "string" and title ~= "" then
                 names = names or {}
                 names[title] = true
             end
@@ -995,6 +1003,116 @@ local function noteTalkTarget()
     end
 end
 
+local ROLE_BY_TYPE = {}
+if Enum and Enum.PlayerInteractionType then
+    for k, v in pairs(Enum.PlayerInteractionType) do ROLE_BY_TYPE[v] = k end
+end
+
+local LEGACY_ROLE = {
+    MERCHANT_SHOW      = "Merchant",
+    TRAINER_SHOW       = "Trainer",
+    BANKFRAME_OPENED   = "Banker",
+    AUCTION_HOUSE_SHOW = "Auctioneer",
+    MAIL_SHOW          = "MailInfo",
+    TAXIMAP_OPENED     = "TaxiNode",
+}
+
+local useManager = false
+
+local function unitSubtitle(unit)
+    local get = C_TooltipInfo and C_TooltipInfo.GetUnit
+    if not get then return nil end
+    local ok, data = pcall(get, unit)
+    if not ok or type(data) ~= "table" or type(data.lines) ~= "table" then return nil end
+    local line = data.lines[2]
+    local text = type(line) == "table" and plain(line.leftText) or nil
+    if type(text) == "string" and text ~= "" and not text:find("%d") then
+        return text
+    end
+end
+
+local function serviceTarget()
+    local kind, id = guidKind(plain(UnitGUID("npc")))
+    if not id then
+        kind, id = guidKind(plain(UnitGUID("softinteract")))
+    end
+    return kind, id
+end
+
+local OBJ_ROLE = {
+    MailInfo = true, TaxiNode = true, Banker = true, GuildBanker = true,
+    Auctioneer = true, BlackMarketAuctioneer = true, VoidStorageBanker = true,
+    Binder = true, StableMaster = true, Transmogrifier = true, Merchant = true,
+}
+
+local function serviceRec(d, kind, id, role, mapID, x, y)
+    if kind == "Creature" and id then
+        noteNPC(id, plain(UnitName("npc")), plain(UnitLevel("npc")), mapID, x, y)
+        local rec = d.NPC[id]
+        if rec and not rec.sub then rec.sub = unitSubtitle("npc") end
+        return rec
+    end
+    local key = (kind == "GameObject" and id) and ("GameObject:" .. id)
+        or (OBJ_ROLE[role] and role)
+    if not key then return nil end
+    local rec = d.OBJ[key]
+    if not rec then
+        rec = {}
+        d.OBJ[key] = rec
+    end
+    rec.name = rec.name or plain(UnitName("npc"))
+    return rec
+end
+
+local function noteTrainer(rec)
+    if not (GetNumTrainerServices and GetTrainerServiceSkillLine) then return end
+    local n = plain(GetNumTrainerServices()) or 0
+    for i = 1, n do
+        local skill = plain(GetTrainerServiceSkillLine(i))
+        if type(skill) == "string" and skill ~= "" then
+            rec.train = skill
+            break
+        end
+    end
+    if IsTradeskillTrainer then
+        rec.tradeskill = plain(IsTradeskillTrainer()) and true or nil
+    end
+end
+
+local function noteGossip(rec)
+    if not (C_GossipInfo and C_GossipInfo.GetOptions) then return end
+    local ok, opts = pcall(C_GossipInfo.GetOptions)
+    if not ok or type(opts) ~= "table" then return end
+    for _, o in ipairs(opts) do
+        local icon = plain(o.icon)
+        if icon then
+            rec.gossip = rec.gossip or {}
+            rec.gossip[icon] = plain(o.name) or true
+        end
+    end
+end
+
+local function noteService(role)
+    if not enabled or not role or role == "None" then return end
+    local d = db()
+    if not d then return end
+    local kind, id = serviceTarget()
+    local mapID, x, y = playerPos()
+    local rec = serviceRec(d, kind, id, role, mapID, x, y)
+    if not rec then return end
+    rec.roles = rec.roles or {}
+    rec.roles[role] = (rec.roles[role] or 0) + 1
+    addPos(rec, mapID, x, y, "talk", TALK_GRID, MAX_TALK)
+    if role == "Gossip" then
+        noteGossip(rec)
+    elseif role == "Trainer" then
+        noteTrainer(rec)
+        if C_Timer and C_Timer.After then
+            C_Timer.After(0.5, function() noteTrainer(rec) end)
+        end
+    end
+end
+
 local function talkSnapshot()
     if not talkTo.t or (GetTime() - talkTo.t) > 30 then return nil end
     return {
@@ -1198,6 +1316,30 @@ frame:SetScript("OnEvent", function(_, event, arg1, arg2, arg3)
         if enabled then
             noteTalkTarget()
             scanQuestGiver()
+            if event == "GOSSIP_SHOW" then
+                if useManager then
+                    local d = db()
+                    local kind, id = serviceTarget()
+                    local rec = d and kind == "Creature" and id and d.NPC[id]
+                    if rec then noteGossip(rec) end
+                else
+                    noteService("Gossip")
+                end
+            end
+        end
+
+    elseif event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
+        noteService(ROLE_BY_TYPE[arg1])
+
+    elseif LEGACY_ROLE[event] then
+        noteService(LEGACY_ROLE[event])
+
+    elseif event == "TRAINER_UPDATE" then
+        if enabled then
+            local d = db()
+            local kind, id = serviceTarget()
+            local rec = d and kind == "Creature" and id and d.NPC[id]
+            if rec then noteTrainer(rec) end
         end
 
     elseif event == "NAME_PLATE_UNIT_ADDED" then
@@ -1271,6 +1413,11 @@ for _, e in ipairs({
 end
 -- Player-filtered, so we never see another unit's secret quest payload.
 pcall(frame.RegisterUnitEvent, frame, "UNIT_QUEST_LOG_CHANGED", "player")
+pcall(frame.RegisterEvent, frame, "TRAINER_UPDATE")
+useManager = pcall(frame.RegisterEvent, frame, "PLAYER_INTERACTION_MANAGER_FRAME_SHOW")
+if not useManager then
+    for e in pairs(LEGACY_ROLE) do pcall(frame.RegisterEvent, frame, e) end
+end
 
 
 -------------------------------------------------------------------------------
