@@ -245,10 +245,22 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
     -- in-progress objective spot": when a quest goes Complete, Blizz's
     -- POI moves to the turn-in NPC; if our cached End is still at the
     -- kill zone we'll be far from POI and switch.
+    --
+    -- The whole chain is gated on the quest being complete: for an
+    -- in-progress quest the live POI is the objective, and treating it
+    -- as End moved the turn-in marker onto the last objective's spot
+    -- (visible on Forever, where GetQuestsOnMap is live on a classic DB).
     local previouslyPatchedEnd = bit_band(patch, 1) ~= 0
     local liveOK = mapId and x and y
 
-    if liveOK then
+    -- While the quest is in progress the live POI marks the current
+    -- objective, not the turn-in NPC. Only a complete quest's POI is
+    -- the ender; otherwise it must not touch End at all.
+    local isComplete = (C_QuestLog.IsComplete and C_QuestLog.IsComplete (qId))
+        or (C_QuestLog.ReadyForTurnIn and C_QuestLog.ReadyForTurnIn (qId))
+        or false
+
+    if liveOK and isComplete then
         local _, ourMap, _, ourX, ourY = self:UnpackSE(quest["End"])
         local distance = math.huge
         if ourMap and ourX and ourY and ourMap == mapId then

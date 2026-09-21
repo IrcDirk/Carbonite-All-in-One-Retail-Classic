@@ -927,6 +927,8 @@ local function noteZoneLevel(mapID, lvl, react)
     z.n = z.n + 1
 end
 
+local unitSubtitle
+
 local function noteUnit(unit)
     if not enabled or not unit or not UnitGUID then return end
 
@@ -943,6 +945,7 @@ local function noteUnit(unit)
     end
 
     rec.name = rec.name or plain(UnitName(unit))
+    if not rec.sub then rec.sub = unitSubtitle(unit) end
 
     local lvl = plain(UnitLevel(unit))
     if type(lvl) == "number" and lvl > 0 then
@@ -974,6 +977,21 @@ local function noteUnit(unit)
         noteHostile(unit == "target" and "target" or "any",
             npcID, rec.name, mapID, x, y)
     end
+end
+
+local pendingUnits = {}
+local function noteUnitSoon(unit)
+    if not enabled or not unit then return end
+    if not (C_Timer and C_Timer.After) then
+        noteUnit(unit)
+        return
+    end
+    if pendingUnits[unit] then return end
+    pendingUnits[unit] = true
+    C_Timer.After(0, function()
+        pendingUnits[unit] = nil
+        noteUnit(unit)
+    end)
 end
 
 -------------------------------------------------------------------------------
@@ -1019,7 +1037,7 @@ local LEGACY_ROLE = {
 
 local useManager = false
 
-local function unitSubtitle(unit)
+function unitSubtitle(unit)
     local get = C_TooltipInfo and C_TooltipInfo.GetUnit
     if not get then return nil end
     local ok, data = pcall(get, unit)
@@ -1343,16 +1361,16 @@ frame:SetScript("OnEvent", function(_, event, arg1, arg2, arg3)
         end
 
     elseif event == "NAME_PLATE_UNIT_ADDED" then
-        noteUnit(arg1)
+        noteUnitSoon(arg1)
 
     elseif event == "UPDATE_MOUSEOVER_UNIT" then
-        noteUnit("mouseover")
+        noteUnitSoon("mouseover")
 
     elseif event == "PLAYER_TARGET_CHANGED" then
-        noteUnit("target")
+        noteUnitSoon("target")
 
     elseif event == "PLAYER_SOFT_INTERACT_CHANGED" then
-        noteUnit("softinteract")
+        noteUnitSoon("softinteract")
 
     elseif event == "QUEST_DATA_LOAD_RESULT" then
         -- arg1 questID, arg2 success
