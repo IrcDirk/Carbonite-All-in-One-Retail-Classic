@@ -19,7 +19,6 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 	<Include file="AceSerializer-3.0\AceSerializer-3.0.xml" />
 	<Include file="AceTimer-3.0\AceTimer-3.0.xml" />
 	<Include file="AceConfig-3.0\AceConfig-3.0.xml" />
-	
 		<!--Other Libraries-->
 	<Include file="LibDataBroker-1.1\LibDataBroker-1.1.lua" />
 	<Include file="LibSharedMedia-3.0\lib.xml"/>
