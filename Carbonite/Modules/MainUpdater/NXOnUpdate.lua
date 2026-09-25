@@ -100,7 +100,9 @@ function Nx:NXOnUpdate (elapsed)
 
             if plX > 0 or plY > 0 then
 
-                local s = format ("Map~%d~%d~%d", plX * 100000000, plY * 100000000, Nx.Map:GetCurrentMapId())
+                local mapId = (Nx.Map.GetPlayerWorldMapID and Nx.Map:GetPlayerWorldMapID())
+                    or Nx.Map:GetCurrentMapId()
+                local s = format ("Map~%d~%d~%d", plX * 100000000, plY * 100000000, mapId)
                 Nx.prt ("NetSend %s", s)
                 Nx.Com:Send ("Z", s)
 

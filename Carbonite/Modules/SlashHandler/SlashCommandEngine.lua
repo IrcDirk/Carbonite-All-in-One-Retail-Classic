@@ -106,6 +106,9 @@ function Nx.slashCommand (txt)
     elseif cmd == "comt" then
         Nx.Com:Test (a1, a2)
 
+    elseif cmd == "comself" then
+        Nx.Com:DumpSelfDiag()
+
     elseif cmd == "comver" then
         if Nx.db.profile.Debug.VerDebug then        -- Stop casual use
             Nx.Com:GetUserVer()

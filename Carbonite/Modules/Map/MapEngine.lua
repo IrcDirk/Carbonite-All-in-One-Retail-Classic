@@ -4617,6 +4617,7 @@ function Nx.Map:RestoreSize()
 
     if self.Win:IsSizeMax() then
         Nx.Map:RestoreBlizzBountyMap(false)
+        self.MaxViewScale = self.Scale
         self.Win:ToggleSize()
 
         self:RestoreView("")
@@ -4651,6 +4652,11 @@ function Nx.Map:MaxSize()
         self.Win:ToggleSize()
 
         self:SaveView ("")
+
+        if self.MaxViewScale and self.MaxViewScale > 0 then
+            self.Scale = self.MaxViewScale
+            self.RealScale = self.MaxViewScale
+        end
 
         self:MouseEnable (true)
         if self:IsInstanceMap(Nx.Map.UpdateMapID) then
@@ -6346,6 +6352,17 @@ function Nx.Map:Update (elapsed)
         plZX = plZX * 100
         plZY = plZY * 100
         PLMapID = self:GetDisplayableMapForPlayer()
+
+        local plyrMapID = self.GetPlayerWorldMapID and self:GetPlayerWorldMapID()
+        if plyrMapID then
+            PLMapID = plyrMapID
+        elseif self.GetPlayerPositionOnMap then
+            local pmX, pmY = self:GetPlayerPositionOnMap (PLMapID)
+            if pmX then
+                plZX = pmX * 100
+                plZY = pmY * 100
+            end
+        end
 
         if Nx.OldMapIDs then
             if PLMapID == 1414 then PLMapID = 12 end

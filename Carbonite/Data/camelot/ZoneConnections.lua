@@ -62,7 +62,7 @@ Nx.ZoneConnections = {
     "7|1||1412|39.54|29.09||1456|51.17|31.54", -- [55]
     "7|1||1412|42.18|30.01||1456|51.17|31.54", -- [56]
     "3|2|"..L["Boat to Menethil Harbor"].."|1445|71.54|56.37|"..L["Boat to Dustwallow Marsh"].."|1437|5.03|63.46", -- [57]
-    "3|2|"..L["Boat to Stormwind City"].."|1439|32.39|43.82|"..L["Boat to Darkshore"].."|1453|22.42|55.95", -- [87]
+    "3|2|"..L["Boat to Stormwind City"].."|1439|30.69|41.12|"..L["Boat to Darkshore"].."|1453|22.42|55.95", -- [87]
     "3|2|"..L["Tram to Stormwind City"].."|1455|72.78|50.24|"..L["Tram to Ironforge"].."|1453|69.04|30.85", -- [58]
     "3|2|"..L["Boat to Menethil Harbor"].."|1439|32.39|43.82|"..L["Boat to Darkshore"].."|1437|4.5|57.7", -- [59]
     "3|2|"..L["Boat to Teldrassil"].."|1439|33.18|40.1|"..L["Boat to Darkshore"].."|1438|54.87|96.8", -- [60]

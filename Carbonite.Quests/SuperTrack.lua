@@ -579,10 +579,11 @@ function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
     if pickObj and pickObj > 0 then
         pickedObj = pickObj
     elseif cur and not cur.Complete and cur.Q and cur.Q["Objectives"] then
+        local states = self:BuildObjectiveRenderState (cur.Q, cur, qId)
         for n = 1, 15 do
             local obj = cur.Q["Objectives"][n]
             if not obj then break end
-            local done = cur[n + 300]
+            local done = self:IsObjectiveSlotDone (states, cur, n)
             if not done then
                 if pickedObj == 0 then
                     pickedObj = n
@@ -735,10 +736,11 @@ function Nx.Quest:OnSuperTrackChanged()
     if pickObj and pickObj > 0 then
         pickedObj = pickObj
     elseif quest and quest["Objectives"] then
+        local states = self:BuildObjectiveRenderState (quest, cur, liveQID)
         for n = 1, 15 do
             local obj = quest["Objectives"][n]
             if not obj then break end
-            local done = cur[n + 300]
+            local done = self:IsObjectiveSlotDone (states, cur, n)
             if not done then
                 if pickedObj == 0 then
                     pickedObj = n

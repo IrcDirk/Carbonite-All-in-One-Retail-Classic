@@ -578,6 +578,12 @@ function Nx.Quest:BuildObjectiveRenderState(quest, cur, questID)
     return states
 end
 
+function Nx.Quest:IsObjectiveSlotDone(states, cur, slot)
+    local state = states and states[slot]
+    if state then return state.done == true end
+    return (cur and cur[slot + 300]) and true or false
+end
+
 function Nx.Quest:BuildCatalogObjectiveMask(quest, cur, questID)
     local mask = 0
     local objectives = quest and quest["Objectives"]

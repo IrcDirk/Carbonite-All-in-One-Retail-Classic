@@ -372,3 +372,7 @@ L["Zephras Isle"] = true
 L["Darkspear Islands"] = true
 L["Riverglades"] = true
 L["Shen'dralas"] = true
+L["Excavation Site: Wetlands"] = true
+L["City of Dalaran"] = true
+L["The Hall of Thanes"] = true
+L["Krol'dok Stronghold"] = true

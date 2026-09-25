@@ -1800,7 +1800,11 @@ function Nx.Quest:GetOptionsConfig()
                                 return Nx.db.profile.General.CaptureEnable
                             end,
                             set = function()
-                                Nx.db.profile.General.CaptureEnable = not Nx.db.profile.General.CaptureEnable
+                                local on = not Nx.db.profile.General.CaptureEnable
+                                Nx.db.profile.General.CaptureEnable = on
+                                if Nx.Quest.ObjCap and Nx.Quest.ObjCap.SetEnabled then
+                                    Nx.Quest.ObjCap:SetEnabled(on)
+                                end
                             end,
                         },
                         spacer4 = {

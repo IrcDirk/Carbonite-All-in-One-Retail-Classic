@@ -2090,13 +2090,16 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
                     local tq = math.floor(tid / 100)
                     local tobj = tid % 100
                     local _, tcur = Nx.Quest:FindCur(tq)
+                    local tstates = tcur and tcur.Q
+                        and Nx.Quest:BuildObjectiveRenderState (tcur.Q, tcur, tq)
                     if tcur and tcur.Q and tcur.Q["Objectives"]
-                        and tobj > 0 and tcur[tobj + 300] then
+                        and tobj > 0
+                        and Nx.Quest:IsObjectiveSlotDone (tstates, tcur, tobj) then
                         local nextObj
                         for n = 1, 15 do
                             local obj = tcur.Q["Objectives"][n]
                             if not obj then break end
-                            if not tcur[n + 300] then
+                            if not Nx.Quest:IsObjectiveSlotDone (tstates, tcur, n) then
                                 local first = type(obj) == "table" and obj[1] or obj
                                 local _, zone = Nx.Quest:UnpackObjectiveNew(first)
                                 if zone and zone ~= 0 then

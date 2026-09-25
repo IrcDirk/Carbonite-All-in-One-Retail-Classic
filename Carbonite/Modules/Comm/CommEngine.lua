@@ -81,6 +81,56 @@ local function _normaliseSenderName(name)
     return name
 end
 
+-- Identity key for "is this me?" comparisons. Forever hands out two-part
+-- character names ("Axarta Rossental") and realm names that keep their
+-- spaces ("Classic Beta PVP"), and the channel payload and UnitFullName do
+-- not agree on whether those spaces survive. Comparing the raw strings let
+-- our own broadcasts through, so they were stored as a third-party player
+-- and drawn as a second dot under our own arrow.
+local function _identityKey(name)
+    if not name then return nil end
+    name = _stripLocaleTag(name)
+    return (name:gsub("%s+", "")):lower()
+end
+
+-- Split an identity key into its name and realm halves.
+local function _splitIdentity(name)
+    local key = _identityKey(name)
+    if not key then return nil end
+    local base, realm = key:match("^([^%-]+)%-(.+)$")
+    return base or key, realm
+end
+
+-- Our own canonical "Name-Realm". UnitFullName can answer without a realm
+-- for a while after PLAYER_LOGIN (seen on Forever under high latency), so
+-- re-read it until a realm shows up rather than trusting the login snapshot.
+local function _selfName(self)
+    local me = self.PlyrName
+    if me and Nx.strpos(me, "-") then return me end
+    local playername, realmname = UnitFullName("player")
+    if playername then
+        realmname = _stripLocaleTag(realmname)
+        if not realmname or realmname == "" then
+            realmname = _stripLocaleTag(GetRealmName())
+        end
+        me = playername .. (realmname and realmname ~= "" and "-" .. realmname or "")
+        self.PlyrName = me
+    end
+    return me
+end
+
+-- "Is this sender me?" Compares name halves always and realm halves only
+-- when both sides carry one, so a realm-less snapshot of our own name can
+-- never let our own broadcast through as a third-party player.
+local function _isSelf(self, name)
+    if not name then return false end
+    local b1, r1 = _splitIdentity(name)
+    local b2, r2 = _splitIdentity(_selfName(self))
+    if not b1 or not b2 or b1 ~= b2 then return false end
+    if r1 and r2 then return r1 == r2 end
+    return true
+end
+
 -- Build a locale-safe pattern for Blizzard's "player not found" system
 -- message. Escape the translated text before restoring the %s capture so
 -- punctuation in any locale cannot alter the Lua pattern.
@@ -668,7 +718,7 @@ function Nx.Com:OnChat_msg_channel(event, arg1, arg2, arg3, arg4, arg5, arg6, ar
         local name = _normaliseSenderName(arg2)
 
         -- Ignore our own messages
-        if name ~= self.PlyrName then
+        if not _isSelf(self, name) then
             local msg = self:RestoreChars(arg1)
             local id = strbyte(msg)
 
@@ -705,7 +755,7 @@ function Nx.Com:OnChat_msg_addon(args, distribution, target)
     local name = _normaliseSenderName(target)
 
     -- Ignore our own messages
-    if name ~= self.PlyrName then
+    if not _isSelf(self, name) then
         -- Split multiple messages (separated by tab)
         local data = { Nx.Split("\t", args) }
 
@@ -1523,7 +1573,8 @@ function Nx.Com:OnUpdate(elapsed)
         local x, y = Nx.Map.GetPlayerMapPosition("player")
 
         if x ~= 0 or y ~= 0 then
-            self.PlyrMapId = map:GetCurrentMapId()
+            self.PlyrMapId = (map.GetPlayerWorldMapID and map:GetPlayerWorldMapID())
+                or map:GetCurrentMapId()
             self.PlyrX = x
             self.PlyrY = y + max(map:GetCurrentMapDungeonLevel(), 1) - 1
         else
@@ -1793,6 +1844,26 @@ function Nx.Com:UpdateIcons(map)
     return self.TrackName, self.TrackX, self.TrackY
 end
 
+--- Print who we think we are and every remote player entry we hold.
+-- Used to chase "my own dot follows me on the map" reports.
+function Nx.Com:DumpSelfDiag()
+    local playername, realmname = UnitFullName("player")
+    Nx.prt("Com self: PlyrName=%s key=%s | UnitFullName=%s/%s | GetRealmName=%s",
+        tostring(self.PlyrName), tostring(_identityKey(self.PlyrName)),
+        tostring(playername), tostring(realmname), tostring(GetRealmName()))
+    local t = GetTime()
+    local n = 0
+    for label, info in pairs({ ZPInfo = self.ZPInfo, PalsInfo = self.PalsInfo }) do
+        for name, pl in pairs(info or {}) do
+            n = n + 1
+            Nx.prt("  %s [%s] key=%s self=%s age=%.0fs map=%s pos=%.1f,%.1f",
+                label, name, tostring(_identityKey(name)), tostring(_isSelf(self, name)),
+                t - (pl.T or 0), tostring(pl.MId), pl.X or -1, pl.Y or -1)
+        end
+    end
+    if n == 0 then Nx.prt("  no remote player entries") end
+end
+
 --- Draw player icons on the map
 -- @param info Player info table to draw from
 -- @param map Map instance
@@ -1809,6 +1880,9 @@ function Nx.Com:UpdatePlyrIcons(info, map, iconName)
     for name, pl in pairs(info) do
         -- Remove stale entries
         if t - pl.T > 35 then
+            info[name] = nil
+
+        elseif _isSelf(self, name) then
             info[name] = nil
 
         elseif not memberNames[name] and not memberNames[name:match("^([^%-]+)")] and (not inBG or map.MapId ~= pl.MId) and pl.Y then
@@ -1999,3 +2073,12 @@ end
 ---------------------------------------------------------------------------------------
 -- EOF
 ---------------------------------------------------------------------------------------
+
+if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
+    Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
+        if not Carbonite.Core.SlashCommands then return end
+        Carbonite.Core.SlashCommands:Register("comself", function()
+            Nx.Com:DumpSelfDiag()
+        end, "print own identity and every remote player entry (self-dot diagnostics)")
+    end)
+end

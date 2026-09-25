@@ -51,6 +51,80 @@ local UnitRace  = UnitRace
 local C_Map     = C_Map
 local C_QuestLog = C_QuestLog
 
+-- Names and titles are locale-bound. enUS goes into the plain fields the
+-- offline tooling has always read; any other client locale lands under
+-- rec.L[locale] so a Russian session never claims the English slot.
+local LOCALE = GetLocale and GetLocale() or "enUS"
+
+local function nameSlot(rec)
+    if LOCALE == "enUS" then return rec end
+    local L = rec.L
+    if not L then
+        L = {}
+        rec.L = L
+    end
+    local t = L[LOCALE]
+    if not t then
+        t = {}
+        L[LOCALE] = t
+    end
+    return t
+end
+
+local function localeTable(d, field)
+    if LOCALE == "enUS" then
+        d[field] = d[field] or {}
+        return d[field]
+    end
+    local lf = field .. "L"
+    d[lf] = d[lf] or {}
+    d[lf][LOCALE] = d[lf][LOCALE] or {}
+    return d[lf][LOCALE]
+end
+
+local function isCyrillic(str)
+    return type(str) == "string" and str:find("[\208\209]") ~= nil
+end
+
+-- One-off repair for records written before names were split by locale:
+-- Russian text sitting in an enUS slot moves under L.ruRU.
+local function migrateNames(d)
+    local function move(rec, field)
+        if rec and isCyrillic(rec[field]) then
+            rec.L = rec.L or {}
+            rec.L.ruRU = rec.L.ruRU or {}
+            rec.L.ruRU[field] = rec.L.ruRU[field] or rec[field]
+            rec[field] = nil
+        end
+    end
+    for _, rec in pairs(d.NPC) do move(rec, "name") end
+    for _, rec in pairs(d.OBJ) do move(rec, "name") end
+    for _, rec in pairs(d.ENT) do move(rec, "name") end
+    for _, rec in pairs(d.H)   do move(rec, "title") end
+    for _, rec in pairs(d.Q)   do move(rec, "title") end
+    for id, name in pairs(d.ITEM) do
+        if isCyrillic(name) then
+            d.ITEML = d.ITEML or {}
+            d.ITEML.ruRU = d.ITEML.ruRU or {}
+            d.ITEML.ruRU[id] = d.ITEML.ruRU[id] or name
+            d.ITEM[id] = nil
+        end
+    end
+    if d.U2QNames then
+        for npcID, titles in pairs(d.U2QNames) do
+            for title, v in pairs(titles) do
+                if isCyrillic(title) then
+                    d.U2QNamesL = d.U2QNamesL or {}
+                    d.U2QNamesL.ruRU = d.U2QNamesL.ruRU or {}
+                    d.U2QNamesL.ruRU[npcID] = d.U2QNamesL.ruRU[npcID] or {}
+                    d.U2QNamesL.ruRU[npcID][title] = v
+                    titles[title] = nil
+                end
+            end
+        end
+    end
+end
+
 -- How long after a kill/loot we still consider it the cause of an objective
 -- tick. Server-side credit for a group kill can lag a second or two.
 local CAUSE_WINDOW  = 4.0
@@ -59,6 +133,9 @@ local CAUSE_KEEP    = 32
 -- Per-entry position samples. Enough to see a spawn area, small enough that
 -- a long play session does not bloat the SavedVariables file.
 local MAX_POS       = 12
+-- Objective credit spots feed the offline area ("blob") builder, which
+-- needs a real point cloud rather than a dozen samples.
+local MAX_OBJ_POS   = 48
 -- Two samples closer than this (in map percent) count as the same spot.
 local POS_GRID      = 0.6
 local TALK_GRID     = 0.15
@@ -122,11 +199,18 @@ local function db()
         d.Audit.questsAtLogin = n
     end
 
+    d.Locales = d.Locales or {}
+    d.Locales[LOCALE] = true
+
     -- Sections added after the first release of this format.
     d.U2Q  = d.U2Q or {}
     d.H    = d.H or {}
     d.ITEM = d.ITEM or {}
     d.ZONELVL = d.ZONELVL or {}
+    if not d.Audit.namesMigrated then
+        migrateNames(d)
+        d.Audit.namesMigrated = true
+    end
 
     -- Which character recorded this. The shipping quest DB keys faction onto
     -- the `side` field, and a single character only ever sees one side of it.
@@ -138,9 +222,9 @@ local function db()
     end
 
     if d.Enabled == nil then
-        -- Default on where we are actively building a database, off elsewhere
+        -- Off until the user opts in (Quests options, "Quests Data Gathering")
         -- so release users do not grow a SavedVariables file for nothing.
-        d.Enabled = Nx.isCamelot and true or false
+        d.Enabled = false
     end
 
     if not d.Build then
@@ -164,9 +248,15 @@ end
 -- the enabled check on that path must not walk the SavedVariables table.
 local enabled = false
 
+local function optionOn()
+    local db_ = Nx.db
+    return db_ and db_.profile and db_.profile.General
+        and db_.profile.General.CaptureEnable == true or false
+end
+
 local function refreshEnabled()
     local d = db()
-    enabled = (d and d.Enabled) == true
+    enabled = (d and d.Enabled) == true or optionOn()
 
     if not d and C_Timer and C_Timer.After and not ObjCap._svRetry then
         ObjCap._svRetry = true
@@ -210,7 +300,7 @@ function ObjCap:Stats()
     for _ in pairs(d.Q)   do q = q + 1 end
     for _, rec in pairs(d.NPC) do
         n = n + 1
-        if rec.name then named = named + 1 end
+        if rec.name or rec.L then named = named + 1 end
     end
     for _ in pairs(d.OBJ) do o = o + 1 end
     for _ in pairs(d.ENT) do e = e + 1 end
@@ -289,7 +379,8 @@ local function noteNPC(npcID, name, lvl, mapID, x, y)
         rec = {}
         d.NPC[npcID] = rec
     end
-    rec.name = rec.name or name
+    local slot = nameSlot(rec)
+    slot.name = slot.name or name
     rec.lvl  = rec.lvl or lvl
     addPos(rec, mapID, x, y)
 end
@@ -344,7 +435,7 @@ end
 local function findItemCause(objText)
     local now = GetTime()
     local d = db()
-    local names = d and d.ITEM
+    local names = d and localeTable(d, "ITEM")
     local best, bestT, fallback, fallbackT
 
     for i = 1, CAUSE_KEEP do
@@ -470,7 +561,7 @@ end
 local function attribute(rec, index, snap, delta)
     local o = objRec(rec, index, snap)
     local mapID, x, y = playerPos()
-    addPos(o, mapID, x, y)
+    addPos(o, mapID, x, y, nil, nil, MAX_OBJ_POS)
 
     local typ = snap.typ
 
@@ -483,9 +574,7 @@ local function attribute(rec, index, snap, delta)
         if c and c.npc then
             o.kills = o.kills or {}
             bumpCount(o.kills, c.npc, delta)
-            o.names = o.names or {}
-            o.names[c.npc] = o.names[c.npc] or c.name
-            addPos(o, c.map, c.x, c.y)
+            addPos(o, c.map, c.x, c.y, nil, nil, MAX_OBJ_POS)
         end
 
     elseif typ == "item" then
@@ -512,7 +601,7 @@ local function attribute(rec, index, snap, delta)
                 it.src = it.src or {}
                 bumpCount(it.src, "object:" .. c.srcName, delta)
             end
-            addPos(o, c.map, c.x, c.y)
+            addPos(o, c.map, c.x, c.y, nil, nil, MAX_OBJ_POS)
         end
 
     elseif typ == "object" then
@@ -521,7 +610,7 @@ local function attribute(rec, index, snap, delta)
             o.objects = o.objects or {}
             local key = c.srcID and format("GameObject:%d", c.srcID) or c.srcName
             if key then bumpCount(o.objects, key, delta) end
-            addPos(o, c.map, c.x, c.y)
+            addPos(o, c.map, c.x, c.y, nil, nil, MAX_OBJ_POS)
         end
     end
     -- "event", "progressbar", "log" and friends carry no cause we can name;
@@ -540,7 +629,7 @@ function ObjCap.ResetSnapshots()
     snapshots = {}
 end
 
-local function scanQuest(questID, title, level, group, freq)
+local function scanQuest(questID, title, level, group, freq, header)
     local snap = readObjectives(questID)
     if not snap then return end
 
@@ -548,8 +637,11 @@ local function scanQuest(questID, title, level, group, freq)
     local rec = questRec(questID)
     if not rec then return end
 
-    rec.title = rec.title or title
+    local slot = nameSlot(rec)
+    slot.title = slot.title or title
         or (C_QuestLog and C_QuestLog.GetTitleForQuestID and C_QuestLog.GetTitleForQuestID(questID))
+    -- Quest-log header (zone or category the client files it under).
+    if header and header ~= "" then slot.cat = slot.cat or header end
     rec.qlvl  = rec.qlvl or level
     rec.group = rec.group or (group and group > 0 and group or nil)
     rec.freq  = rec.freq or (freq and freq > 1 and freq or nil)
@@ -577,10 +669,13 @@ end
 -- rest of the quest API answers to. Reuse it rather than branching here.
 local function eachLoggedQuest(fn)
     local num = _G.GetNumQuestLogEntries and GetNumQuestLogEntries() or 0
+    local header
     for i = 1, num do
         local title, level, group, isHeader, _, _, freq, questID = GetQuestLogTitle(i)
-        if questID and questID > 0 and not isHeader then
-            fn(questID, title, level, group, freq)
+        if isHeader then
+            header = plain(title)
+        elseif questID and questID > 0 then
+            fn(questID, title, level, group, freq, header)
         end
     end
 end
@@ -641,7 +736,8 @@ local function noteHarvestFromGossip(questID, info)
         h = {}
         d.H[questID] = h
     end
-    h.title = h.title or plain(info.title)
+    local slot = nameSlot(h)
+    slot.title = slot.title or plain(info.title)
     h.lvl   = h.lvl or plain(info.questLevel)
     local freq = plain(info.frequency)
     if type(freq) == "number" and freq > 1 then h.freq = freq end
@@ -695,10 +791,10 @@ local function scanQuestGiver()
             end
         end
         if names then
-            d.U2QNames = d.U2QNames or {}
-            d.U2QNames[npcID] = d.U2QNames[npcID] or {}
+            local u2q = localeTable(d, "U2QNames")
+            u2q[npcID] = u2q[npcID] or {}
             for title in pairs(names) do
-                d.U2QNames[npcID][title] = "a"
+                u2q[npcID][title] = "a"
             end
         end
     end
@@ -748,7 +844,8 @@ local function readHarvested(questID)
         h = {}
         d.H[questID] = h
     end
-    h.title = title ~= "" and title or h.title
+    local slot = nameSlot(h)
+    slot.title = title ~= "" and title or slot.title
     h.src = "load"
     if C_QuestLog.GetQuestDifficultyLevel then
         local ok, lvl = pcall(C_QuestLog.GetQuestDifficultyLevel, questID)
@@ -772,13 +869,36 @@ local function readHarvested(questID)
         end
     end
     if objs and #objs > 0 then
-        h.objs = {}
+        slot.objs = {}
         for i = 1, #objs do
             local o = objs[i]
-            h.objs[i] = { typ = plain(o.type), text = plain(o.text), need = plain(o.numRequired) }
+            slot.objs[i] = { typ = plain(o.type), text = plain(o.text), need = plain(o.numRequired) }
         end
     end
     return true
+end
+
+-- Quest IDs the capture has heard of (log scans, harvest, gossip links) that
+-- still lack a title in this client's locale.
+local function questIDsWithoutTitle(d)
+    local seen, ids = {}, {}
+    local function want(id)
+        id = tonumber(id)
+        if not id or seen[id] then return end
+        seen[id] = true
+        local h = d.H[id]
+        if h and nameSlot(h).title then return end
+        local q = d.Q[id]
+        if q and nameSlot(q).title and h then return end
+        ids[#ids + 1] = id
+    end
+    for id in pairs(d.Q) do want(id) end
+    for id in pairs(d.H) do want(id) end
+    for _, quests in pairs(d.U2Q) do
+        for id in pairs(quests) do want(id) end
+    end
+    table.sort(ids)
+    return ids
 end
 
 local function harvestTick()
@@ -801,9 +921,10 @@ local function harvestTick()
     end
 
     while harvest.nflight < harvest.batch and prog.cur <= prog.to do
-        local id = prog.cur
-        prog.cur = id + 1
-        if not d.H[id] or not d.H[id].objs then
+        local id = prog.queue and prog.queue[prog.cur] or prog.cur
+        prog.cur = prog.cur + 1
+        local h = id and d.H[id]
+        if id and not (h and nameSlot(h).title and nameSlot(h).objs) then
             harvest.inflight[id] = now
             harvest.nflight = harvest.nflight + 1
             pcall(C_QuestLog.RequestLoadQuestByID, id)
@@ -817,11 +938,15 @@ local function harvestTick()
             harvest.ticker = nil
         end
         local log = harvestLog()
-        if log then log:info("harvest finished: %d quests known", prog.found or 0) end
+        if log then
+            log:info("harvest finished (%s): %d quests loaded%s", LOCALE, prog.found or 0,
+                prog.queue and format(" of %d requested", #prog.queue) or "")
+        end
+        prog.queue = nil
         return
     end
 
-    if prog.cur - (prog.lastReport or prog.from) >= 2000 then
+    if not prog.queue and prog.cur - (prog.lastReport or prog.from) >= 2000 then
         prog.lastReport = prog.cur
         local log = harvestLog()
         if log then
@@ -866,6 +991,33 @@ function ObjCap:HarvestStart(from, to)
     end
 end
 
+-- Harvest only the quests we already know about but have no title for in
+-- this locale. Cheap enough to run by itself after login, so an enUS login
+-- fills the English titles of everything a ruRU session captured and the
+-- other way round.
+function ObjCap:HarvestKnown(quiet)
+    local d = db()
+    if not d or harvest.running then return 0 end
+    if not (C_QuestLog and C_QuestLog.RequestLoadQuestByID) then return 0 end
+    local ids = questIDsWithoutTitle(d)
+    if #ids == 0 then
+        if not quiet then
+            local log = harvestLog()
+            if log then log:info("harvest: every known quest already has a %s title", LOCALE) end
+        end
+        return 0
+    end
+    d.HProg = { from = 1, to = #ids, cur = 1, found = 0, queue = ids, locale = LOCALE }
+    harvest.running = true
+    harvest.inflight = {}
+    harvest.nflight = 0
+    if harvest.ticker then harvest.ticker:Cancel() end
+    harvest.ticker = C_Timer.NewTicker(HARVEST_INTERVAL, harvestTick)
+    local log = harvestLog()
+    if log then log:info("harvest: loading %d known quests without a %s title", #ids, LOCALE) end
+    return #ids
+end
+
 function ObjCap:HarvestStop()
     harvest.running = false
     if harvest.ticker then
@@ -892,6 +1044,173 @@ function ObjCap:SetHarvestBatch(n)
     n = tonumber(n)
     if n and n >= 1 and n <= 64 then harvest.batch = floor(n) end
     return harvest.batch
+end
+
+-------------------------------------------------------------------------------
+-- NPC name harvest
+--
+-- A "unit:Creature-0-0-0-0-<npcID>-0" hyperlink makes the client query the
+-- server for that creature; once the answer lands in the creature cache the
+-- tooltip carries its name in the client locale. So an enUS login can name
+-- every camelot creature without ever meeting it, and the same run on ruRU
+-- fills the ruRU slot. Names go through nameSlot, so locales never collide.
+-------------------------------------------------------------------------------
+
+local NPC_HARVEST_DEFAULT_FROM = 249000
+local NPC_HARVEST_DEFAULT_TO   = 270000
+local NPC_HARVEST_TIMEOUT      = 8
+
+local npcHarvest = {
+    running  = false,
+    inflight = {},
+    nflight  = 0,
+    ticker   = nil,
+}
+
+local function npcNameFromTooltip(id)
+    if not (C_TooltipInfo and C_TooltipInfo.GetHyperlink) then return nil end
+    local ok, data = pcall(C_TooltipInfo.GetHyperlink,
+        format("unit:Creature-0-0-0-0-%d-0000000000", id))
+    if not ok or type(data) ~= "table" then return nil end
+    local first = data.lines and data.lines[1]
+    if not first then return nil end
+    if first.leftText == nil and _G.TooltipUtil and TooltipUtil.SurfaceArgs then
+        pcall(TooltipUtil.SurfaceArgs, first)
+    end
+    local text = plain(first.leftText)
+    if type(text) ~= "string" or text == "" then return nil end
+    if text == (_G.UNKNOWN or "Unknown") or text == (_G.UNKNOWNOBJECT or "Unknown") then
+        return nil
+    end
+    return text
+end
+
+local function npcHarvestTick()
+    local d = db()
+    if not npcHarvest.running or not d then return end
+    local prog = d.NProg
+    if not prog then
+        npcHarvest.running = false
+        return
+    end
+
+    local now = GetTime()
+    for id, t in pairs(npcHarvest.inflight) do
+        local name = npcNameFromTooltip(id)
+        if name then
+            local rec = d.NPC[id]
+            if not rec then
+                rec = {}
+                d.NPC[id] = rec
+            end
+            local slot = nameSlot(rec)
+            slot.name = slot.name or name
+            rec.src = rec.src or "harvest"
+            prog.found = (prog.found or 0) + 1
+            npcHarvest.inflight[id] = nil
+            npcHarvest.nflight = npcHarvest.nflight - 1
+        elseif (now - t) > NPC_HARVEST_TIMEOUT then
+            npcHarvest.inflight[id] = nil
+            npcHarvest.nflight = npcHarvest.nflight - 1
+        end
+    end
+
+    while npcHarvest.nflight < harvest.batch and prog.cur <= prog.to do
+        local id = prog.cur
+        prog.cur = id + 1
+        local rec = d.NPC[id]
+        local have = rec and nameSlot(rec).name
+        if not have then
+            local name = npcNameFromTooltip(id)   -- first call fires the query
+            if name then
+                rec = rec or {}
+                d.NPC[id] = rec
+                local slot = nameSlot(rec)
+                slot.name = slot.name or name
+                rec.src = rec.src or "harvest"
+                prog.found = (prog.found or 0) + 1
+            else
+                npcHarvest.inflight[id] = now
+                npcHarvest.nflight = npcHarvest.nflight + 1
+            end
+        end
+    end
+
+    if prog.cur > prog.to and npcHarvest.nflight <= 0 then
+        npcHarvest.running = false
+        if npcHarvest.ticker then
+            npcHarvest.ticker:Cancel()
+            npcHarvest.ticker = nil
+        end
+        local log = harvestLog()
+        if log then log:info("npc harvest finished: %d names in %s", prog.found or 0, LOCALE) end
+        return
+    end
+
+    if prog.cur - (prog.lastReport or prog.from) >= 1000 then
+        prog.lastReport = prog.cur
+        local log = harvestLog()
+        if log then
+            log:info("npc harvest at id %d/%d, %d names", prog.cur, prog.to, prog.found or 0)
+        end
+    end
+end
+
+function ObjCap:NpcHarvestStart(from, to)
+    local d = db()
+    if not d then return end
+    if not (C_TooltipInfo and C_TooltipInfo.GetHyperlink) then
+        local log = harvestLog()
+        if log then log:info("this client has no C_TooltipInfo.GetHyperlink") end
+        return
+    end
+
+    d.Enabled = true
+    refreshEnabled()
+
+    local prog = d.NProg
+    if from or not prog or (prog.cur or 0) > (prog.to or 0) or prog.locale ~= LOCALE then
+        prog = {
+            from = from or NPC_HARVEST_DEFAULT_FROM,
+            to = to or NPC_HARVEST_DEFAULT_TO,
+            cur = from or NPC_HARVEST_DEFAULT_FROM,
+            found = 0,
+            locale = LOCALE,
+        }
+        d.NProg = prog
+    end
+
+    npcHarvest.running = true
+    npcHarvest.inflight = {}
+    npcHarvest.nflight = 0
+    if npcHarvest.ticker then npcHarvest.ticker:Cancel() end
+    npcHarvest.ticker = C_Timer.NewTicker(HARVEST_INTERVAL, npcHarvestTick)
+
+    local log = harvestLog()
+    if log then
+        log:info("npc harvest running (%s): ids %d..%d (resuming at %d), %d per %.2fs",
+            LOCALE, prog.from, prog.to, prog.cur, harvest.batch, HARVEST_INTERVAL)
+    end
+end
+
+function ObjCap:NpcHarvestStop()
+    npcHarvest.running = false
+    if npcHarvest.ticker then
+        npcHarvest.ticker:Cancel()
+        npcHarvest.ticker = nil
+    end
+    local d = db()
+    local log = harvestLog()
+    if log and d and d.NProg then
+        log:info("npc harvest stopped at id %d/%d, %d names",
+            d.NProg.cur or 0, d.NProg.to or 0, d.NProg.found or 0)
+    end
+end
+
+function ObjCap:NpcHarvestStatus()
+    local d = db()
+    local prog = d and d.NProg
+    return npcHarvest.running, prog and prog.cur or 0, prog and prog.to or 0, prog and prog.found or 0
 end
 
 -------------------------------------------------------------------------------
@@ -944,8 +1263,9 @@ local function noteUnit(unit)
         d.NPC[npcID] = rec
     end
 
-    rec.name = rec.name or plain(UnitName(unit))
-    if not rec.sub then rec.sub = unitSubtitle(unit) end
+    local slot = nameSlot(rec)
+    slot.name = slot.name or plain(UnitName(unit))
+    if not slot.sub then slot.sub = unitSubtitle(unit) end
 
     local lvl = plain(UnitLevel(unit))
     if type(lvl) == "number" and lvl > 0 then
@@ -975,7 +1295,7 @@ local function noteUnit(unit)
     -- Hostile or neutral units are kill candidates for the fallback above.
     if not rec.react or rec.react <= 4 then
         noteHostile(unit == "target" and "target" or "any",
-            npcID, rec.name, mapID, x, y)
+            npcID, slot.name, mapID, x, y)
     end
 end
 
@@ -1078,7 +1398,8 @@ local function serviceRec(d, kind, id, role, mapID, x, y)
         rec = {}
         d.OBJ[key] = rec
     end
-    rec.name = rec.name or plain(UnitName("npc"))
+    local slot = nameSlot(rec)
+    slot.name = slot.name or plain(UnitName("npc"))
     return rec
 end
 
@@ -1110,7 +1431,44 @@ local function noteGossip(rec)
     end
 end
 
+-- Flight master open: every node the taxi map shows, with its position on
+-- the player's map. The Current node is this flight master's own.
+local function noteTaxiNodes()
+    if not enabled then return end
+    if not (C_TaxiMap and C_TaxiMap.GetAllTaxiNodes and C_Map and C_Map.GetBestMapForUnit) then return end
+    local d = db()
+    if not d then return end
+    local mapID = plain(C_Map.GetBestMapForUnit("player"))
+    if not mapID then return end
+    local ok, nodes = pcall(C_TaxiMap.GetAllTaxiNodes, mapID)
+    if not ok or type(nodes) ~= "table" then return end
+    d.TAXI = d.TAXI or {}
+    local here = (Enum and Enum.FlightPathState and Enum.FlightPathState.Current) or 0
+    for _, n in ipairs(nodes) do
+        local id = plain(n.nodeID)
+        local pos = n.position
+        if id and pos then
+            local rec = d.TAXI[id]
+            if not rec then
+                rec = {}
+                d.TAXI[id] = rec
+            end
+            local slot = nameSlot(rec)
+            slot.name = slot.name or plain(n.name)
+            if not rec.map then
+                rec.map, rec.x, rec.y = mapID, plain(pos.x) * 100, plain(pos.y) * 100
+            end
+            if plain(n.state) == here then
+                local kind, npcID = guidKind(plain(UnitGUID("npc")))
+                if kind == "Creature" and npcID then rec.npc = rec.npc or npcID end
+                rec.map, rec.x, rec.y = mapID, plain(pos.x) * 100, plain(pos.y) * 100
+            end
+        end
+    end
+end
+
 local function noteService(role)
+    if role == "TaxiNode" then noteTaxiNodes() end
     if not enabled or not role or role == "None" then return end
     local d = db()
     if not d then return end
@@ -1156,7 +1514,10 @@ local function onLoot()
             -- objectives by name, so keep it.
             local d = db()
             local iname = link:match("%[(.-)%]")
-            if d and iname and iname ~= "" then d.ITEM[itemID] = d.ITEM[itemID] or iname end
+            if d and iname and iname ~= "" then
+                local items = localeTable(d, "ITEM")
+                items[itemID] = items[itemID] or iname
+            end
             local srcKind, srcID, srcName, approxSrc
 
             if _G.GetLootSourceInfo then
@@ -1238,7 +1599,8 @@ local function noteZone()
         rec = {}
         d.ENT[instanceID] = rec
     end
-    rec.name = rec.name or name
+    local slot = nameSlot(rec)
+    slot.name = slot.name or name
     rec.typ  = rec.typ or itype
     -- Entrance coordinates for Nx.Zones: the outdoor spot we stood on right
     -- before the portal took us. Only the first one is trustworthy; later
@@ -1248,17 +1610,74 @@ local function noteZone()
     end
 end
 
+-- Follow-up detection: a quest accepted right after a turn-in, from the
+-- same NPC (or auto-offered), is that quest's `next`.
+local lastTurnIn = {}
+local pendingStartItem = {}
+local CHAIN_WINDOW = 20
+
+-- Walking across a zone border: the last outdoor spot in the old zone and
+-- the first in the new one, the pair Nx.ZoneConnections is made of.
+local function noteZoneCrossing()
+    if not enabled or not lastOutdoor.map then return end
+    if _G.UnitOnTaxi and UnitOnTaxi("player") then return end
+    local fromMap, fx, fy = lastOutdoor.map, lastOutdoor.x, lastOutdoor.y
+    if not (C_Timer and C_Timer.After) then return end
+    C_Timer.After(0.5, function()
+        if _G.GetInstanceInfo then
+            local _, itype = GetInstanceInfo()
+            if plain(itype) and plain(itype) ~= "none" then return end
+        end
+        local toMap, tx, ty = playerPos()
+        if not toMap or toMap == fromMap or not tx or not fx then return end
+        local d = db()
+        if not d then return end
+        d.ZC = d.ZC or {}
+        local key = format("%d>%d", fromMap, toMap)
+        local rec = d.ZC[key]
+        if not rec then
+            rec = { from = fromMap, to = toMap, pos = {} }
+            d.ZC[key] = rec
+        end
+        local list = rec.pos
+        for i = 1, #list do
+            local p = list[i]
+            if abs(p[1] - fx) < 1 and abs(p[2] - fy) < 1 then
+                p[5] = (p[5] or 1) + 1
+                return
+            end
+        end
+        if #list < 8 then
+            list[#list + 1] = { fx, fy, tx, ty, 1 }
+        end
+    end)
+end
+
 local function onQuestAccepted(questID)
     if not ObjCap:IsEnabled() then return end
     local rec = questRec(questID)
     if not rec then return end
     rec.accept = rec.accept or talkSnapshot()
     rec.plvl = rec.plvl or UnitLevel("player")
+    if lastTurnIn.id and lastTurnIn.id ~= questID
+        and (GetTime() - (lastTurnIn.t or 0)) < CHAIN_WINDOW
+        and (not lastTurnIn.npc or not rec.accept or not rec.accept.npc
+            or rec.accept.npc == lastTurnIn.npc) then
+        rec.prev = rec.prev or lastTurnIn.id
+        local d = db()
+        local prevRec = d and d.Q[lastTurnIn.id]
+        if prevRec then prevRec.next = prevRec.next or questID end
+    end
+    if pendingStartItem.item and (GetTime() - (pendingStartItem.t or 0)) < 60 then
+        rec.startItem = rec.startItem or pendingStartItem.item
+        pendingStartItem.item = nil
+    end
     local qi = _G.GetQuestLogIndexByID and GetQuestLogIndexByID(questID)
         or (C_QuestLog and C_QuestLog.GetLogIndexForQuestID and C_QuestLog.GetLogIndexForQuestID(questID))
     if qi and qi > 0 and _G.GetQuestLogTitle then
         local title, level, group, _, _, _, freq = GetQuestLogTitle(qi)
-        rec.title = rec.title or title
+        local slot = nameSlot(rec)
+        slot.title = slot.title or title
         rec.qlvl  = rec.qlvl or level
         rec.group = rec.group or (group and group > 0 and group or nil)
         rec.freq  = rec.freq or (freq and freq > 1 and freq or nil)
@@ -1275,6 +1694,9 @@ local function onQuestTurnedIn(questID, xp, money)
     rec.xp = rec.xp or xp
     rec.money = rec.money or money
     snapshots[questID] = nil
+    lastTurnIn.id = questID
+    lastTurnIn.t = GetTime()
+    lastTurnIn.npc = rec.turnin and rec.turnin.npc
 end
 
 -- Reward items are only readable while the completion frame is open.
@@ -1325,13 +1747,20 @@ frame:SetScript("OnEvent", function(_, event, arg1, arg2, arg3)
                 pushCause("item", { item = itemID, map = mapID, x = x, y = y })
                 local d = db()
                 local iname = msg:match("%[(.-)%]")
-                if d and iname and iname ~= "" then d.ITEM[itemID] = d.ITEM[itemID] or iname end
+                if d and iname and iname ~= "" then
+                    local items = localeTable(d, "ITEM")
+                    items[itemID] = items[itemID] or iname
+                end
             end
         end
 
     elseif event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "GOSSIP_SHOW"
         or event == "QUEST_GREETING" then
         if enabled then
+            -- QUEST_DETAIL carries the item that started the quest, if any.
+            if event == "QUEST_DETAIL" and type(arg1) == "number" and arg1 > 0 then
+                pendingStartItem.item, pendingStartItem.t = arg1, GetTime()
+            end
             noteTalkTarget()
             scanQuestGiver()
             if event == "GOSSIP_SHOW" then
@@ -1406,12 +1835,27 @@ frame:SetScript("OnEvent", function(_, event, arg1, arg2, arg3)
 
     elseif event == "PLAYER_LOGIN" then
         refreshEnabled()
+        local d = db()
+        if d and not d.Class then
+            local _, class = UnitClass and UnitClass("player")
+            local _, race = UnitRace and UnitRace("player")
+            d.Class, d.Race = class, race
+            d.Faction = d.Faction or (UnitFactionGroup and UnitFactionGroup("player"))
+        end
 
     elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA"
         or event == "ZONE_CHANGED" then
         refreshEnabled()
+        if event == "ZONE_CHANGED_NEW_AREA" then noteZoneCrossing() end
         noteZone()
         scanSoon()
+        if event == "PLAYER_ENTERING_WORLD" and not ObjCap._autoHarvest and C_Timer and C_Timer.After then
+            ObjCap._autoHarvest = true
+            -- Give the login storm a moment, then fill in titles for this locale.
+            C_Timer.After(20, function()
+                if enabled and not harvest.running then ObjCap:HarvestKnown(true) end
+            end)
+        end
     end
 end)
 
@@ -1432,6 +1876,7 @@ end
 -- Player-filtered, so we never see another unit's secret quest payload.
 pcall(frame.RegisterUnitEvent, frame, "UNIT_QUEST_LOG_CHANGED", "player")
 pcall(frame.RegisterEvent, frame, "TRAINER_UPDATE")
+pcall(frame.RegisterEvent, frame, "TAXIMAP_OPENED")
 useManager = pcall(frame.RegisterEvent, frame, "PLAYER_INTERACTION_MANAGER_FRAME_SHOW")
 if not useManager then
     for e in pairs(LEGACY_ROLE) do pcall(frame.RegisterEvent, frame, e) end
@@ -1464,6 +1909,19 @@ if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
             elseif cmd == "batch" then
                 log:info("harvest batch size: %d", ObjCap:SetHarvestBatch(args[2]))
                 return
+            elseif cmd == "harvestnpc" then
+                local sub = args[2]
+                if sub == "stop" then
+                    ObjCap:NpcHarvestStop()
+                elseif sub == "status" then
+                    local running, cur, to, found = ObjCap:NpcHarvestStatus()
+                    log:info("npc harvest %s at id %d/%d, %d names",
+                        running and "running" or "idle", cur, to, found)
+                else
+                    -- "harvestnpc" resumes, "harvestnpc 249000 270000" restarts on a range
+                    ObjCap:NpcHarvestStart(tonumber(sub), tonumber(args[3]))
+                end
+                return
             elseif cmd == "harvest" then
                 local sub = args[2]
                 if sub == "stop" then
@@ -1472,6 +1930,8 @@ if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
                     local running, cur, to, known = ObjCap:HarvestStatus()
                     log:info("harvest %s at id %d/%d, %d quests known",
                         running and "running" or "idle", cur, to, known)
+                elseif sub == "known" then
+                    ObjCap:HarvestKnown()
                 else
                     -- "harvest" resumes, "harvest 1 30000" restarts on a range
                     ObjCap:HarvestStart(tonumber(sub), tonumber(args[3]))

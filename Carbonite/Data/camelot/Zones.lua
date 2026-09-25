@@ -120,7 +120,11 @@ Nx.Zones = {
     [287] = L["Blackwing Lair"] .. "|60|60|3|5|1428|20.70|35.33|40",
     [319] = L["Temple of Ahn'Qiraj"] .. "|60|60|3|5|1451|29.1|93.8|40",
     [337] = L["Zul'Gurub"] .. "|55|60|3|5|1434|67.2|32.8|5",
-    [2999] = L["Ruins of Lordaeron"] .. "|0|0|3|5|1458|72.9|11.3|5",
+    [2959] = L["City of Dalaran"] .. "|28|33|3|5|1416|9.8|60.6|5",
+    [2998] = L["Excavation Site: Wetlands"] .. "|24|29|3|5|1437|52.5|63.6|5",
+    [2999] = L["Ruins of Lordaeron"] .. "|11|24|3|5|1458|72.9|11.3|5",
+    [3065] = L["The Hall of Thanes"] .. "|13|22|3|5|1455|46.8|52.3|5",
+    [17780] = L["Krol'dok Stronghold"] .. "|40|45|3|5|2548|37.5|37.4|5",
 
     -- ---------------------------------------------------------------
     -- WoW Forever ("camelot") instances, from Map.db2 of build 1.60.1.69893
@@ -131,11 +135,26 @@ Nx.Zones = {
     -- Map.db2 instance IDs for reference; the live entries must use
     -- Carbonite's own instance numbering like the vanilla ones above.
     --
-    --   party:      2959 City of Dalaran
-    --               2998 Excavation Site: Wetlands
-    --               2999 Ruins of Lordaeron
+    -- Keys are the Map.db2 instance IDs: they are unique, they are what
+    -- GetInstanceInfo() reports from inside, and no UiMap uses them.
+    --
+    -- Krol'dok Stronghold has NO Map.db2 row in 1.60.1.69913 - the client only
+    -- knows AreaTable 17780 "Krol'dok Stronghold", an outdoor sub-area of
+    -- Riverglades (area 16591). Its Zones key is therefore that area ID, which
+    -- is unique and traceable; re-key it to the instance map ID once Blizzard
+    -- ships one. Entrance found in-game: Riverglades 37.5, 37.4.
+    --
+    --   party:      2959 City of Dalaran           [done: Alterac 9.8, 60.6]
+    --                    That is the sewer door inside Dalaran itself. A second
+    --                    way in sits in Silverpine at 69.3, 45.6; a Carbonite
+    --                    instance is positioned AT its entrance, so only one
+    --                    point per instance can be stored - the spare is kept
+    --                    here. Both still answer "this dungeon is not available"
+    --                    on the beta.
+    --               2998 Excavation Site: Wetlands   [done: Wetlands 52.5, 63.6]
+    --               2999 Ruins of Lordaeron      [done: Undercity 72.9, 11.3]
     --               3002 Half-Pint Tavern
-    --               3065 The Hall of Thanes
+    --               3065 The Hall of Thanes       [done: Ironforge 46.8, 52.3]
     --               3109 Manor Mistmantle
     --   pvp:        2997 Darkspear Islands (uiMap 2524, added above)
     --               3005 Battle for Gilneas
@@ -146,6 +165,10 @@ Nx.Zones = {
     --
     -- TODO fill in after the in-game dump run: entrance uiMap + x/y, group
     -- size, level range, and our own floor-map art.
+    --
+    -- 2998 is an open-air phased copy of the Wetlands marsh south of
+    -- Whelgar's Excavation Site (terrain area 17732 spans Wetlands
+    -- 27-51 / 48-72), so it needs no floor map of its own.
     -- ---------------------------------------------------------------
 }
 

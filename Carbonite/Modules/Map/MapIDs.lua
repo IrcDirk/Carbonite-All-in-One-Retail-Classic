@@ -92,6 +92,43 @@ function MapIDs:GetDisplayableMapForPlayer()
     return mapID
 end
 
+-- Player position expressed on a specific map. Returns nil when the player's
+-- location cannot be represented there, so callers can keep their own value.
+function MapIDs:GetPlayerPositionOnMap(mapID)
+    local C_Map = _G.C_Map
+    if not mapID or mapID == 0 or not C_Map or not C_Map.GetPlayerMapPosition then
+        return nil
+    end
+
+    local ok, pos = pcall(C_Map.GetPlayerMapPosition, mapID, "player")
+    if not ok or not pos then return nil end
+
+    local x, y = pos:GetXY()
+    if not x or not y then return nil end
+    if x == 0 and y == 0 then return nil end
+    return x, y
+end
+
+-- The map whose coordinate space the player's position is reported in, when
+-- the flavor data places that map in Carbonite's world grid. City maps such as
+-- Ironforge are reported by GetBestMapForUnit but climbed away from by
+-- MapUtil.GetDisplayableMapForPlayer, and the parent zone cannot express the
+-- position at all, so the conversion has to use the city's own row.
+function MapIDs:GetPlayerWorldMapID()
+    local C_Map = _G.C_Map
+    local rawID = C_Map and C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player")
+    if not rawID or rawID == 0 then return nil end
+
+    local mapID = self:CanonicalizeMapID(rawID)
+    local NxMap = nxMap()
+    local info = NxMap and NxMap.MapWorldInfo and NxMap.MapWorldInfo[mapID]
+    if info and info.Scale and info[4] and info[5] then
+        return mapID
+    end
+
+    return nil
+end
+
 -- The map ID Carbonite considers "current" - prefers the open map's
 -- selection when the user is hovering it.
 function MapIDs:GetCurrentMapAreaID()
@@ -276,6 +313,8 @@ local function rewireLegacy()
     if not NxMap then return end
 
     NxMap.GetDisplayableMapForPlayer = function(_) return MapIDs:GetDisplayableMapForPlayer() end
+    NxMap.GetPlayerPositionOnMap = function(_, mapID) return MapIDs:GetPlayerPositionOnMap(mapID) end
+    NxMap.GetPlayerWorldMapID = function(_) return MapIDs:GetPlayerWorldMapID() end
     NxMap.CanonicalizeMapID = function(_, mapID) return MapIDs:CanonicalizeMapID(mapID) end
     NxMap.GetCurrentMapAreaID = function(_) return MapIDs:GetCurrentMapAreaID() end
     NxMap.GetCurrentMapId     = function(_) return MapIDs:GetCurrentMapId() end
