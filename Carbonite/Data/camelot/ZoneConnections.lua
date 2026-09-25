@@ -72,5 +72,7 @@ Nx.ZoneConnections = {
     "7|2|"..L["Boat to Stranglethorn Vale"].."|1413|63.68|38.63|"..L["Boat to The Barrens"].."|1434|26.04|73.24", -- [64]
     "7|2|"..L["Boat to Tanaris"].."|2548|80.1|54.4|"..L["Boat to Riverglades"].."|1446|68.3|23.0",
     "2|0|"..L["Portal to Stormwind"].."|1416|12.0|56.2|"..L["Portal to Dalaran"].."|1453|50.0|87.0", -- [77]
+    "3|2|"..L["Boat to Dalaran"].."|2521|65.8|83.4|"..L["Boat to Zephras Isle"].."|1416|12.7|52.0",
+    "5|2|"..L["Boat to Mulgore"].."|2521|57.9|80.7|"..L["Boat to Zephras Isle"].."|1412|34.3|25.7",
 }
 

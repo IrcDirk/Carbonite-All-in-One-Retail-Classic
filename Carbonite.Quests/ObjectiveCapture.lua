@@ -1659,6 +1659,13 @@ local function onQuestAccepted(questID)
     if not rec then return end
     rec.accept = rec.accept or talkSnapshot()
     rec.plvl = rec.plvl or UnitLevel("player")
+    -- The file is per account: remember which factions accepted the quest,
+    -- so a quest both sides have done comes out neutral.
+    local faction = UnitFactionGroup and plain(UnitFactionGroup("player"))
+    if faction then
+        rec.side = rec.side or {}
+        rec.side[faction] = true
+    end
     if lastTurnIn.id and lastTurnIn.id ~= questID
         and (GetTime() - (lastTurnIn.t or 0)) < CHAIN_WINDOW
         and (not lastTurnIn.npc or not rec.accept or not rec.accept.npc
@@ -1836,11 +1843,21 @@ frame:SetScript("OnEvent", function(_, event, arg1, arg2, arg3)
     elseif event == "PLAYER_LOGIN" then
         refreshEnabled()
         local d = db()
-        if d and not d.Class then
+        if d then
             local _, class = UnitClass and UnitClass("player")
             local _, race = UnitRace and UnitRace("player")
-            d.Class, d.Race = class, race
-            d.Faction = d.Faction or (UnitFactionGroup and UnitFactionGroup("player"))
+            local faction = UnitFactionGroup and UnitFactionGroup("player")
+            if not d.Class then d.Class, d.Race = class, race end
+            d.Faction = d.Faction or faction
+            -- One file per account, so keep every character that fed it.
+            local name, realm = UnitFullName and UnitFullName("player")
+            if name then
+                d.Chars = d.Chars or {}
+                d.Chars[name .. "-" .. (realm or GetRealmName() or "?")] = {
+                    faction = faction, class = class, race = race,
+                    lvl = UnitLevel and UnitLevel("player"), t = time and time() or nil,
+                }
+            end
         end
 
     elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA"
