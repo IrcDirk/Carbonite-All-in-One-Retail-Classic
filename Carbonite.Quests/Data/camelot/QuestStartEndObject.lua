@@ -230,4 +230,5 @@ Nx.QuestStartEndObject = {
     [180748] = "Ticking Present",
     [180793] = "Festive Gift",
     [181073] = "Fragrant Cauldron",
+    [581822] = "Bloodstained Satchel",
 }

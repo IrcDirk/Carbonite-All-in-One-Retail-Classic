@@ -7908,6 +7908,23 @@ function Nx.ModQuests:Data3()
                 },
             },
         },
+        [92415] = {
+            Quest = [=[Remember That I Love You|1|22|0|0|0|9750]=],
+            End = "14450|1453|32|56.3|54.2",
+        },
+        [95161] = {
+            Quest = [=[Remember That I Love You|1|22|0|0|0|180]=],
+            Start = "14450|1453|32|56.3|54.2",
+            End = "228|1431|32|73.1|44.5",
+        },
+        [95189] = {
+            Quest = [=[Crest of Lordaeron|1|22|0|0|0|9750]=],
+            End = "15991|1453|32|69.9|28.5",
+        },
+        [95195] = {
+            Quest = [=[Bloodied Insignia|1|22|0|0|0|9750]=],
+            End = "466|1453|32|69.1|82.7",
+        },
     }
     return ModQuests
 end

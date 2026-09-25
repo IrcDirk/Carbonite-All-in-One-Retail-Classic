@@ -128,6 +128,8 @@ end
 -- How long after a kill/loot we still consider it the cause of an objective
 -- tick. Server-side credit for a group kill can lag a second or two.
 local CAUSE_WINDOW  = 4.0
+local TALK_CREDIT_WINDOW = 3.0
+local talkTo = {}
 -- Ring buffer length. One loot window can carry a dozen items.
 local CAUSE_KEEP    = 32
 -- Per-entry position samples. Enough to see a spawn area, small enough that
@@ -566,7 +568,15 @@ local function attribute(rec, index, snap, delta)
     local typ = snap.typ
 
     if typ == "monster" or typ == "player" then
-        local c = findCause("monster")
+        -- Talk-to objectives share the "monster" type: with a gossip or quest
+        -- frame just opened the credit belongs to that NPC, not to whatever
+        -- died nearby a moment ago.
+        local c
+        if talkTo.t and (GetTime() - talkTo.t) <= TALK_CREDIT_WINDOW
+            and talkTo.kind == "Creature" and talkTo.npc then
+            c = { npc = talkTo.npc, map = talkTo.map, x = talkTo.x, y = talkTo.y }
+        end
+        c = c or findCause("monster")
         if not c then
             c = hostileFallback()
             if c then o.approx = true end
@@ -631,7 +641,14 @@ end
 
 local function scanQuest(questID, title, level, group, freq, header)
     local snap = readObjectives(questID)
-    if not snap then return end
+    if not snap then
+        if not (C_QuestLog and C_QuestLog.IsComplete) then return end
+        snap = {}
+    end
+    if C_QuestLog and C_QuestLog.IsComplete then
+        local ok, done = pcall(C_QuestLog.IsComplete, questID)
+        snap.complete = ok and done and true or false
+    end
 
     local prev = snapshots[questID]
     local rec = questRec(questID)
@@ -650,6 +667,11 @@ local function scanQuest(questID, title, level, group, freq, header)
         local now = snap[i]
         local was = prev and prev[i]
         local delta = now.have - ((was and was.have) or 0)
+        -- Objectives without a counter ("use ability at X", talk-to) only flip
+        -- `finished`; credit that flip as one step so the spot gets recorded.
+        if delta <= 0 and was and now.done and not was.done then
+            delta = math.max((now.need or 0) - (was.have or 0), 1)
+        end
         -- Objectives can reset (abandon/turn-in), only credit forward motion.
         if delta > 0 and prev then
             attribute(rec, i, now, delta)
@@ -658,6 +680,14 @@ local function scanQuest(questID, title, level, group, freq, header)
             -- not blame anything for progress that happened before we looked.
             objRec(rec, i, now)
         end
+    end
+
+    -- Quests with no readable objectives at all: remember where the player
+    -- stood when the quest became complete, the converter uses it as the
+    -- objective spot.
+    if #snap == 0 and prev and snap.complete and not prev.complete and not rec.doneAt then
+        local mapID, x, y = playerPos()
+        if mapID and x and y then rec.doneAt = { mapID, x, y } end
     end
 
     snapshots[questID] = snap
@@ -1325,7 +1355,6 @@ local frame = CreateFrame("Frame")
 
 -- Who we are talking to right now, so QUEST_ACCEPTED / QUEST_TURNED_IN can
 -- name the giver even though their own payload does not.
-local talkTo = {}
 
 local function noteTalkTarget()
     local guid = plain(UnitGUID("npc"))
@@ -1610,6 +1639,8 @@ local function noteZone()
     end
 end
 
+local noteCharacter
+
 -- Follow-up detection: a quest accepted right after a turn-in, from the
 -- same NPC (or auto-offered), is that quest's `next`.
 local lastTurnIn = {}
@@ -1653,6 +1684,36 @@ local function noteZoneCrossing()
     end)
 end
 
+-- One file per account, so keep every character that fed it. Unit info can
+-- still be blank at PLAYER_LOGIN on Forever, hence the retry on entering
+-- the world: nil fields are filled in, known ones kept.
+function noteCharacter()
+    local d = db()
+    if not d then return end
+    local _, class = UnitClass and UnitClass("player")
+    local _, race = UnitRace and UnitRace("player")
+    local faction = UnitFactionGroup and plain(UnitFactionGroup("player"))
+    class, race = plain(class), plain(race)
+    if not d.Class and class then d.Class, d.Race = class, race end
+    d.Faction = d.Faction or faction
+    local name, realm = UnitFullName and UnitFullName("player")
+    name, realm = plain(name), plain(realm)
+    if not name then return end
+    d.Chars = d.Chars or {}
+    local key = name .. "-" .. (realm or plain(GetRealmName()) or "?")
+    local c = d.Chars[key]
+    if not c then
+        c = {}
+        d.Chars[key] = c
+    end
+    c.faction = c.faction or faction
+    c.class = c.class or class
+    c.race = c.race or race
+    local lvl = plain(UnitLevel and UnitLevel("player"))
+    if type(lvl) == "number" and lvl > 0 then c.lvl = lvl end
+    c.t = time and time() or c.t
+end
+
 local function onQuestAccepted(questID)
     if not ObjCap:IsEnabled() then return end
     local rec = questRec(questID)
@@ -1666,6 +1727,13 @@ local function onQuestAccepted(questID)
         rec.side = rec.side or {}
         rec.side[faction] = true
     end
+    local _, class = UnitClass and UnitClass("player")
+    class = plain(class)
+    if class then
+        rec.cls = rec.cls or {}
+        rec.cls[class] = true
+    end
+    noteCharacter()
     if lastTurnIn.id and lastTurnIn.id ~= questID
         and (GetTime() - (lastTurnIn.t or 0)) < CHAIN_WINDOW
         and (not lastTurnIn.npc or not rec.accept or not rec.accept.npc
@@ -1842,27 +1910,12 @@ frame:SetScript("OnEvent", function(_, event, arg1, arg2, arg3)
 
     elseif event == "PLAYER_LOGIN" then
         refreshEnabled()
-        local d = db()
-        if d then
-            local _, class = UnitClass and UnitClass("player")
-            local _, race = UnitRace and UnitRace("player")
-            local faction = UnitFactionGroup and UnitFactionGroup("player")
-            if not d.Class then d.Class, d.Race = class, race end
-            d.Faction = d.Faction or faction
-            -- One file per account, so keep every character that fed it.
-            local name, realm = UnitFullName and UnitFullName("player")
-            if name then
-                d.Chars = d.Chars or {}
-                d.Chars[name .. "-" .. (realm or GetRealmName() or "?")] = {
-                    faction = faction, class = class, race = race,
-                    lvl = UnitLevel and UnitLevel("player"), t = time and time() or nil,
-                }
-            end
-        end
+        noteCharacter()
 
     elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA"
         or event == "ZONE_CHANGED" then
         refreshEnabled()
+        if event == "PLAYER_ENTERING_WORLD" then noteCharacter() end
         if event == "ZONE_CHANGED_NEW_AREA" then noteZoneCrossing() end
         noteZone()
         scanSoon()
