@@ -119,11 +119,65 @@ local function _selfName(self)
     return me
 end
 
+-- Forever: UnitFullName returns the first name only, the surname is the
+-- second value of UnitName, while senders arrive as "First Surname-Realm"
+-- (or "First-Surname-Realm"). Compare with every separator removed against
+-- all spellings of our own name.
+local function _compactKey(name)
+    if not name then return nil end
+    name = _stripLocaleTag(name)
+    return (name:gsub("[%s%-]+", "")):lower()
+end
+
+local function _selfKeys(self)
+    local first, surname = UnitName("player")
+    local fullFirst, fullRealm = UnitFullName("player")
+    if not first and not fullFirst then return nil end
+
+    local sig = strjoin("\1", tostring(first), tostring(surname), tostring(fullFirst),
+        tostring(fullRealm), tostring(GetRealmName()))
+    if self._selfKeySig == sig and self._selfKeyCache then
+        return self._selfKeyCache
+    end
+
+    local bases = {}
+    if first and surname and surname ~= "" then
+        bases[#bases + 1] = first .. surname
+    else
+        bases[#bases + 1] = first or fullFirst
+    end
+    if fullFirst and fullFirst ~= first then
+        bases[#bases + 1] = fullFirst
+    end
+
+    local realms = {}
+    for _, r in ipairs({ fullRealm, GetRealmName() }) do
+        r = _stripLocaleTag(r)
+        if r and r ~= "" then
+            realms[#realms + 1] = r
+        end
+    end
+
+    keys = {}
+    for _, b in ipairs(bases) do
+        keys[_compactKey(b)] = true
+        for _, r in ipairs(realms) do
+            keys[_compactKey(b .. r)] = true
+        end
+    end
+
+    self._selfKeySig = sig
+    self._selfKeyCache = keys
+    return keys
+end
+
 -- "Is this sender me?" Compares name halves always and realm halves only
 -- when both sides carry one, so a realm-less snapshot of our own name can
 -- never let our own broadcast through as a third-party player.
 local function _isSelf(self, name)
     if not name then return false end
+    local keys = _selfKeys(self)
+    if keys and keys[_compactKey(name)] then return true end
     local b1, r1 = _splitIdentity(name)
     local b2, r2 = _splitIdentity(_selfName(self))
     if not b1 or not b2 or b1 ~= b2 then return false end
@@ -1848,9 +1902,14 @@ end
 -- Used to chase "my own dot follows me on the map" reports.
 function Nx.Com:DumpSelfDiag()
     local playername, realmname = UnitFullName("player")
-    Nx.prt("Com self: PlyrName=%s key=%s | UnitFullName=%s/%s | GetRealmName=%s",
+    local first, surname = UnitName("player")
+    Nx.prt("Com self: PlyrName=%s key=%s | UnitFullName=%s/%s | UnitName=%s/%s | GetRealmName=%s",
         tostring(self.PlyrName), tostring(_identityKey(self.PlyrName)),
-        tostring(playername), tostring(realmname), tostring(GetRealmName()))
+        tostring(playername), tostring(realmname), tostring(first), tostring(surname), tostring(GetRealmName()))
+    local keyList = {}
+    for k in pairs(_selfKeys(self) or {}) do keyList[#keyList + 1] = k end
+    table.sort(keyList)
+    Nx.prt("  self keys: %s", table.concat(keyList, ", "))
     local t = GetTime()
     local n = 0
     for label, info in pairs({ ZPInfo = self.ZPInfo, PalsInfo = self.PalsInfo }) do
