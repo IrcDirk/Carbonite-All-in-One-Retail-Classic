@@ -360,6 +360,9 @@ function Nx.Map:GetMapInfo(mapId)
             if mapId == 13 then mapId = 1415 end    -- Eastern Kingdoms
 
             mapInfo = C_Map.GetMapInfo(mapId)
+            if not mapInfo then
+                return nil
+            end
 
             -- Reverse translation for continent-level maps (type 2)
             if mapInfo.mapType == 2 then

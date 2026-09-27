@@ -256,6 +256,12 @@ function MapIDs:IdToName(mapID)
         local info = _G.C_Map.GetMapInfo(mapID)
         if info then return info.name or "?" end
     end
+    local Nx = _G.Nx
+    local zone = Nx and Nx.Zones and Nx.Zones[mapID]
+    if zone and Nx.Split then
+        local name = Nx.Split("|", zone)
+        if name and name ~= "" then return name end
+    end
     return "?"
 end
 
