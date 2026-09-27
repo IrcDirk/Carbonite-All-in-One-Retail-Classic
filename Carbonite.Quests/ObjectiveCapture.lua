@@ -320,6 +320,14 @@ end
 -- SecrecyLevel.ContextuallySecret. Storing one is an outright error in
 -- Blizzard's own containers ("attempted to store a secret value"), so every
 -- value this module writes to SavedVariables goes through here first.
+local function groupTag(group)
+    if type(group) == "number" then
+        return group > 0 and group or nil
+    elseif type(group) == "string" then
+        return group ~= "" and group or nil
+    end
+end
+
 local function plain(v)
     if _G.issecretvalue and _G.issecretvalue(v) then return nil end
     return v
@@ -660,8 +668,8 @@ local function scanQuest(questID, title, level, group, freq, header)
     -- Quest-log header (zone or category the client files it under).
     if header and header ~= "" then slot.cat = slot.cat or header end
     rec.qlvl  = rec.qlvl or level
-    rec.group = rec.group or (group and group > 0 and group or nil)
-    rec.freq  = rec.freq or (freq and freq > 1 and freq or nil)
+    rec.group = rec.group or groupTag(group)
+    rec.freq  = rec.freq or (type(freq) == "number" and freq > 1 and freq or nil)
 
     for i = 1, #snap do
         local now = snap[i]
@@ -1754,8 +1762,8 @@ local function onQuestAccepted(questID)
         local slot = nameSlot(rec)
         slot.title = slot.title or title
         rec.qlvl  = rec.qlvl or level
-        rec.group = rec.group or (group and group > 0 and group or nil)
-        rec.freq  = rec.freq or (freq and freq > 1 and freq or nil)
+        rec.group = rec.group or groupTag(group)
+        rec.freq  = rec.freq or (type(freq) == "number" and freq > 1 and freq or nil)
     end
     snapshots[questID] = readObjectives(questID)
     scanSoon()
