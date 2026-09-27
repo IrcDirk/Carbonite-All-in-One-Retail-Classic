@@ -10,6 +10,7 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Warehouse = Nx.Warehouse or {}
 
+local WarehouseAPI = Nx.Warehouse.API
 local warehouseopts
 
 function Nx.Warehouse:GetOptionsConfig()
@@ -75,7 +76,7 @@ function Nx.Warehouse:GetOptionsConfig()
                             end,
                             get = false,
                             set = function (info, value)
-                                local name = C_Item.GetItemInfo(value)
+                                local name = WarehouseAPI.GetItemInfo(value)
                                 name = name or value
                                 StaticPopupDialogs["NX_AddIgnore"] = {
                                     text = L["Ignore"] .. " " .. value .. "?",
@@ -624,7 +625,7 @@ function Nx.Warehouse:GetOptionsConfig()
                                     end,
                                     get = false,
                                     set = function (info, value)
-                                        local name = C_Item.GetItemInfo(value)
+                                        local name = WarehouseAPI.GetItemInfo(value)
                                         name = name or value
                                         StaticPopupDialogs["NX_AddSell"] = {
                                             text = L["Add"] .. " " .. value .. "?",

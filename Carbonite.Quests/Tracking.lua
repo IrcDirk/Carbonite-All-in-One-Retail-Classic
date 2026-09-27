@@ -15,6 +15,9 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+
 -- WoW globals aliased as locals.
 local bit_band   = bit.band
 local bit_lshift = bit.lshift
@@ -112,12 +115,7 @@ local function CanDrawQuestBlob(qId)
     if not qId or qId <= 0 then return false end
     if _G.GetCVarBool and not _G.GetCVarBool("questPOI") then return false end
 
-    local logIdx
-    if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
-        logIdx = C_QuestLog.GetLogIndexForQuestID (qId)
-    elseif _G.GetQuestLogIndexByID then
-        logIdx = _G.GetQuestLogIndexByID (qId)
-    end
+    local logIdx = QuestAPI and QuestAPI:GetLogIndexForQuestID (qId) or 0
     if not logIdx or logIdx <= 0 then return false end
 
     if _G.QuestUtils_IsQuestBonusObjective
@@ -161,12 +159,7 @@ function Nx.Quest:UpdateQuestBlob (qId)
     local mapOpts = Nx.db and Nx.db.char and Nx.db.char.Map
     if not qId or not (mapOpts and mapOpts.ShowQuestBlobs)
         or not CanDrawQuestBlob (qId) then
-        local logIdx
-        if qId and C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
-            logIdx = C_QuestLog.GetLogIndexForQuestID (qId)
-        elseif qId and _G.GetQuestLogIndexByID then
-            logIdx = _G.GetQuestLogIndexByID (qId)
-        end
+        local logIdx = qId and QuestAPI and QuestAPI:GetLogIndexForQuestID (qId) or 0
         tdbg ("  blob(%s): HIDE (showOpt=%s questPOI=%s logIdx=%s) was=%s",
             tostring(qId),
             tostring(mapOpts and mapOpts.ShowQuestBlobs),
@@ -583,21 +576,7 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
     local quest = Nx.Quests[qId]
 
     if Nx.qdb.profile.QuestWatch.Sync then
-        if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
-            BlizIndex = C_QuestLog.GetLogIndexForQuestID (qId)
-        elseif GetQuestLogIndexByID then
-            BlizIndex = GetQuestLogIndexByID (qId)
-        else
-            local i = 1
-            while GetQuestLogTitle (i) do
-                local _, _, _, _, _, _, _, questID = GetQuestLogTitle (i)
-                if questID == qId then
-                    BlizIndex = i
-                    break
-                end
-                i = i + 1
-            end
-        end
+        BlizIndex = QuestAPI and QuestAPI:GetLogIndexForQuestID (qId) or 0
     end
     tbegin()
     tdbg ("call qId=%s qObj=%s useEnd=%s target=%s skipSame=%s inDB=%s",

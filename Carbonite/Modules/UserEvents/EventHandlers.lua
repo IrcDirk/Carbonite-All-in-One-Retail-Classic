@@ -16,6 +16,8 @@
 -- time without re-touching Carbonite.lua.
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local SpellAPI = SharedAPI and SharedAPI.Spell
 
 local canaccessvalue = _G.canaccessvalue
 local issecretvalue = _G.issecretvalue
@@ -44,18 +46,10 @@ end
 -- Gather detection (herb / mining / artifact / gas / logging / opening)
 -------------------------------------------------------------------------------
 
--- Return the modern spell name for special gather casts while retaining the
--- global API as a fallback for clients that do not expose C_Spell.
+-- Resolve gather-cast spell names through the shared compatibility layer.
 local function resolveSpellName(spellID)
-    if not spellID then return end
-    if C_Spell and C_Spell.GetSpellInfo then
-        local info = C_Spell.GetSpellInfo(spellID)
-        if type(info) == "table" then return info.name end
-        if type(info) == "string" then return info end
-    end
-    if GetSpellInfo then
-        return GetSpellInfo(spellID)
-    end
+    if not spellID or not SpellAPI then return end
+    return SpellAPI:GetName(spellID)
 end
 
 local function getSpellName(spellID)

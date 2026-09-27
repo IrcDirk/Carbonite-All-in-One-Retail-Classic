@@ -10,6 +10,10 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+local GetLiveLogInfo = Nx.Quest.GetLiveLogInfo
+
 -- WoW globals aliased as locals.
 local strfind  = strfind or string.find
 local strsub   = strsub  or string.sub
@@ -179,9 +183,11 @@ function Nx.Quest:Abandon (qIndex, qId)
 
         self:ExpandQuests()
 
-        local title, level, groupCnt, isHeader = GetQuestLogTitle (qIndex)
+        local info = GetLiveLogInfo and GetLiveLogInfo (qIndex)
+        local title = info and info.title
+        local isHeader = info and info.isHeader
 
-        if not isHeader then
+        if info and not isHeader then
 
 --            Nx.prt ("Abandon %s %s", qIndex, title)
 --            QuestLog_SetSelection (qIndex)
@@ -205,14 +211,15 @@ function Nx.Quest:Abandon (qIndex, qId)
                         and C_QuestLog.AbandonQuest then
 
                         local abandonId = qId
-                        if (not abandonId or abandonId <= 0)
-                            and C_QuestLog.GetQuestIDForLogIndex then
-                            abandonId = C_QuestLog.GetQuestIDForLogIndex(qIndex)
+                        if (not abandonId or abandonId <= 0) and QuestAPI then
+                            abandonId = QuestAPI:GetQuestIDForLogIndex(qIndex)
                         end
-                        if abandonId and abandonId > 0 and C_QuestLog.SetSelectedQuest then
-                            C_QuestLog.SetSelectedQuest (abandonId)
-                        elseif _G.SelectQuestLogEntry then
-                            SelectQuestLogEntry (qIndex)
+                        if QuestAPI then
+                            if abandonId and abandonId > 0 then
+                                QuestAPI:SetSelectedQuestID(abandonId)
+                            else
+                                QuestAPI:SetSelectedLogIndex(qIndex)
+                            end
                         end
 
                         C_QuestLog.SetAbandonQuest()
@@ -224,10 +231,10 @@ function Nx.Quest:Abandon (qIndex, qId)
                             HideUIPanel (popup)
                         end
 
-                    elseif _G.SelectQuestLogEntry and _G.SetAbandonQuest
+                    elseif QuestAPI and _G.SetAbandonQuest
                         and _G.AbandonQuest then
 
-                         SelectQuestLogEntry (qIndex)
+                         QuestAPI:SetSelectedLogIndex(qIndex)
                          SetAbandonQuest()
                          -- native blizz
                          AbandonQuest()

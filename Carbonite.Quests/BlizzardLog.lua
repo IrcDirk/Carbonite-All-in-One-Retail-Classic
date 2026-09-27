@@ -11,6 +11,10 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+local GetLiveLogInfo = Nx.Quest.GetLiveLogInfo
+
 -- WoW globals aliased as locals.
 local bit_band   = bit.band
 local bit_lshift = bit.lshift
@@ -22,12 +26,75 @@ local tinsert    = tinsert  or table.insert
 local sort       = sort     or table.sort
 local GetTime              = GetTime
 local InCombatLockdown     = InCombatLockdown
-local GetQuestLogLeaderBoard      = GetQuestLogLeaderBoard
-local GetNumQuestLeaderBoards     = GetNumQuestLeaderBoards
-local GetQuestLogQuestText        = GetQuestLogQuestText
-local GetQuestLogTimeLeft         = GetQuestLogTimeLeft
 local GetQuestLogSpecialItemInfo  = GetQuestLogSpecialItemInfo
 local GetQuestObjectiveInfo       = GetQuestObjectiveInfo
+
+-- File-local legacy-shaped adapters backed by the shared Quest API. They keep
+-- the mature recording code readable without publishing compatibility globals.
+local function GetQuestLogTitle(logIndex)
+    local info, questID, completionState
+    if GetLiveLogInfo then
+        info, questID, completionState = GetLiveLogInfo(logIndex)
+    end
+    if not info then
+        return nil
+    end
+    return info.title, info.level, info.suggestedGroup, info.isHeader,
+        info.isCollapsed, completionState, info.frequency, questID,
+        info.startEvent, info.questID, info.isOnMap, info.hasLocalPOI,
+        info.isTask, info.isBounty, info.isStory, info.isHidden, info.isScaling
+end
+
+local function GetNumQuestLogEntries()
+    if not QuestAPI then
+        return 0, 0
+    end
+    return QuestAPI:GetNumEntries()
+end
+
+local function GetQuestLogIndexByID(questID)
+    return QuestAPI and QuestAPI:GetLogIndexForQuestID(questID) or 0
+end
+
+local function SelectQuestLogEntry(logIndex)
+    if QuestAPI then
+        return QuestAPI:SetSelectedLogIndex(logIndex)
+    end
+    return false
+end
+
+local function GetQuestLogPushable()
+    return QuestAPI and QuestAPI:IsSelectedQuestPushable() or false
+end
+
+local function GetQuestLogIsAutoComplete(logIndex)
+    return QuestAPI and QuestAPI:IsAutoCompleteForLogIndex(logIndex) or false
+end
+
+local function GetNumQuestLeaderBoards(logIndex)
+    return QuestAPI and QuestAPI:GetNumObjectivesForLogIndex(logIndex) or 0
+end
+
+local function GetQuestLogLeaderBoard(objectiveIndex, logIndex)
+    if not QuestAPI then
+        return nil
+    end
+    return QuestAPI:GetObjectiveForLogIndex(objectiveIndex, logIndex)
+end
+
+local function GetQuestLogQuestText(logIndex)
+    if not QuestAPI then
+        return nil
+    end
+    return QuestAPI:GetQuestText(logIndex)
+end
+
+local function GetQuestLogTimeLeft(logIndex)
+    if not QuestAPI then
+        return nil
+    end
+    return QuestAPI:GetTimeLeft(logIndex)
+end
 
 -- Promoted from NxQuest.lua.
 local GetQuestTagInfoCompat = Nx.Quest.GetQuestTagInfoCompat
@@ -324,7 +391,7 @@ function Nx.Quest:RecordQuestsLog (validatedQuestCount)
     local previousCurq = self.CurQ
     if not previousCurq then return false end
     local curq = previousCurq
-    local oldSel = GetQuestLogSelection()
+    local oldSelectedQuestID = QuestAPI and QuestAPI:GetSelectedQuestID() or 0
 
 --    Nx.prt ("RecordQuestsLog %s, %s", qcnt, #curq)
 
@@ -809,7 +876,9 @@ function Nx.Quest:RecordQuestsLog (validatedQuestCount)
         self.QLastChanged = self:FindCurFromOld (lastChanged)
     end
 
-    SelectQuestLogEntry (oldSel)
+    if oldSelectedQuestID and oldSelectedQuestID > 0 and QuestAPI then
+        QuestAPI:SetSelectedQuestID(oldSelectedQuestID)
+    end
 
 --    Nx.prt ("CurQ %d", #curq)
 

@@ -20,6 +20,7 @@
 
 local Carbonite = _G.Carbonite
 local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
+local UnitAPI = Carbonite.Compat and Carbonite.Compat.Api and Carbonite.Compat.Api.Unit
 
 -- See MouseoverHandler: retail UnitGUID("mouseover") can be a secure-tainted
 -- "secret" string for player units; strsub on it raises from a tainted
@@ -35,7 +36,7 @@ local function _guid_strsub(g, a, b) return strsub(g, a, b) end
 function Nx:UnitDGet(target)
     if not Nx.db.profile.Debug.DebugUnit then return end
 
-    local guid = UnitGUID(target)
+    local guid = UnitAPI and UnitAPI:GetGUID(target)
     if not guid then return end
 
     local okId, sId = pcall(_guid_strsub, guid, 7, 10)

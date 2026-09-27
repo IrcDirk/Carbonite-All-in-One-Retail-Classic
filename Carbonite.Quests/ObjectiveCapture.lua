@@ -29,6 +29,9 @@ if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
 local Carbonite = _G.Carbonite
+local SharedAPI = Carbonite and Carbonite.Compat and Carbonite.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+local GetLiveLogInfo = Nx.Quest.GetLiveLogInfo
 
 local ObjCap = {}
 Nx.Quest.ObjCap = ObjCap
@@ -320,17 +323,18 @@ end
 -- SecrecyLevel.ContextuallySecret. Storing one is an outright error in
 -- Blizzard's own containers ("attempted to store a secret value"), so every
 -- value this module writes to SavedVariables goes through here first.
+local function plain(v)
+    if _G.issecretvalue and _G.issecretvalue(v) then return nil end
+    return v
+end
+
 local function groupTag(group)
+    group = plain(group)
     if type(group) == "number" then
         return group > 0 and group or nil
     elseif type(group) == "string" then
         return group ~= "" and group or nil
     end
-end
-
-local function plain(v)
-    if _G.issecretvalue and _G.issecretvalue(v) then return nil end
-    return v
 end
 
 -- Player position as mapID plus percent coordinates with one decimal, which
@@ -497,51 +501,44 @@ local function questRec(questID)
     return rec
 end
 
--- Objective snapshot for one quest, normalized across flavors. Modern
--- clients answer with C_QuestLog.GetQuestObjectives; the leaderboard path is
--- the fallback for clients (or moments) where that returns nothing.
+-- Objective snapshot for one quest, normalized across flavors. The shared
+-- Quest API prefers C_QuestLog.GetQuestObjectives and falls back to the
+-- indexed leaderboard API when a client does not expose structured data.
 local function readObjectives(questID)
-    local out
-
-    if C_QuestLog and C_QuestLog.GetQuestObjectives then
-        local ok, objs = pcall(C_QuestLog.GetQuestObjectives, questID)
-        if ok and objs and #objs > 0 then
-            out = {}
-            for i = 1, #objs do
-                local o = objs[i]
-                out[i] = {
-                    text = plain(o.text),
-                    typ  = plain(o.type),
-                    have = plain(o.numFulfilled) or 0,
-                    need = plain(o.numRequired) or 0,
-                    done = o.finished and true or false,
-                }
-            end
-            return out
-        end
+    if not QuestAPI then
+        return nil
     end
 
-    local qi = _G.GetQuestLogIndexByID and GetQuestLogIndexByID(questID)
-        or (C_QuestLog and C_QuestLog.GetLogIndexForQuestID and C_QuestLog.GetLogIndexForQuestID(questID))
-    if not qi or qi == 0 then return nil end
+    local objectives = QuestAPI:GetObjectivesForQuestID(questID)
+    if not objectives or #objectives == 0 then
+        return nil
+    end
 
-    local cnt = _G.GetNumQuestLeaderBoards and GetNumQuestLeaderBoards(qi) or 0
-    if cnt == 0 or not _G.GetQuestLogLeaderBoard then return nil end
+    local out = {}
+    for i = 1, #objectives do
+        local objective = objectives[i]
+        local text = plain(objective.text)
+        local have = plain(objective.numFulfilled)
+        local need = plain(objective.numRequired)
 
-    out = {}
-    for i = 1, cnt do
-        local text, typ, done = GetQuestLogLeaderBoard(i, qi)
-        local have, need = 0, 0
-        if text then
-            local h, n = text:match("(%d+)%s*/%s*(%d+)")
-            have, need = tonumber(h) or 0, tonumber(n) or 0
+        if (have == nil or need == nil) and text then
+            local parsedHave, parsedNeed = text:match("(%d+)%s*/%s*(%d+)")
+            have = have or tonumber(parsedHave)
+            need = need or tonumber(parsedNeed)
         end
+
+        have = have or 0
+        need = need or 0
+        if objective.finished and need > 0 then
+            have = need
+        end
+
         out[i] = {
             text = text,
-            typ  = typ,
-            have = done and need > 0 and need or have,
+            typ = plain(objective.type),
+            have = have,
             need = need,
-            done = done and true or false,
+            done = objective.finished and true or false,
         }
     end
     return out
@@ -669,6 +666,7 @@ local function scanQuest(questID, title, level, group, freq, header)
     if header and header ~= "" then slot.cat = slot.cat or header end
     rec.qlvl  = rec.qlvl or level
     rec.group = rec.group or groupTag(group)
+    freq = plain(freq)
     rec.freq  = rec.freq or (type(freq) == "number" and freq > 1 and freq or nil)
 
     for i = 1, #snap do
@@ -701,19 +699,24 @@ local function scanQuest(questID, title, level, group, freq, header)
     snapshots[questID] = snap
 end
 
--- NxQuest.lua installs the classic GetQuestLogTitle signature on every
--- flavor, and its 8th return is the *live* quest ID (not the story/display ID
--- C_QuestLog.GetInfo hands out for replayable content), which is the one the
--- rest of the quest API answers to. Reuse it rather than branching here.
+-- Walk the live quest log through Carbonite's shared compatibility API.
+-- GetLiveLogInfo resolves replay/story rows to the playable quest ID and keeps
+-- the completion-state debounce in NxQuest.lua centralized.
 local function eachLoggedQuest(fn)
-    local num = _G.GetNumQuestLogEntries and GetNumQuestLogEntries() or 0
+    local num = QuestAPI and QuestAPI:GetNumEntries() or 0
     local header
     for i = 1, num do
-        local title, level, group, isHeader, _, _, freq, questID = GetQuestLogTitle(i)
-        if isHeader then
-            header = plain(title)
-        elseif questID and questID > 0 then
-            fn(questID, title, level, group, freq, header)
+        local info, questID
+        if GetLiveLogInfo then
+            info, questID = GetLiveLogInfo(i)
+        end
+        if info then
+            if info.isHeader then
+                header = plain(info.title)
+            elseif questID and questID > 0 then
+                fn(questID, info.title, info.level, info.suggestedGroup,
+                    info.frequency, header)
+            end
         end
     end
 end
@@ -1755,15 +1758,18 @@ local function onQuestAccepted(questID)
         rec.startItem = rec.startItem or pendingStartItem.item
         pendingStartItem.item = nil
     end
-    local qi = _G.GetQuestLogIndexByID and GetQuestLogIndexByID(questID)
-        or (C_QuestLog and C_QuestLog.GetLogIndexForQuestID and C_QuestLog.GetLogIndexForQuestID(questID))
-    if qi and qi > 0 and _G.GetQuestLogTitle then
-        local title, level, group, _, _, _, freq = GetQuestLogTitle(qi)
-        local slot = nameSlot(rec)
-        slot.title = slot.title or title
-        rec.qlvl  = rec.qlvl or level
-        rec.group = rec.group or groupTag(group)
-        rec.freq  = rec.freq or (type(freq) == "number" and freq > 1 and freq or nil)
+    local qi = QuestAPI and QuestAPI:GetLogIndexForQuestID(questID) or 0
+    if qi > 0 then
+        local info = GetLiveLogInfo and GetLiveLogInfo(qi)
+        if info then
+            local slot = nameSlot(rec)
+            slot.title = slot.title or info.title
+            rec.qlvl = rec.qlvl or info.level
+            local group = info.suggestedGroup
+            rec.group = rec.group or groupTag(group)
+            local freq = plain(info.frequency)
+            rec.freq = rec.freq or (type(freq) == "number" and freq > 1 and freq or nil)
+        end
     end
     snapshots[questID] = readObjectives(questID)
     scanSoon()

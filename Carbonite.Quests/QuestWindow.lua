@@ -12,6 +12,10 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+local GetLiveLogInfo = Nx.Quest.GetLiveLogInfo
+
 -- WoW globals aliased as locals (mirrors the prelude in NxQuest.lua).
 local bit_band   = bit.band
 local bit_lshift = bit.lshift
@@ -29,10 +33,49 @@ local GetTime              = GetTime
 local UnitLevel            = UnitLevel
 local UnitName             = UnitName
 local InCombatLockdown     = InCombatLockdown
-local GetQuestLogLeaderBoard  = GetQuestLogLeaderBoard
-local GetNumQuestLeaderBoards = GetNumQuestLeaderBoards
 local GetDailyQuestsCompleted = GetDailyQuestsCompleted
 local GetQuestResetTime       = GetQuestResetTime
+
+-- File-local quest-log adapters backed by Carbonite.Compat.Api.Quest.
+local function GetQuestLogTitle(logIndex)
+    local info, questID, completionState
+    if GetLiveLogInfo then
+        info, questID, completionState = GetLiveLogInfo(logIndex)
+    end
+    if not info then
+        return nil
+    end
+    return info.title, info.level, info.suggestedGroup, info.isHeader,
+        info.isCollapsed, completionState, info.frequency, questID,
+        info.startEvent, info.questID, info.isOnMap, info.hasLocalPOI,
+        info.isTask, info.isBounty, info.isStory, info.isHidden, info.isScaling
+end
+
+local function GetQuestLogIndexByID(questID)
+    return QuestAPI and QuestAPI:GetLogIndexForQuestID(questID) or 0
+end
+
+local function GetNumQuestLogEntries()
+    if not QuestAPI then
+        return 0, 0
+    end
+    return QuestAPI:GetNumEntries()
+end
+
+local function SelectQuestLogEntry(logIndex)
+    return QuestAPI and QuestAPI:SetSelectedLogIndex(logIndex) or false
+end
+
+local function GetNumQuestLeaderBoards(logIndex)
+    return QuestAPI and QuestAPI:GetNumObjectivesForLogIndex(logIndex) or 0
+end
+
+local function GetQuestLogLeaderBoard(objectiveIndex, logIndex)
+    if not QuestAPI then
+        return nil
+    end
+    return QuestAPI:GetObjectiveForLogIndex(objectiveIndex, logIndex)
+end
 
 -- Promoted from NxQuest.lua's file-local cache helper.
 local GetCachedDifficultyColorStr = Nx.Quest.GetCachedDifficultyColorStr
@@ -2328,14 +2371,10 @@ function Nx.Quest.List:Update()
 
     -- Title
 
-    -- Prefer the modern C_QuestLog API (2nd return = quest count without
-    -- headers); legacy global fallback for Classic flavors.
-    local _, i
-    if C_QuestLog and C_QuestLog.GetNumQuestLogEntries then
-        _, i = C_QuestLog.GetNumQuestLogEntries()
-    else
-        _, i = GetNumQuestLogEntries()
-    end
+    -- The shared Quest API preserves the native two-return count shape; the
+    -- second value is the accepted-quest count without headers where supplied.
+    local _, i = GetNumQuestLogEntries()
+    i = i or 0
 
     local dailyStr = ""
     local dailysDone = GetDailyQuestsCompleted()
@@ -2368,7 +2407,7 @@ function Nx.Quest.List:Update()
 
     if self.TabSelected == 1 then
 
-        local oldSel = GetQuestLogSelection()
+        local oldSelectedQuestID = QuestAPI and QuestAPI:GetSelectedQuestID() or 0
 
         local header
         local curq = Quest.CurQ
@@ -2549,7 +2588,9 @@ function Nx.Quest.List:Update()
             end
         end
 
-        SelectQuestLogEntry (oldSel)
+        if oldSelectedQuestID and oldSelectedQuestID > 0 and QuestAPI then
+            QuestAPI:SetSelectedQuestID(oldSelectedQuestID)
+        end
 
     end
 
