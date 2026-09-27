@@ -3031,7 +3031,10 @@ function Nx.Quest.List:CheckShow (mapId, index)
             return true
         end
 
-        local quest = Nx.Quests[qId]
+        local quest = qId and Nx.Quests[qId]
+        if not quest then
+            return
+        end
         local qnext = Quest:UnpackNext (quest["Quest"])
 
         if not qnext or qnext == 0 or _qids[qnext] == true or cnum > 40 then
