@@ -18,23 +18,13 @@ local Carbonite = _G.Carbonite
 local MouseoverHandler = {}
 Carbonite.Modules.MouseoverHandler = MouseoverHandler
 
+local UnitAPI = Carbonite.Compat and Carbonite.Compat.Api and Carbonite.Compat.Api.Unit
 local lastGUID
 
--- Suppress secret GUIDs at the public accessor so no subscriber receives
--- one, and an inaccessible mouseover clears a previous accessible unit once.
-local canaccessvalue = _G.canaccessvalue
-local issecretvalue = _G.issecretvalue
-local function CanUseGUID(guid)
-    if canaccessvalue and not canaccessvalue(guid) then
-        return false
-    end
-    return not (issecretvalue and issecretvalue(guid))
-end
-
 function MouseoverHandler:GetUnitGUID()
-    if not _G.UnitGUID then return nil end
-    local guid = _G.UnitGUID("mouseover")
-    if not CanUseGUID(guid) or (guid and type(guid) ~= "string") then
+    if not UnitAPI then return nil end
+    local guid = UnitAPI:GetGUID("mouseover")
+    if guid and type(guid) ~= "string" then
         return nil
     end
     return guid

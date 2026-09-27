@@ -10,6 +10,10 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+local GetLiveLogInfo = Nx.Quest.GetLiveLogInfo
+
 -- WoW globals aliased as locals.
 local floor      = math.floor
 local strsub     = strsub   or string.sub
@@ -33,10 +37,14 @@ function Nx.Quest:FindNewQuest()
     -- Id
     if self.AcceptQId then    -- Auto accept quest triggered?
 
-        local qi = GetQuestLogIndexByID (self.AcceptQId)
+        local qi = QuestAPI and QuestAPI:GetLogIndexForQuestID (self.AcceptQId) or 0
         self.AcceptQId = nil
 
-        local title = self:ExtractTitle (GetQuestLogTitle (qi))
+        local info = GetLiveLogInfo and GetLiveLogInfo (qi)
+        local title = info and self:ExtractTitle (info.title)
+        if not title then
+            return
+        end
 
         if not self.RealQ[title] then
             return qi
@@ -51,18 +59,26 @@ function Nx.Quest:FindNewQuest()
         return
     end
 
-    local cnt = GetNumQuestLogEntries()
+    local cnt = QuestAPI and QuestAPI:GetNumEntries() or 0
 
 --    Nx.prt ("FindNewQuest %d", cnt)
 
     for qn = 1, cnt do
 
-        local title, level, groupCnt, isHeader, isCollapsed, _, _, questID = GetQuestLogTitle (qn)
+        local info, questID
+        if GetLiveLogInfo then
+            info, questID = GetLiveLogInfo (qn)
+        end
+        local title = info and info.title
+        local level = info and info.level
+        local groupCnt = info and info.suggestedGroup
+        local isHeader = info and info.isHeader
+        local isCollapsed = info and info.isCollapsed
         local questTagInfo = GetQuestTagInfoCompat(questID)
         local tagID = questTagInfo and questTagInfo.tagID
         local tag = questTagInfo and questTagInfo.tagName
 
-        if not isHeader then
+        if info and not isHeader then
             title = self:ExtractTitle (title)
             if title == aQName then
                 if not self.RealQ[title] then
@@ -364,7 +380,8 @@ function Nx.Quest:TellPartyOfChanges()
 
 --PAIDS!
 
-    if self.RealQEntries ~= GetNumQuestLogEntries() then    -- Quests added or removed?
+    local entryCount = QuestAPI and QuestAPI:GetNumEntries() or 0
+    if self.RealQEntries ~= entryCount then    -- Quests added or removed?
         return
     end
 
@@ -382,7 +399,10 @@ function Nx.Quest:TellPartyOfChanges()
             for n = 1, cur.LBCnt do
 
                 local skip
-                local desc, _, done = GetQuestLogLeaderBoard (n, cur.QI)
+                local desc, _, done
+                if QuestAPI then
+                    desc, _, done = QuestAPI:GetObjectiveForLogIndex (n, cur.QI)
+                end
                 if desc then
                     if not done then
 

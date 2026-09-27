@@ -13,6 +13,9 @@
 local Carbonite = _G.Carbonite
 if not Carbonite then return end
 
+local SharedAPI = Carbonite.Compat and Carbonite.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+
 local QuestRouting = {}
 Carbonite.Quests = Carbonite.Quests or {}
 Carbonite.Quests.Routing = QuestRouting
@@ -26,7 +29,7 @@ function QuestRouting:RouteToQuest(questID)
     if not questID then return end
     local q = quest()
     if q and q.TrackOnMap then
-        local logIdx = _G.GetQuestLogIndexByID and _G.GetQuestLogIndexByID(questID) or 0
+        local logIdx = QuestAPI and QuestAPI:GetLogIndexForQuestID(questID) or 0
         q:TrackOnMap(questID, logIdx)
         Carbonite.Core.EventBus:Fire("QUEST_ROUTE_REQUESTED", questID)
     end
@@ -37,7 +40,7 @@ function QuestRouting:RouteToObjective(questID, objIndex)
     -- some flavours; we pass it via the optional 3rd parameter.
     local q = quest()
     if q and q.TrackOnMap then
-        local logIdx = _G.GetQuestLogIndexByID and _G.GetQuestLogIndexByID(questID) or 0
+        local logIdx = QuestAPI and QuestAPI:GetLogIndexForQuestID(questID) or 0
         q:TrackOnMap(questID, logIdx, objIndex)
     end
 end

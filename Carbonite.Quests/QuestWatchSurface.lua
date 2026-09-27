@@ -17,6 +17,9 @@
 local Carbonite = _G.Carbonite
 if not Carbonite then return end
 
+local SharedAPI = Carbonite.Compat and Carbonite.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+
 local QuestWatchSurface = {}
 Carbonite.Quests = Carbonite.Quests or {}
 Carbonite.Quests.WatchSurface = QuestWatchSurface
@@ -35,7 +38,7 @@ end
 function QuestWatchSurface:Track(questID)
     local Quest = _G.Nx and _G.Nx.Quest
     if Quest and Quest.SetActiveCarboniteQuest then
-        local logIdx = _G.GetQuestLogIndexByID and _G.GetQuestLogIndexByID(questID) or 0
+        local logIdx = QuestAPI and QuestAPI:GetLogIndexForQuestID(questID) or 0
         Quest:SetActiveCarboniteQuest(questID, logIdx)
     end
     if _G.C_SuperTrack and _G.C_SuperTrack.SetSuperTrackedQuestID then

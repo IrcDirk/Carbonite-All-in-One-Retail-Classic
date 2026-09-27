@@ -24,6 +24,8 @@
 -------------------------------------------------------------------------------
 
 local _G = getfenv(0)
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
 
 -------------------------------------------------------------------------------
 -- LOCAL FUNCTION REFERENCES (Performance optimization)
@@ -59,29 +61,22 @@ local wipe = wipe or table.wipe
 -- WoW API functions used frequently
 local GetTime = GetTime
 local UnitLevel = UnitLevel
--- GetNumQuestLogEntries, GetQuestLogTitle, SelectQuestLogEntry, GetQuestLogSelection 
--- are defined after shims section
-local GetQuestLogLeaderBoard = GetQuestLogLeaderBoard
-local GetNumQuestLeaderBoards = GetNumQuestLeaderBoards
-local GetQuestLogQuestText = GetQuestLogQuestText
--- GetQuestTagInfo replaced by GetQuestTagInfoCompat in retail
--- GetQuestLogPushable and GetQuestLogIsAutoComplete are defined after shims section
-local GetQuestLogTimeLeft = GetQuestLogTimeLeft
+-- Quest-log access is centralized through Carbonite.Compat.Api.Quest.
+-- GetQuestTagInfo is normalized below because its return shape differs by client.
 local GetQuestLogSpecialItemInfo = GetQuestLogSpecialItemInfo
 local GetQuestDifficultyColor = GetQuestDifficultyColor
 local GetQuestObjectiveInfo = GetQuestObjectiveInfo
--- IsUnitOnQuest is defined after shims section to use the shimmed version
 local UnitName = UnitName
 local UnitGUID = UnitGUID
 local InCombatLockdown = InCombatLockdown
 local GetDailyQuestsCompleted = GetDailyQuestsCompleted
 local GetQuestResetTime = GetQuestResetTime
-local GetAbandonQuestItems = C_QuestLog.GetAbandonQuestItems or GetAbandonQuestItems
+local GetAbandonQuestItems = (C_QuestLog and C_QuestLog.GetAbandonQuestItems) or GetAbandonQuestItems
 
 -------------------------------------------------------------------------------
--- API COMPATIBILITY SHIMS
--- Create wrapper functions for Retail API compatibility
--- Classic uses GetQuestLogTitle directly, Retail uses C_QuestLog.GetInfo
+-- QUEST COMPATIBILITY HELPERS
+-- Quest-log reads use Carbonite.Compat.Api.Quest. Only the remaining watch /
+-- unit shims below are published for legacy Carbonite interaction paths.
 -------------------------------------------------------------------------------
 
 -- Return Carbonite's legacy tri-state completion value:
@@ -165,85 +160,8 @@ local function GetQuestCompletionState(questID)
     return nil
 end
 
--- Check if we need to create shims (Retail doesn't have GetQuestLogTitle natively)
-if C_QuestLog and C_QuestLog.GetInfo then
-    -- Retail: Create shim that wraps C_QuestLog.GetInfo with GetQuestLogTitle signature.
-    --
-    -- Important: C_QuestLog.GetInfo's `.questID` can be a story/display ID
-    -- for replayable content (Chromie Time, Threads of Fate, scaling
-    -- campaigns) while C_QuestLog.GetQuestIDForLogIndex returns the
-    -- actual playable instance ID. The instance ID is the one that
-    -- works with C_SuperTrack, C_QuestLog.IsOnQuest, and the rest of
-    -- the live quest API, so we prefer it. q.questID stays as the
-    -- displayQuestID slot for any caller that wants the story ID.
-    function GetQuestLogTitle(qn)
-        local q = C_QuestLog.GetInfo(qn)
-        if not q then
-            return
-        end
-        local liveID = q.questID
-        if C_QuestLog.GetQuestIDForLogIndex then
-            local id = C_QuestLog.GetQuestIDForLogIndex(qn)
-            if id and id > 0 then
-                liveID = id
-            end
-        end
-        local isComplete = GetQuestCompletionState(liveID)
-        return q.title, q.level, q.suggestedGroup, q.isHeader, q.isCollapsed, isComplete, q.frequency, liveID, q.startEvent, q.questID, q.isOnMap, q.hasLocalPOI, q.isTask, q.isBounty, q.isStory, q.isHidden, q.isScaling
-    end
-
-    -- Retail: Wrap C_QuestLog.GetNumQuestLogEntries if it exists
-    if C_QuestLog.GetNumQuestLogEntries then
-        function GetNumQuestLogEntries()
-            return C_QuestLog.GetNumQuestLogEntries()
-        end
-    end
-
-    -- Retail: GetQuestLogSelection returns the selected quest ID
-    function GetQuestLogSelection()
-        return C_QuestLog.GetSelectedQuest()
-    end
-
-    -- Retail: SelectQuestLogEntry - handles both log index and questID
-    -- Quest IDs are typically 5+ digits, log indices are typically under 100
-    function SelectQuestLogEntry(val)
-        if val and val > 0 then
-            if val > 1000 then
-                -- Likely a questID (from GetQuestLogSelection), use directly
-                C_QuestLog.SetSelectedQuest(val)
-            else
-                -- Likely a log index, convert to questID first
-                local questID = C_QuestLog.GetQuestIDForLogIndex(val)
-                if questID then
-                    C_QuestLog.SetSelectedQuest(questID)
-                end
-            end
-        end
-    end
-
-    -- Retail: GetQuestLogPushable - uses currently selected quest
-    function GetQuestLogPushable()
-        local questID = C_QuestLog.GetSelectedQuest()
-        if questID then
-            return C_QuestLog.IsPushableQuest(questID)
-        end
-        return false
-    end
-
-    -- Retail: GetQuestLogIsAutoComplete - get from quest info
-    function GetQuestLogIsAutoComplete(qIndex)
-        local qInfo = C_QuestLog.GetInfo(qIndex)
-        if qInfo then
-            return qInfo.isAutoComplete
-        end
-        return false
-    end
-
-    -- Retail: GetQuestLogIndexByID - get log index for a quest ID
-    function GetQuestLogIndexByID(questID)
-        return C_QuestLog.GetLogIndexForQuestID(questID) or 0
-    end
-end
+-- Carbonite no longer recreates removed quest-log globals on modern clients.
+-- Extracted quest modules consume Carbonite.Compat.Api.Quest directly.
 
 -- GetQuestTagInfo compatibility wrapper.
 -- Retail uses C_QuestLog.GetQuestTagInfo(questID); Classic uses
@@ -252,6 +170,35 @@ end
 -- NxQuest sites unchanged.
 Nx.Quest = Nx.Quest or {}
 Nx.Quest.GetQuestCompletionState = GetQuestCompletionState
+
+-- Return one normalized quest-log row plus the live quest ID and Carbonite's
+-- debounced completion state. Extracted quest modules use this instead of
+-- Carbonite-created legacy globals such as GetQuestLogTitle.
+function Nx.Quest.GetLiveLogInfo(logIndex)
+    if not QuestAPI or not logIndex or logIndex <= 0 then
+        return nil
+    end
+
+    local info = QuestAPI:GetInfo(logIndex)
+    if not info then
+        return nil
+    end
+
+    local questID = QuestAPI:GetQuestIDForLogIndex(logIndex)
+    if not questID or questID <= 0 then
+        questID = info.questID
+    end
+
+    local completionState
+    if questID and questID > 0 then
+        completionState = GetQuestCompletionState(questID)
+    end
+    if completionState == nil and info.isComplete ~= nil then
+        completionState = info.isComplete
+    end
+
+    return info, questID, completionState
+end
 
 -- Quest-list rows store the quest ID above their low 16 objective/index bits.
 -- WoW's bit library truncates its input to 32 bits, so bit.rshift(row, 16)
@@ -365,16 +312,6 @@ if C_QuestLog and C_QuestLog.RemoveQuestWatch and not RemoveQuestWatch then
         end
     end
 end
-
--- Update local references to use the shims
-local GetQuestLogTitle = GetQuestLogTitle
-local GetNumQuestLogEntries = GetNumQuestLogEntries
-local SelectQuestLogEntry = SelectQuestLogEntry
-local GetQuestLogSelection = GetQuestLogSelection
-local GetQuestLogPushable = GetQuestLogPushable
-local GetQuestLogIsAutoComplete = GetQuestLogIsAutoComplete
-local GetQuestLogIndexByID = GetQuestLogIndexByID
-local IsUnitOnQuest = IsUnitOnQuest
 
 -------------------------------------------------------------------------------
 -- COLOR UTILITY FUNCTIONS (Performance optimization)

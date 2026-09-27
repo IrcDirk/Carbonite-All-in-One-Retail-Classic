@@ -11,6 +11,10 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+local GetLiveLogInfo = Nx.Quest.GetLiveLogInfo
+
 -- WoW globals aliased as locals for hot-path speed. Mirrors the
 -- block at the top of NxQuest.lua; the watch UI does a lot of
 -- formatted strings + bit ops so the aliases are worth keeping.
@@ -31,6 +35,99 @@ local wipe       = wipe     or table.wipe
 local GetTime              = GetTime
 local InCombatLockdown     = InCombatLockdown
 local GetQuestObjectiveInfo = GetQuestObjectiveInfo
+
+-- Return one fixed-width watch line without splitting WoW text markup.
+-- Atlas/texture escapes are treated as a single visible glyph; color escapes
+-- are zero-width. This keeps Blizzard objective strings such as profession
+-- quality atlases intact when the fixed-size tracker wraps them.
+local function SplitWatchMarkupLine(text, maxVisible)
+    if type(text) ~= "string" or text == "" or not maxVisible or maxVisible < 1 then
+        return text, nil
+    end
+
+    local len = #text
+    local i = 1
+    local visible = 0
+    local lastSpace
+
+    while i <= len do
+        local b = strbyte(text, i)
+
+        if b == 124 and i < len then -- "|"
+            local tag = strsub(text, i + 1, i + 1)
+
+            if tag == "c" and i + 9 <= len then
+                i = i + 10
+            elseif tag == "r" then
+                i = i + 2
+            elseif tag == "A" then
+                local close = strfind(text, "|a", i + 2, true)
+                if close then
+                    visible = visible + 1
+                    i = close + 2
+                else
+                    visible = visible + 1
+                    i = i + 1
+                end
+            elseif tag == "T" then
+                local close = strfind(text, "|t", i + 2, true)
+                if close then
+                    visible = visible + 1
+                    i = close + 2
+                else
+                    visible = visible + 1
+                    i = i + 1
+                end
+            elseif tag == "H" then
+                local labelStart = strfind(text, "|h", i + 2, true)
+                local labelEnd = labelStart and strfind(text, "|h", labelStart + 2, true)
+                if labelEnd then
+                    visible = visible + 1
+                    i = labelEnd + 2
+                else
+                    visible = visible + 1
+                    i = i + 1
+                end
+            else
+                visible = visible + 1
+                i = i + 1
+            end
+        else
+            if b == 32 then
+                lastSpace = i
+            end
+
+            visible = visible + 1
+
+            -- Avoid cutting inside a UTF-8 character on clients/locales that
+            -- return non-ASCII objective text.
+            if b and b >= 240 then
+                i = i + 4
+            elseif b and b >= 224 then
+                i = i + 3
+            elseif b and b >= 192 then
+                i = i + 2
+            else
+                i = i + 1
+            end
+        end
+
+        if visible >= maxVisible and i <= len then
+            local cut = lastSpace
+            if cut and cut > 1 then
+                local restStart = cut + 1
+                while restStart <= len and strbyte(text, restStart) == 32 do
+                    restStart = restStart + 1
+                end
+                return strsub(text, 1, cut - 1), strsub(text, restStart)
+            end
+
+            return strsub(text, 1, i - 1), strsub(text, i)
+        end
+    end
+
+    return text, nil
+end
 
 -- Promoted from NxQuest.lua's file-local cache helper.
 local GetCachedDifficultyColorStr = Nx.Quest.GetCachedDifficultyColorStr
@@ -559,10 +656,8 @@ end
 local function GetLiveQuestIndex (questId, fallbackIndex)
     local questIndex
 
-    if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
-        questIndex = C_QuestLog.GetLogIndexForQuestID (questId)
-    elseif GetQuestLogIndexByID then
-        questIndex = GetQuestLogIndexByID (questId)
+    if QuestAPI then
+        questIndex = QuestAPI:GetLogIndexForQuestID (questId)
     end
 
     if questIndex and questIndex > 0 then
@@ -572,8 +667,8 @@ local function GetLiveQuestIndex (questId, fallbackIndex)
     -- During quest-log rebuilds Carbonite can still hold the prior index.
     -- Reuse it only when the client can confirm that it still names this ID.
     if fallbackIndex and fallbackIndex > 0 then
-        if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
-            if C_QuestLog.GetQuestIDForLogIndex (fallbackIndex) == questId then
+        if QuestAPI then
+            if QuestAPI:GetQuestIDForLogIndex (fallbackIndex) == questId then
                 return fallbackIndex
             end
         elseif GetQuestIDFromLogIndex then
@@ -595,10 +690,8 @@ function Nx.Quest.Watch:SyncBlizzardWatch (questId, questIndex, watched)
         return false
     end
 
-    if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
-        questIndex = C_QuestLog.GetLogIndexForQuestID (questId)
-    elseif GetQuestLogIndexByID then
-        questIndex = GetQuestLogIndexByID (questId)
+    if QuestAPI then
+        questIndex = QuestAPI:GetLogIndexForQuestID (questId)
     end
 
     if not questIndex or questIndex <= 0 then
@@ -622,12 +715,8 @@ function Nx.Quest.Watch:SyncBlizzardWatch (questId, questIndex, watched)
 
     local Quest = Nx.Quest
     Nx.SuperTrackSafe (function()
-        local liveIndex = questIndex
-        if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
-            liveIndex = C_QuestLog.GetLogIndexForQuestID (questId)
-        elseif GetQuestLogIndexByID then
-            liveIndex = GetQuestLogIndexByID (questId)
-        end
+        local liveIndex = QuestAPI and QuestAPI:GetLogIndexForQuestID (questId)
+            or questIndex
 
         if not liveIndex or liveIndex <= 0
                 or GetBlizzardQuestWatchState (questId, liveIndex) == watched then
@@ -1012,8 +1101,9 @@ end
 local function WatchList_ScanTip(bounty)
     local tipVisible = GameTooltip:IsShown()
     local tipText = ""
-    local questIndex = GetQuestLogIndexByID(bounty.questID)
-    local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory = GetQuestLogTitle(questIndex)
+    local questIndex = QuestAPI and QuestAPI:GetLogIndexForQuestID(bounty.questID) or 0
+    local info = GetLiveLogInfo and GetLiveLogInfo(questIndex)
+    local title = info and info.title
 
     if title and not tipVisible then
         -- Use Nx.TooltipText as scratchpad to avoid tainting GameTooltip
@@ -1026,8 +1116,13 @@ local function WatchList_ScanTip(bounty)
             Nx.Quest.AddQuestTimeToTooltipCompat(scanTip, bounty.questID)
         end
 
-        local _, questDescription = GetQuestLogQuestText(questIndex)
-        scanTip:AddLine(questDescription, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+        local questDescription
+        if QuestAPI then
+            _, questDescription = QuestAPI:GetQuestText(questIndex)
+        end
+        if questDescription then
+            scanTip:AddLine(questDescription, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+        end
 
         WatchList_AddObjectives(scanTip, bounty.questID, bounty.numObjectives)
 
@@ -1872,11 +1967,16 @@ function Nx.Quest.Watch:UpdateList()
                             end
                         end
                     end
-                    local taskInfo = GetNumQuestLogEntries()
+                    local taskInfo = QuestAPI and QuestAPI:GetNumEntries() or 0
                     if taskInfo > 0 then
                         for i=1,taskInfo do
-                            local title, _, _, _, _, _, _, questId, _, _, _, _, isTask, _ = GetQuestLogTitle(i)
-                            if isTask and tasks[questId] ~= true
+                            local info, questId
+                            if GetLiveLogInfo then
+                                info, questId = GetLiveLogInfo(i)
+                            end
+                            local title = info and info.title
+                            local isTask = info and info.isTask
+                            if isTask and questId and tasks[questId] ~= true
                                     and WatchList_ShouldShowTask (Quest, questId, i) then
                                 tasks[questId] = true
                                 local title, factionID = C_TaskQuest.GetQuestInfoByQuestID(questId)
@@ -2038,10 +2138,10 @@ function Nx.Quest.Watch:UpdateList()
                                 elseif isComplete ~= 1 then
                                     isComplete = liveCompletion
                                 end
-                                if not isAC and GetQuestLogIndexByID then
-                                    local logIdx = GetQuestLogIndexByID(qId)
+                                if not isAC and QuestAPI then
+                                    local logIdx = QuestAPI:GetLogIndexForQuestID(qId)
                                     if logIdx and logIdx > 0
-                                            and GetQuestLogIsAutoComplete(logIdx) then
+                                            and QuestAPI:IsAutoCompleteForLogIndex(logIdx) then
                                         isAC = true
                                     end
                                 end
@@ -2221,22 +2321,16 @@ function Nx.Quest.Watch:UpdateList()
                                             end
                                         end
                                         if fixedSize then
-                                            local maxCOpt = Nx.qdb.profile.QuestWatch.OMaxLen + 10
-                                            local maxC = maxCOpt
-                                            while #str > maxC do
-                                                for cn = maxC, 12, -1 do
-                                                    if strbyte (str, cn) == 32 then        -- Find last space
-                                                        maxC = cn - 1
-                                                        break
-                                                    end
-                                                end
-                                                local s = strsub (str, 1, maxC)
-                                                list:ItemSet (2, s)
-                                                str = color .. strsub (str, maxC + 1)
+                                            local maxVisible = Nx.qdb.profile.QuestWatch.OMaxLen + 10
+                                            local line, rest = SplitWatchMarkupLine(str, maxVisible)
+                                            while rest and rest ~= "" do
+                                                list:ItemSet (2, line)
+                                                str = color .. rest
                                                 list:ItemAdd (qId * 0x10000 + ln * 0x100 + qi)
                                                 list:ItemSetOffset (16, lnOffset)
-                                                maxC = maxCOpt
+                                                line, rest = SplitWatchMarkupLine(str, maxVisible)
                                             end
+                                            str = line or str
                                         end
                                         list:ItemSet (2, str)
                                         lnOffset = lnOffset - 1
@@ -2284,14 +2378,12 @@ function Nx.Quest.Watch:UpdateList()
         if w < 127 then
             self.Win:SetTitle ("")
         else
-            -- Prefer the modern C_QuestLog API; its 2nd return is the real
-            -- quest count (excludes headers). Fall back to the legacy global
-            -- on Classic flavors that lack C_QuestLog.GetNumQuestLogEntries.
-            local _, i
-            if C_QuestLog and C_QuestLog.GetNumQuestLogEntries then
-                _, i = C_QuestLog.GetNumQuestLogEntries()
-            else
-                _, i = GetNumQuestLogEntries()
+            -- The shared compatibility layer preserves the native two-value
+            -- shape: shown entries first, accepted quests second.
+            local i = 0
+            if QuestAPI then
+                local _, numQuests = QuestAPI:GetNumEntries()
+                i = numQuests or 0
             end
             -- Show the player-facing accepted-quest cap, not Retail's larger
             -- internal quest-log capacity. Fall back to MAX_QUESTS/25 where
@@ -2418,13 +2510,11 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                     end
                     if liveQID == qId
                        and C_QuestLog and C_QuestLog.IsOnQuest
-                       and not C_QuestLog.IsOnQuest(liveQID) then
-                        for i = 1, GetNumQuestLogEntries() do
-                            local _, _, _, _, _, _, _, qid = GetQuestLogTitle(i)
-                            if i == qIndex and qid and qid > 0 then
-                                liveQID = qid
-                                break
-                            end
+                       and not C_QuestLog.IsOnQuest(liveQID)
+                       and QuestAPI and qIndex and qIndex > 0 then
+                        local resolvedID = QuestAPI:GetQuestIDForLogIndex(qIndex)
+                        if resolvedID and resolvedID > 0 then
+                            liveQID = resolvedID
                         end
                     end
 
@@ -2579,7 +2669,7 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                                             ShowQuestComplete(_liveID)
                                         end)
                                     else
-                                        local qi = (GetQuestLogIndexByID and GetQuestLogIndexByID(_liveID)) or _qIndex
+                                        local qi = QuestAPI and QuestAPI:GetLogIndexForQuestID(_liveID) or _qIndex
                                         if qi and qi > 0 then
                                             C_Timer.After(0, function()
                                                 ShowQuestComplete(qi)
@@ -2605,15 +2695,15 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                             -- (user-reported bug: ? click switches tracking).
                             if cur and C_QuestLog then
                                 local apiComplete = C_QuestLog.IsComplete and C_QuestLog.IsComplete(qId)
-                                local logIdx = GetQuestLogIndexByID and GetQuestLogIndexByID(qId)
-                                local apiAC = logIdx and logIdx > 0
-                                    and GetQuestLogIsAutoComplete(logIdx)
+                                local logIdx = QuestAPI and QuestAPI:GetLogIndexForQuestID(qId) or 0
+                                local apiAC = logIdx > 0 and QuestAPI
+                                    and QuestAPI:IsAutoCompleteForLogIndex(logIdx)
                                 if apiComplete then isComplete = true end
                                 if apiAC       then isAC       = true end
                             end
                             if isComplete and isAC then
                                 -- Use fresh log index in case quest log was reshuffled
-                                local qi = GetQuestLogIndexByID(qId)
+                                local qi = QuestAPI and QuestAPI:GetLogIndexForQuestID(qId) or 0
                                 ShowQuestComplete (qi > 0 and qi or qIndex)
 
                             else

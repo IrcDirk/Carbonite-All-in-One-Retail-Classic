@@ -47,6 +47,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Carbonite")
 -- NxWarehouse, the new Map/* wrappers) keep resolving.
 
 local Carbonite = _G.Carbonite
+local SharedAPI = Carbonite.Compat and Carbonite.Compat.Api
+local SpellAPI = SharedAPI and SharedAPI.Spell
 local Travel = Carbonite:GetModule("Travel", true)
 if not Travel then return end
 
@@ -68,7 +70,9 @@ Carbonite.Travel = Travel
 -- Travel System Initialization
 ---------------------------------------------------------------------------------------
 
-local DoesSpellExist = C_Spell.DoesSpellExist or DoesSpellExist
+local function DoesSpellExist(spellID)
+    return SpellAPI and SpellAPI:Exists(spellID) or false
+end
 
 --- Icon lookup table: destination zone ID -> portal icon
 --- Mirrors the portalN table in NxMapGuide.lua, using the same OldMapIDs check
@@ -152,13 +156,13 @@ function Travel:Init()
 
     -- Cache flying skill spell names for each expansion
     -- These are used to determine if the player can fly in specific zones
-    self.WrathFlyName    = C_Spell.GetSpellInfo(54197)  and C_Spell.GetSpellInfo(54197).name or ""  -- Cold Weather Flying (Northrend)
-    self.AzerothFlyName  = C_Spell.GetSpellInfo(90267)  and C_Spell.GetSpellInfo(90267).name or ""  -- Flight Master's License (Azeroth)
-    self.PandariaFlyName = C_Spell.GetSpellInfo(115913) and C_Spell.GetSpellInfo(115913).name or "" -- Wisdom of the Four Winds
-    self.DraenorFlyName  = C_Spell.GetSpellInfo(191645) and C_Spell.GetSpellInfo(191645).name or "" -- Draenor Pathfinder
-    self.LegionFlyName   = C_Spell.GetSpellInfo(233368) and C_Spell.GetSpellInfo(233368).name or "" -- Broken Isles Pathfinder
-    self.BattleFlyName   = C_Spell.GetSpellInfo(278833) and C_Spell.GetSpellInfo(278833).name or "" -- Battle for Azeroth Pathfinder
-    self.SkyRidingName   = C_Spell.GetSpellInfo(376027) and C_Spell.GetSpellInfo(376027).name or "" -- SkyRiding
+    self.WrathFlyName    = SpellAPI and SpellAPI:GetName(54197) or ""  -- Cold Weather Flying (Northrend)
+    self.AzerothFlyName  = SpellAPI and SpellAPI:GetName(90267) or ""  -- Flight Master's License (Azeroth)
+    self.PandariaFlyName = SpellAPI and SpellAPI:GetName(115913) or "" -- Wisdom of the Four Winds
+    self.DraenorFlyName  = SpellAPI and SpellAPI:GetName(191645) or "" -- Draenor Pathfinder
+    self.LegionFlyName   = SpellAPI and SpellAPI:GetName(233368) or "" -- Broken Isles Pathfinder
+    self.BattleFlyName   = SpellAPI and SpellAPI:GetName(278833) or "" -- Battle for Azeroth Pathfinder
+    self.SkyRidingName   = SpellAPI and SpellAPI:GetName(376027) or "" -- SkyRiding
 end
 
 ---------------------------------------------------------------------------------------
@@ -1312,7 +1316,7 @@ function Travel:GetRidingSkill()
 
     -- Check each riding skill from lowest to highest
         for skill, spellId in pairs(RidingSpells) do
-            if C_Spell.GetSpellInfo(spellId) then
+            if SpellAPI and SpellAPI:GetInfo(spellId) then
                 RidingSkill = skill
                 break
             end

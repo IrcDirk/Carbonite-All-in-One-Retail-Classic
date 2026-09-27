@@ -11,6 +11,10 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+local GetLiveLogInfo = Nx.Quest.GetLiveLogInfo
+
 -- WoW globals aliased as locals.
 local bit_band   = bit.band
 local floor      = math.floor
@@ -131,10 +135,10 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
     if not quest["Quest"] then
         local fac = UnitFactionGroup ("player") == "Horde" and 1 or 2
         local level = 0
-        local qi = GetQuestLogIndexByID and GetQuestLogIndexByID (qId)
-        if qi and qi > 0 then
-            local _, lvl = GetQuestLogTitle (qi)
-            level = lvl or 0
+        local qi = QuestAPI and QuestAPI:GetLogIndexForQuestID (qId) or 0
+        if qi > 0 then
+            local info = GetLiveLogInfo and GetLiveLogInfo (qi)
+            level = info and info.level or 0
         end
         quest["Quest"] = format ("[[%s|%s|%s|0|0|0]]", title, fac, level)
         touched = true

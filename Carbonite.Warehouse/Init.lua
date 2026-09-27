@@ -17,6 +17,15 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Warehouse = Nx.Warehouse or {}
 
+local function RegisterWarehouseEvent(event)
+    if type(event) ~= "string" or event == "" then
+        return false
+    end
+
+    local ok = pcall(CarboniteWarehouse.RegisterEvent, CarboniteWarehouse, event, "EventHandler")
+    return ok
+end
+
 -------------------------------------------------------------------------------
 -- MODULE INITIALIZATION
 -------------------------------------------------------------------------------
@@ -27,68 +36,10 @@ Nx.Warehouse = Nx.Warehouse or {}
 --
 function CarboniteWarehouse:OnInitialize()
     if not Nx.Initialized then
-        CarbWHInit = Nx:ScheduleTimer(CarboniteWarehouse.OnInitialize,1)
+        Nx.Warehouse.InitTimer = Nx:ScheduleTimer(CarboniteWarehouse.OnInitialize, 1)
         return
     end
     Nx.wdb = LibStub("AceDB-3.0"):New("NXWhouse", Nx.Warehouse.defaults, true)
-    Nx.Warehouse:ConvertData()
-    Nx.Warehouse:InitWarehouseCharacter()
-    Nx.Font:ModuleAdd("Warehouse.WarehouseFont",{ "NxFontWHI", "GameFontNormal","wdb" })
-    Nx.Warehouse:Init()
-    Nx.Warehouse:Login()
-    local function func ()
-        Nx.Warehouse:ToggleShow()
-    end
-    Nx.NXMiniMapBut.Menu:AddItem(0, L["Show Warehouse"], func, Nx.NXMiniMapBut)
-    CarboniteWarehouse:RegisterEvent("BAG_UPDATE","EventHandler")
-    CarboniteWarehouse:RegisterEvent("PLAYERBANKSLOTS_CHANGED", "EventHandler")
-    --CarboniteWarehouse:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED", "EventHandler")
-    --CarboniteWarehouse:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("BANKFRAME_OPENED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("BANKFRAME_CLOSED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("GUILDBANKFRAME_OPENED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("GUILDBANKFRAME_CLOSED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("ITEM_LOCK_CHANGED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("MAIL_INBOX_UPDATE", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("UNIT_INVENTORY_CHANGED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("MERCHANT_SHOW", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("MERCHANT_CLOSED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("TIME_PLAYED_MSG", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("LOOT_OPENED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("LOOT_SLOT_CLEARED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("LOOT_CLOSED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("CHAT_MSG_SKILL", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("SKILL_LINES_CHANGED", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("TRADE_SKILL_CLOSE", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("TRADE_SKILL_SHOW", "EventHandler")
-    CarboniteWarehouse:RegisterEvent("PLAYER_LOGIN","EventHandler")
-    CarboniteWarehouse:RegisterEvent("TIME_PLAYED_MSG","EventHandler")
-    -- UNIT_SPELLCAST_* via a dedicated unit-filtered frame instead of
-    -- AceEvent. AceEvent funnels every event onto one shared frame
-    -- registered with the unfiltered RegisterEvent; that frame sits in the
-    -- same global secure-dispatch list as Blizzard's CastingBarFrame, so
-    -- Carbonite's taint leaks onto the casting bar's staged/empowered-cast
-    -- animation code ("attempted to iterate a table that cannot be accessed
-    -- while tainted ... CastingBarFrame StopAnims/StopFinishAnims").
-    -- RegisterUnitEvent scoped to "player" routes us through the
-    -- filtered-event path, which dispatches separately and keeps our taint
-    -- off the casting bar. The handlers only ever act on arg1 == "player",
-    -- so behaviour is unchanged.
-    if not Nx.Warehouse.SpellcastFrame then
-        local castFrame = CreateFrame("Frame", "CarboniteWarehouseSpellcastFrame")
-        castFrame:SetScript("OnEvent", function (_, event, ...)
-            CarboniteWarehouse:EventHandler(event, ...)
-        end)
-        castFrame:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
-        castFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "player")
-        castFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "player")
-        Nx.Warehouse.SpellcastFrame = castFrame
-    end
-    CarboniteWarehouse:RegisterEvent("CURRENCY_DISPLAY_UPDATE", "EventHandler")
-    GuildBank.RegisterCallback(CarboniteWarehouse,"GuildBankComm_PageUpdate", "OnPageSync")
-    GuildBank.RegisterCallback(CarboniteWarehouse, "GuildBankComm_FundsUpdate", "OnMoneySync")
-    GuildBank.RegisterCallback(CarboniteWarehouse, "GuildBankComm_TabsUpdate", "OnTabSync")
-
     Nx.Button.TypeData["MapWarehouse"] = {
         Up = "$INV_Misc_EngGizmos_17",
         SizeUp = 22,
@@ -114,6 +65,78 @@ function CarboniteWarehouse:OnInitialize()
         SizeDn = 14,
         UpUV = { 0, 1, 0, .5 },
     }
+    Nx.Warehouse:ConvertData()
+    Nx.Warehouse:InitWarehouseCharacter()
+    Nx.Font:ModuleAdd("Warehouse.WarehouseFont",{ "NxFontWHI", "GameFontNormal","wdb" })
+    Nx.Warehouse:Init()
+    Nx.Warehouse:Login()
+    Nx.Warehouse:CaptureItems()
+    local function func ()
+        Nx.Warehouse:ToggleShow()
+    end
+    Nx.NXMiniMapBut.Menu:AddItem(0, L["Show Warehouse"], func, Nx.NXMiniMapBut)
+    RegisterWarehouseEvent("BAG_UPDATE_DELAYED")
+    RegisterWarehouseEvent("PLAYERBANKSLOTS_CHANGED")
+    RegisterWarehouseEvent("BANKFRAME_OPENED")
+    RegisterWarehouseEvent("BANKFRAME_CLOSED")
+    if Nx.Warehouse.API and Nx.Warehouse.API.HasAccountBank and Nx.Warehouse.API.HasAccountBank() then
+        RegisterWarehouseEvent("PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED")
+        RegisterWarehouseEvent("BANK_TABS_CHANGED")
+    elseif not (Nx.Warehouse.API and Nx.Warehouse.API.HasModernCharacterBank and Nx.Warehouse.API.HasModernCharacterBank()) then
+        RegisterWarehouseEvent("PLAYERBANKBAGSLOTS_CHANGED")
+        if _G.REAGENTBANK_CONTAINER then
+            RegisterWarehouseEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
+        end
+    end
+    RegisterWarehouseEvent("GUILDBANKFRAME_OPENED")
+    RegisterWarehouseEvent("GUILDBANKFRAME_CLOSED")
+    RegisterWarehouseEvent("GUILDBANKBAGSLOTS_CHANGED")
+    RegisterWarehouseEvent("GUILDBANK_UPDATE_TABS")
+    RegisterWarehouseEvent("GUILDBANK_UPDATE_MONEY")
+    RegisterWarehouseEvent("ITEM_LOCK_CHANGED")
+    RegisterWarehouseEvent("GET_ITEM_INFO_RECEIVED")
+    RegisterWarehouseEvent("MAIL_INBOX_UPDATE")
+    RegisterWarehouseEvent("UNIT_INVENTORY_CHANGED")
+    RegisterWarehouseEvent("MERCHANT_SHOW")
+    RegisterWarehouseEvent("MERCHANT_CLOSED")
+    RegisterWarehouseEvent("TIME_PLAYED_MSG")
+    RegisterWarehouseEvent("LOOT_OPENED")
+    RegisterWarehouseEvent("LOOT_SLOT_CLEARED")
+    RegisterWarehouseEvent("LOOT_CLOSED")
+    RegisterWarehouseEvent("CHAT_MSG_SKILL")
+    RegisterWarehouseEvent("SKILL_LINES_CHANGED")
+    RegisterWarehouseEvent("TRADE_SKILL_CLOSE")
+    RegisterWarehouseEvent("TRADE_SKILL_SHOW")
+    if Nx.Warehouse.API and Nx.Warehouse.API.HasModernTradeSkillRecipes and Nx.Warehouse.API.HasModernTradeSkillRecipes() then
+        RegisterWarehouseEvent("TRADE_SKILL_LIST_UPDATE")
+    end
+    RegisterWarehouseEvent("PLAYER_LOGIN")
+    -- UNIT_SPELLCAST_* via a dedicated unit-filtered frame instead of
+    -- AceEvent. AceEvent funnels every event onto one shared frame
+    -- registered with the unfiltered RegisterEvent; that frame sits in the
+    -- same global secure-dispatch list as Blizzard's CastingBarFrame, so
+    -- Carbonite's taint leaks onto the casting bar's staged/empowered-cast
+    -- animation code ("attempted to iterate a table that cannot be accessed
+    -- while tainted ... CastingBarFrame StopAnims/StopFinishAnims").
+    -- RegisterUnitEvent scoped to "player" routes us through the
+    -- filtered-event path, which dispatches separately and keeps our taint
+    -- off the casting bar. The handlers only ever act on arg1 == "player",
+    -- so behaviour is unchanged.
+    if not Nx.Warehouse.SpellcastFrame then
+        local castFrame = CreateFrame("Frame", "CarboniteWarehouseSpellcastFrame")
+        castFrame:SetScript("OnEvent", function (_, event, ...)
+            CarboniteWarehouse:EventHandler(event, ...)
+        end)
+        castFrame:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
+        castFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "player")
+        castFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "player")
+        Nx.Warehouse.SpellcastFrame = castFrame
+    end
+    RegisterWarehouseEvent("CURRENCY_DISPLAY_UPDATE")
+    GuildBank.RegisterCallback(CarboniteWarehouse,"GuildBankComm_PageUpdate", "OnPageSync")
+    GuildBank.RegisterCallback(CarboniteWarehouse, "GuildBankComm_FundsUpdate", "OnMoneySync")
+    GuildBank.RegisterCallback(CarboniteWarehouse, "GuildBankComm_TabsUpdate", "OnTabSync")
+
     tinsert (Nx.BarData,{"MapWarehouse", L["-Warehouse-"], Nx.Warehouse.OnButToggleWarehouse, false })
     Nx.Map.Maps[1]:CreateToolBar()
 
@@ -127,7 +150,8 @@ function CarboniteWarehouse:OnInitialize()
         -- This is the simplest approach - one hook catches all tooltip updates
         hooksecurefunc("GameTooltip_UpdateStyle", Nx.Warehouse.TooltipProcess)
 
-    elseif TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall then
+    elseif TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall
+        and Enum and Enum.TooltipDataType and Enum.TooltipDataType.Item then
         -- TooltipDataProcessor: Dragonflight+ modern tooltip system
         -- Used when GameTooltip_UpdateStyle is not available
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip, data)
@@ -213,7 +237,7 @@ function CarboniteWarehouse:OnInitialize()
     -- New Auction House API: BFA 8.3+ and MoP Classic (retail client base)
     if C_AuctionHouse and C_AuctionHouse.ConfirmCommoditiesPurchase then
         hooksecurefunc(C_AuctionHouse, "ConfirmCommoditiesPurchase", function(itemID, count)
-            local name, link = C_Item.GetItemInfo(itemID)
+            local name, link = Nx.Warehouse.API.GetItemInfo(itemID)
             if not link or not count then
                 return
             end
@@ -309,145 +333,44 @@ end
 -- Convert warehouse data from main db to warehouse db
 --
 function Nx.Warehouse:ConvertData()
-    if not Nx.wdb.global then
-        Nx.wdb.global = {}
+    Nx.wdb.global = type(Nx.wdb.global) == "table" and Nx.wdb.global or {}
+    Nx.wdb.global.Characters = type(Nx.wdb.global.Characters) == "table" and Nx.wdb.global.Characters or {}
+
+    local sourceCharacters = Nx.db and Nx.db.global and Nx.db.global.Characters
+    if type(sourceCharacters) ~= "table" then
+        return
     end
-    if not Nx.wdb.global.Characters then
-        Nx.wdb.global.Characters = {}
-    end
-    for ch,data in pairs(Nx.db.global.Characters) do
-        if not Nx.wdb.global.Characters[ch] then
-            Nx.wdb.global.Characters[ch] = {}
-        end
-        if Nx.db.global.Characters[ch].WareBank then
-            Nx.wdb.global.Characters[ch].WareBank = Nx.db.global.Characters[ch].WareBank
-            Nx.db.global.Characters[ch].WareBank = nil
-        end
-        if Nx.db.global.Characters[ch].WareMail then
-            Nx.wdb.global.Characters[ch].WareMail = Nx.db.global.Characters[ch].WareMail
-            Nx.db.global.Characters[ch].WareMail = nil
-        end
-        if Nx.db.global.Characters[ch].WareBank then
-            Nx.wdb.global.Characters[ch].WareBank = Nx.db.global.Characters[ch].WareBank
-            Nx.db.global.Characters[ch].WareBank = nil
-        end
-        if Nx.db.global.Characters[ch].Time then
-            Nx.wdb.global.Characters[ch].Time = Nx.db.global.Characters[ch].Time
-            Nx.db.global.Characters[ch].Time = nil
-        end
-        if Nx.db.global.Characters[ch].LMoney then
-            Nx.wdb.global.Characters[ch].LMoney = Nx.db.global.Characters[ch].LMoney
-            Nx.db.global.Characters[ch].LMoney = nil
-        end
-        if Nx.db.global.Characters[ch].Profs then
-            Nx.wdb.global.Characters[ch].Profs = Nx.db.global.Characters[ch].Profs
-            Nx.db.global.Characters[ch].Profs = nil
-        end
-        if Nx.db.global.Characters[ch].LXP then
-            Nx.wdb.global.Characters[ch].LXP = Nx.db.global.Characters[ch].LXP
-            Nx.db.global.Characters[ch].LXP = nil
-        end
-        if Nx.db.global.Characters[ch].LHonor then
-            Nx.wdb.global.Characters[ch].LHonor = Nx.db.global.Characters[ch].LHonor
-            Nx.db.global.Characters[ch].LHonor = nil
-        end
-        if Nx.db.global.Characters[ch].DurLowPercent then
-            Nx.wdb.global.Characters[ch].DurLowPercent = Nx.db.global.Characters[ch].DurLowPercent
-            Nx.db.global.Characters[ch].DurLowPercent = nil
-        end
-        if Nx.db.global.Characters[ch].XPMax then
-            Nx.wdb.global.Characters[ch].XPMax = Nx.db.global.Characters[ch].XPMax
-            Nx.db.global.Characters[ch].XPMax = nil
-        end
-        if Nx.db.global.Characters[ch].Conquest then
-            Nx.wdb.global.Characters[ch].Conquest = Nx.db.global.Characters[ch].Conquest
-            Nx.db.global.Characters[ch].Conquest = nil
-        end
-        if Nx.db.global.Characters[ch].LArenaPts then
-            Nx.wdb.global.Characters[ch].LArenaPts = Nx.db.global.Characters[ch].LArenaPts
-            Nx.db.global.Characters[ch].LArenaPts = nil
-        end
-        if Nx.db.global.Characters[ch].TimePlayed then
-            Nx.wdb.global.Characters[ch].TimePlayed = Nx.db.global.Characters[ch].TimePlayed
-            Nx.db.global.Characters[ch].TimePlayed = nil
-        end
-        if Nx.db.global.Characters[ch].XP then
-            Nx.wdb.global.Characters[ch].XP = Nx.db.global.Characters[ch].XP
-            Nx.db.global.Characters[ch].XP = nil
-        end
-        if Nx.db.global.Characters[ch].XPRest then
-            Nx.wdb.global.Characters[ch].XPRest = Nx.db.global.Characters[ch].XPRest
-            Nx.db.global.Characters[ch].XPRest = nil
-        end
-        if Nx.db.global.Characters[ch].Honor then
-            Nx.wdb.global.Characters[ch].Honor = Nx.db.global.Characters[ch].Honor
-            Nx.db.global.Characters[ch].Honor = nil
-        end
-        if Nx.db.global.Characters[ch].Money then
-            Nx.wdb.global.Characters[ch].Money = Nx.db.global.Characters[ch].Money
-            Nx.db.global.Characters[ch].Money = nil
-        end
-        if Nx.db.global.Characters[ch].WareBags then
-            Nx.wdb.global.Characters[ch].WareBags = Nx.db.global.Characters[ch].WareBags
-            Nx.db.global.Characters[ch].WareBags = nil
-        end
-        if Nx.db.global.Characters[ch].LXPMax then
-            Nx.wdb.global.Characters[ch].LXPMax = Nx.db.global.Characters[ch].LXPMax
-            Nx.db.global.Characters[ch].LXPMax = nil
-        end
-        if Nx.db.global.Characters[ch].LTime then
-            Nx.wdb.global.Characters[ch].LTime = Nx.db.global.Characters[ch].LTime
-            Nx.db.global.Characters[ch].LTime = nil
-        end
-        if Nx.db.global.Characters[ch].LXPRest then
-            Nx.wdb.global.Characters[ch].LXPRest = Nx.db.global.Characters[ch].LXPRest
-            Nx.db.global.Characters[ch].LXPRest = nil
-        end
-        if Nx.db.global.Characters[ch].DurPercent then
-            Nx.wdb.global.Characters[ch].DurPercent = Nx.db.global.Characters[ch].DurPercent
-            Nx.db.global.Characters[ch].DurPercent = nil
-        end
-        if Nx.db.global.Characters[ch].WareInv then
-            Nx.wdb.global.Characters[ch].WareInv = Nx.db.global.Characters[ch].WareInv
-            Nx.db.global.Characters[ch].WareInv = nil
-        end
-        if Nx.db.global.Characters[ch].LvlTime then
-            Nx.wdb.global.Characters[ch].LvlTime = Nx.db.global.Characters[ch].LvlTime
-            Nx.db.global.Characters[ch].LvlTime = nil
-        end
-        if Nx.db.global.Characters[ch].Pos then
-            Nx.wdb.global.Characters[ch].Pos = Nx.db.global.Characters[ch].Pos
-            Nx.db.global.Characters[ch].Pos = nil
-        end
-        if Nx.db.global.Characters[ch].WHHide then
-            Nx.wdb.global.Characters[ch].WHHide = Nx.db.global.Characters[ch].WHHide
-            Nx.db.global.Characters[ch].WHHide = nil
-        end
-        if Nx.db.global.Characters[ch].Garrison then
-            Nx.wdb.global.Characters[ch].Garrison = Nx.db.global.Characters[ch].Garrison
-            Nx.db.global.Characters[ch].Garrison = nil
-        end
-        if Nx.db.global.Characters[ch].Apexis then
-            Nx.wdb.global.Characters[ch].Apexis = Nx.db.global.Characters[ch].Apexis
-            Nx.db.global.Characters[ch].Apexis = nil
-        end
-        if Nx.db.global.Characters[ch].Nethershard then
-            Nx.wdb.global.Characters[ch].Nethershard = Nx.db.global.Characters[ch].Nethershard
-            Nx.db.global.Characters[ch].Nethershard = nil
-        end
-        if Nx.db.global.Characters[ch].WareRBank then
-            Nx.wdb.global.Characters[ch].WareRBank = Nx.db.global.Characters[ch].WareRBank
-            Nx.db.global.Characters[ch].WareRBank = nil
-        end
-        if Nx.db.global.Characters[ch].OrderHall then
-            Nx.wdb.global.Characters[ch].OrderHall = Nx.db.global.Characters[ch].OrderHall
-            Nx.db.global.Characters[ch].OrderHall = nil
-        end
-        if Nx.db.global.Characters[ch].Class then
-            Nx.wdb.global.Characters[ch].Class = Nx.db.global.Characters[ch].Class
-        end
-        if Nx.db.global.Characters[ch].Level then
-            Nx.wdb.global.Characters[ch].Level = Nx.db.global.Characters[ch].Level
+
+    local moveFields = {
+        "WareBank", "WareMail", "Time", "LMoney", "Profs", "LXP", "LHonor",
+        "DurLowPercent", "XPMax", "Conquest", "LArenaPts", "TimePlayed", "XP",
+        "XPRest", "Honor", "Money", "WareBags", "LXPMax", "LTime", "LXPRest",
+        "DurPercent", "WareInv", "LvlTime", "Pos", "WHHide", "Garrison", "Apexis",
+        "Nethershard", "WareRBank", "OrderHall",
+    }
+
+    for charName, source in pairs(sourceCharacters) do
+        if type(source) == "table" then
+            local target = Nx.wdb.global.Characters[charName]
+            if type(target) ~= "table" then
+                target = {}
+                Nx.wdb.global.Characters[charName] = target
+            end
+
+            for _, field in ipairs(moveFields) do
+                if source[field] ~= nil then
+                    target[field] = source[field]
+                    source[field] = nil
+                end
+            end
+
+            -- Core still owns these identity fields, so copy rather than move.
+            if source.Class ~= nil then
+                target.Class = source.Class
+            end
+            if source.Level ~= nil then
+                target.Level = source.Level
+            end
         end
     end
 end
@@ -465,14 +388,13 @@ end
 -- @param arg3   Third event argument
 --
 function CarboniteWarehouse:EventHandler(event, arg1, arg2, arg3)
-    if event == "BAG_UPDATE" then
+    if event == "BAG_UPDATE_DELAYED" then
         Nx.Warehouse:OnBag_update()
-    elseif event == "PLAYERBANKSLOTS_CHANGED" then
+    elseif event == "PLAYERBANKSLOTS_CHANGED" or event == "PLAYERBANKBAGSLOTS_CHANGED"
+        or event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED" or event == "BANK_TABS_CHANGED" then
         Nx.Warehouse:OnBag_update()
     elseif event == "PLAYERREAGENTBANKSLOTS_CHANGED" then
         Nx.Warehouse:ScanRBank()
-    elseif event == "PLAYERBANKBAGSLOTS_CHANGED" then
-        Nx.Warehouse:OnBag_update()
     elseif event == "BANKFRAME_OPENED" then
         Nx.Warehouse:OnBankframe_opened()
     elseif event == "BANKFRAME_CLOSED" then
@@ -481,8 +403,18 @@ function CarboniteWarehouse:EventHandler(event, arg1, arg2, arg3)
         Nx.Warehouse:OnGuildbankframe_opened()
     elseif event == "GUILDBANKFRAME_CLOSED" then
         Nx.Warehouse:OnGuildbankframe_closed()
+    elseif event == "GUILDBANKBAGSLOTS_CHANGED" then
+        if Nx.Warehouse.GuildBankOpen then
+            Nx.Warehouse:GuildRecord(true)
+        end
+    elseif event == "GUILDBANK_UPDATE_TABS" then
+        Nx.Warehouse:GuildRecord(Nx.Warehouse.GuildBankOpen)
+    elseif event == "GUILDBANK_UPDATE_MONEY" then
+        Nx.Warehouse:GuildRecord(false)
     elseif event == "ITEM_LOCK_CHANGED" then
         Nx.Warehouse:OnItem_lock_changed(arg1, arg2)
+    elseif event == "GET_ITEM_INFO_RECEIVED" then
+        Nx.Warehouse:OnItemDataReceived(arg1, arg2)
     elseif event == "MAIL_INBOX_UPDATE" then
         Nx.Warehouse:OnMail_inbox_update()
     elseif event == "UNIT_INVENTORY_CHANGED" then
@@ -497,21 +429,15 @@ function CarboniteWarehouse:EventHandler(event, arg1, arg2, arg3)
         Nx.Warehouse:OnLoot_slot_cleared(arg1)
     elseif event == "LOOT_CLOSED" then
         Nx.Warehouse:OnLoot_closed()
-    elseif event == "CHAT_MSG_SKILL" then
+    elseif event == "CHAT_MSG_SKILL" or event == "SKILL_LINES_CHANGED" then
         Nx.Warehouse:OnChat_msg_skill()
-    elseif event == "SKILL_LINES_CHANGED" then
-        Nx.Warehouse:OnChat_msg_skill()
-    elseif event == "TRADE_SKILL_CLOSE" then
-        Nx.Warehouse:OnTrade_skill_update()
-    elseif event == "TRADE_SKILL_SHOW" then
-        Nx.Warehouse:OnTrade_skill_update()
+    elseif event == "TRADE_SKILL_CLOSE" or event == "TRADE_SKILL_SHOW" or event == "TRADE_SKILL_LIST_UPDATE" then
+        Nx.Warehouse:OnTrade_skill_update(event)
     elseif event == "PLAYER_LOGIN" then
-        Nx.Warehouse:Login(event,arg1)
+        Nx.Warehouse:Login(event, arg1)
     elseif event == "TIME_PLAYED_MSG" then
-        Nx.Warehouse:OnTime_played_msg(event,arg1,arg2)
-    elseif event == "UNIT_SPELLCAST_INTERRUPTED" then
-        Nx.Warehouse:OnUnit_spellcast_interrupted(event, arg1)
-    elseif event == "UNIT_SPELLCAST_FAILED" then
+        Nx.Warehouse:OnTime_played_msg(event, arg1, arg2)
+    elseif event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" then
         Nx.Warehouse:OnUnit_spellcast_interrupted(event, arg1)
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
         Nx.Warehouse:OnUnit_spellcast_succeeded(event, arg1, arg2, arg3)
@@ -580,17 +506,19 @@ end
 --
 function Nx.Warehouse:Init()
     local ware = Nx.wdb.profile.WarehouseData
+    local version = type(ware) == "table" and tonumber(ware.Version) or nil
 
-    -- Check and upgrade data version if needed
-    if not ware or ware.Version < Nx.VERSIONWare then
-        if ware then
-            Nx.prt("Reset old warehouse data %f", ware.Version)
-        end
-
+    -- Preserve legacy guild-bank caches. WarehouseData is migrated in place;
+    -- a missing or older version is not sufficient reason to discard scans.
+    if type(ware) ~= "table" then
         ware = {}
         Nx.wdb.profile.WarehouseData = ware
+    end
+    if not version or version < Nx.VERSIONWare then
         ware.Version = Nx.VERSIONWare
     end
+
+    ware.StorageSchemaVersion = Nx.Warehouse.StorageSchemaVersion or 1
 
     self.Enabled = Nx.wdb.profile.Warehouse.Enable
     self.SkillRiding = 0
@@ -650,6 +578,7 @@ end
 function Nx.Warehouse:Login(event, arg1)
     local ch = Nx.Warehouse.CurCharacter
     Nx.Warehouse:RecordCharacterLogin()
+    Nx.Warehouse:RecordCharacterSkills()
     Nx.Warehouse:GuildRecord()
     if Nx.Warehouse.TimePlayed then
         ch["TimePlayed"] = Nx.Warehouse.TimePlayed

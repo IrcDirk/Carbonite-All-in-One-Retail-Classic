@@ -4398,8 +4398,11 @@ end
 
 function Nx.Button:SetType (typ)
 
-    self.Frm.NxTip = self.Tip or (typ and self.TypeData[typ].Tip)
-    self.Type = self.TypeData[typ]
+    local typeData = typ and self.TypeData[typ]
+    self.Frm.NxTip = self.Tip or (typeData and typeData.Tip)
+    self.Type = typeData
+    self.Frm:EnableMouse (typeData ~= nil)
+    return typeData ~= nil
 end
 
 ---------------------------------------------------------------------------------------
@@ -4511,6 +4514,9 @@ function Nx.Button:OnMouseDown (button)
 
     local this = self                -- V4
     local but = this.NxBut
+    if not but or not but.Type then
+        return
+    end
 
     if button == "LeftButton" or button == "MiddleButton" then
 
@@ -4568,6 +4574,9 @@ function Nx.Button:OnMouseUp (button)
 
     local this = self            -- V4
     local but = this.NxBut
+    if not but or not but.Type then
+        return
+    end
 
     if button == "LeftButton" then
 

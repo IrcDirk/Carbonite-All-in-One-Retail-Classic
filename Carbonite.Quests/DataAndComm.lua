@@ -13,6 +13,9 @@ local Nx = _G.Nx
 if not Nx then return end
 Nx.Quest = Nx.Quest or {}
 
+local SharedAPI = Nx.Compat and Nx.Compat.Api
+local QuestAPI = SharedAPI and SharedAPI.Quest
+
 -- WoW globals aliased as locals (mirrors NxQuest's prelude).
 local bit_band   = bit.band
 local bit_lshift = bit.lshift
@@ -1651,6 +1654,8 @@ end
 -- @return     Quest ID
 --
 function Nx.Quest:GetQuestID(loc)
-    local _, _, _, _, _, _, _, questId, _, _, _, _, _, _ = GetQuestLogTitle(loc)
-    return questId
+    if not QuestAPI then
+        return nil
+    end
+    return QuestAPI:GetQuestIDForLogIndex(loc)
 end

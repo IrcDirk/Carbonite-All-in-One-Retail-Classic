@@ -134,8 +134,9 @@ local function _selfKeys(self)
     local fullFirst, fullRealm = UnitFullName("player")
     if not first and not fullFirst then return nil end
 
+    local currentRealm = GetRealmName()
     local sig = strjoin("\1", tostring(first), tostring(surname), tostring(fullFirst),
-        tostring(fullRealm), tostring(GetRealmName()))
+        tostring(fullRealm), tostring(currentRealm))
     if self._selfKeySig == sig and self._selfKeyCache then
         return self._selfKeyCache
     end
@@ -151,14 +152,20 @@ local function _selfKeys(self)
     end
 
     local realms = {}
-    for _, r in ipairs({ fullRealm, GetRealmName() }) do
-        r = _stripLocaleTag(r)
+    if fullRealm then
+        local r = _stripLocaleTag(fullRealm)
+        if r and r ~= "" then
+            realms[#realms + 1] = r
+        end
+    end
+    if currentRealm then
+        local r = _stripLocaleTag(currentRealm)
         if r and r ~= "" then
             realms[#realms + 1] = r
         end
     end
 
-    keys = {}
+    local keys = {}
     for _, b in ipairs(bases) do
         keys[_compactKey(b)] = true
         for _, r in ipairs(realms) do

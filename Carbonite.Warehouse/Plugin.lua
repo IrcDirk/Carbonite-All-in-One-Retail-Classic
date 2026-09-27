@@ -24,30 +24,59 @@ WHAddon.Public = Warehouse
 Carbonite.Plugins = Carbonite.Plugins or {}
 Carbonite.Plugins.Warehouse = Warehouse
 
--- Returns the canonical inventory table for a character. Defers to
--- the legacy storage so we are interoperable with users upgrading
--- from old Carbonite installs.
+-- Returns the canonical saved Warehouse record for a character.
 function Warehouse:GetCharacterInventory(charName)
     local Nx = _G.Nx
-    if not Nx or not Nx.WHdb then return nil end
-    local chars = Nx.WHdb.global.Characters
-    return chars and chars[charName]
+    local chars = Nx and Nx.wdb and Nx.wdb.global and Nx.wdb.global.Characters
+    return chars and chars[charName] or nil
 end
 
 function Warehouse:EachCharacter(fn)
+    if type(fn) ~= "function" then return end
+
     local Nx = _G.Nx
-    if not Nx or not Nx.WHdb or not Nx.WHdb.global.Characters then return end
-    for name, data in pairs(Nx.WHdb.global.Characters) do fn(name, data) end
+    local chars = Nx and Nx.wdb and Nx.wdb.global and Nx.wdb.global.Characters
+    if type(chars) ~= "table" then return end
+
+    for name, data in pairs(chars) do
+        if type(data) == "table" then
+            fn(name, data)
+        end
+    end
+end
+
+local function CountSavedItem(inv, itemID, worn)
+    local total = 0
+    if type(inv) ~= "table" then return total end
+
+    for _, entry in pairs(inv) do
+        if type(entry) == "string" then
+            local first, link = _G.Nx.Split("^", entry)
+            local savedID = link and tonumber(string.match(link, "item:(%d+)"))
+            if savedID == itemID then
+                total = total + (worn and 1 or (tonumber(first) or 0))
+            end
+        end
+    end
+    return total
 end
 
 function Warehouse:CountItem(itemID)
+    itemID = tonumber(itemID)
+    if not itemID then return 0 end
+
     local total = 0
     self:EachCharacter(function(_, char)
-        if not char.Items then return end
-        for _, entry in ipairs(char.Items) do
-            if entry.id == itemID then total = total + (entry.count or 0) end
-        end
+        total = total + CountSavedItem(char.WareInv, itemID, true)
+        total = total + CountSavedItem(char.WareBags, itemID, false)
+        total = total + CountSavedItem(char.WareBank, itemID, false)
+        total = total + CountSavedItem(char.WareRBank, itemID, false)
+        total = total + CountSavedItem(char.WareMail, itemID, false)
     end)
+
+    local Nx = _G.Nx
+    local account = Nx and Nx.wdb and Nx.wdb.global and Nx.wdb.global.AccountBank
+    total = total + CountSavedItem(account and account.Inv, itemID, false)
     return total
 end
 
@@ -62,7 +91,10 @@ Plugin.Bind(WHAddon, "Warehouse", {
     options = function()
         local Nx = _G.Nx
         local function whDB()
-            if Nx and Nx.WHdb then return Nx.WHdb.profile.Warehouse or {} end
+            if Nx and Nx.wdb and Nx.wdb.profile then
+                Nx.wdb.profile.Warehouse = Nx.wdb.profile.Warehouse or {}
+                return Nx.wdb.profile.Warehouse
+            end
             return {}
         end
         return {
