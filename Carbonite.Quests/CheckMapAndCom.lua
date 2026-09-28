@@ -27,6 +27,54 @@ local tremove  = tremove or table.remove
 -- a nil global when the user confirms a quest cancel on retail.
 local GetAbandonQuestItems = (C_QuestLog and C_QuestLog.GetAbandonQuestItems) or GetAbandonQuestItems
 
+-- Blizzard returns item IDs on Retail, while older clients can return a
+-- ready-to-display string. Select the quest before reading its abandon items,
+-- as Blizzard's own quest log does, then restore the previous selection.
+local function GetAbandonItemText(qIndex, qId)
+    if not GetAbandonQuestItems or not QuestAPI
+        or not ((C_QuestLog and C_QuestLog.SetAbandonQuest)
+            or _G.SetAbandonQuest) then
+        return nil
+    end
+
+    local previousID = QuestAPI:GetSelectedQuestID()
+    local previousIndex = QuestAPI:GetSelectedLogIndex()
+    local selected = (qId and qId > 0 and QuestAPI:SetSelectedQuestID(qId))
+        or QuestAPI:SetSelectedLogIndex(qIndex)
+    if not selected then return nil end
+
+    if C_QuestLog and C_QuestLog.SetAbandonQuest then
+        C_QuestLog.SetAbandonQuest()
+    else
+        SetAbandonQuest()
+    end
+
+    local items = GetAbandonQuestItems()
+    if C_QuestLog and C_QuestLog.SetSelectedQuest and previousID then
+        C_QuestLog.SetSelectedQuest(previousID)
+    elseif previousIndex and previousIndex > 0 then
+        QuestAPI:SetSelectedLogIndex(previousIndex)
+    end
+
+    if type(items) == "string" then
+        return items ~= "" and items or nil
+    end
+    if type(items) ~= "table" then return nil end
+
+    local names = {}
+    local itemAPI = SharedAPI and SharedAPI.Item
+    for _, itemID in ipairs(items) do
+        if type(itemID) == "number" and itemID > 0 then
+            local name = itemAPI and itemAPI:GetInfo(itemID)
+            names[#names + 1] = type(name) == "string" and name ~= ""
+                and name or format("#%d", itemID)
+        elseif type(itemID) == "string" and itemID ~= "" then
+            names[#names + 1] = itemID
+        end
+    end
+    return #names > 0 and table.concat(names, ", ") or nil
+end
+
 
 -------------------------------------------------------------------------------
 -- Check if any part of quest in the map
@@ -179,21 +227,54 @@ end
 
 function Nx.Quest:Abandon (qIndex, qId)
 
-    if qIndex > 0 then
+    local retail = C_QuestLog and C_QuestLog.SetSelectedQuest
+        and C_QuestLog.SetAbandonQuest and C_QuestLog.AbandonQuest
 
-        self:ExpandQuests()
+    if retail and (not qId or qId <= 0) then
+        qId = qIndex and qIndex > 0 and QuestAPI
+            and QuestAPI:GetQuestIDForLogIndex(qIndex)
+        if not qId or qId <= 0 then return end
+    end
 
-        local info = GetLiveLogInfo and GetLiveLogInfo (qIndex)
+    -- The watch packs the quest-log index into one byte. It can be zero or
+    -- outdated by the time its right-click menu runs; Retail can resolve the
+    -- live quest by ID and does not need the saved index to abandon it.
+    if retail and qId and qId > 0 then
+        if C_QuestLog.IsOnQuest and not C_QuestLog.IsOnQuest(qId) then
+            return
+        end
+        qIndex = QuestAPI and QuestAPI:GetLogIndexForQuestID(qId) or 0
+    end
+
+    if (qIndex and qIndex > 0) or (retail and qId and qId > 0) then
+
+        if qIndex and qIndex > 0 then
+            self:ExpandQuests()
+            if retail and qId and qId > 0 and QuestAPI then
+                qIndex = QuestAPI:GetLogIndexForQuestID(qId) or 0
+            end
+        end
+
+        local info, liveID
+        if GetLiveLogInfo and qIndex and qIndex > 0 then
+            info, liveID = GetLiveLogInfo(qIndex)
+        end
+        if retail and info and (info.isHeader or (liveID and liveID ~= qId)) then
+            info = nil
+        end
         local title = info and info.title
-        local isHeader = info and info.isHeader
+        if retail and not title and C_QuestLog.GetTitleForQuestID then
+            title = C_QuestLog.GetTitleForQuestID(qId)
+        end
+        title = title or "?"
 
-        if info and not isHeader then
+        if retail or (info and not info.isHeader) then
 
 --            Nx.prt ("Abandon %s %s", qIndex, title)
 --            QuestLog_SetSelection (qIndex)
 
             local text = format(ABANDON_QUEST_CONFIRM, title);
-            local items = GetAbandonQuestItems()
+            local items = GetAbandonItemText(qIndex, qId)
             if items then
                 text = format(ABANDON_QUEST_CONFIRM_WITH_ITEMS, title, items);
             end
@@ -202,27 +283,25 @@ function Nx.Quest:Abandon (qIndex, qId)
                 text,
                 YES,
                 function(self)
-                    -- Pick the path by what the client actually has, not by
-                    -- flavor: on the 12.0 engine the bare SetAbandonQuest /
-                    -- AbandonQuest globals are gone and only C_QuestLog has
-                    -- them, while Nx.isClassic is true on Forever - which sent
-                    -- abandon straight into a nil call.
-                    if C_QuestLog and C_QuestLog.SetAbandonQuest
-                        and C_QuestLog.AbandonQuest then
+                    -- Use the abandon API available on this client.
+                    if retail then
 
                         local abandonId = qId
                         if (not abandonId or abandonId <= 0) and QuestAPI then
                             abandonId = QuestAPI:GetQuestIDForLogIndex(qIndex)
                         end
-                        if QuestAPI then
-                            if abandonId and abandonId > 0 then
-                                QuestAPI:SetSelectedQuestID(abandonId)
-                            else
-                                QuestAPI:SetSelectedLogIndex(qIndex)
-                            end
+                        if not abandonId or abandonId <= 0
+                            or (C_QuestLog.IsOnQuest
+                                and not C_QuestLog.IsOnQuest(abandonId)) then
+                            return
                         end
 
+                        C_QuestLog.SetSelectedQuest(abandonId)
                         C_QuestLog.SetAbandonQuest()
+                        if C_QuestLog.GetAbandonQuest
+                            and C_QuestLog.GetAbandonQuest() ~= abandonId then
+                            return
+                        end
                         -- native blizz
                         C_QuestLog.AbandonQuest()
 
@@ -238,11 +317,13 @@ function Nx.Quest:Abandon (qIndex, qId)
                          SetAbandonQuest()
                          -- native blizz
                          AbandonQuest()
+                    else
+                        return
                     end
 
                     PlaySound(SOUNDKIT.IG_QUEST_LOG_ABANDON_QUEST);
                     -- carb
-                    if qId > 0 then
+                    if qId and qId > 0 then
                         --Nx.Quest.CurQ[qIndex] = nil
                         Nx.Quest:NullQuest (qId)
                     end
@@ -256,7 +337,7 @@ function Nx.Quest:Abandon (qIndex, qId)
         self:RestoreExpandQuests()
 
     else
-        if qId > 0 then
+        if qId and qId > 0 then
 
             self.Watch:RemoveWatch (qId, qIndex)
             local i = self:FindCur (qId)
@@ -474,4 +555,3 @@ function Nx.Quest:QSendAllTimer()
 
     self.SendPlyr = nil
 end
-

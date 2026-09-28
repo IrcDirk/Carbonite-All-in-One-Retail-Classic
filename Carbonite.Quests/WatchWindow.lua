@@ -36,6 +36,22 @@ local GetTime              = GetTime
 local InCombatLockdown     = InCombatLockdown
 local GetQuestObjectiveInfo = GetQuestObjectiveInfo
 
+-- Font strings in the compact watch can show a standalone profession atlas
+-- escape as raw text after wrapping. Keep the quality tier visible as text.
+local function FormatWatchObjectiveText(desc)
+    if type(desc) ~= "string"
+        or not strfind(desc, "|A:professions-icon-quality", 1, true) then
+        return desc
+    end
+
+    local quality = _G.QUALITY or "Quality"
+    return gsub(desc,
+        "|A:professions%-icon%-quality[^:|]-tier(%d+)%-questobjective:[^|]*|a",
+        function(tier)
+            return "(" .. quality .. " " .. tier .. ")"
+        end)
+end
+
 -- Return one fixed-width watch line without splitting WoW text markup.
 -- Atlas/texture escapes are treated as a single visible glyph; color escapes
 -- are zero-width. This keeps Blizzard objective strings such as profession
@@ -536,7 +552,8 @@ function Nx.Quest.Watch:Menu_OnShare (item)
 end
 
 function Nx.Quest.Watch:Menu_OnAbandon (item)
-    Nx.Quest.List:Select (self.MenuQId, self.MenuQIndex)
+    -- The watch row's log index is only a snapshot. Selecting the quest-list
+    -- row here can refresh that list before Abandon resolves the live quest.
     Nx.Quest:Abandon (self.MenuQIndex, self.MenuQId)
 end
 
@@ -2290,6 +2307,7 @@ function Nx.Quest.Watch:UpdateList()
                                                 desc = format ("%s: %s", s2, s1)
                                             end
                                         end
+                                        desc = FormatWatchObjectiveText(desc)
                                         local str = color .. (desc or "?")    --V4
                                         if not done then
                                             local d = cur["OD"..ln]

@@ -390,11 +390,16 @@ local function CatalogObjective(self, quest, qObj, px, py)
 
     local name, zone, loc = self:UnpackObjectiveNew (first)
     if not self:IsUsableObjective (questObj, zone) then
-        return nil, KnownZone (zone)
+        -- An outdoor zone can be known even when its objective has no usable
+        -- coordinates. Only an instance objective should suppress the
+        -- available quest start/end fallback.
+        return nil, IsInstanceZone (zone)
     end
 
     local x, y, closeMapId, inside = self:GetClosestObjectivePos (questObj, loc, zone, px, py)
-    if not x or not y or (x == 0 and y == 0) then return nil, false end
+    if not x or not y or (x == 0 and y == 0) then
+        return nil, IsInstanceZone (closeMapId or zone)
+    end
 
     return {
         mId = closeMapId or zone, x1 = x, y1 = y, x2 = x, y2 = y,
