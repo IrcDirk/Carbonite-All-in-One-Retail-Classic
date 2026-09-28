@@ -232,7 +232,14 @@ function Nx.Quest:Capture (curi, objNum)
     end
 
     local qTitle = cur.Title
+    -- GetBestMapForUnit can return nil (loading screens, some instances on
+    -- Forever); fall back to the map the engine last resolved, then 0.
     local currentMapID = C_Map.GetBestMapForUnit("player")
+    if not currentMapID then
+        local map = self.Map and self.Map.GetMap and self.Map:GetMap(1)
+        currentMapID = map and map.UpdateMapID or 0
+    end
+    local acceptDLvl = self.AcceptDLvl or 0
 
 --    Nx.prt ("Cap len %s", len)
 
@@ -264,14 +271,14 @@ function Nx.Quest:Capture (curi, objNum)
         -- 0 is reserved
         local s = Nx:PackXY (self.AcceptX, self.AcceptY)
 --        qdata[1] = format ("0%s^%02x%02x%s", self.AcceptGiver, plLvl, self.AcceptAId, s)
-        qdata[1] = format ("0|%s|%s^%03x%x%s", qTitle, self.AcceptGiver, currentMapID, self.AcceptDLvl, s)
+        qdata[1] = format ("0|%s|%s^%03x%x%s", qTitle, self.AcceptGiver or "", currentMapID, acceptDLvl, s)
 
 --        Nx.prt ("Capture start %s", qdata[1])
 
     elseif objNum < 0 then    -- Ender
 
         local s = Nx:PackXY (self.AcceptX, self.AcceptY)
-        qdata[2] = format ("|%s|%s^%03x%x%s", qTitle, self.AcceptGiver, currentMapID, self.AcceptDLvl, s)
+        qdata[2] = format ("|%s|%s^%03x%x%s", qTitle, self.AcceptGiver or "", currentMapID, acceptDLvl, s)
 
         self.CaptureQEndTime = GetTime()
         self.CaptureQEndId = saveId
