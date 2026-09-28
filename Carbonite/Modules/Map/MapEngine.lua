@@ -6629,7 +6629,14 @@ function Nx.Map:Update (elapsed)
     self.BackgndAlpha = Nx.Util_StepValue (self.BackgndAlpha, self.BackgndAlphaTarget, .05)
     self.Frm.texture:SetVertexColor (1, 1, 1, self.BackgndAlpha)
 
-    self.WorldAlpha = (self.BackgndAlpha - self.BackgndAlphaFade) / (self.BackgndAlphaFull - self.BackgndAlphaFade) * self.BackgndAlphaFull
+    -- Fade-in and fade-out transparency can be set equal from the map menu;
+    -- the 12.0 engine raises "Division by zero" instead of returning inf.
+    local alphaSpan = self.BackgndAlphaFull - self.BackgndAlphaFade
+    if alphaSpan > 0 then
+        self.WorldAlpha = (self.BackgndAlpha - self.BackgndAlphaFade) / alphaSpan * self.BackgndAlphaFull
+    else
+        self.WorldAlpha = self.BackgndAlphaFull
+    end
 
     self:ResetIcons()
 
