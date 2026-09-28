@@ -177,6 +177,11 @@ L["Quests Data Gathering"] = "Сбор данных о заданиях"
 L["Gathers quests data"] = true
 L["Reload UI"] = "Перезагрузка интерфейса"
 L["Toggle Quest Watch"] = "Переключить отслеживание заданий"
+
+L["Quest Watch"] = "Отслеживание заданий"
+L["+%d more"] = "ещё %d"
+L["Blizzard-style Quest Watch header and icons"] = "Заголовок и значки окна отслеживания в стиле Blizzard"
+L["When enabled, the quest watch uses a Blizzard tracker style title row and quest state icons (RELOAD REQUIRED). Falls back to the classic look on clients without these textures"] = "Если включено, окно отслеживания использует строку заголовка и значки состояния заданий в стиле трекера Blizzard (ТРЕБУЕТСЯ ПЕРЕЗАГРУЗКА). На клиентах без этих текстур остаётся классический вид"
 L["Daily"] = "Ежедневные"
 L["Daily Dungeon"] = "Ежедневные в подземельях"
 L["Daily Heroic"] = "Ежедневные в героическом режиме"

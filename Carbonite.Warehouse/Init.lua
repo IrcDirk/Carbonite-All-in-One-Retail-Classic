@@ -236,13 +236,14 @@ function CarboniteWarehouse:OnInitialize()
 
     -- New Auction House API: BFA 8.3+ and MoP Classic (retail client base)
     if C_AuctionHouse and C_AuctionHouse.ConfirmCommoditiesPurchase then
-        hooksecurefunc(C_AuctionHouse, "ConfirmCommoditiesPurchase", function(itemID, count)
-            local name, link = Nx.Warehouse.API.GetItemInfo(itemID)
-            if not link or not count then
-                return
-            end
-            Nx.Warehouse.onAuctionHouseUpdate(link, count)
-        end)
+        RegisterWarehouseEvent("COMMODITY_PURCHASED")
+        RegisterWarehouseEvent("AUCTION_HOUSE_PURCHASE_COMPLETED")
+        RegisterWarehouseEvent("AUCTION_HOUSE_CLOSED")
+        if AuctionHouseFrameMixin and AuctionHouseFrameMixin.StartItemBuyout then
+            hooksecurefunc(AuctionHouseFrameMixin, "StartItemBuyout", function(frame, auctionID)
+                Nx.Warehouse:RememberAuctionBuyout(frame, auctionID)
+            end)
+        end
     end
 
     Nx:AddToConfig("Warehouse Module",Nx.Warehouse:GetOptionsConfig(),L["Warehouse Module"])
@@ -443,6 +444,12 @@ function CarboniteWarehouse:EventHandler(event, arg1, arg2, arg3)
         Nx.Warehouse:OnUnit_spellcast_succeeded(event, arg1, arg2, arg3)
     elseif event == "CURRENCY_DISPLAY_UPDATE" then
         Nx.Warehouse:RecordCurrency()
+    elseif event == "COMMODITY_PURCHASED" then
+        Nx.Warehouse:OnCommodityPurchased(arg1, arg2)
+    elseif event == "AUCTION_HOUSE_PURCHASE_COMPLETED" then
+        Nx.Warehouse:OnAuctionPurchaseCompleted(arg1)
+    elseif event == "AUCTION_HOUSE_CLOSED" then
+        Nx.Warehouse.PendingBuyouts = nil
     else
         Nx.prt("ERROR: Event " .. event .. " triggered without function.")
     end

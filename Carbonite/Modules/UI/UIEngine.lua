@@ -4702,6 +4702,63 @@ end
 
 ---------------------------------------------------------------------------------------
 
+---------------------------------------------------------------------------------------
+-- Atlas-based looks: AtlasUp/AtlasDn replace the Up/Dn file textures, DnUV mirrors
+-- UpUV, IconUp/IconDn draw an overlay atlas (IconScale of the button size)
+---------------------------------------------------------------------------------------
+
+function Nx.Button:UpdateAtlasLook (typ, f, tx)
+
+    local pressed = not self.State and self.Pressed
+    local baseAtlas, uv, icon, iconCol
+
+    if self.State then
+        baseAtlas = nil
+    elseif pressed then
+        baseAtlas = typ.AtlasDn or typ.AtlasUp
+        uv = typ.DnUV
+        icon = typ.IconDn or typ.IconUp
+        iconCol = typ.IconVRGBADn or typ.IconVRGBAUp
+    else
+        baseAtlas = typ.AtlasUp
+        uv = typ.UpUV
+        icon = typ.IconUp
+        iconCol = typ.IconVRGBAUp
+    end
+
+    if baseAtlas then
+        tx:SetAtlas (baseAtlas)
+        self.TxCoordSet = true
+    elseif uv then
+        tx:SetTexCoord (uv[1], uv[2], uv[3], uv[4])
+        self.TxCoordSet = true
+    elseif self.TxCoordSet then
+        tx:SetTexCoord (0, 1, 0, 1)
+        self.TxCoordSet = nil
+    end
+
+    local it = f.NxIcon
+    if icon then
+        if not it then
+            it = f:CreateTexture (nil, "OVERLAY")
+            f.NxIcon = it
+        end
+        it:SetAtlas (icon)
+        local scale = typ.IconScale or .7
+        it:ClearAllPoints()
+        it:SetPoint ("CENTER", f, "CENTER", typ.IconOffX or 0, typ.IconOffY or 0)
+        it:SetSize (f:GetWidth() * scale, f:GetHeight() * scale)
+        if iconCol then
+            it:SetVertexColor (Nx.Util_str2rgba (iconCol))
+        else
+            it:SetVertexColor (1, 1, 1, 1)
+        end
+        it:Show()
+    elseif it then
+        it:Hide()
+    end
+end
+
 function Nx.Button:Update()
 
 --    Nx.prt ("But Update: %s", debugstack (2, 3, 0))
@@ -4849,8 +4906,16 @@ function Nx.Button:Update()
                 f:SetWidth (sz)
                 f:SetHeight (sz)
             end
+            if typ.WidthUp then
+                f:SetWidth (typ.WidthUp)
+            end
+            if typ.HeightUp then
+                f:SetHeight (typ.HeightUp)
+            end
         end
     end
+
+    self:UpdateAtlasLook (typ, f, tx)
 
     local of = Nx.Button.OverFrm
 

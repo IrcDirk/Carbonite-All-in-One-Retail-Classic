@@ -1097,7 +1097,8 @@ function Nx.Quest:ScanBlizzQuestDataZone(WatchUpdate)
                             if not quest["End"] then --or (bit_band(patch,1) and mapId == MapUtil.GetDisplayableMapForPlayer()) then --disable this check as it's logic fails when there's no objectives defined in QuestDB for QuestID
                                 local safeTitle = (title or "?"):gsub("|", "")
                                 if safeTitle == "" then safeTitle = "?" end
-                                quest["End"] = format ("%s|%s|32|%f|%f", safeTitle, mapId, x, y)
+                                local endMap, endX, endY = self:RefineLivePoint (mapId, x, y)
+                                quest["End"] = format ("%s|%s|32|%f|%f", safeTitle, endMap, endX, endY)
                             end
                             patch = bit.bor (patch, 1)        -- Flag as a patched quest
                         end

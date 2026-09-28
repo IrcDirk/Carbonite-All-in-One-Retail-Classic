@@ -545,6 +545,7 @@ Nx.Quest.defaults = {
             ScenTrack = true,                           -- Track scenarios
             ShareMinimizePosition = true,               -- Share full/minimized position
             ShowClose = false,                          -- Show close button
+            ModernLook = true,                          -- Blizzard-tracker style header/icons
             ShowDist = true,                            -- Show distance
             ShowPerColor = false,                       -- Color by progress
             CompleteColor = "1|.82|0|1",                -- Complete quest color

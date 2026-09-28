@@ -174,6 +174,11 @@ L["Quests Data Gathering"] = true
 L["Gathers quests data"] = true
 L["Reload UI"] = true
 L["Toggle Quest Watch"] = true
+
+L["Quest Watch"] = true
+L["+%d more"] = true
+L["Blizzard-style Quest Watch header and icons"] = true
+L["When enabled, the quest watch uses a Blizzard tracker style title row and quest state icons (RELOAD REQUIRED). Falls back to the classic look on clients without these textures"] = true
 L["Daily"] = true
 L["Daily Dungeon"] = true
 L["Daily Heroic"] = true

@@ -224,6 +224,111 @@ function CarboniteQuest:OnInitialize()
         VRGBADn = "1|.5|.125|.94",
         WatchError = 1
     }
+    -- Blizzard-tracker style title-row icons (Watch.Modern). The turn-in
+    -- circle comes from the world-map POI sheet with the "?" atlas on top;
+    -- in-progress rows use the tracker's ellipsis atlas. Tracked/super-
+    -- tracked rows switch to the highlighted variants.
+    local poiTex = "Interface\\WorldMap\\UI-QuestPoi-NumberIcons"
+    local poiUVNormal = { .5, .625, .875, 1 }
+    local poiUVTracked = { .5, .625, .375, .5 }
+    local poiUVPushed = { .375, .5, .875, 1 }
+    local turnInIcon = "UI-QuestIcon-TurnIn-Normal"
+    local progYellow = "Quest-In-Progress-Icon-yellow"
+    local progBrown = "Quest-In-Progress-Icon-Brown"
+    local modernSize = 15
+
+    Nx.Button.TypeData["QuestWatchDone"] = {
+        Bool = true,
+        Up = poiTex, Dn = poiTex,
+        UpUV = poiUVNormal, DnUV = poiUVTracked,
+        IconUp = turnInIcon, IconScale = .72,
+        SizeUp = modernSize, SizeDn = modernSize,
+        AlphaUp = .85, AlphaDn = 1,
+    }
+    Nx.Button.TypeData["QuestWatchDoneTarget"] = {
+        Bool = true,
+        Up = poiTex, Dn = poiTex,
+        UpUV = poiUVTracked, DnUV = poiUVTracked,
+        IconUp = turnInIcon, IconScale = .72,
+        SizeUp = modernSize, SizeDn = modernSize,
+        AlphaUp = 1, AlphaDn = 1,
+    }
+    Nx.Button.TypeData["QuestWatchDoneAC"] = {
+        Up = poiTex, Dn = poiTex,
+        UpUV = poiUVNormal, DnUV = poiUVPushed,
+        IconUp = turnInIcon, IconScale = .72,
+        IconVRGBAUp = ".6|1|.6|1",
+        SizeUp = modernSize, SizeDn = modernSize,
+        AlphaUp = 1, AlphaDn = 1,
+        AutoComplete = true,
+    }
+    Nx.Button.TypeData["QuestWatchDoneErr"] = {
+        Up = poiTex, Dn = poiTex,
+        UpUV = poiUVNormal, DnUV = poiUVPushed,
+        IconUp = turnInIcon, IconScale = .72,
+        SizeUp = modernSize, SizeDn = modernSize,
+        VRGBAUp = "1|.45|.3|.9", VRGBADn = "1|.45|.3|1",
+        WatchError = 1,
+    }
+    -- The ellipsis atlases hold only the dots (Blizzard draws them on the
+    -- POI circle as the Display layer), so the circle comes from the same
+    -- sheet as the turn-in icon.
+    Nx.Button.TypeData["QuestWatchProgTip"] = {
+        Up = poiTex, Dn = poiTex,
+        UpUV = poiUVNormal, DnUV = poiUVPushed,
+        IconUp = progYellow, IconDn = progBrown, IconScale = 1,
+        SizeUp = modernSize, SizeDn = modernSize,
+        AlphaUp = .85, AlphaDn = 1,
+        WatchTip = 1,
+    }
+    Nx.Button.TypeData["QuestWatchProgTipTarget"] = {
+        Up = poiTex, Dn = poiTex,
+        UpUV = poiUVTracked, DnUV = poiUVTracked,
+        IconUp = progBrown, IconScale = 1,
+        SizeUp = modernSize, SizeDn = modernSize,
+        AlphaUp = 1, AlphaDn = 1,
+        WatchTip = 1,
+    }
+    Nx.Button.TypeData["QuestWatchProgTog"] = {
+        Bool = true,
+        Up = poiTex, Dn = poiTex,
+        UpUV = poiUVNormal, DnUV = poiUVTracked,
+        IconUp = progYellow, IconDn = progBrown, IconScale = 1,
+        SizeUp = modernSize, SizeDn = modernSize,
+        AlphaUp = .85, AlphaDn = 1,
+    }
+    Nx.Button.TypeData["QuestWatchProgTogTarget"] = {
+        Bool = true,
+        Up = poiTex, Dn = poiTex,
+        UpUV = poiUVTracked, DnUV = poiUVTracked,
+        IconUp = progBrown, IconScale = 1,
+        SizeUp = modernSize, SizeDn = modernSize,
+        AlphaUp = 1, AlphaDn = 1,
+    }
+    Nx.Button.TypeData["QuestWatchProgErr"] = {
+        Up = poiTex, Dn = poiTex,
+        UpUV = poiUVNormal, DnUV = poiUVPushed,
+        IconUp = progYellow, IconScale = 1,
+        SizeUp = modernSize, SizeDn = modernSize,
+        VRGBAUp = "1|.45|.3|.9", VRGBADn = "1|.45|.3|1",
+        WatchError = 1,
+    }
+    -- Completed objective marker: a flat dash where the objective dot
+    -- would be. Inert = the watch list ignores clicks on it.
+    Nx.Button.TypeData["QuestWatchObjDone"] = {
+        RGBUp = ".62|.62|.62", RGBDn = ".62|.62|.62",
+        WidthUp = 7, HeightUp = 2,
+        AlphaUp = .9, AlphaDn = .9,
+        Inert = 1,
+    }
+    Nx.Button.TypeData["QuestWatchMinBlizz"] = {
+        Tip = MINIMIZE or "Minimize",
+        Bool = true,
+        AtlasUp = "ui-questtrackerbutton-collapse-all",
+        AtlasDn = "ui-questtrackerbutton-expand-all",
+        SizeUp = 16, SizeDn = 16,
+        AlphaUp = 1, AlphaDn = 1,
+    }
     Nx.Button.TypeData["QuestWatchTrial"] = {
         Up = "Interface\\Addons\\Carbonite\\Gfx\\Buttons\\DotOn",
         Dn = "Interface\\Addons\\Carbonite\\Gfx\\Buttons\\DotOn",

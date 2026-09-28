@@ -144,6 +144,224 @@ local GetPackedQuestID = Nx.Quest.GetPackedQuestID
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- Blizzard-tracker style chrome (title strip, tool row, state icons).
+-- Only used when the client ships the atlases; otherwise the legacy
+-- layout below stays untouched.
+-------------------------------------------------------------------------------
+
+local MODERN_ATLASES = {
+    "Quest-In-Progress-Icon-yellow",
+    "Quest-In-Progress-Icon-Brown",
+    "UI-QuestIcon-TurnIn-Normal",
+    "ui-questtrackerbutton-collapse-all",
+    "ui-questtrackerbutton-expand-all",
+}
+
+local MODERN_LINE_H = 18        -- tool row (14px buttons + 2px above/below)
+local MODERN_TITLE_H = 17       -- title row (a bit taller for the header bar)
+
+function Nx.Quest.Watch:ModernAvailable()
+    if self.ModernOK ~= nil then
+        return self.ModernOK
+    end
+    local ok = false
+    if C_Texture and C_Texture.GetAtlasInfo then
+        ok = true
+        for _, atlas in ipairs (MODERN_ATLASES) do
+            local okCall, info = pcall (C_Texture.GetAtlasInfo, atlas)
+            if not okCall or not info then
+                ok = false
+                self.ModernMissing = atlas
+                break
+            end
+        end
+    end
+    self.ModernOK = ok
+    return ok
+end
+
+local MODERN_EDGE = 2           -- inset from the frame edge for bar/lines
+
+local function MakeHeaderLine (f, bw, y)
+    local t = f:CreateTexture (nil, "OVERLAY", nil, -7)
+    t:SetHeight (1)
+    t:SetPoint ("TOPLEFT", f, "TOPLEFT", MODERN_EDGE, y)
+    t:SetPoint ("TOPRIGHT", f, "TOPRIGHT", -MODERN_EDGE, y)
+    t:SetColorTexture (1, 1, 1, 1)
+    local grad = false
+    if t.SetGradient and CreateColor then
+        grad = pcall (t.SetGradient, t, "HORIZONTAL",
+            CreateColor (1, .82, 0, .8), CreateColor (1, .82, 0, .05))
+    end
+    if not grad then
+        t:SetColorTexture (1, .82, 0, .45)
+    end
+    return t
+end
+
+function Nx.Quest.Watch:SetupModernChrome (win)
+    local f = win.Frm
+    local lineH = MODERN_LINE_H
+    local titleH = MODERN_TITLE_H
+
+    win:SetTitleLineH (lineH)
+    win:SetTitleXOff (2, 0)
+
+    local bw, bh = win.BorderW, win.BorderH
+
+    -- Rows have different heights: SetTitleLineH sizes both uniformly, so
+    -- fix up the title row and the derived window metrics by hand.
+    win.TitleH = titleH + lineH + 2
+    win.TopH = win.TitleH + bh
+    -- The title row runs from just inside the top border down to the
+    -- tool row, so the text is centred in that band instead of sitting
+    -- below an empty border strip.
+    local barTop = -2
+    local barH = bh + titleH - 2
+    local fs1, fs2 = win.TitleFStr[1], win.TitleFStr[2]
+    fs1:ClearAllPoints()
+    fs1:SetPoint ("TOPLEFT", f, "TOPLEFT", MODERN_EDGE + 12, barTop)
+    fs1:SetPoint ("TOPRIGHT", f, "TOPRIGHT", -bw, barTop)
+    fs1:SetHeight (barH)
+    fs1:SetDrawLayer ("OVERLAY", 0)
+    fs2:ClearAllPoints()
+    fs2:SetPoint ("TOPLEFT", f, "TOPLEFT", bw + 2, -bh - titleH - .4)
+    fs2:SetPoint ("TOPRIGHT", f, "TOPRIGHT", -bw, -bh - titleH - .4)
+
+    win:SetTitle ("|cffffd100" .. L["Quest Watch"])
+
+    local cnt = f:CreateFontString (nil, "OVERLAY")
+    cnt:SetFontObject ("NxFontS")
+    cnt:SetJustifyH ("RIGHT")
+    cnt:SetHeight (barH)
+    cnt:SetPoint ("TOPRIGHT", f, "TOPRIGHT", -bw - 20 - (win.Closer and 14 or 0), barTop)
+    self.CountFStr = cnt
+
+    local miner = win.ButMiner
+    if miner then
+        miner:SetType ("QuestWatchMinBlizz")
+        miner.Frm:ClearAllPoints()
+        miner.Frm:SetPoint ("TOPRIGHT", f, "TOPRIGHT", -bw - (win.Closer and 14 or 0), barTop - floor ((barH - 16) / 2))
+        miner:Update()
+    end
+
+    self.HdrLine1 = MakeHeaderLine (f, bw, -bh - titleH)
+    self.HdrLine2 = MakeHeaderLine (f, bw, -bh - titleH - lineH)
+
+    win.TitleFStr[2]:SetText ("")
+
+    -- Menu and priorities stay on the left; the four toggles are
+    -- re-anchored to the window's right edge (they remain children of
+    -- ButMenu so fade and minimize handling is unchanged).
+    local y2 = -bh - titleH - floor ((lineH - 14) / 2)
+    self.ButMenu.Frm:ClearAllPoints()
+    self.ButMenu.Frm:SetPoint ("TOPLEFT", f, "TOPLEFT", bw + 2, y2)
+    self.ButPri.Frm:ClearAllPoints()
+    self.ButPri.Frm:SetPoint ("TOPLEFT", f, "TOPLEFT", bw + 17, y2)
+
+    local cy = -bh - titleH - lineH / 2
+    local toggles = { self.ButShowOnMap, self.ButATarget, self.ButQGivers, self.ButShowParty }
+    for i, but in ipairs (toggles) do
+        but.Frm:ClearAllPoints()
+        but.Frm:SetPoint ("CENTER", f, "TOPRIGHT", -bw - 8 - (#toggles - i) * 12, cy)
+    end
+
+end
+
+-- Frame width that fits the title, the quest counter and the buttons.
+-- Measured on the live title string (width 0 = natural width, same trick
+-- as Window:GetTitleTextWidth); a hidden measuring string reports 0.
+function Nx.Quest.Watch:GetModernMinWidth()
+    local win = self.Win
+    if not win then
+        return 0
+    end
+    local fstr = win.TitleFStr[1]
+    local prevW = fstr:GetWidth()
+    fstr:SetWidth (0)
+    local titleW = fstr:GetStringWidth()
+    fstr:SetWidth (prevW)
+    if not titleW or titleW <= 0 then
+        return 0
+    end
+    local countW = 30
+    if self.CountFStr then
+        countW = max (countW, self.CountFStr:GetStringWidth() or 0)
+    end
+    local closerW = win.Closer and 14 or 0
+    return floor (win.BorderW * 2 + 2 + titleW + 8 + countW + 4 + 20 + closerW + 2 + .5)
+end
+
+function Nx.Quest.Watch:ApplyModernMinWidth()
+    local win = self.Win
+    local need = self:GetModernMinWidth()
+    if not win or need <= 0 then
+        return
+    end
+    local f = win.Frm
+    local fixed = self.List and self.List.ShowAll
+    local lineH = self.List and self.List:GetLineH() or 13
+    -- A resizable watch restored with a tiny saved height renders zero rows.
+    -- Keep room for a handful of lines below the two title rows.
+    local minH = fixed and 0 or floor (win.TopH + win.BorderH + lineH * 6 + .5)
+
+    if need ~= self.ModernMinW or minH ~= self.ModernMinH then
+        self.ModernMinW = need
+        self.ModernMinH = minH
+        if fixed then
+            self.List:SetMinSize (max (124, need - win.BorderW * 2), 1)
+        elseif f.SetResizeBounds then
+            f:SetResizeBounds (need, max (40, minH))
+        end
+    end
+
+    if win:GetLayoutMode() == "Min" or InCombatLockdown() then
+        return
+    end
+
+    local resized = false
+    if f:GetWidth() < need then
+        f:SetWidth (need)
+        resized = true
+    end
+    if not fixed and f:GetHeight() < minH then
+        f:SetHeight (minH)
+        resized = true
+    end
+    if resized then
+        win:Adjust()
+        if type (win.LayoutMode) == "string" then
+            win:RecordLayoutData()
+        end
+    end
+end
+
+function Nx.Quest.Watch:UpdateModernTitle (cur, maxQ)
+    local win = self.Win
+    if not win then
+        return
+    end
+    win:SetTitle ("|cffffd100" .. L["Quest Watch"])
+    if self.CountFStr then
+        if cur then
+            self.CountFStr:SetText (format ("|cff40af40%d/%d", cur, maxQ))
+        else
+            self.CountFStr:SetText ("")
+        end
+    end
+    self:ApplyModernMinWidth()
+end
+
+function Nx.Quest.Watch:FitMinimizedWidth()
+    local win = self.Win
+    if not win or win:GetLayoutMode() ~= "Min" then
+        return
+    end
+    win.Frm:SetWidth (max (125, self:GetModernMinWidth(), self.ModernMinW or 0))
+    win:Adjust()
+end
+
+-------------------------------------------------------------------------------
 -- Init and open
 -------------------------------------------------------------------------------
 
@@ -157,6 +375,8 @@ function Nx.Quest.Watch:Open()
 
     local fixedSize = Nx.qdb.profile.QuestWatch.FixedSize
 
+    self.Modern = Nx.qdb.profile.QuestWatch.ModernLook and self:ModernAvailable() or false
+
     -- Create window
 
 --    Nx.Window:ClrSaveData ("NxQuestWatch")
@@ -165,7 +385,7 @@ function Nx.Quest.Watch:Open()
 
     local border = fixedSize and false or 0
 
-    local win = Nx.Window:Create ("NxQuestWatch", nil, nil, nil, 1, border)
+    local win = Nx.Window:Create ("NxQuestWatch", nil, nil, nil, self.Modern and 2 or 1, border)
     self.Win = win
 
     win:InitLayoutData (nil, -.80, -.35, -.2, -.1)
@@ -248,6 +468,10 @@ function Nx.Quest.Watch:Open()
     self.ButShowParty = Nx.Button:Create (self.ButMenu.Frm, "QuestWatchParty", nil, nil, 80, 0, "CENTER", 1, 1, func, self)
     self.ButShowParty:SetPressed (qopts.NXWWatchParty == nil or qopts.NXWWatchParty)
 
+    if self.Modern then
+        self:SetupModernChrome (win)
+    end
+
     -- List
 
     Nx.List:SetCreateFont ("QuestWatch.WatchFont", 12)
@@ -263,7 +487,11 @@ function Nx.Quest.Watch:Open()
         list.Frm:EnableMouse (false)
     end
 
-    list:ColumnAdd ("", 1, 14)
+    if self.Modern then
+        self:ApplyModernMinWidth()
+    end
+
+    list:ColumnAdd ("", 1, self.Modern and 18 or 14)
     list:ColumnAdd ("Name", 2, not fixedSize and 900 or 20)
 --    list:ColumnAdd ("", 3, 0)
 --    list:ColumnAdd ("Type", 4, 60)
@@ -388,6 +616,10 @@ function Nx.Quest.Watch:Open()
     if win.ButMaxer then
         tinsert (minimizedHideFrames, win.ButMaxer.Frm)
     end
+    if self.Modern then
+        tinsert (minimizedHideFrames, win.TitleFStr[2])
+        tinsert (minimizedHideFrames, self.HdrLine2)
+    end
 
     win:SetMinimizedHideFrames (minimizedHideFrames)
 
@@ -418,7 +650,12 @@ end
 function Nx.Quest.Watch:OnWin (typ)
     if self.Win:GetLayoutMode() == "Min" then
         self.FirstUpdate = true
-        self.Win:SetTitle ("")
+        if self.Modern then
+            self:UpdateModernTitle()
+            self:FitMinimizedWidth()
+        else
+            self.Win:SetTitle ("")
+        end
     end
     self:Update()
 end
@@ -723,7 +960,17 @@ function Nx.Quest.Watch:SyncBlizzardWatch (questId, questIndex, watched)
             return
         end
 
-        if Nx.isRetail and C_QuestLog then
+        local mirrored = self.BlizzMirrored
+        if not mirrored then
+            mirrored = {}
+            self.BlizzMirrored = mirrored
+        end
+
+        -- Pick the API by availability, not by flavor: Forever runs the
+        -- mainline code base (C_QuestLog.AddQuestWatch by quest ID) while
+        -- Nx.isRetail is false there, and Classic clients only have the
+        -- index-based globals.
+        if C_QuestLog and C_QuestLog.AddQuestWatch and C_QuestLog.RemoveQuestWatch then
             local isWorldQuest = QuestUtils_IsQuestWorldQuest
                 and QuestUtils_IsQuestWorldQuest (questId)
             local changeWatch
@@ -737,20 +984,29 @@ function Nx.Quest.Watch:SyncBlizzardWatch (questId, questIndex, watched)
             if changeWatch then
                 changeWatch (questId)
             end
-            return
+        else
+            local changeWatch = watched and AddQuestWatch or RemoveQuestWatch
+            if not changeWatch then
+                return
+            end
+
+            -- Classic hooks AddQuestWatch to infer map-pin clicks. Mirroring a
+            -- watch-list change is not a click and must not toggle the active quest.
+            local previousSuppress = Quest._addWatchSuppress
+            Quest._addWatchSuppress = true
+            changeWatch (liveIndex)
+            Quest._addWatchSuppress = previousSuppress
         end
 
-        local changeWatch = watched and AddQuestWatch or RemoveQuestWatch
-        if not changeWatch then
-            return
+        -- Remember only the watches Blizzard actually accepted. A full
+        -- (no quest ID) QUEST_WATCH_LIST_CHANGED resync may drop those when
+        -- Blizzard no longer lists them, but never a Carbonite-only watch
+        -- that could not be mirrored (tracker full, API missing).
+        if watched and GetBlizzardQuestWatchState (questId, liveIndex) then
+            mirrored[questId] = true
+        else
+            mirrored[questId] = nil
         end
-
-        -- Classic hooks AddQuestWatch to infer map-pin clicks. Mirroring a
-        -- watch-list change is not a click and must not toggle the active quest.
-        local previousSuppress = Quest._addWatchSuppress
-        Quest._addWatchSuppress = true
-        changeWatch (liveIndex)
-        Quest._addWatchSuppress = previousSuppress
     end)
 
     return true
@@ -857,6 +1113,10 @@ function Nx.Quest.Watch:OnBlizzardWatchChanged (questId, added)
             return
         end
 
+        if added == false and self.BlizzMirrored then
+            self.BlizzMirrored[questId] = nil
+        end
+
         changed = ApplyWatchState (questId, questIndex, added)
 
         -- The event itself is authoritative. Rebuild even when Carbonite's
@@ -871,6 +1131,10 @@ function Nx.Quest.Watch:OnBlizzardWatchChanged (questId, added)
                 seenQuestIds[currentQuestId] = true
                 local questIndex = GetLiveQuestIndex (currentQuestId, cur.QI)
                 local watched = GetBlizzardQuestWatchState (currentQuestId, questIndex)
+                if watched == false
+                        and not (self.BlizzMirrored and self.BlizzMirrored[currentQuestId]) then
+                    watched = nil
+                end
                 if not limitedBCCWatch
                         or (watched and not IsBCCNativeAutomaticWatch (currentQuestId)) then
                     changed = ApplyWatchState (currentQuestId, questIndex, watched) or changed
@@ -1652,6 +1916,7 @@ end
 
 function Nx.Quest.Watch:UpdateList()
 --    Nx.prt ("QWatchUpdate")
+    self.UpdateListCount = (self.UpdateListCount or 0) + 1
 
     local Nx = Nx
     local Quest = Nx.Quest
@@ -2153,7 +2418,39 @@ function Nx.Quest.Watch:UpdateList()
                             list:ItemAdd (qId * 0x10000 + qi)
                             local trackMode = Quest.Tracking[qId] or 0
                             local obj = quest and (quest["End"] or quest["Start"])
-                            if qId == 0 then
+                            local isSuperTracked = superTrackedQID > 0 and qId == superTrackedQID
+                            if self.Modern then
+                                local isTarget = isSuperTracked or Quest:IsTargeted (qId, 0)
+                                local noZone = false
+                                if obj then
+                                    local _, zone = Quest:GetSEPos (obj)
+                                    noZone = not zone
+                                end
+                                if qId == 0 then
+                                    list:ItemSetButton ("QuestWatchProgErr", false)
+                                elseif isComplete or lbNum == 0 then
+                                    local pressed = bit_band (trackMode, 1) > 0
+                                    local butType
+                                    if isComplete then
+                                        if isAC then
+                                            butType, pressed = "QuestWatchDoneAC", false
+                                        elseif noZone then
+                                            butType, pressed = "QuestWatchDoneErr", false
+                                        else
+                                            butType = isTarget and "QuestWatchDoneTarget" or "QuestWatchDone"
+                                        end
+                                    elseif noZone then
+                                        butType, pressed = "QuestWatchProgErr", false
+                                    else
+                                        butType = isTarget and "QuestWatchProgTogTarget" or "QuestWatchProgTog"
+                                    end
+                                    list:ItemSetButton (butType, pressed)
+                                elseif not obj then
+                                    list:ItemSetButton ("QuestWatchProgErr", false)
+                                else
+                                    list:ItemSetButton (isTarget and "QuestWatchProgTipTarget" or "QuestWatchProgTip", false)
+                                end
+                            elseif qId == 0 then
                                 list:ItemSetButton ("QuestWatchErr", false)
                             elseif isComplete or lbNum == 0 then
                                 local butType = "QuestWatch"
@@ -2198,7 +2495,7 @@ function Nx.Quest.Watch:UpdateList()
                                 lvlStr = format ("%s%2d%s ", colStr, level, cur.TagShort)
                             end
                             local nameStr = format ("%s%s%s", lvlStr, color, cur.Title)
-                            if superTrackedQID > 0 and qId == superTrackedQID then
+                            if isSuperTracked and not self.Modern then
                                 -- Yellow chevron marks the super-tracked quest.
                                 nameStr = "|cffffd200>|r " .. nameStr
                             end
@@ -2319,6 +2616,8 @@ function Nx.Quest.Watch:UpdateList()
                                             else
                                                 list:ItemSetButton (butType, nil)
                                             end
+                                        elseif done then
+                                            list:ItemSetButton ("QuestWatchObjDone", false)
                                         end
                                         if fixedSize then
                                             local maxVisible = Nx.qdb.profile.QuestWatch.OMaxLen + 10
@@ -2338,8 +2637,17 @@ function Nx.Quest.Watch:UpdateList()
                                 end
                             end
                             if fixedSize and watchNum >= qopts.NXWVisMax then
-                                list:ItemAdd (0)
-                                list:ItemSet (2, " ...")
+                                if self.Modern then
+                                    local remaining = #watched - watchNum
+                                    if remaining > 0 then
+                                        list:ItemAdd (0)
+                                        list:ItemSetOffset (16, 0)
+                                        list:ItemSet (2, "|cff9d9d9d" .. format (L["+%d more"], remaining))
+                                    end
+                                else
+                                    list:ItemAdd (0)
+                                    list:ItemSet (2, " ...")
+                                end
                                 break
                             end
                             watchNum = watchNum + 1
@@ -2362,7 +2670,11 @@ function Nx.Quest.Watch:UpdateList()
 
     if self.Win:IsSizeMin() then
         self.FirstUpdate = true
-        self.Win:SetTitle ("")
+        if self.Modern then
+            self:UpdateModernTitle()
+        else
+            self.Win:SetTitle ("")
+        end
 
     else
 
@@ -2375,7 +2687,7 @@ function Nx.Quest.Watch:UpdateList()
             self.Win:OffsetPos (0, h)
         end
 
-        if w < 127 then
+        if w < 127 and not self.Modern then
             self.Win:SetTitle ("")
         else
             -- The shared compatibility layer preserves the native two-value
@@ -2389,7 +2701,11 @@ function Nx.Quest.Watch:UpdateList()
             -- internal quest-log capacity. Fall back to MAX_QUESTS/25 where
             -- the API is missing on older clients.
             local maxQ = (C_QuestLog and C_QuestLog.GetMaxNumQuestsCanAccept and C_QuestLog.GetMaxNumQuestsCanAccept()) or MAX_QUESTS or 25
-            self.Win:SetTitle (format ("          |cff40af40%d/%d", i, maxQ))
+            if self.Modern then
+                self:UpdateModernTitle (i, maxQ)
+            else
+                self.Win:SetTitle (format ("          |cff40af40%d/%d", i, maxQ))
+            end
         end
 
         self.FirstUpdate = nil
@@ -2428,6 +2744,16 @@ function Nx.Quest.Watch:WinUpdateFade (fade, force)
         self.ButPri.Frm:SetAlpha (fade)
         self.ButShowOnMap.Frm:SetAlpha (fade)
         self.ButATarget.Frm:SetAlpha (fade)
+        if self.Modern then
+            self.ButQGivers.Frm:SetAlpha (fade)
+            self.ButShowParty.Frm:SetAlpha (fade)
+            self.CountFStr:SetAlpha (fade)
+            self.HdrLine1:SetAlpha (fade)
+            self.HdrLine2:SetAlpha (fade)
+            if self.Win.ButMiner then
+                self.Win.ButMiner.Frm:SetAlpha (fade)
+            end
+        end
     end
 end
 
@@ -2472,6 +2798,9 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
             local qIndex = bit_band (data, 0xff)
             local qId = GetPackedQuestID(data)
             local typ = but:GetType()
+            if typ.Inert then
+                return
+            end
             if (typ.CustomTip or typ.EmissaryTip) and click ~= "RightButton" then
                 local func = self.List:ItemGetFunc(data)
                 func(data)
@@ -3111,5 +3440,161 @@ function Nx.Quest:UpdateGiverIconMenu()
         menuI.UData = qId
 
         curI = curI + 1
+    end
+end
+
+-------------------------------------------------------------------------------
+-- /cb qwtest [icons|state]
+--   icons : report the Blizzard atlases the modern look needs and draw a
+--           sample frame with every new title-row icon type
+--   state : dump why each quest is or is not in the watch list
+-------------------------------------------------------------------------------
+
+do
+    local Carbonite = _G.Carbonite
+    if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
+        Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", function()
+            if not Carbonite.Core.SlashCommands then return end
+
+            local function prt (fmt, ...)
+                DEFAULT_CHAT_FRAME:AddMessage ("|cff40c0ff[qwtest]|r " .. format (fmt, ...))
+            end
+
+            local function ShowIconTest()
+                local Watch = Nx.Quest.Watch
+                Watch.ModernOK = nil
+                prt ("atlas API: %s", (C_Texture and C_Texture.GetAtlasInfo) and "yes" or "NO")
+                for _, atlas in ipairs (MODERN_ATLASES) do
+                    local okCall, info = pcall (C_Texture and C_Texture.GetAtlasInfo or function() end, atlas)
+                    prt ("  %s = %s", atlas, (okCall and info) and format ("%dx%d", info.width or 0, info.height or 0) or "|cffff4040missing|r")
+                end
+                prt ("modern look available: %s (option %s, window %s)",
+                    tostring (Watch:ModernAvailable()),
+                    tostring (Nx.qdb.profile.QuestWatch.ModernLook),
+                    tostring (Watch.Modern))
+
+                local f = Watch.TestFrm
+                if not f then
+                    f = CreateFrame ("Frame", "NxQuestWatchIconTest", UIParent, "BackdropTemplate")
+                    Watch.TestFrm = f
+                    f:SetSize (260, 190)
+                    f:SetPoint ("CENTER", 0, 120)
+                    f:SetBackdrop ({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+                        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true,
+                        tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 } })
+                    f:SetBackdropColor (0, 0, 0, .85)
+                    f:EnableMouse (true)
+                    f:SetMovable (true)
+                    f:RegisterForDrag ("LeftButton")
+                    f:SetScript ("OnDragStart", f.StartMoving)
+                    f:SetScript ("OnDragStop", f.StopMovingOrSizing)
+                    f:SetFrameStrata ("DIALOG")
+
+                    local title = f:CreateFontString (nil, "OVERLAY", "GameFontNormal")
+                    title:SetPoint ("TOPLEFT", 10, -8)
+                    title:SetText ("|cffffd100" .. L["Quest Watch"] .. "|r  icon test (/cb qwtest icons to close)")
+                    MakeHeaderLine (f, 8, -24)
+
+                    local rows = {
+                        { "QuestWatchDone", false, "complete, untracked" },
+                        { "QuestWatchDone", true, "complete, tracked" },
+                        { "QuestWatchDoneTarget", false, "complete, super-tracked" },
+                        { "QuestWatchDoneAC", false, "complete, auto-complete" },
+                        { "QuestWatchDoneErr", false, "complete, no turn-in coords" },
+                        { "QuestWatchProgTip", false, "in progress" },
+                        { "QuestWatchProgTipTarget", false, "in progress, super-tracked" },
+                        { "QuestWatchProgTog", true, "no objectives, tracked" },
+                        { "QuestWatchProgErr", false, "in progress, no data" },
+                        { "QuestWatchMinBlizz", false, "minimize" },
+                        { "QuestWatchMinBlizz", true, "restore" },
+                    }
+                    for i, row in ipairs (rows) do
+                        local y = -30 - (i - 1) * 14
+                        local but = Nx.Button:Create (f, row[1], nil, nil, 12, y, "TOPLEFT", 15, 15, function() end, Watch)
+                        but:SetPressed (row[2])
+                        local fs = f:CreateFontString (nil, "OVERLAY", "GameFontHighlightSmall")
+                        fs:SetPoint ("TOPLEFT", 34, y - 1)
+                        fs:SetText (row[3])
+                    end
+                    f:Show()
+                    return
+                end
+                f:SetShown (not f:IsShown())
+            end
+
+            local function ShowStateDump()
+                local Quest = Nx.Quest
+                local Watch = Quest.Watch
+                local qopts = Quest:GetQuestOpts()
+                local rawHideDist = qopts["NXWHideDist"]
+                local hideDist = (rawHideDist >= 19900 and 99999 or rawHideDist) / 4.575
+                prt ("Sync=%s HideUnfinished=%s HideGroup=%s HideNotInZone=%s HideDist=%s VisMax=%s Fixed=%s",
+                    tostring (Nx.qdb.profile.QuestWatch.Sync), tostring (qopts.NXWHideUnfinished),
+                    tostring (qopts.NXWHideGroup), tostring (qopts.NXWHideNotInZone),
+                    tostring (rawHideDist), tostring (qopts.NXWVisMax),
+                    tostring (Nx.qdb.profile.QuestWatch.FixedSize))
+                prt ("AddQuestWatch global=%s C_QuestLog.AddQuestWatch=%s GetQuestWatchType=%s isRetail=%s isCamelot=%s",
+                    tostring (AddQuestWatch ~= nil),
+                    tostring (C_QuestLog and C_QuestLog.AddQuestWatch ~= nil),
+                    tostring (C_QuestLog and C_QuestLog.GetQuestWatchType ~= nil),
+                    tostring (Nx.isRetail), tostring (Nx.isCamelot))
+                local win, list = Watch.Win, Watch.List
+                if win and list then
+                    local f, lf = win.Frm, list.Frm
+                    prt ("win mode=%s size=%.0fx%.0f shown=%s alpha=%.2f titleH=%s topH=%s modern=%s minW=%s updates=%s",
+                        tostring (win:GetLayoutMode()), f:GetWidth(), f:GetHeight(), tostring (f:IsShown()),
+                        f:GetAlpha(), tostring (win.TitleH), tostring (win.TopH), tostring (Watch.Modern),
+                        tostring (Watch.ModernMinW), tostring (Watch.UpdateListCount))
+                    prt ("list size=%.0fx%.0f shown=%s visible=%s alpha=%.2f num=%s vis=%s top=%s strs=%s showAll=%s lineH=%s minW=%s",
+                        lf:GetWidth(), lf:GetHeight(), tostring (lf:IsShown()), tostring (lf:IsVisible()),
+                        lf:GetAlpha(), tostring (list.Num), tostring (list.Vis), tostring (list.Top),
+                        tostring (#list.Strs), tostring (list.ShowAll), tostring (list:GetLineH()), tostring (list.MinW))
+                    local l, t = lf:GetLeft(), lf:GetTop()
+                    local wl, wt = f:GetLeft(), f:GetTop()
+                    prt ("list offset in win: x=%s y=%s", tostring (l and wl and floor (l - wl)), tostring (t and wt and floor (wt - t)))
+                    local col = list.Columns[2]
+                    for i = 1, 3 do
+                        local fs = list.Strs[list.Vis + i]
+                        prt ("row %d data=%s str=%s shown=%s", i, tostring (col and col.Data and col.Data[i]),
+                            fs and tostring (fs:GetText()) or "-", fs and tostring (fs:IsShown()) or "-")
+                    end
+                end
+                local curq = Quest.CurQ
+                if not curq then
+                    prt ("no CurQ")
+                    return
+                end
+                for n, cur in ipairs (curq) do
+                    local qId = cur.QId
+                    local id = qId > 0 and qId or cur.Title
+                    local status = Quest:GetQuest (id)
+                    local bliz
+                    if C_QuestLog and C_QuestLog.GetQuestWatchType then
+                        bliz = C_QuestLog.GetQuestWatchType (qId)
+                    elseif IsQuestWatched and cur.QI and cur.QI > 0 then
+                        bliz = IsQuestWatched (cur.QI)
+                    end
+                    local pass = status == "W"
+                        and (cur.Distance < hideDist or cur.Distance > 999999)
+                        and (not qopts.NXWHideUnfinished or cur.CompleteMerge)
+                        and (not qopts.NXWHideGroup or cur.PartySize < 5)
+                        and (not qopts.NXWHideNotInZone or cur.InZone)
+                    prt ("%s#%d qid=%s qi=%s st=%s bliz=%s dist=%.0f zone=%s mirrored=%s %s",
+                        pass and "|cff40ff40" or "|cffb0b0b0", n, tostring (qId), tostring (cur.QI),
+                        tostring (status), tostring (bliz), cur.Distance or -1,
+                        tostring (cur.InZone), tostring (Watch.BlizzMirrored and Watch.BlizzMirrored[qId]),
+                        cur.Title or "?")
+                end
+            end
+
+            Carbonite.Core.SlashCommands:Register("qwtest", function(rest)
+                local cmd = tostring(rest or ""):lower():match("^%s*(%S*)")
+                if cmd == "state" then
+                    ShowStateDump()
+                else
+                    ShowIconTest()
+                end
+            end, "quest watch look test: /cb qwtest [icons|state]")
+        end)
     end
 end

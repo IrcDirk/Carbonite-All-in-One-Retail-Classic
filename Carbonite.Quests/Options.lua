@@ -892,6 +892,20 @@ function Nx.Quest:GetOptionsConfig()
                                 Nx.Opts.NXCmdReload()
                             end,
                         },
+                        qwmodern = {
+                            order = 5.5,
+                            type = "toggle",
+                            width = "full",
+                            name = L["Blizzard-style Quest Watch header and icons"],
+                            desc = L["When enabled, the quest watch uses a Blizzard tracker style title row and quest state icons (RELOAD REQUIRED). Falls back to the classic look on clients without these textures"],
+                            get = function()
+                                return Nx.qdb.profile.QuestWatch.ModernLook
+                            end,
+                            set = function()
+                                Nx.qdb.profile.QuestWatch.ModernLook = not Nx.qdb.profile.QuestWatch.ModernLook
+                                Nx.Opts.NXCmdReload()
+                            end,
+                        },
                         qwhideblizz = {
                             order = 6,
                             type = "toggle",

@@ -358,6 +358,7 @@ local function RefineLiveMapId(mapID, wx, wy)
     end
     return mapID
 end
+Nx.Quest.RefineLiveMapId = RefineLiveMapId
 
 local function HasInstanceMap(mapID)
     local info = Nx.Map.InstanceInfo
@@ -589,6 +590,17 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
         return
     end
 
+    if qObj == 0 and not useEnd then
+        local cur = self.QIds and self.QIds[qId]
+        local complete = (cur and cur.Complete)
+            or (C_QuestLog and C_QuestLog.IsComplete and C_QuestLog.IsComplete (qId))
+        local inLog = cur or (C_QuestLog and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest (qId))
+        if complete or (inLog and not quest["Objectives"]) then
+            tdbg ("  useEnd forced: %s", complete and "quest complete" or "delivery quest in log")
+            useEnd = true
+        end
+    end
+
     local tbits = Quest.Tracking[qId] or 0
 
     -- For qObj > 0 (a specific objective): tracking bit must be set.
@@ -815,6 +827,35 @@ if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
                 if _G.NXQuest then _G.NXQuest.TrackLog = nil end
                 log:info("TrackLog wiped")
                 return
+            elseif cmd == "path" then
+                local QMap = _G.NxMap1 and _G.NxMap1.NxMap
+                if not QMap then log:info("no map") return end
+                local function say(fmt, ...)
+                    local ok, msg = pcall(string.format, fmt, ...)
+                    if ok then log:info("%s", msg); Nx.Quest.TrackLogWrite(msg) end
+                end
+                local pm = Nx.Map:GetDisplayableMapForPlayer()
+                local best = C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player")
+                local px, py = QMap:GetZonePos(pm, QMap.PlyrX or 0, QMap.PlyrY or 0)
+                say("player: displayable=%s best=%s zonePos=%.1f,%.1f world=%.0f,%.0f",
+                    tostring(pm), tostring(best), px or 0, py or 0, QMap.PlyrX or 0, QMap.PlyrY or 0)
+                local winfo = Nx.Map.MapWorldInfo
+                say("  winfo[%s]: Cont=%s Zone=%s City=%s EntryMId=%s", tostring(pm),
+                    tostring(winfo[pm] and winfo[pm].Cont), tostring(winfo[pm] and winfo[pm].Zone),
+                    tostring(winfo[pm] and winfo[pm].City), tostring(winfo[pm] and winfo[pm].EntryMId))
+                for i, t in ipairs(QMap.Targets or {}) do
+                    local zx, zy = QMap:GetZonePos(t.MapId, t.TargetMX or 0, t.TargetMY or 0)
+                    say("target[%d]: mapId=%s type=%s name=%s zonePos=%.1f,%.1f world=%.0f,%.0f EntryMId=%s",
+                        i, tostring(t.MapId), tostring(t.TargetType), tostring(t.TargetName),
+                        zx or 0, zy or 0, t.TargetMX or 0, t.TargetMY or 0,
+                        tostring(winfo[t.MapId] and winfo[t.MapId].EntryMId))
+                end
+                for i, t in ipairs(QMap.Tracking or {}) do
+                    say("  path[%d]: mode=%s name=%s world=%.0f,%.0f", i, tostring(t.Mode),
+                        tostring(t.TargetName), t.TargetMX or 0, t.TargetMY or 0)
+                end
+                say("  routeUse=%s activeQID=%s", tostring(Nx.db.profile.Map.RouteUse), tostring(Nx.Quest.ActiveQID))
+                return
             elseif cmd == "state" or cmd == "" then
                 local function say(fmt, ...)
                     local ok, msg = pcall(string.format, fmt, ...)
@@ -854,7 +895,7 @@ if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
                     _G.NXQuest and _G.NXQuest.TrackLog and #_G.NXQuest.TrackLog or 0)
                 return
             else
-                log:info("usage: /cb qtrack [on|off|state|wipe]")
+                log:info("usage: /cb qtrack [on|off|state|path|wipe]")
                 return
             end
             log:info("trace %s", Nx.Quest.TrackDebug and "ON" or "OFF")

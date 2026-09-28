@@ -102,6 +102,49 @@ end
 -- coarser POI x/y.
 -------------------------------------------------------------------------------
 
+function Nx.Quest:RefineLivePoint (mapId, x, y)
+    if not mapId or not x or not y or not Nx.Quest.RefineLiveMapId then
+        return mapId, x, y
+    end
+    local wx, wy = Nx.Map:GetWorldPos (mapId, x, y)
+    if not wx or not wy or (wx == 0 and wy == 0) then
+        return mapId, x, y
+    end
+    local refined = Nx.Quest.RefineLiveMapId (mapId, wx, wy)
+    if refined and refined ~= mapId then
+        local zx, zy = Nx.Map:GetZonePos (refined, wx, wy)
+        if zx and zy and not (zx == 0 and zy == 0) then
+            return refined, zx, zy
+        end
+    end
+    return mapId, x, y
+end
+
+function Nx.Quest:LivePointDistance (ourMap, ourX, ourY, mapId, x, y)
+    ourMap = tonumber (ourMap)
+    ourX, ourY = tonumber (ourX), tonumber (ourY)
+    if not ourMap or not ourX or not ourY or not mapId or not x or not y then
+        return math.huge
+    end
+    if ourMap == mapId then
+        local dx, dy = ourX - x, ourY - y
+        return math.sqrt (dx * dx + dy * dy)
+    end
+    local winfo = Nx.Map.MapWorldInfo
+    local ours, live = winfo[ourMap], winfo[mapId]
+    if not ours or not live or ours.Cont ~= live.Cont or not ours.Scale or ours.Scale == 0 then
+        return math.huge
+    end
+    local wx1, wy1 = Nx.Map:GetWorldPos (ourMap, ourX, ourY)
+    local wx2, wy2 = Nx.Map:GetWorldPos (mapId, x, y)
+    if (wx1 == 0 and wy1 == 0) or (wx2 == 0 and wy2 == 0) then
+        return math.huge
+    end
+    local dx = (wx1 - wx2) / ours.Scale
+    local dy = (wy1 - wy2) / ours.Scale * 1.5
+    return math.sqrt (dx * dx + dy * dy)
+end
+
 function Nx.Quest:PatchQuestFromBlizzard (qId)
     if not qId or qId <= 0 then return false end
     if not C_QuestLog or not C_QuestLog.GetQuestObjectives then return false end
@@ -163,6 +206,7 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
     if Nx.Map and Nx.Map.GetCurrentMapId then
         tryMap (Nx.Map:GetCurrentMapId ())
     end
+    mapId, x, y = self:RefineLivePoint (mapId, x, y)
 
     if lbCnt > 0 then
         -- For each Blizzard objective:
@@ -266,11 +310,7 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
 
     if liveOK and isComplete then
         local _, ourMap, _, ourX, ourY = self:UnpackSE(quest["End"])
-        local distance = math.huge
-        if ourMap and ourX and ourY and ourMap == mapId then
-            local dx, dy = ourX - x, ourY - y
-            distance = math.sqrt(dx * dx + dy * dy)
-        end
+        local distance = self:LivePointDistance (ourMap, ourX, ourY, mapId, x, y)
         -- Threshold tuned for Carbonite's 0..100 zone-percent scale: 8
         -- units ~= 8% of map dimension, generous enough to keep
         -- bundled coords for most curated entries but tight enough to

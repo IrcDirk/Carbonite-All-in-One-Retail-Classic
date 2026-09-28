@@ -2246,6 +2246,48 @@ local function BagListContains(bags, bag)
     return false
 end
 
+function Nx.Warehouse:OnCommodityPurchased(itemID, quantity)
+    if type(itemID) ~= "number" or type(quantity) ~= "number" or quantity <= 0 then
+        return
+    end
+    local _, link = C_Item.GetItemInfo(itemID)
+    if not link then
+        return
+    end
+    Nx.Warehouse.onAuctionHouseUpdate(link, quantity)
+end
+
+function Nx.Warehouse:RememberAuctionBuyout(frame, auctionID)
+    if type(auctionID) ~= "number" then
+        return
+    end
+    local buyFrame = frame and frame.ItemBuyFrame
+    local itemKey = buyFrame and buyFrame.itemKey
+    if not itemKey or not C_AuctionHouse.GetNumItemSearchResults then
+        return
+    end
+    local num = C_AuctionHouse.GetNumItemSearchResults(itemKey) or 0
+    for i = 1, num do
+        local info = C_AuctionHouse.GetItemSearchResultInfo(itemKey, i)
+        if info and info.auctionID == auctionID then
+            if info.itemLink then
+                self.PendingBuyouts = self.PendingBuyouts or {}
+                self.PendingBuyouts[auctionID] = { link = info.itemLink, count = info.quantity or 1 }
+            end
+            return
+        end
+    end
+end
+
+function Nx.Warehouse:OnAuctionPurchaseCompleted(auctionID)
+    local pending = self.PendingBuyouts and self.PendingBuyouts[auctionID]
+    if not pending then
+        return
+    end
+    self.PendingBuyouts[auctionID] = nil
+    Nx.Warehouse.onAuctionHouseUpdate(pending.link, pending.count)
+end
+
 function Nx.Warehouse.OnItem_lock_changed(_, arg1, arg2)
     if type(arg1) ~= "number" or type(arg2) ~= "number" then
         return
