@@ -85,6 +85,7 @@ Carbonite.Core.EventBus:Subscribe("CARBONITE_LOADED", function()
     local NxMap = _G.Nx and _G.Nx.Map
     if not NxMap then return end
     local L = _G.Nx and Carbonite:L() or {}
+    MapToolBar:RegisterButton({ id = "Map3D",      label = L["3D View"]  or "3D View",   handler = NxMap.OnButToggle3D,      order = 5 })
     MapToolBar:RegisterButton({ id = "MapZIn",     label = L["Zoom In"]  or "Zoom In",   handler = NxMap.OnButZoomIn,        order = 10 })
     MapToolBar:RegisterButton({ id = "MapZOut",    label = L["Zoom Out"] or "Zoom Out",  handler = NxMap.OnButZoomOut,       order = 20 })
     MapToolBar:RegisterButton({ id = "MapGuide",   label = L["Guide"]    or "Guide",     handler = NxMap.OnButToggleGuide,   order = 30 })

@@ -337,6 +337,102 @@ local function mapConfig()
             name = L["Map Options"],
             childGroups = "tab",
             args = {
+                view3d = {
+                    order = 9,
+                    type = "group",
+                    name = L["3D View"],
+                    args = {
+                        View3D = {
+                            order = 1,
+                            type = "toggle",
+                            width = "full",
+                            name = L["3D View (experimental)"],
+                            desc = L["Tilted perspective map built from minimap tiles and baked terrain heights. Also toggled by the 3D toolbar button."],
+                            get = function() return Nx.db.profile.Map.View3D end,
+                            set = function(_, v)
+                                Nx.db.profile.Map.View3D = v == true
+                                local m = Nx.Map:GetMap(1)
+                                if m and m.SetView3D then m:SetView3D(v == true) end
+                            end,
+                        },
+                        View3DTilt = {
+                            order = 2,
+                            type = "range",
+                            name = L["3D Tilt"],
+                            desc = L["Camera tilt in degrees; 0 looks straight down."],
+                            min = 10, max = 80, step = 1, bigStep = 1,
+                            get = function() return Nx.db.profile.Map.View3DTilt end,
+                            set = function(_, v) Nx.db.profile.Map.View3DTilt = v end,
+                        },
+                        View3DDist = {
+                            order = 3,
+                            type = "range",
+                            name = L["3D Distance"],
+                            desc = L["Camera distance in map heights; larger is flatter perspective."],
+                            min = 0.6, max = 3, step = 0.1, bigStep = 0.1,
+                            get = function() return Nx.db.profile.Map.View3DDist end,
+                            set = function(_, v) Nx.db.profile.Map.View3DDist = v end,
+                        },
+                        View3DHeight = {
+                            order = 4,
+                            type = "range",
+                            name = L["3D Height Scale"],
+                            desc = L["Terrain height exaggeration; 1 is true scale."],
+                            min = 0, max = 3, step = 0.1, bigStep = 0.1,
+                            get = function() return Nx.db.profile.Map.View3DHeight end,
+                            set = function(_, v) Nx.db.profile.Map.View3DHeight = v end,
+                        },
+                        View3DSub = {
+                            order = 5,
+                            type = "range",
+                            name = L["3D Tile Detail"],
+                            desc = L["Sub-quads per minimap tile edge; higher follows the terrain better and costs more."],
+                            min = 1, max = 6, step = 1, bigStep = 1,
+                            get = function() return Nx.db.profile.Map.View3DSub end,
+                            set = function(_, v) Nx.db.profile.Map.View3DSub = v end,
+                        },
+                        View3DMiniScale = {
+                            order = 6,
+                            type = "range",
+                            name = L["3D Terrain Zoom Limit"],
+                            desc = L["Below this draw scale (world zoom) the map falls back to flat 2D."],
+                            min = 0.04, max = 0.5, step = 0.01, bigStep = 0.01,
+                            get = function() return Nx.db.profile.Map.View3DMiniScale end,
+                            set = function(_, v) Nx.db.profile.Map.View3DMiniScale = v end,
+                        },
+                        View3DMaxScale = {
+                            order = 7,
+                            type = "range",
+                            name = L["3D Max Zoom"],
+                            desc = L["Zoom-in cap while the 3D view is on."],
+                            min = 1, max = 6, step = 0.1, bigStep = 0.1,
+                            get = function() return Nx.db.profile.Map.View3DMaxScale end,
+                            set = function(_, v) Nx.db.profile.Map.View3DMaxScale = v end,
+                        },
+                        Hide3DOccluded = {
+                            order = 8,
+                            type = "toggle",
+                            width = "full",
+                            name = L["3D Hide Pins Behind Terrain"],
+                            desc = L["Hide icons and labels whose position is behind a ridge from the camera."],
+                            get = function() return Nx.db.profile.Map.Hide3DOccluded end,
+                            set = function(_, v)
+                                Nx.db.profile.Map.Hide3DOccluded = v == true
+                            end,
+                        },
+                        ShowAreaNames = {
+                            order = 9,
+                            type = "toggle",
+                            width = "full",
+                            name = L["Show Area Names"],
+                            desc = L["Draw subzone names (Goldshire, Stormwind Harbor...) once the area is large enough on screen."],
+                            get = function() return Nx.db.profile.Map.ShowAreaNames end,
+                            set = function(_, v)
+                                Nx.db.profile.Map.ShowAreaNames = v == true
+                            end,
+                        },
+                    },
+                },
                 -- Main map options tab
                 mainMap = {
                     order = 1,

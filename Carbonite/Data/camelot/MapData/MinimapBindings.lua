@@ -8,14 +8,14 @@ local Map = Nx.Map
 
 Map.MiniMapBlks = {
     [1] = {
-        Map.KalMapBlks,
+        Map.CamelotKalMapBlks,
         1908,
         19, 8,
         Map.MapWorldInfo[13].X + Map.MapInfo[1].X + 1600 + 212.52, Map.MapWorldInfo[13].Y + Map.MapInfo[1].Y + -800 + -266.42,
         "World\\Minimaps\\Kalimdor"
     },
     [2] = {
-        Map.EkMapBlks,
+        Map.CamelotEkMapBlks,
         2420,
         24, 20,
         Map.MapWorldInfo[14].X + Map.MapInfo[2].X -1080, Map.MapWorldInfo[14].Y + Map.MapInfo[2].Y - 1308,

@@ -369,7 +369,42 @@ local function renderLINE(map, layer, cls)
         local pin = layer.pins[i]
         local x1, y1 = pin.x,  pin.y
         local x2, y2 = pin.x2, pin.y2
-        if isPinMapRelevant(map, pin) and x1 and y1 and x2 and y2 then
+        if isPinMapRelevant(map, pin) and x1 and y1 and x2 and y2 and map.View3DActive then
+            -- Tilted view: split the line so it follows the terrain and
+            -- project every joint (points behind the camera are skipped).
+            local fx1, fy1 = worldToFramePixel(map, x1, y1)
+            local fx2, fy2 = worldToFramePixel(map, x2, y2)
+            local len = ((fx2 - fx1) ^ 2 + (fy2 - fy1) ^ 2) ^ .5
+            local segs = math.max(1, math.min(24, math.floor(len / 40)))
+            local clipW, clipH = map.MapW, map.MapH
+            local px, py, pok = map:Screen3D(x1, y1)
+            for sgi = 1, segs do
+                local t = sgi / segs
+                local wx, wy = x1 + (x2 - x1) * t, y1 + (y2 - y1) * t
+                local qx, qy, qok = map:Screen3D(wx, wy)
+                if pok and qok then
+                    local vis = (px >= 0 and px <= clipW and py >= 0 and py <= clipH)
+                        or (qx >= 0 and qx <= clipW and qy >= 0 and qy <= clipH)
+                    if vis then
+                        local line = map:GetLineStatic()
+                        line:SetThickness(pin.thickness or cls.thickness or 2)
+                        line:SetStartPoint("TOPLEFT", hostFrm, px, -py - map.TitleH)
+                        line:SetEndPoint("TOPLEFT", hostFrm, qx, -qy - map.TitleH)
+                        local tex = pin.tex or cls.tex
+                        if tex then
+                            line:SetTexture(tex)
+                        elseif pin.color or cls.color then
+                            line:SetColorTexture(c2rgba(pin.color or cls.color))
+                        else
+                            line:SetColorTexture(1, 1, 1, 1)
+                        end
+                        line:Show()
+                        lineHits[#lineHits + 1] = { px, py, qx, qy, pin }
+                    end
+                end
+                px, py, pok = qx, qy, qok
+            end
+        elseif isPinMapRelevant(map, pin) and x1 and y1 and x2 and y2 then
             local sx1, sy1, in1 = worldToFramePixel(map, x1, y1)
             local sx2, sy2, in2 = worldToFramePixel(map, x2, y2)
             -- Cheap cull: skip when both endpoints sit outside. Lines

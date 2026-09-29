@@ -4192,6 +4192,16 @@ Nx.Button.TypeData = {
         SizeUp = 22,
         SizeDn = 22,
     },
+    ["Map3D"] = {
+        Tip = "3D",
+        Bool = true,
+        RGBUp = ".12|.12|.16",
+        RGBDn = ".16|.32|.6",
+        VRGBAUp = "1|1|1|.75",
+        VRGBADn = "1|1|1|1",
+        SizeUp = 22,
+        SizeDn = 22,
+    },
     ["MapQGivers"] = {
         Up = "$INV_Misc_Note_02",
         SizeUp = 22,
