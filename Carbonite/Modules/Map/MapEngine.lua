@@ -45,6 +45,11 @@ local function P3D()
     return Nx.db.profile.Map
 end
 
+-- Shared by the 3D helpers; declared up here because UpdateMiniFrames
+-- (defined earlier in the file) uses them too.
+local V3D_UL, V3D_LL, V3D_UR, V3D_LR = 1, 2, 3, 4
+local m_sin, m_cos, m_rad = math.sin, math.cos, math.rad
+
 -- Extended tooltip library for enhanced tooltips
 local ExtToolTip = LibStub('LibQTip-1.0RS')
 
@@ -216,6 +221,18 @@ NXMapOptsMapsDefault = {
 -- Called once during addon load
 --
 function Nx.Map:Init()
+
+    -- Client-derived minimap block tables (Data/<flavor>/MapData/MinimapTiles.lua,
+    -- generated from the WDT MAID chunks) replace the hand-maintained ones so
+    -- only tiles that exist in this client are drawn.
+    if Nx.Map.WdtMiniBlks and Nx.Map.MiniMapBlks then
+        for id, tiles in pairs (Nx.Map.WdtMiniBlks) do
+            local binding = Nx.Map.MiniMapBlks[id]
+            if binding then
+                binding[1] = tiles
+            end
+        end
+    end
     -- Determine player faction (Alliance = 0, Horde = 1)
     local plFaction = UnitFactionGroup("player")
     plFaction = strsub(plFaction, 1, 1)
@@ -6685,6 +6702,18 @@ function Nx.Map:Update (elapsed)
     -- The tilted view only lives between the detail zoom and the world zoom;
     -- below the limit the whole map falls back to plain 2D drawing.
     self.View3DActive = self.View3D and self.ScaleDraw >= (P3D().View3DMiniScale or .12) or false
+    if self.View3DActive then
+        -- Everything the projection depends on. While it is unchanged the
+        -- tile geometry and the occlusion cache stay valid, so a static
+        -- view costs almost nothing per frame.
+        local P = P3D()
+        self.View3DSig = format ("%.1f|%.1f|%.4f|%d|%d|%s|%s|%s|%s|%.1f",
+            self.MapPosXDraw, self.MapPosYDraw, self.ScaleDraw, self.MapW, self.MapH,
+            tostring (P.View3DTilt), tostring (P.View3DDist), tostring (P.View3DSub),
+            tostring (P.View3DHeight), self.View3DBaseH or 0)
+    else
+        self.View3DSig = nil
+    end
 
     self:MoveContinents()
 --    self:MoveWorldHotspots()
@@ -10418,7 +10447,6 @@ function Nx.Map:UpdateMiniFrames()
         for x = miniX, miniX + blksX - 1 do
 
             f = self.MiniFrms[frmNum]
-            --Nx.prt(mapId.." | "..miniT[3] .." "..miniT[4] .." "..miniT[7].." | "..x.." "..y.." | "..(tonumber(format("%02d%02d", (x + miniT[3]), (y + miniT[4])))).." | "..(txname and txname or "nil"));
             local key = (x + miniT[3]) * 100 + (y + miniT[4])
             local txname = miniT[1][key] --Map:GetMiniBlkName (miniT, x, y)
 
@@ -10436,21 +10464,7 @@ function Nx.Map:UpdateMiniFrames()
                     -- Relief needs back-to-front rows: nearer rows on top.
                     f:SetFrameLevel (view3D and (level + rowN) or level)
                     f.texture:SetVertexColor (1, 1, 1, al)
---                    txname = "Textures\\Minimap\\"..txname
                     f.texture:SetTexture (txname)
-
---                    Nx.prtD("%s %s, %s", x, y, txname)
---[[
---                    Nx.prtCtrl ("%s %s, %s", x, y, txname)
-
-                    local r, r2, r3 = f.texture:SetTexture (txname)        --V4 always returns r=1?
-                    Nx.prtVar ("mmtex", r)
-                    Nx.prtVar ("mmtex2", r2)
-                    Nx.prtVar ("mmtex3", r3)
-                    if not r then
-                        Nx.prtCtrl ("%s %s, %s", x, y, txname)
-                    end
---]]
                 end
 
             elseif view3D then
@@ -11018,8 +11032,6 @@ end
 -- icons get projected centres. No terrain height yet.
 -------------------------------------------------------------------------------
 
-local V3D_UL, V3D_LL, V3D_UR, V3D_LR = 1, 2, 3, 4
-local m_sin, m_cos, m_rad = math.sin, math.cos, math.rad
 
 function Nx.Map:Menu_OnView3D (item)
     self:SetView3D (item:GetChecked())
@@ -11102,13 +11114,17 @@ function Nx.Map:Finish3D()
             local name = tx:GetTexture()
             local r, g, b, a = tx:GetVertexColor()
             local changed = name ~= frm.Nx3DTexName
-            frm.Nx3DTexName = name
-            for _, st in ipairs (subs) do
-                if st:IsShown() then
-                    if changed then
-                        st:SetTexture (name)
+            local alphaChanged = a ~= frm.Nx3DTexA
+            if changed or alphaChanged then
+                frm.Nx3DTexName = name
+                frm.Nx3DTexA = a
+                for _, st in ipairs (subs) do
+                    if st:IsShown() then
+                        if changed then
+                            st:SetTexture (name)
+                        end
+                        st:SetVertexColor (r, g, b, a)
                     end
-                    st:SetVertexColor (r, g, b, a)
                 end
             end
         end
@@ -11213,16 +11229,22 @@ end
 -- under the camera; if any sample's silhouette projects above the pin the
 -- pin is behind a ridge. Results are cached per map position for a few
 -- frames because pins are restamped every update.
-local occCache, occCacheTick = {}, -1
+local occCache, occCacheSig = {}, nil
 
 function Nx.Map:Occluded3D (bx, by, px, py)
     if not self.Mini3D then
         return false
     end
-    local tick = Nx.Tick or 0
-    if tick - occCacheTick > 5 or tick < occCacheTick then
+    -- Coarse key: the view can move a fraction of a tile and zoom a little
+    -- before the ridge test is redone, so walking does not rebuild it
+    -- every frame.
+    local P = P3D()
+    local sig = floor (self.MapPosXDraw / 8) .. "|" .. floor (self.MapPosYDraw / 8) .. "|"
+        .. floor (self.ScaleDraw * 20) .. "|" .. tostring (P.View3DTilt) .. "|"
+        .. tostring (P.View3DDist) .. "|" .. tostring (P.View3DHeight)
+    if occCacheSig ~= sig then
         wipe (occCache)
-        occCacheTick = tick
+        occCacheSig = sig
     end
     local key = floor (bx * 4) * 1000003 + floor (by * 4)
     local cached = occCache[key]
@@ -11240,12 +11262,12 @@ function Nx.Map:Occluded3D (bx, by, px, py)
 
     local dx, dy = cx - bx, cy - by
     local len = (dx * dx + dy * dy) ^ .5
-    local stepMap = 10 / scale
+    local stepMap = 14 / scale
     local hit = false
     if len > stepMap * 1.5 then
         local nx, ny = dx / len, dy / len
         local steps = floor (len / stepMap)
-        if steps > 80 then steps = 80 end
+        if steps > 48 then steps = 48 end
         for i = 2, steps do
             local mx = bx + nx * stepMap * i
             local my = by + ny * stepMap * i
@@ -11303,6 +11325,20 @@ function Nx.Map:ClipFrameTL3D (frm, bx, by, w, h, texMaxX, texMaxY)
     if not tx or not tx.SetVertexOffset then
         return nil
     end
+
+    local sig = self.View3DSig
+    if sig and frm.Nx3DSig == sig and frm.Nx3DBX == bx and frm.Nx3DBY == by
+            and frm.Nx3DW == w and frm.Nx3DSea == (frm.NxSea or false)
+            and frm.Nx3DHRef == frm.Nx3DH then
+        if frm.Nx3DShown then
+            frm:Show()
+            return true
+        end
+        return false
+    end
+    frm.Nx3DSig, frm.Nx3DBX, frm.Nx3DBY, frm.Nx3DW = sig, bx, by, w
+    frm.Nx3DSea, frm.Nx3DHRef = frm.NxSea or false, frm.Nx3DH
+    frm.Nx3DShown = false
 
     local scale = self.ScaleDraw
     local x = (bx - self.MapPosXDraw) * scale + self.MapW * .5
@@ -11392,6 +11428,7 @@ function Nx.Map:ClipFrameTL3D (frm, bx, by, w, h, texMaxX, texMaxY)
         tx:SetVertexOffset (V3D_UR, x2 - maxX, minY - y2)
         tx:SetVertexOffset (V3D_LL, x3 - minX, maxY - y3)
         tx:SetVertexOffset (V3D_LR, x4 - maxX, maxY - y4)
+        frm.Nx3DShown = true
         frm:Show()
         return true
     end
@@ -11417,6 +11454,7 @@ function Nx.Map:ClipFrameTL3D (frm, bx, by, w, h, texMaxX, texMaxY)
                 st:SetTexelSnappingBias (0)
                 subs[n] = st
                 frm.Nx3DTexName = nil
+                frm.Nx3DTexA = nil
             end
 
             local sx, sy = x + ix * sw, y + iy * sh
@@ -11445,11 +11483,13 @@ function Nx.Map:ClipFrameTL3D (frm, bx, by, w, h, texMaxX, texMaxY)
             local sminY = min (ay, by2, cy, dy)
             local smaxY = max (ay, by2, cy, dy)
 
-            st:ClearAllPoints()
             st:SetPoint ("TOPLEFT", frm, "TOPLEFT", sminX - minX, minY - sminY)
             st:SetSize (max (smaxX - sminX, .3), max (smaxY - sminY, .3))
-            st:SetTexCoord (ix / sub * texMaxX, (ix + 1) / sub * texMaxX,
-                iy / sub * texMaxY, (iy + 1) / sub * texMaxY)
+            if st.NxSubKey ~= sub then
+                st.NxSubKey = sub
+                st:SetTexCoord (ix / sub * texMaxX, (ix + 1) / sub * texMaxX,
+                    iy / sub * texMaxY, (iy + 1) / sub * texMaxY)
+            end
             st:SetVertexOffset (V3D_UL, ax - sminX, sminY - ay)
             st:SetVertexOffset (V3D_UR, bx2 - smaxX, sminY - by2)
             st:SetVertexOffset (V3D_LL, cx - sminX, smaxY - cy)
@@ -11462,6 +11502,7 @@ function Nx.Map:ClipFrameTL3D (frm, bx, by, w, h, texMaxX, texMaxY)
         subs[i]:Hide()
     end
 
+    frm.Nx3DShown = true
     frm:Show()
     return true
 end
@@ -13501,7 +13542,9 @@ end
 function Nx.Map:UpdateAreaLabels()
     local used = 0
     local labels = Nx.Map.AreaLabels
-    local show = labels and Nx.db.profile.Map.ShowAreaNames
+    -- Area names belong to the 3D view; the flat map shows them only on request.
+    local P = Nx.db.profile.Map
+    local show = labels and P.ShowAreaNames and (self.View3DActive or P.ShowAreaNames2D)
         and not self:IsInstanceMap (Nx.Map.RMapId)
         and not self:IsBattleGroundMap (Nx.Map.RMapId)
 

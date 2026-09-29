@@ -425,10 +425,22 @@ local function mapConfig()
                             type = "toggle",
                             width = "full",
                             name = L["Show Area Names"],
-                            desc = L["Draw subzone names (Goldshire, Stormwind Harbor...) once the area is large enough on screen."],
+                            desc = L["Draw subzone names (Goldshire, Stormwind Harbor...) in the 3D view once the area is large enough on screen."],
                             get = function() return Nx.db.profile.Map.ShowAreaNames end,
                             set = function(_, v)
                                 Nx.db.profile.Map.ShowAreaNames = v == true
+                            end,
+                        },
+                        ShowAreaNames2D = {
+                            order = 10,
+                            type = "toggle",
+                            width = "full",
+                            name = L["Show Area Names in 2D too"],
+                            desc = L["Also draw subzone names on the flat map, not only in the 3D view."],
+                            disabled = function() return not Nx.db.profile.Map.ShowAreaNames end,
+                            get = function() return Nx.db.profile.Map.ShowAreaNames2D end,
+                            set = function(_, v)
+                                Nx.db.profile.Map.ShowAreaNames2D = v == true
                             end,
                         },
                     },

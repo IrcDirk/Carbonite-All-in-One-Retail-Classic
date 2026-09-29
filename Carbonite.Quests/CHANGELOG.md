@@ -1,5 +1,69 @@
 # Carbonite Quests Project Changelog
 
+## 2026-09-29 — Experimental 3D map view, area names, client-derived minimap tiles
+
+- Added an opt-in tilted "3D" map view (toolbar `3D` button, Map Options →
+  3D View tab): minimap blocks are projected in perspective through
+  `SetVertexOffset`, each block split into sub-quads to avoid affine texture
+  swimming, with terrain relief from heights baked out of the client ADT files
+  (`Data/<flavor>/MapData/MapHeights.lua`, 9x9 corner grid per tile).
+- Heights are relative to the ground under the view centre, so the player
+  stays centred; sea floor is flattened to the water plane and missing tiles
+  draw as flat water so coasts and islands no longer sink.
+- Icons, chop-clipped POI/quest pins, goto breadcrumb arrows and LINE pins are
+  projected too; pins and labels hidden behind a ridge from the camera can be
+  suppressed (`3D Hide Pins Behind Terrain`). Mouse hit-testing and wheel zoom
+  use the inverse projection.
+- The 3D view switches itself off below the world zoom (`3D Terrain Zoom
+  Limit`) and caps zoom-in (`3D Max Zoom`); tile geometry and occlusion are
+  cached while the view is unchanged to keep FPS stable.
+- Added subzone name labels (Goldshire, Stormwind Harbor…) generated from
+  `WorldMapOverlay.db2` with localized names from `C_Map.GetAreaInfo`; shown
+  in the 3D view, optional on the flat map (`Show Area Names in 2D too`).
+  Modern zones with zero HitRects use the texture placement on the art canvas
+  and label every AreaID of a patch.
+- Minimap block tables are now generated from the client WDT MAID chunks
+  (`Data/<flavor>/MapData/MinimapTiles.lua`) for Classic, TBC, Mists, Retail
+  and Forever, replacing hand-maintained tables that leaked retail-only tiles
+  (Quel'Danas, Vashj'ir) into classic flavors; the legacy camelot tables were
+  removed.
+- Tooling in `~/gamedev/maps/heights` (`resolve_maps.py`, `flavor_extract.sh`,
+  `flavor_generate.py`, `build_minimap_tiles.py`, `bake_heights.py`) and
+  `~/gamedev/maps/labels/build_area_labels.py`.
+
+### Validation
+
+- Verified in game on Forever beta (3D view, relief, labels, occlusion); other
+  flavors received the generated data but are not yet checked in game.
+
+## 2026-09-28 — Blizzard-style Quest Watch, Forever watch sync, small map fixes
+
+- Quest Watch got a Blizzard-tracker style layout behind the
+  `QuestWatch.ModernLook` option: two-row header ("Quest Watch" title, quest
+  counter, Blizzard minimize widget; menu/priority buttons and the four
+  toggles on the second row), gold header lines, turn-in "?" and in-progress
+  "…" circle icons for quest rows, `+N more` instead of `...`, a dash for
+  completed objectives (also in the legacy look). The new look only activates
+  when the client has the required atlases (Forever, Retail); Classic Era and
+  TBC Anniversary keep the legacy window.
+- Fixed Forever quest watch losing every watch but one: `SyncBlizzardWatch`
+  chose the API by `Nx.isRetail` (false on camelot), so nothing was mirrored
+  and a full `QUEST_WATCH_LIST_CHANGED` resync flipped Carbonite-only watches
+  to unwatched. The API is now chosen by availability and the full resync
+  only drops watches Carbonite itself mirrored (`Watch.BlizzMirrored`).
+- Resizable quest watch restored with a tiny saved height rendered zero rows;
+  it now enforces a minimum height and a width that fits the title.
+- Added `/cb qwtest [icons|state]` and `/cb map3d` diagnostics.
+- Guarded the map world-overlay alpha against equal fade in/out values
+  (the 12.0 engine raises "Division by zero") and the quest capture format
+  against a nil `GetBestMapForUnit`.
+- Window and map fade sliders share one label pair, translated by meaning
+  ("Прозрачность в фокусе / вне фокуса").
+
+### Validation
+
+- Verified on Forever beta and TBC Anniversary (legacy fallback).
+
 ## 2026-09-01 — Classic quest-watch minimized-layout repair
 
 - Completed missing `MinW` and `MinH` values when the shared quest-watch

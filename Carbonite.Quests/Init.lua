@@ -390,6 +390,26 @@ function CarboniteQuest:OnInitialize()
     tinsert(Nx.BrokerMenuTemplate,{ text = L["Toggle Quest Watch"], func = function() Nx.Quest.Watch.Win:Show(not Nx.Quest.Watch.Win:IsShown()) end })
     tinsert(Nx.Whatsnew.Categories, "Quests")
     Nx.Whatsnew.Quests = {
+        [1790546400] = {
+            "Sept 28th 2026", "",
+            "Quest Watch got a Blizzard-tracker style look:",
+            "   two-row header with the quest counter and the",
+            "   Blizzard minimize widget, gold header lines,",
+            "   \"?\" circles for completed quests and \"...\"",
+            "   circles for quests in progress, a dash for",
+            "   completed objectives and \"+N more\" instead of",
+            "   \"...\" when the list is capped.",
+            "",
+            "The new look is on by default (Quest Watch options)",
+            "   and used only where the client has the Blizzard",
+            "   textures; Classic Era and TBC keep the classic look.",
+            "",
+            "Fixed watched quests disappearing from the Carbonite",
+            "   list on WoW Forever (Blizzard watch sync).",
+            "",
+            "Fixed the resizable quest watch restoring with no",
+            "   visible rows after a tiny saved height.",
+        },
         [1504562405] = {"Sept 4th 2017","","New feature for world quests.","Carbonite Quests now has it's own WorldQuest Tracker","","You can find it as World Quest List under the menu in the top left of quest watch.","(Play button icon)"}
     }
 

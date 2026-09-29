@@ -38,6 +38,8 @@ L["Show Cities"] = true
 L["Show Towns"] = true
 L["Show Extras"] = true
 L["Show Area Names"] = true
+L["Show Area Names in 2D too"] = true
+L["Also draw subzone names on the flat map, not only in the 3D view."] = true
 L["Tilted perspective map built from minimap tiles and baked terrain heights. Also toggled by the 3D toolbar button."] = true
 L["Camera tilt in degrees; 0 looks straight down."] = true
 L["Camera distance in map heights; larger is flatter perspective."] = true
@@ -46,7 +48,7 @@ L["Sub-quads per minimap tile edge; higher follows the terrain better and costs 
 L["Below this draw scale (world zoom) the map falls back to flat 2D."] = true
 L["Zoom-in cap while the 3D view is on."] = true
 L["Hide icons and labels whose position is behind a ridge from the camera."] = true
-L["Draw subzone names (Goldshire, Stormwind Harbor...) once the area is large enough on screen."] = true
+L["Draw subzone names (Goldshire, Stormwind Harbor...) in the 3D view once the area is large enough on screen."] = true
 L["Show Kill Icons"] = true
 L["3D View (experimental)"] = true
 L["3D Tilt"] = true

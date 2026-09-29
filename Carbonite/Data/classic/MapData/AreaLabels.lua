@@ -7,11 +7,12 @@ if not Nx or not Nx.Map then return end
 
 Nx.Map.AreaLabels = {
     [1411] = { -- Durotar
-        { 370, 52.4, 24.7, 10.0, 13.5 }, -- Drygulch Ravine
+        { 370, 52.4, 22.5, 10.0, 13.5 }, -- Drygulch Ravine
         { 368, 65.4, 84.6, 11.0, 28.4 }, -- Echo Isles
         { 366, 48.9, 79.3, 6.0, 9.0 }, -- Kolkar Crag
         { 362, 54.6, 42.7, 9.5, 12.0 }, -- Razor Hill
         { 816, 41.2, 43.4, 12.5, 18.0 }, -- Razormane Grounds
+        { 410, 52.4, 26.9, 10.0, 13.5 }, -- Razorwind Canyon
         { 367, 56.1, 73.0, 7.5, 11.2 }, -- Sen'jin Village
         { 817, 53.6, 12.0, 7.5, 7.5 }, -- Skull Rock
         { 369, 40.7, 24.3, 10.5, 17.2 }, -- Thunder Ridge
@@ -19,21 +20,20 @@ Nx.Map.AreaLabels = {
         { 363, 44.4, 67.0, 10.0, 15.7 }, -- Valley of Trials
     },
     [1412] = { -- Mulgore
-        { 404, 32.6, 50.7, 9.3, 9.0 }, -- Bael'dun Digsite
-        { 222, 47.0, 62.4, 7.3, 8.5 }, -- Bloodhoof Village
-        { 358, 61.4, 80.8, 13.8, 13.3 }, -- Brambleblade Ravine
-        { 818, 34.1, 68.5, 6.2, 10.0 }, -- Palemane Rock
-        { 224, 52.0, 52.6, 4.9, 6.1 }, -- Ravaged Caravan
-        { 220, 46.7, 82.9, 16.3, 13.0 }, -- Red Cloud Mesa
-        { 225, 57.8, 31.6, 8.6, 12.9 }, -- Red Rocks
-        { 17045, 36.9, 16.8, 30.2, 33.7 }, -- Skywatcher Plateau
-        { 820, 49.5, 39.8, 7.7, 18.9 }, -- The Golden Plains
-        { 821, 60.4, 68.1, 11.3, 9.9 }, -- The Rolling Plains
-        { 360, 59.2, 52.1, 6.9, 9.9 }, -- The Venture Co. Mine
-        { 397, 44.4, 50.0, 5.6, 6.6 }, -- Thunderhorn Water Well
-        { 398, 42.6, 24.3, 5.5, 7.3 }, -- Wildmane Water Well
-        { 819, 50.6, 20.5, 10.7, 10.8 }, -- Windfury Ridge
-        { 396, 51.9, 68.9, 3.8, 6.9 }, -- Winterhoof Water Well
+        { 404, 33.7, 46.4, 9.5, 15.0 }, -- Bael'dun Digsite
+        { 222, 47.4, 59.1, 12.0, 15.0 }, -- Bloodhoof Village
+        { 221, 44.9, 86.3, 22.0, 21.7 }, -- Camp Narache
+        { 818, 36.4, 62.1, 7.0, 18.0 }, -- Palemane Rock
+        { 224, 54.4, 47.2, 8.0, 9.0 }, -- Ravaged Caravan
+        { 220, 44.9, 79.1, 22.0, 21.7 }, -- Red Cloud Mesa
+        { 225, 61.1, 20.2, 11.5, 18.0 }, -- Red Rocks
+        { 820, 52.9, 29.9, 9.0, 24.0 }, -- The Golden Plains
+        { 821, 62.9, 67.7, 11.0, 12.7 }, -- The Rolling Plains
+        { 360, 61.6, 50.1, 6.5, 16.5 }, -- The Venture Co. Mine
+        { 397, 44.7, 45.7, 6.5, 10.5 }, -- Thunderhorn Water Well
+        { 398, 39.4, 12.4, 13.0, 9.7 }, -- Wildmane Water Well
+        { 819, 50.1, 12.0, 10.5, 10.5 }, -- Windfury Ridge
+        { 396, 54.1, 65.9, 7.5, 9.0 }, -- Winterhoof Water Well
     },
     [1413] = { -- The Barrens
         { 1700, 43.2, 48.3, 8.5, 14.2 }, -- Agama'gor
@@ -89,9 +89,10 @@ Nx.Map.AreaLabels = {
         { 336, 52.6, 52.8, 8.5, 9.7 }, -- Circle of Outer Binding
         { 334, 22.2, 25.4, 10.5, 18.0 }, -- Circle of West Binding
         { 315, 55.1, 39.7, 9.5, 10.5 }, -- Dabyrie's Farmstead
+        { 318, 75.1, 39.4, 12.5, 16.5 }, -- Drywhisker Gorge
         { 327, 30.9, 79.7, 19.0, 17.2 }, -- Faldir's Cove
         { 314, 61.4, 56.5, 8.0, 11.2 }, -- Go'Shek Farm
-        { 321, 75.1, 36.7, 12.5, 16.5 }, -- Hammerfall
+        { 321, 75.1, 33.9, 12.5, 16.5 }, -- Hammerfall
         { 313, 31.7, 31.4, 8.5, 18.0 }, -- Northfold Manor
         { 320, 45.9, 47.2, 8.0, 16.5 }, -- Refuge Pointe
         { 324, 22.7, 62.1, 17.5, 22.5 }, -- Stromgarde Keep
@@ -104,15 +105,17 @@ Nx.Map.AreaLabels = {
         { 338, 42.9, 33.3, 14.0, 15.7 }, -- Angor Fortress
         { 337, 15.7, 61.8, 11.5, 15.7 }, -- Apocryphan's Rest
         { 342, 61.4, 72.6, 14.0, 25.4 }, -- Camp Boff
-        { 344, 13.2, 81.6, 18.5, 21.0 }, -- Camp Cagg
+        { 344, 13.2, 78.1, 18.5, 21.0 }, -- Camp Cagg
         { 341, 66.1, 22.5, 12.5, 15.0 }, -- Camp Kosh
+        { 347, 13.2, 85.1, 18.5, 21.0 }, -- Dustbelch Grotto
         { 1898, 62.6, 46.0, 12.5, 18.7 }, -- Dustwind Gulch
         { 346, 56.6, 36.3, 13.5, 15.7 }, -- Hammertoe's Digsite
         { 340, 8.7, 47.5, 15.5, 15.7 }, -- Kargath
         { 339, 78.3, 50.9, 20.0, 34.4 }, -- Lethlor Ravine
         { 1879, 30.7, 75.2, 18.5, 24.7 }, -- Mirage Flats
         { 1878, 30.4, 51.6, 17.0, 21.0 }, -- The Dustbowl
-        { 1897, 49.2, 16.5, 18.5, 18.0 }, -- The Maker's Terrace
+        { 1897, 49.2, 13.5, 18.5, 18.0 }, -- The Maker's Terrace
+        { 1517, 49.2, 19.5, 18.5, 18.0 }, -- Uldaman
         { 1877, 46.4, 56.9, 13.0, 18.0 }, -- Valley of Fangs
     },
     [1419] = { -- Blasted Lands
@@ -136,32 +139,33 @@ Nx.Map.AreaLabels = {
         { 154, 34.4, 63.9, 13.2, 18.3 }, -- Deathknell
         { 164, 57.8, 38.2, 9.6, 21.9 }, -- Garren's Haunt
         { 811, 47.3, 66.3, 14.6, 14.1 }, -- Nightmare Vale
-        { 153, 62.2, 73.2, 31.9, 38.3 }, -- Ruins of Lordaeron
         { 459, 77.8, 32.9, 8.0, 31.6 }, -- Scarlet Watch Post
         { 156, 36.0, 49.5, 15.3, 12.1 }, -- Solliden Farmstead
         { 810, 48.0, 51.3, 10.3, 10.6 }, -- Stillwater Pond
-        { 161, 87.2, 31.5, 25.5, 38.3 }, -- Terrace of Repose
+        { 161, 84.8, 36.6, 16.7, 22.6 }, -- Terrace of Repose
         { 152, 83.6, 69.6, 13.5, 25.4 }, -- The Bulwark
         { 812, 87.2, 48.5, 19.3, 25.1 }, -- Venomweb Vale
-        { 16616, 17.1, 61.4, 33.4, 63.5 }, -- Whispering Forest
-        { 160, 87.2, 44.3, 25.5, 38.3 }, -- Whispering Gardens
+        { 160, 84.8, 29.1, 16.7, 22.6 }, -- Whispering Gardens
     },
     [1421] = { -- Silverpine Forest
         { 233, 63.4, 62.9, 11.0, 15.0 }, -- Ambermill
         { 231, 58.9, 72.2, 8.0, 9.7 }, -- Beren's Peril
         { 213, 56.1, 48.3, 6.5, 11.2 }, -- Deep Elem Mine
-        { 172, 71.9, 28.8, 19.0, 20.2 }, -- Fenris Isle
-        { 238, 56.6, 10.5, 6.5, 6.0 }, -- Malden's Orchard
+        { 172, 71.9, 25.4, 19.0, 20.2 }, -- Fenris Isle
+        { 238, 56.6, 9.5, 6.5, 6.0 }, -- Malden's Orchard
         { 928, 40.4, 28.4, 8.0, 9.0 }, -- North Tide's Hollow
         { 229, 46.9, 53.9, 8.0, 9.0 }, -- Olsen's Farthing
         { 204, 44.9, 73.7, 8.0, 8.2 }, -- Pyrewood Village
         { 236, 44.2, 66.2, 10.5, 9.7 }, -- Shadowfang Keep
+        { 232, 71.9, 32.2, 19.0, 20.2 }, -- The Dawning Isles
         { 240, 46.4, 21.7, 7.0, 9.0 }, -- The Dead Field
         { 237, 55.4, 36.3, 9.0, 11.2 }, -- The Decrepit Ferry
         { 230, 46.4, 86.1, 9.0, 13.5 }, -- The Greymane Wall
+        { 239, 56.6, 11.5, 6.5, 6.0 }, -- The Ivar Patch
         { 228, 44.7, 40.8, 8.5, 9.7 }, -- The Sepulcher
-        { 927, 54.1, 22.8, 6.5, 11.2 }, -- The Shining Strand
+        { 927, 54.1, 21.0, 6.5, 11.2 }, -- The Shining Strand
         { 226, 37.4, 15.7, 10.0, 10.5 }, -- The Skittering Dark
+        { 227, 54.1, 24.7, 6.5, 11.2 }, -- Valgan's Field
     },
     [1422] = { -- Western Plaguelands
         { 2298, 68.9, 75.2, 10.0, 14.2 }, -- Caer Darrow
@@ -186,7 +190,6 @@ Nx.Map.AreaLabels = {
         { 2271, 67.9, 49.8, 7.0, 12.7 }, -- Eastwall Tower
         { 2621, 62.6, 80.1, 12.5, 13.5 }, -- Lake Mereldar
         { 2268, 82.1, 58.4, 7.5, 12.0 }, -- Light's Hope Chapel
-        { 16335, 83.8, 65.1, 32.3, 69.8 }, -- New Avalon
         { 2272, 70.6, 31.8, 8.5, 12.7 }, -- Northdale
         { 2275, 57.9, 28.4, 13.0, 13.5 }, -- Northpass Tower
         { 2622, 74.1, 62.5, 9.5, 18.7 }, -- Pestilent Scar
@@ -235,22 +238,24 @@ Nx.Map.AreaLabels = {
     },
     [1426] = { -- Dun Morogh
         { 803, 63.4, 50.5, 6.0, 6.7 }, -- Amberstill Ranch
-        { 77, 28.2, 85.9, 25.5, 38.3 }, -- Anvilmar
+        { 77, 26.4, 78.1, 15.0, 17.2 }, -- Anvilmar
         { 137, 30.4, 46.0, 5.0, 9.7 }, -- Brewnall Village
         { 801, 35.9, 53.1, 8.0, 10.5 }, -- Chill Breeze Valley
         { 800, 34.9, 68.1, 6.0, 10.5 }, -- Coldridge Pass
-        { 132, 28.2, 73.1, 25.5, 38.3 }, -- Coldridge Valley
+        { 132, 26.4, 72.4, 15.0, 17.2 }, -- Coldridge Valley
         { 135, 28.2, 51.6, 4.5, 9.0 }, -- Frostmane Hold
-        { 809, 55.6, 43.6, 31.9, 38.3 }, -- Gates of Ironforge
+        { 809, 49.4, 37.4, 11.0, 13.5 }, -- Gates of Ironforge
         { 133, 24.2, 38.2, 7.5, 12.0 }, -- Gnomeregan
         { 134, 68.6, 57.6, 9.5, 13.5 }, -- Gol'Bolar Quarry
-        { 212, 76.8, 54.3, 8.0, 14.2 }, -- Helm's Bed Lake
+        { 212, 76.8, 51.9, 8.0, 14.2 }, -- Helm's Bed Lake
         { 211, 34.9, 38.5, 7.0, 18.7 }, -- Iceflow Lake
-        { 131, 51.3, 63.2, 25.5, 38.3 }, -- Kharanos
+        { 716, 76.8, 56.6, 8.0, 14.2 }, -- Ironband's Compound
+        { 131, 48.5, 54.0, 20.0, 29.9 }, -- Kharanos
         { 138, 57.4, 42.7, 6.0, 12.0 }, -- Misty Pine Refuge
         { 808, 82.8, 37.8, 6.0, 14.2 }, -- North Gate Outpost
         { 802, 40.9, 40.0, 6.0, 14.2 }, -- Shimmer Ridge
         { 806, 85.3, 50.9, 6.0, 10.5 }, -- South Gate Outpost
+        { 189, 48.5, 64.0, 20.0, 29.9 }, -- Steelgrill's Depot
         { 136, 40.9, 58.0, 6.0, 11.2 }, -- The Grizzled Den
         { 804, 59.9, 57.3, 9.0, 8.2 }, -- The Tundrid Hills
     },
@@ -279,29 +284,34 @@ Nx.Map.AreaLabels = {
         { 62, 67.4, 79.3, 12.0, 10.5 }, -- Brackwell Pumpkin Patch
         { 18, 52.6, 64.0, 15.5, 14.2 }, -- Crystal Lake
         { 88, 83.6, 66.2, 12.5, 12.7 }, -- Eastvale Logging Camp
-        { 57, 38.4, 84.2, 17.0, 15.7 }, -- Fargodeep Mine
-        { 60, 25.0, 81.6, 10.0, 29.9 }, -- Forest's Edge
+        { 57, 38.4, 80.3, 17.0, 15.7 }, -- Fargodeep Mine
+        { 60, 25.0, 76.6, 10.0, 29.9 }, -- Forest's Edge
         { 87, 41.2, 64.7, 8.5, 9.7 }, -- Goldshire
+        { 54, 67.6, 68.9, 13.5, 13.5 }, -- Jasperlode Mine
         { 797, 53.6, 83.1, 15.5, 18.0 }, -- Jerod's Landing
         { 9, 51.1, 42.3, 17.5, 27.7 }, -- Northshire Valley
         { 798, 85.1, 80.5, 12.5, 9.7 }, -- Ridgepoint Tower
         { 86, 75.1, 49.8, 15.5, 24.7 }, -- Stone Cairn Lake
-        { 80, 24.2, 41.4, 25.4, 35.2 }, -- Stormwind Mountains
-        { 91, 67.6, 66.6, 13.5, 13.5 }, -- Tower of Azora
-        { 1617, 24.2, 29.7, 25.4, 35.2 }, -- Valley of Heroes
+        { 64, 38.4, 88.1, 17.0, 15.7 }, -- The Maclure Vineyards
+        { 63, 38.4, 84.2, 17.0, 15.7 }, -- The Stonefield Farm
+        { 91, 67.6, 64.4, 13.5, 13.5 }, -- Tower of Azora
+        { 120, 25.0, 86.6, 10.0, 29.9 }, -- Westbrook Garrison
     },
     [1430] = { -- Deadwind Pass
-        { 2697, 45.2, 35.9, 27.4, 34.4 }, -- Deadman's Crossing
+        { 2697, 45.2, 30.2, 27.4, 34.4 }, -- Deadman's Crossing
         { 2562, 42.7, 68.9, 18.5, 24.0 }, -- Karazhan
+        { 2938, 45.2, 41.7, 27.4, 34.4 }, -- Sleeping Gorge
         { 2561, 58.6, 64.7, 15.5, 32.2 }, -- The Vice
     },
     [1431] = { -- Duskwood
         { 536, 21.7, 69.2, 11.5, 14.2 }, -- Addle's Stead
+        { 576, 77.1, 47.4, 12.5, 15.0 }, -- Beggar's Haunt
         { 242, 62.6, 40.8, 11.5, 32.2 }, -- Brightwood Grove
-        { 42, 77.1, 44.9, 12.5, 15.0 }, -- Darkshire
+        { 42, 77.1, 42.4, 12.5, 15.0 }, -- Darkshire
+        { 243, 20.2, 45.4, 11.5, 21.0 }, -- Forlorn Rowe
         { 1098, 74.4, 33.7, 10.0, 9.0 }, -- Manor Mistmantle
         { 94, 20.7, 56.1, 10.5, 10.5 }, -- Raven Hill
-        { 492, 20.2, 41.9, 11.5, 21.0 }, -- Raven Hill Cemetery
+        { 492, 20.2, 38.4, 11.5, 21.0 }, -- Raven Hill Cemetery
         { 799, 54.6, 21.3, 84.3, 17.2 }, -- The Darkened Bank
         { 1097, 10.0, 44.5, 8.9, 31.7 }, -- The Hushed Bank
         { 241, 64.1, 73.0, 12.5, 17.2 }, -- The Rotting Orchard
@@ -311,10 +321,11 @@ Nx.Map.AreaLabels = {
         { 93, 36.2, 73.4, 15.5, 16.5 }, -- Vul'Gol Ogre Mound
     },
     [1432] = { -- Loch Modan
+        { 925, 22.5, 18.2, 13.0, 17.2 }, -- Algaz Station
         { 936, 45.2, 68.9, 11.5, 19.5 }, -- Grizzlepaw Ridge
         { 142, 69.4, 65.5, 14.0, 17.2 }, -- Ironband's Excavation Site
         { 143, 70.9, 25.1, 18.0, 18.7 }, -- Mo'grosh Stronghold
-        { 838, 22.5, 15.3, 13.0, 17.2 }, -- North Gate Pass
+        { 838, 22.5, 12.5, 13.0, 17.2 }, -- North Gate Pass
         { 149, 34.4, 21.7, 11.0, 16.5 }, -- Silver Stream Mine
         { 923, 34.9, 77.8, 15.0, 26.9 }, -- Stonesplinter Valley
         { 146, 47.9, 12.7, 20.0, 12.0 }, -- Stonewrought Dam
@@ -324,31 +335,32 @@ Nx.Map.AreaLabels = {
         { 924, 20.5, 73.7, 11.0, 27.7 }, -- Valley of Kings
     },
     [1433] = { -- Redridge Mountains
-        { 97, 47.9, 42.7, 13.9, 15.6 }, -- Alther's Mill
-        { 1000, 71.1, 38.4, 17.2, 21.7 }, -- Galardell Valley
-        { 68, 42.0, 59.8, 23.8, 18.4 }, -- Lake Everstill
-        { 1001, 37.3, 76.9, 30.8, 16.5 }, -- Lakeridge Highway
-        { 69, 21.4, 45.3, 24.0, 11.8 }, -- Lakeshire
-        { 95, 23.4, 25.6, 23.4, 18.1 }, -- Redridge Canyons
-        { 996, 34.1, 12.4, 13.3, 13.5 }, -- Render's Camp
-        { 998, 34.1, 16.9, 13.3, 13.5 }, -- Render's Rock
-        { 997, 70.4, 79.1, 22.3, 15.7 }, -- Render's Valley
-        { 98, 23.4, 31.7, 23.4, 18.1 }, -- Rethban Caverns
-        { 70, 62.3, 54.8, 10.6, 12.6 }, -- Stonewatch
-        { 71, 73.2, 67.2, 16.2, 12.6 }, -- Stonewatch Falls
-        { 999, 62.3, 59.0, 10.6, 12.6 }, -- Stonewatch Tower
-        { 1002, 11.9, 73.3, 13.3, 19.6 }, -- Three Corners
-        { 96, 71.1, 45.6, 17.2, 21.7 }, -- Tower of Ilgalar
+        { 97, 53.4, 42.3, 12.0, 18.7 }, -- Alther's Mill
+        { 1000, 78.1, 38.2, 16.5, 26.9 }, -- Galardell Valley
+        { 68, 41.9, 59.1, 34.9, 21.0 }, -- Lake Everstill
+        { 1001, 38.2, 73.4, 32.4, 13.5 }, -- Lakeridge Highway
+        { 69, 25.4, 43.4, 18.0, 12.0 }, -- Lakeshire
+        { 95, 28.7, 25.0, 22.5, 18.7 }, -- Redridge Canyons
+        { 996, 40.2, 12.5, 19.5, 26.2 }, -- Render's Camp
+        { 998, 40.2, 21.2, 19.5, 26.2 }, -- Render's Rock
+        { 997, 73.1, 77.8, 39.4, 15.0 }, -- Render's Valley
+        { 98, 28.7, 31.2, 22.5, 18.7 }, -- Rethban Caverns
+        { 70, 66.1, 51.6, 13.5, 20.2 }, -- Stonewatch
+        { 71, 74.6, 67.0, 18.5, 12.7 }, -- Stonewatch Falls
+        { 999, 66.1, 58.4, 13.5, 20.2 }, -- Stonewatch Tower
+        { 1002, 18.5, 69.2, 18.0, 26.2 }, -- Three Corners
+        { 96, 78.1, 47.2, 16.5, 26.9 }, -- Tower of Ilgalar
     },
     [1434] = { -- Stranglethorn Vale
         { 123, 29.4, 19.8, 5.0, 5.2 }, -- Bal'lal Ruins
         { 127, 41.7, 31.1, 5.5, 6.7 }, -- Balia'mah Ruins
         { 1739, 26.9, 53.5, 10.0, 9.7 }, -- Bloodsail Compound
-        { 35, 26.2, 74.1, 8.5, 10.5 }, -- Booty Bay
+        { 35, 26.2, 72.4, 8.5, 10.5 }, -- Booty Bay
         { 310, 40.9, 50.5, 6.0, 8.2 }, -- Crystalvein Mine
         { 117, 31.7, 27.3, 6.5, 6.7 }, -- Grom'gol Base Camp
         { 1741, 29.4, 44.2, 9.0, 12.0 }, -- Gurubashi Arena
         { 297, 38.9, 82.3, 8.0, 12.0 }, -- Jaguero Isle
+        { 312, 26.2, 75.8, 8.5, 10.5 }, -- Janeiro's Point
         { 125, 34.4, 21.0, 5.0, 6.0 }, -- Kal'ai Ruins
         { 101, 45.4, 9.4, 8.0, 8.2 }, -- Kurzen's Compound
         { 37, 40.4, 18.7, 6.0, 7.5 }, -- Lake Nazferiti
@@ -372,7 +384,8 @@ Nx.Map.AreaLabels = {
     [1435] = { -- Swamp of Sorrows
         { 76, 65.1, 22.5, 22.5, 26.9 }, -- Fallow Sanctuary
         { 1777, 15.0, 62.9, 10.0, 21.0 }, -- Itharius's Cave
-        { 300, 88.3, 52.8, 14.0, 83.1 }, -- Misty Reed Strand
+        { 1978, 88.3, 66.6, 14.0, 83.1 }, -- Misty Reed Post
+        { 300, 88.3, 38.9, 14.0, 83.1 }, -- Misty Reed Strand
         { 116, 13.2, 35.9, 16.5, 15.0 }, -- Misty Valley
         { 74, 71.1, 52.8, 18.5, 26.2 }, -- Pool of Tears
         { 1778, 83.8, 46.4, 13.0, 40.4 }, -- Sorrowmurk
@@ -388,9 +401,10 @@ Nx.Map.AreaLabels = {
         { 109, 50.9, 21.3, 9.0, 12.7 }, -- Furlbrow's Pumpkin Farm
         { 113, 31.4, 41.5, 12.0, 14.2 }, -- Gold Coast Quarry
         { 111, 44.7, 24.3, 8.5, 11.2 }, -- Jangolode Mine
-        { 20, 44.2, 65.5, 10.5, 20.2 }, -- Moonbrook
+        { 20, 44.2, 62.1, 10.5, 20.2 }, -- Moonbrook
         { 107, 55.4, 32.6, 10.0, 11.2 }, -- Saldean's Farm
         { 108, 55.9, 49.8, 9.0, 15.7 }, -- Sentinel Hill
+        { 919, 44.2, 68.9, 10.5, 20.2 }, -- Stendel's Pond
         { 920, 46.9, 79.0, 18.0, 11.2 }, -- The Dagger Hills
         { 917, 62.4, 61.4, 10.0, 12.0 }, -- The Dead Acre
         { 922, 63.4, 72.6, 15.0, 10.5 }, -- The Dust Plains
@@ -403,8 +417,10 @@ Nx.Map.AreaLabels = {
         { 1018, 20.0, 49.0, 15.0, 12.7 }, -- Black Channel Marsh
         { 1022, 19.2, 36.3, 14.5, 11.2 }, -- Bluegill Marsh
         { 1016, 60.6, 32.6, 11.5, 20.2 }, -- Direforge Hill
+        { 1038, 81.8, 56.4, 22.0, 43.4 }, -- Dragonmaw Gates
+        { 836, 56.4, 71.6, 12.0, 16.5 }, -- Dun Algaz
         { 205, 49.4, 16.8, 10.0, 9.7 }, -- Dun Modr
-        { 1037, 80.1, 63.2, 38.3, 57.5 }, -- Grim Batol
+        { 1037, 81.8, 70.9, 22.0, 43.4 }, -- Grim Batol
         { 309, 44.7, 31.1, 12.5, 17.2 }, -- Ironbeard's Tomb
         { 150, 10.2, 56.9, 6.5, 10.5 }, -- Menethil Harbor
         { 1020, 61.9, 54.6, 11.0, 18.0 }, -- Mosshide Fen
@@ -412,7 +428,7 @@ Nx.Map.AreaLabels = {
         { 1023, 34.2, 24.3, 13.5, 20.2 }, -- Saltspray Glen
         { 1024, 23.2, 28.4, 18.5, 15.0 }, -- Sundown Marsh
         { 1025, 53.6, 36.7, 10.5, 22.5 }, -- The Green Belt
-        { 1021, 56.4, 68.9, 12.0, 16.5 }, -- Thelgen Rock
+        { 1021, 56.4, 66.1, 12.0, 16.5 }, -- Thelgen Rock
         { 118, 35.9, 49.0, 10.0, 9.7 }, -- Whelgar's Excavation Site
     },
     [1438] = { -- Teldrassil
@@ -425,15 +441,15 @@ Nx.Map.AreaLabels = {
         { 188, 59.6, 40.0, 12.5, 18.7 }, -- Shadowglen
         { 260, 65.6, 57.6, 10.5, 12.0 }, -- Starbreeze Village
         { 264, 37.9, 36.3, 6.0, 21.7 }, -- The Oracle Glade
-        { 1662, 27.4, 62.4, 15.0, 28.4 }, -- Tradesmen's Terrace
-        { 1660, 27.4, 52.9, 15.0, 28.4 }, -- Warrior's Terrace
-        { 266, 46.9, 35.6, 11.0, 21.7 }, -- Wellspring Lake
+        { 266, 46.9, 31.9, 11.0, 21.7 }, -- Wellspring Lake
+        { 265, 46.9, 39.2, 11.0, 21.7 }, -- Wellspring River
     },
     [1439] = { -- Darkshore
         { 447, 42.7, 57.6, 6.5, 10.5 }, -- Ameth'Aran
         { 442, 39.2, 43.8, 7.5, 11.2 }, -- Auberdine
         { 446, 44.9, 36.3, 7.0, 8.2 }, -- Bashal'Aran
-        { 456, 53.6, 33.3, 10.5, 9.7 }, -- Cliffspring River
+        { 445, 53.6, 34.9, 10.5, 9.7 }, -- Cliffspring Falls
+        { 456, 53.6, 31.7, 10.5, 9.7 }, -- Cliffspring River
         { 448, 42.9, 77.1, 9.0, 12.0 }, -- Grove of the Ancients
         { 450, 34.9, 85.3, 6.0, 9.0 }, -- Remtravel's Excavation
         { 443, 58.6, 16.5, 6.5, 15.0 }, -- Ruins of Mathystra
@@ -443,16 +459,20 @@ Nx.Map.AreaLabels = {
     [1440] = { -- Ashenvale
         { 415, 37.2, 51.6, 12.5, 15.0 }, -- Astranaar
         { 438, 93.8, 36.3, 9.0, 12.7 }, -- Bough Shadow
-        { 422, 69.1, 82.0, 11.5, 12.7 }, -- Fallen Sky Lake
+        { 422, 69.1, 79.8, 11.5, 12.7 }, -- Fallen Sky Lake
         { 434, 83.1, 77.5, 16.5, 15.7 }, -- Felfire Hill
         { 417, 26.7, 63.6, 6.5, 10.5 }, -- Fire Scar Shrine
+        { 2359, 49.4, 77.8, 15.0, 18.0 }, -- Greenpaw Village
         { 424, 46.4, 46.8, 7.0, 11.2 }, -- Iris Lake
         { 441, 20.5, 40.4, 6.0, 12.0 }, -- Lake Falathim
         { 413, 29.2, 25.8, 8.5, 24.7 }, -- Maestra's Post
-        { 421, 49.4, 73.4, 15.0, 18.0 }, -- Mystral Lake
-        { 428, 71.6, 59.1, 11.5, 16.5 }, -- Night Run
+        { 421, 49.4, 68.9, 15.0, 18.0 }, -- Mystral Lake
+        { 428, 71.6, 56.4, 11.5, 16.5 }, -- Night Run
         { 426, 60.9, 51.6, 10.0, 12.0 }, -- Raynewood Retreat
         { 430, 81.8, 48.3, 14.0, 9.7 }, -- Satyrnaar
+        { 420, 49.4, 73.4, 15.0, 18.0 }, -- Silverwind Refuge
+        { 431, 71.6, 61.9, 11.5, 16.5 }, -- Splintertree Post
+        { 432, 69.1, 84.1, 11.5, 12.7 }, -- The Dor'Danil Barrow Den
         { 419, 56.1, 37.1, 12.5, 14.2 }, -- The Howling Vale
         { 418, 33.4, 67.4, 8.0, 13.5 }, -- The Ruins of Stardust
         { 416, 22.2, 52.8, 9.5, 14.2 }, -- The Shrine of Aessina
@@ -461,7 +481,7 @@ Nx.Map.AreaLabels = {
         { 437, 91.1, 59.1, 11.5, 12.0 }, -- Warsong Lumber Camp
     },
     [1441] = { -- Thousand Needles
-        { 480, 16.2, 17.6, 19.5, 23.2 }, -- Camp E'thok
+        { 480, 16.2, 13.7, 19.5, 23.2 }, -- Camp E'thok
         { 2097, 34.9, 36.3, 9.0, 15.7 }, -- Darkcloud Pinnacle
         { 484, 46.2, 52.8, 12.5, 15.7 }, -- Freewind Post
         { 482, 13.5, 34.1, 13.0, 23.2 }, -- Highperch
@@ -469,6 +489,7 @@ Nx.Map.AreaLabels = {
         { 485, 32.2, 22.5, 9.5, 10.5 }, -- The Great Lift
         { 483, 30.7, 47.5, 16.5, 24.7 }, -- The Screeching Canyon
         { 439, 78.3, 73.0, 25.0, 48.7 }, -- The Shimmering Flats
+        { 2237, 16.2, 21.5, 19.5, 23.2 }, -- Whitereach Post
         { 2303, 62.4, 55.0, 15.0, 24.7 }, -- Windbreak Canyon
     },
     [1442] = { -- Stonetalon Mountains
@@ -481,8 +502,9 @@ Nx.Map.AreaLabels = {
         { 467, 37.2, 13.5, 20.5, 18.0 }, -- Stonetalon Peak
         { 460, 46.4, 58.4, 11.0, 13.5 }, -- Sun Rock Retreat
         { 465, 31.9, 67.0, 15.0, 21.7 }, -- The Charred Vale
+        { 1277, 69.9, 55.4, 25.9, 29.2 }, -- The Talondeep Path
         { 1076, 60.4, 68.5, 21.0, 42.7 }, -- Webwinder Path
-        { 461, 69.9, 50.5, 25.9, 29.2 }, -- Windshear Crag
+        { 461, 69.9, 45.7, 25.9, 29.2 }, -- Windshear Crag
     },
     [1443] = { -- Desolace
         { 2405, 40.9, 30.7, 13.0, 21.0 }, -- Ethel Rethor
@@ -517,27 +539,19 @@ Nx.Map.AreaLabels = {
         { 1120, 30.2, 50.1, 13.5, 16.5 }, -- Sardor Isle
         { 1108, 46.4, 62.1, 7.0, 41.9 }, -- The Forgotten Coast
         { 1119, 47.2, 25.4, 15.5, 21.0 }, -- The Twin Colossals
-        { 1101, 72.9, 61.0, 17.0, 20.2 }, -- The Writhing Deep
+        { 1101, 72.9, 57.6, 17.0, 20.2 }, -- The Writhing Deep
+        { 2519, 72.9, 64.4, 17.0, 20.2 }, -- Woodpaw Hills
     },
     [1445] = { -- Dustwallow Marsh
         { 2079, 75.6, 17.6, 12.5, 18.7 }, -- Alcaz Island
-        { 501, 44.4, 48.7, 25.0, 25.4 }, -- Beezil's Wreck
-        { 498, 36.9, 63.3, 11.0, 19.5 }, -- Bloodfen Burrow
-        { 507, 36.9, 29.0, 13.0, 24.7 }, -- Bluefen
-        { 496, 36.9, 16.7, 13.0, 24.7 }, -- Brackenwall Village
-        { 499, 36.9, 22.8, 13.0, 24.7 }, -- Darkmist Cavern
-        { 518, 53.9, 20.1, 19.0, 27.7 }, -- Dreadmurk Shore
-        { 516, 53.9, 31.1, 19.0, 27.7 }, -- Dustwallow Bay
-        { 504, 53.9, 25.6, 19.0, 27.7 }, -- North Point Tower
-        { 503, 68.1, 54.4, 13.5, 18.7 }, -- Sentry Point
-        { 508, 36.9, 59.4, 11.0, 19.5 }, -- Stonemaul Ruins
-        { 509, 36.9, 55.5, 11.0, 19.5 }, -- The Den of Flame
-        { 510, 36.9, 67.2, 11.0, 19.5 }, -- The Dragonmurk
-        { 2302, 44.4, 42.3, 25.0, 25.4 }, -- The Quagmire
-        { 513, 68.1, 48.2, 13.5, 18.7 }, -- Theramore Isle
-        { 517, 44.4, 55.0, 25.0, 25.4 }, -- Tidefury Cove
-        { 502, 53.9, 14.5, 19.0, 27.7 }, -- Witch Hill
-        { 511, 52.6, 71.9, 17.5, 20.2 }, -- Wyrmbog
+        { 507, 36.9, 26.9, 13.0, 24.7 }, -- Bluefen
+        { 496, 36.9, 18.7, 13.0, 24.7 }, -- Brackenwall Village
+        { 518, 53.9, 27.4, 19.0, 27.7 }, -- Dreadmurk Shore
+        { 509, 36.9, 61.4, 11.0, 19.5 }, -- The Den of Flame
+        { 2302, 44.4, 48.7, 25.0, 25.4 }, -- The Quagmire
+        { 513, 68.1, 51.3, 13.5, 18.7 }, -- Theramore Isle
+        { 502, 53.9, 18.2, 19.0, 27.7 }, -- Witch Hill
+        { 511, 52.6, 75.2, 17.5, 20.2 }, -- Wyrmbog
     },
     [1446] = { -- Tanaris
         { 1939, 45.7, 42.7, 9.5, 13.5 }, -- Abyssal Sands
@@ -568,16 +582,16 @@ Nx.Map.AreaLabels = {
         { 1236, 20.7, 60.3, 8.5, 9.7 }, -- Haldarr Encampment
         { 1230, 63.9, 11.2, 47.9, 12.0 }, -- Jagged Reef
         { 1234, 43.2, 80.1, 11.5, 13.5 }, -- Lake Mennar
-        { 1219, 57.9, 18.0, 17.0, 9.0 }, -- Legashi Encampment
+        { 1219, 57.9, 18.0, 17.0, 9.0 }, -- Legash Encampment
         { 1232, 70.6, 85.0, 9.5, 9.7 }, -- Ravencrest Monument
-        { 1221, 36.7, 54.3, 12.5, 15.7 }, -- Ruins of Eldarath
+        { 1221, 36.7, 54.3, 12.5, 15.7 }, -- Ruins of Eldarath 
         { 1235, 17.5, 74.9, 10.0, 13.5 }, -- Shadowsong Shrine
         { 1231, 58.4, 71.9, 28.9, 18.0 }, -- Southridge Beach
         { 1226, 76.6, 41.2, 10.5, 15.0 }, -- Temple of Arkkoran
         { 1220, 60.9, 28.8, 15.0, 9.7 }, -- Thalassian Base Camp
         { 1256, 58.1, 91.7, 28.4, 9.7 }, -- The Ruined Reaches
         { 1228, 45.7, 46.0, 5.5, 18.7 }, -- The Shattered Strand
-        { 1769, 37.7, 37.4, 25.5, 43.1 }, -- Timbermaw Hold
+        { 1216, 37.2, 33.3, 10.5, 15.7 }, -- Timbermaw Hold
         { 1229, 88.3, 30.3, 7.0, 12.7 }, -- Tower of Eldara
         { 1225, 46.9, 28.4, 8.0, 12.0 }, -- Ursolan
         { 1237, 21.5, 50.5, 10.0, 8.2 }, -- Valormok
@@ -586,7 +600,7 @@ Nx.Map.AreaLabels = {
         { 1765, 42.4, 48.7, 13.0, 9.0 }, -- Bloodvenom Falls
         { 1761, 49.2, 91.3, 8.5, 9.0 }, -- Deadwood Village
         { 2479, 51.6, 79.7, 9.5, 8.2 }, -- Emerald Sanctuary
-        { 1762, 63.4, 10.9, 10.0, 11.2 }, -- Felpaw Village
+        { 1762, 63.4, 9.0, 10.0, 11.2 }, -- Felpaw Village
         { 1767, 50.1, 23.6, 9.5, 11.2 }, -- Irontree Woods
         { 2480, 41.2, 82.7, 8.5, 12.7 }, -- Jadefire Glen
         { 2618, 41.2, 18.0, 8.5, 10.5 }, -- Jadefire Run
@@ -595,6 +609,7 @@ Nx.Map.AreaLabels = {
         { 2481, 37.9, 69.2, 9.0, 11.2 }, -- Ruins of Constellas
         { 1766, 42.2, 35.2, 10.5, 18.0 }, -- Shatter Scar Vale
         { 1998, 62.1, 24.3, 7.5, 9.7 }, -- Talonbranch Glade 
+        { 1769, 63.4, 12.7, 10.0, 11.2 }, -- Timbermaw Hold
     },
     [1449] = { -- Un'Goro Crater
         { 537, 50.4, 49.8, 18.0, 24.7 }, -- Fire Plume Ridge
@@ -606,22 +621,26 @@ Nx.Map.AreaLabels = {
         { 540, 51.6, 80.1, 15.5, 19.5 }, -- The Slithering Scar
     },
     [1450] = { -- Moonglade
-        { 656, 53.1, 32.5, 57.5, 76.6 }, -- Lake Elune'ara
-        { 2361, 53.1, 70.8, 57.5, 76.6 }, -- Nighthaven
-        { 2362, 53.1, 51.6, 57.5, 76.6 }, -- Shrine of Remulos
+        { 656, 50.6, 48.2, 28.4, 38.9 }, -- Lake Elune'ara
+        { 2361, 50.6, 61.1, 28.4, 38.9 }, -- Nighthaven
     },
     [1451] = { -- Silithus
-        { 2742, 44.9, 24.3, 13.0, 18.7 }, -- Hive'Ashi
-        { 2744, 57.1, 80.5, 16.5, 33.7 }, -- Hive'Regal
+        { 3427, 57.1, 86.1, 16.5, 33.7 }, -- Bronzebeard Encampment
+        { 3425, 50.6, 34.8, 6.5, 10.5 }, -- Cenarion Hold
+        { 2742, 44.9, 21.2, 13.0, 18.7 }, -- Hive'Ashi
+        { 2744, 57.1, 74.9, 16.5, 33.7 }, -- Hive'Regal
         { 2743, 24.7, 58.4, 16.5, 24.0 }, -- Hive'Zora
-        { 2738, 62.4, 53.1, 8.0, 12.0 }, -- Southwind Village
+        { 2738, 62.4, 51.1, 8.0, 12.0 }, -- Southwind Village
+        { 3426, 44.9, 27.4, 13.0, 18.7 }, -- Staghelm Point
         { 2740, 23.2, 17.6, 16.5, 20.2 }, -- The Crystal Vale
-        { 2737, 28.9, 95.1, 14.0, 6.0 }, -- The Scarab Wall
-        { 2739, 50.2, 48.5, 31.9, 38.3 }, -- Twilight Base Camp
+        { 2741, 28.9, 96.1, 14.0, 6.0 }, -- The Scarab Dais
+        { 2737, 28.9, 94.1, 14.0, 6.0 }, -- The Scarab Wall
+        { 3097, 50.6, 37.4, 6.5, 10.5 }, -- The Swarming Pillar
+        { 2739, 50.6, 40.0, 6.5, 10.5 }, -- Twilight Base Camp
+        { 3077, 62.4, 55.1, 8.0, 12.0 }, -- Valor's Rest
     },
     [1452] = { -- Winterspring
-        { 2256, 57.9, 80.3, 18.0, 16.5 }, -- Darkwhisper Gorge
-        { 16005, 57.9, 85.8, 18.0, 16.5 }, -- Darkwhisper Gorge
+        { 2256, 57.9, 83.1, 18.0, 16.5 }, -- Darkwhisper Gorge
         { 2255, 60.9, 37.8, 9.0, 9.7 }, -- Everlook
         { 2246, 33.4, 36.7, 12.0, 7.5 }, -- Frostfire Hot Springs
         { 2241, 49.4, 12.7, 11.0, 9.0 }, -- Frostsaber Rock
@@ -639,64 +658,7 @@ Nx.Map.AreaLabels = {
         { 2959, 41.9, 14.0, 28.9, 26.2 }, -- Dun Baldar
         { 3299, 41.9, 20.6, 28.9, 26.2 }, -- Dun Baldar Pass
         { 2978, 51.9, 70.9, 17.0, 29.2 }, -- Frostwolf Keep
-        { 2977, 51.9, 78.2, 17.0, 29.2 }, -- Iceblood Garrison
+        { 2977, 48.9, 41.9, 22.0, 29.9 }, -- Iceblood Garrison
         { 3318, 41.9, 27.1, 28.9, 26.2 }, -- Rock of Durotan
-    },
-    [2482] = { -- Mount Hyjal
-        { 17145, 33.8, 42.3, 14.3, 16.6 }, -- Cradle of Tranquility
-        { 16866, 54.4, 37.3, 18.9, 23.7 }, -- Dae'gun
-        { 16848, 13.9, 49.9, 11.8, 20.1 }, -- Elderwild
-        { 17050, 46.2, 76.8, 15.1, 21.9 }, -- Felblood Scar
-        { 17144, 28.8, 70.6, 16.4, 14.5 }, -- Malorne's Retreat
-        { 16868, 24.2, 52.7, 10.2, 15.6 }, -- Mourning's Rest
-        { 16867, 50.6, 59.1, 14.1, 12.0 }, -- Shrine of Aviana
-        { 16849, 78.4, 35.2, 21.8, 32.9 }, -- Summit of Eternity
-        { 16853, 70.6, 73.0, 23.0, 25.0 }, -- Tainted Foothills
-    },
-    [2521] = { -- Zephras Isle
-        { 17675, 70.0, 67.1, 6.8, 5.5 }, -- East Pylon Watchtower
-        { 17684, 54.0, 81.2, 4.0, 5.2 }, -- Fairweather Stables
-        { 16636, 49.9, 54.9, 7.7, 8.7 }, -- Falaath Village
-        { 16626, 60.0, 66.6, 12.5, 8.4 }, -- Gustberry Lowlands
-        { 17677, 48.1, 69.1, 4.1, 5.5 }, -- Overlook Standing Stones
-        { 16630, 71.1, 49.6, 5.2, 11.4 }, -- Rohashi Spires
-        { 16833, 58.0, 28.3, 6.7, 15.9 }, -- Ruins of Ban'aethal
-        { 16631, 60.3, 38.8, 12.5, 6.1 }, -- Shadowgale Forest
-        { 16623, 49.2, 62.0, 11.5, 6.3 }, -- Shen'dar Highlands
-        { 16624, 44.5, 44.6, 8.3, 7.5 }, -- Shen'dar Village
-        { 16629, 62.3, 50.3, 11.6, 11.4 }, -- Shrine of Akir
-        { 16622, 41.1, 29.6, 14.6, 6.1 }, -- Thendal Grove
-        { 17678, 48.8, 17.7, 4.8, 5.8 }, -- Thendal Standing Stones
-        { 16635, 42.8, 22.0, 5.2, 8.7 }, -- Thendal Village
-        { 16638, 62.7, 76.0, 13.0, 16.0 }, -- Valanaar
-        { 16628, 62.7, 81.3, 13.0, 16.0 }, -- Valanaar Skydocks
-        { 17674, 40.6, 64.0, 5.0, 6.7 }, -- West Pylon Watchtower
-        { 16663, 46.8, 82.0, 6.7, 7.9 }, -- Windfield Orchard
-        { 16625, 51.8, 47.3, 8.6, 7.5 }, -- Windsong Lake
-        { 17676, 45.8, 38.8, 4.9, 5.1 }, -- Windsong Standing Stones
-    },
-    [2548] = { -- Riverglades
-        { 16726, 65.7, 16.4, 13.0, 17.2 }, -- Bolder'ok
-        { 16737, 27.3, 62.6, 15.3, 17.1 }, -- Bristle Hills
-        { 16734, 52.3, 45.5, 5.4, 9.3 }, -- Elbrim's Farm
-        { 16724, 64.8, 82.9, 11.0, 12.0 }, -- Farholde Keep
-        { 17780, 44.4, 26.5, 16.8, 20.1 }, -- Krol'dok Stronghold
-        { 16735, 44.8, 81.0, 8.0, 8.4 }, -- Meadowsbrook
-        { 16727, 76.5, 51.8, 13.2, 11.1 }, -- Powderfuse Port
-        { 16743, 58.7, 46.0, 7.7, 8.5 }, -- Rog'mar
-        { 16723, 46.1, 51.3, 7.1, 16.3 }, -- Sunnyglade
-        { 16729, 60.0, 64.3, 5.9, 6.7 }, -- Terral's Watch
-        { 16736, 38.1, 61.0, 7.3, 10.9 }, -- Turner's Logging Camp
-        { 16685, 27.5, 43.9, 11.4, 16.0 }, -- Twilight's Shroud
-        { 16725, 54.2, 77.6, 8.9, 10.6 }, -- Wheeler's Grange
-        { 16731, 76.2, 34.2, 11.3, 17.5 }, -- Windstead
-    },
-    [2652] = { -- Shen'dralas
-        { 16677, 74.9, 31.1, 33.3, 62.1 }, -- Bristleback Retreat
-        { 16678, 30.7, 49.2, 31.5, 45.1 }, -- Evenshade's Overlook
-        { 16742, 72.7, 73.1, 31.6, 49.6 }, -- Forlorn Gardens
-        { 16675, 62.2, 55.3, 25.6, 34.3 }, -- Magram Front
-        { 16676, 29.6, 77.1, 34.3, 45.8 }, -- Outcast Hideaway
-        { 2657, 39.0, 25.7, 61.9, 51.5 }, -- Valley of Bones
     },
 }
