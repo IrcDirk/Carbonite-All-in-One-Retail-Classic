@@ -1176,7 +1176,7 @@ function Travel:FindConnection(srcMapId, srcX, srcY, dstMapId, dstX, dstY, skipI
     local winfo = Nx.Map.MapWorldInfo
 
     local srcT = winfo[srcMapId]
-    if not srcT or not srcT.Connections then
+    if not srcT or not srcT.Connections or not winfo[dstMapId] then
         return
     end
 
@@ -1212,7 +1212,8 @@ function Travel:FindConnection(srcMapId, srcX, srcY, dstMapId, dstX, dstY, skipI
         local closeDist = 9000111222333444
 
         for mapId, zcon in pairs(srcT.Connections) do
-            if not self.VisitedMapIds[mapId] then
+            local mapInfo = winfo[mapId]
+            if mapInfo and not self.VisitedMapIds[mapId] then
                 if #zcon == 0 then
                     -- Open connection: recursively search
                     local d, con = self:FindConnection(mapId, srcX, srcY, dstMapId, dstX, dstY, true)
@@ -1221,13 +1222,15 @@ function Travel:FindConnection(srcMapId, srcX, srcY, dstMapId, dstX, dstY, skipI
                         closeCon = con
                     end
                 else
+                    -- Runtime map records may not have connection data yet.
+                    local connections = mapInfo.Connections
+                    local penalty = connections and connections[dstMapId] and 1 or 2
+
                     -- Specific connection points
                     for n, con in ipairs(zcon) do
                         local dist1 = ((con.StartX - srcX) ^ 2 + (con.StartY - srcY) ^ 2) ^ .5
                         local dist2 = ((con.EndX - dstX) ^ 2 + (con.EndY - dstY) ^ 2) ^ .5
 
-                        -- Add penalty for zones without direct connection to destination
-                        local penalty = winfo[mapId].Connections[dstMapId] and 1 or 2
                         local d = dist1 + con.Dist + dist2 * penalty
 
                         if d < closeDist then
@@ -1247,7 +1250,9 @@ function Travel:FindConnection(srcMapId, srcX, srcY, dstMapId, dstX, dstY, skipI
             end
         end
 
-        return closeDist, closeCon
+        if closeDist < 9000111222333444 then
+            return closeDist, closeCon
+        end
     end
 end
 
