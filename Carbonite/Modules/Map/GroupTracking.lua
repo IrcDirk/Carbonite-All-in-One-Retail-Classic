@@ -37,8 +37,8 @@ function GroupTracking:GetUnitPosition(unit)
         and MapIDs:CanonicalizeMapID(queryMapID)
         or queryMapID
 
-    -- Compare Carbonite's logical map IDs (for example Undercity 90), but
-    -- query the position on Blizzard's actual player map (Undercity 998).
+    -- Compare Carbonite's logical map IDs, but query the position on
+    -- Blizzard's actual player map.
     if unit ~= "player" and NxMap and NxMap.RMapId and logicalMapID ~= NxMap.RMapId then
         return 0, 0
     end

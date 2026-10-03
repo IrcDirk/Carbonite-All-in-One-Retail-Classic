@@ -28,9 +28,8 @@ local function nxMap() return _G.Nx and _G.Nx.Map end
 -- ---------------------------------------------------------------------
 
 -- Convert a Blizzard player/art map alias to the canonical Carbonite map ID.
--- Most maps are already canonical. A small number of layered cities are not:
--- MoP Undercity, for example, is reported as uiMapID 998 while Carbonite's
--- world geometry and quest data intentionally remain keyed by city ID 90.
+-- Most maps are already canonical; a flavor's data may declare PlayerMapID
+-- aliases for maps it keys under a different ID.
 function MapIDs:CanonicalizeMapID(mapID)
     if not mapID or mapID == 0 then return mapID end
 
@@ -75,9 +74,8 @@ function MapIDs:GetDisplayableMapForPlayer()
     -- Blizzard's displayable helper deliberately climbs away from maps that
     -- have no C_Map art. Carbonite can still render its legacy city tiles, so
     -- retain a raw city map only when its flavor data declares legacy art
-    -- (Exodar is the common MoP example), and canonicalize aliases such as
-    -- Undercity 998 → 90. Every other map keeps Blizzard's displayable-parent
-    -- behavior.
+    -- (Exodar is the common MoP example), and canonicalize declared aliases.
+    -- Every other map keeps Blizzard's displayable-parent behavior.
     local rawCanonicalID = self:CanonicalizeMapID(rawMapID)
     local NxMap = nxMap()
     local rawInfo = NxMap and NxMap.MapWorldInfo and NxMap.MapWorldInfo[rawCanonicalID]

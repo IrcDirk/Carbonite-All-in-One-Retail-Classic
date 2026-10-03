@@ -392,20 +392,13 @@ Map.MapWorldInfo = {
         City = true,
         MMOutside = true,
     },
-    [90] = {
+    [998] = {
         Scale = 1.9187500610352,
         X = -174.63852539063,
         Y = -375.5890625,
         Overlay = "undercity",
         Name = L["Undercity"],
         City = true,
-        -- MoP exposes the playable city through uiMapID 998 while
-        -- Carbonite's world geometry and quest data use the canonical
-        -- city ID 90. Keep 90 for coordinates, but query 998 for player
-        -- location/artwork. The legacy path is a last-resort fallback on
-        -- clients where C_Map reports no art for the city map.
-        PlayerMapID = 998,
-        ArtMapID = 998,
         LegacyMapArt = "Undercity",
     },
     [91] = {

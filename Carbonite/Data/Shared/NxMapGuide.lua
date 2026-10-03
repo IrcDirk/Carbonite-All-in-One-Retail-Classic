@@ -67,7 +67,7 @@ else
         Silvermoon = 110,
         Stormwind = 84,
         ThunderBluff = 88,
-        Undercity = 90,
+        Undercity = (Carbonite and Carbonite.isMoPClassic) and 998 or 90,
         Shattrath = 111,
         Tanaris = 71,
         TolBarad = 244,
@@ -985,7 +985,7 @@ function Nx.Map.Guide:PatchFolder (folder, parent)
             [PortalZoneIDs.Shattrath] = "Spell_Arcane_TeleportShattrath",
             [PortalZoneIDs.Tanaris] = "Interface\\AddOns\\Carbonite\\Gfx\\Icons\\Achievement_Zone_Tanaris_01",
         }
-        if isMoP then
+        if Carbonite and Carbonite.isMoPClassic then
             portalN[125] = "Spell_Arcane_TeleportDalaran"
             portalN[PortalZoneIDs.TolBarad] = "Spell_Arcane_TeleportTolBarad"
         end

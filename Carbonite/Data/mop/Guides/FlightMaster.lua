@@ -198,7 +198,7 @@ local FLIGHT_DATA = {
     ["2,83,58.8,48.2"]   = L["Everlook, Winterspring"],
     ["2,85,49.5,59.2"]   = L["Orgrimmar, Durotar"],
     ["2,88,46.65,49.90"] = L["Thunder Bluff, Mulgore"],
-    ["2,90,63.09,48.32"] = L["Undercity, Tirisfal"],
+    ["2,998,63.09,48.32"] = L["Undercity, Tirisfal"],
 
 -- Horde added in Cataclysm
 

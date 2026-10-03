@@ -108,6 +108,7 @@ else
         [84]  = "Spell_Arcane_TeleportStormWind",   -- Stormwind City
         [88]  = "Spell_Arcane_TeleportThunderBluff",
         [90]  = "Spell_Arcane_TeleportUnderCity",   -- Undercity
+        [998] = "Spell_Arcane_TeleportUnderCity",   -- Undercity (MoP)
         [111] = "Spell_Arcane_TeleportShattrath",   -- Shattrath
         [71]  = "Achievement_Zone_Tanaris_01",
         [125] = "Spell_Arcane_TeleportDalaran",

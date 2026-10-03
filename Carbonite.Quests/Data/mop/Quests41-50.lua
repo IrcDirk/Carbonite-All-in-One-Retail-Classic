@@ -143,11 +143,11 @@ function Nx.ModQuests:Data5()
         },
         [232] = {
             Quest = [=[Errand for Apothecary Zinge|2|45|38|238|0|0]=],
-            End = "7683|90|32|58.61|54.68",
+            End = "7683|998|32|58.61|54.68",
         },
         [238] = {
             Quest = [=[Errand for Apothecary Zinge|2|45|38|243|0|0]=],
-            End = "5204|90|32|50.14|67.97",
+            End = "5204|998|32|50.14|67.97",
         },
         [243] = {
             Quest = [=[Into the Field|2|46|38|379|0|0]=],
@@ -672,7 +672,7 @@ function Nx.ModQuests:Data5()
         },
         [864] = {
             Quest = [=[Return to Apothecary Zinge|2|46|38|0|0|0]=],
-            End = "5204|90|32|50.14|67.97",
+            End = "5204|998|32|50.14|67.97",
         },
         [936] = {
             Quest = [=[Assisting Arch Druid Runetotem|2|50|47|3761|0|0]=],
@@ -1077,7 +1077,7 @@ function Nx.ModQuests:Data5()
         },
         [2342] = {
             Quest = [=[Reclaimed Treasures|2|43|33|0|0|0]=],
-            End = "5651|90|32|62.32|48.61",
+            End = "5651|998|32|62.32|48.61",
             Objectives = {
                 [1] = {
                     "nil|48|32|33.93|93.01|9.62|9.62",
@@ -3831,7 +3831,7 @@ function Nx.ModQuests:Data5()
         },
         [9154] = {
             Quest = [=[Light's Hope Chapel||50|50|0|31|0]=],
-            Start = "16255|90|32|66.2|47.0",
+            Start = "16255|998|32|66.2|47.0",
             End = "16281|23|32|75.16|54.39",
         },
         [9249] = {
@@ -3889,7 +3889,7 @@ function Nx.ModQuests:Data5()
         [9319] = {
             Quest = [=[A Light in Dark Places||50|50|0|32|0]=],
             Start = "16788|41|32|56.4|92.0",
-            End = "26221|90|32|66.9|13.53",
+            End = "26221|998|32|66.9|13.53",
             Objectives = {
                 [1] = {
                     "|210|35|40|69.5|5.01|3.34",
@@ -4066,8 +4066,8 @@ function Nx.ModQuests:Data5()
         },
         [11948] = {
             Quest = [=[Striking Back||43|39|0|32|0]=],
-            Start = "26221|90|32|66.9|13.53",
-            End = "26221|90|32|66.9|13.53",
+            Start = "26221|998|32|66.9|13.53",
+            End = "26221|998|32|66.9|13.53",
             Objectives = {
                 [1] = {
                     "|50|35|20.16|21.60|28.86|9.62",
@@ -4103,7 +4103,7 @@ function Nx.ModQuests:Data5()
         },
         [14355] = {
             Quest = [=[Into The Scarlet Monastery|2|42|30|0|0|0]=],
-            End = "36273|90|32|56.25|92.21",
+            End = "36273|998|32|56.25|92.21",
             Objectives = {
                 [1] = {
                     "nil|302|32|-1.00|-1.00|9.62|9.62",
@@ -5409,7 +5409,7 @@ function Nx.ModQuests:Data5()
         },
         [25785] = {
             Quest = [=[Hammering It Out||45|1|0|0|0]=],
-            End = "41209|90|32|69.66|47.06",
+            End = "41209|998|32|69.66|47.06",
         },
         [25790] = {
             Quest = [=[Back to Crazzle|1|41|38|0|0|0]=],

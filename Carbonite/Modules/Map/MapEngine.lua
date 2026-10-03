@@ -8828,7 +8828,7 @@ function Nx.Map:CalcTracking()
     local srcX = self.PlyrX
     local srcY = self.PlyrY
     -- Carbonite's player-map resolver is independent of map hover and also
-    -- canonicalizes Blizzard aliases (MoP Undercity 998 -> city 90).
+    -- canonicalizes declared Blizzard aliases.
     local srcMapId = self:GetDisplayableMapForPlayer()
 
     -- Build path through all targets. Scalar-arg BuildPath signature
@@ -18058,7 +18058,11 @@ function Nx.Map:GetMapNameByID(mapId)
         mapId = Nx.Map:GetCurrentMapAreaID()
     end
     local mapInfo = Nx.Map:GetMapInfo(mapId)
-    return mapInfo and mapInfo.name or nil
+    if mapInfo and mapInfo.name then
+        return mapInfo.name
+    end
+    local winfo = Nx.Map.MapWorldInfo and Nx.Map.MapWorldInfo[mapId]
+    return winfo and winfo.Name or nil
 end
 
 ---

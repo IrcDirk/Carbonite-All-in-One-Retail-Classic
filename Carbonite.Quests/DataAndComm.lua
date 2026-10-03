@@ -161,6 +161,7 @@ local CITY_FACTION = {
     [86]   = 2,  -- Orgrimmar (alt instance map)
     [88]   = 2,  -- Thunder Bluff
     [90]   = 2,  -- Undercity
+    [998]  = 2,  -- Undercity (MoP)
     [110]  = 2,  -- Silvermoon City
 }
 

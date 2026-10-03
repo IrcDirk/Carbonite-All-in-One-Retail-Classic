@@ -29891,7 +29891,7 @@ function Nx.ModQuests:Data8()
         },
         [25787] = {
             Quest = [=[Hammering It Out||75|1|0|0|0]=],
-            End = "41209|90|32|69.66|47.06",
+            End = "41209|998|32|69.66|47.06",
         },
         [26054] = {
             Quest = [=[Water They Up To?|1|80|78|0|42|0]=],

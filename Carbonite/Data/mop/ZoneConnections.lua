@@ -50,7 +50,7 @@ Nx.ZoneConnectionsCata = {
     "7|1||95|48|14||94|48.7|90", -- [47]
     "7|1||21|66.36|79.8||25|14.35|46.2", -- [48]
     "7|1||21|67.56|5.45||18|54.14|75.77", -- [49]
-    "7|1||90|66.01|36.85||18|61.86|64.95", -- [50]
+    "7|1||998|66.01|36.85||18|61.86|64.95", -- [50]
     "7|1||102|43.08|27.35||105|37.26|80.57", -- [51]
     "7|1||102|67.63|87.56||107|73.89|33.71", -- [52]
     "7|1||85|18|60.43||10|63.88|0", -- [53]
@@ -83,7 +83,7 @@ Nx.ZoneConnectionsCata = {
 --    "2|0|"..L["Portal to Ironforge"].."|111|56.31|36.99||87|25.51|8.43", -- [78]
 --    "2|0|"..L["Portal to Exodar"].."|111|59.52|46.65||103|47.62|59.82", -- [79]
 --    "4|0|"..L["Portal to Thunder Bluff"].."|111|52.78|53.02||88|22.21|16.87", -- [81]
---    "4|0|"..L["Portal to Undercity"].."|111|51.67|52.49||90|84.58|16.33", -- [83]
+--    "4|0|"..L["Portal to Undercity"].."|111|51.67|52.49||998|84.58|16.33", -- [83]
 --    "4|0|"..L["Portal to Silvermoon"].."|111|59.14|48.29||110|58.26|19.24", -- [84]
     "3|2|"..L["Boat to Wetlands"].."|70|71.54|56.37|"..L["Boat to Dustwallow Marsh"].."|56|6.03|62.46", -- [85]
     "3|3|"..L["Tram to Stormwind City"].."|87|72.78|50.24|"..L["Tram to Ironforge"].."|84|66.37|34.13", -- [86]
@@ -93,8 +93,8 @@ Nx.ZoneConnectionsCata = {
     "5|5|"..L["Zeppelin to Undercity"].."|1|50.88|13.87|"..L["Zeppelin to Orgrimmar"].."|18|60.7|58.78", -- [91]
     "5|5|"..L["Zeppelin to Stranglethorn Vale"].."|1|50.57|12.64|"..L["Zeppelin to Orgrimmar"].."|50|31.37|30.15", -- [92]
     "7|2|"..L["Boat to Stranglethorn Vale"].."|10|63.68|38.63|"..L["Boat to The Barrens"].."|50|26.04|73.24", -- [93]
-    "4|0|"..L["Portal to Undercity"].."|110|49.5|14.79|"..L["Portal to Silvermoon"].."|90|56.93|11.4", -- [94]
-    "4|0|"..L["Portal to Silvermoon"].."|90|54.86|11.25|"..L["Portal to Undercity"].."|110|50.62|16.45", -- [95]
+    "4|0|"..L["Portal to Undercity"].."|110|49.5|14.79|"..L["Portal to Silvermoon"].."|998|56.93|11.4", -- [94]
+    "4|0|"..L["Portal to Silvermoon"].."|998|54.86|11.25|"..L["Portal to Undercity"].."|110|50.62|16.45", -- [95]
 
 -- Northrend
     "5|2|"..L["Zeppelin to Borean Tundra"].."|85|44.7|62.4|"..L["Zeppelin to Orgrimmar"].."|114|41.4|53.6",
@@ -127,7 +127,7 @@ Nx.ZoneConnectionsCata = {
 
     "4|0|"..L["Portal to Orgrimmar"].."|125|55.41|25.48||85|0|0",
 --    "4|0|"..L["Portal to Thunder Bluff"].."|125|57.2|21.8||88|22.21|16.87",
---    "4|0|"..L["Portal to Undercity"].."|125|55.6|23.9||90|84.58|16.33",
+--    "4|0|"..L["Portal to Undercity"].."|125|55.6|23.9||998|84.58|16.33",
 --    "4|0|"..L["Portal to Silvermoon"].."|125|58.3|21.6||110|58.26|19.24",
 --    "4|0|"..L["Portal to Shattrath"].."|125|56.3|22.6||111|55.09|40.22",
 
@@ -145,7 +145,7 @@ Nx.ZoneConnectionsCata = {
        -- Horde
        "4|0|"..L["Portal to Blasted Lands"].."|86|44.8|67.8||17|50.4|81.7", -- from Orgrimmar
        "4|0|"..L["Portal to Blasted Lands"].."|88|23.2|13.6||17|50.4|81.7", -- from Thunder Bluff
-       "4|0|"..L["Portal to Blasted Lands"].."|90|85.2|17||17|50.4|81.7", -- from Undercity
+       "4|0|"..L["Portal to Blasted Lands"].."|998|85.2|17||17|50.4|81.7", -- from Undercity
        "4|0|"..L["Portal to Blasted Lands"].."|110|58.4|21.0||17|50.4|81.7", -- from Silvermoon
 
 }
@@ -207,7 +207,7 @@ Nx.ZoneConnections = {
     "7|1||95|0|0||94|0|0",
     "7|1||21|66.2|79.7||25|28|63.7",
     "7|1||21|67.56|5.45||18|54.14|75.77",
-    "7|1||90|66.01|36.85||18|61.86|64.95",
+    "7|1||998|66.01|36.85||18|61.86|64.95",
     "7|1||102|43.08|27.35||105|37.26|80.57",
     "7|1||102|67.63|87.56||107|73.89|33.71",
     "7|1||85|25|66.8||10|70.2|4.6",
@@ -252,8 +252,8 @@ Nx.ZoneConnections = {
     "5|2|" .. L["Zeppelin to"] .. " " .. L["Stranglethorn Vale"] .. "|18|61.8|59.1|" .. L["Zeppelin to"] .. " " .. L["Tirisfal Glades"] .. "|50|37.5|51",
     "5|2|" .. L["Zeppelin to"] .. " " .. L["Undercity"] .. "|117|77.71|28.26|" .. L["Zeppelin to"] .. " " .. L["Howling Fjord"] .. "|18|59.05|58.94",
     "7|2|" .. L["Boat to"] .. " " .. L["Stranglethorn Vale"] .. "|10|70.1|73.2|" .. L["Boat to"] .. " " .. L["Northern Barrens"] .. "|210|39.4|67.2",
-    "4|0|" .. L["Portal to"] .. " " .. L["Undercity"] .. "|110|49.5|14.79|" .. L["Portal to"] .. " " .. L["Silvermoon City"] .. "|90|56.93|11.4",
-    "4|0|" .. L["Portal to"] .. " " .. L["Silvermoon City"] .. "|90|54.86|11.25|" .. L["Portal to"] .. " " .. L["Undercity"] .. "|110|50.62|16.45",
+    "4|0|" .. L["Portal to"] .. " " .. L["Undercity"] .. "|110|49.5|14.79|" .. L["Portal to"] .. " " .. L["Silvermoon City"] .. "|998|56.93|11.4",
+    "4|0|" .. L["Portal to"] .. " " .. L["Silvermoon City"] .. "|998|54.86|11.25|" .. L["Portal to"] .. " " .. L["Undercity"] .. "|110|50.62|16.45",
     "7|1||115|60.92|10.74||127|46.52|70.8",
     "7|1||127|93.02|58.46||121|12.52|66.95",
     "7|1||127|85.77|45.09||120|38.19|93.25",

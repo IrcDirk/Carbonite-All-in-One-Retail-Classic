@@ -66,7 +66,7 @@ Map.ContBlks = {
 Map.MapZones = {
     [0] = {12,13,1467,113,948,424,0,-1},
     [1] = {1,7,10,57,62,63,64,65,66,69,70,71,76,77,78,80,81,83,85,86,88,89,97,103,106,198,199,249,327,338,460,461,462,463,468},
-    [2] = {14,15,17,18,21,22,23,25,26,27,32,36,37,42,47,48,49,50,51,52,56,84,87,90,94,95,110,122,124,179,201,202,204,205,203,210,217,218,224,241,244,245,425,427,465,467,469},
+    [2] = {14,15,17,18,21,22,23,25,26,27,32,36,37,42,47,48,49,50,51,52,56,84,87,998,94,95,110,122,124,179,201,202,204,205,203,210,217,218,224,241,244,245,425,427,465,467,469},
     [3] = {100,102,104,105,107,108,109,111},
     [4] = {114,115,116,117,118,119,120,121,123,125,127,170},
     [5] = {174,194,207,276,407},
@@ -521,20 +521,13 @@ Map.MapWorldInfo = {
         City = true,
         MMOutside = true,
     },
-    [90] = {
+    [998] = {
         Scale = 1.9187500610352,
         X = -174.63852539063,
         Y = -375.5890625,
         Overlay = "undercity",
         Name = L["Undercity"],
         City = true,
-        -- MoP exposes the playable city through uiMapID 998 while
-        -- Carbonite's world geometry and quest data use the canonical
-        -- city ID 90. Keep 90 for coordinates, but query 998 for player
-        -- location/artwork. The legacy path is a last-resort fallback on
-        -- clients where C_Map reports no art for the city map.
-        PlayerMapID = 998,
-        ArtMapID = 998,
         LegacyMapArt = "Undercity",
     },
     [91] = {
