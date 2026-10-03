@@ -6,11 +6,11 @@ local L = LibStub("AceLocale-3.0"):NewLocale("Carbonite", "itIT")
 if not L then return end
 
 -- Main Guide
-L["All"] = true
+L["All"] = "Tutto"
 L["Quest Givers"] = "Committenti"
 L["Stable Master"] = "Stalliere"
 L["Flight Master"] = "Maestro di Volo"
-L["Common Place"] = true
+L["Common Place"] = "Luogo Comune"
 L["Auctioneer"] = "Banditore"
 L["Banker"] = "Banchiere"
 L["Innkeeper"] = "Locandiere"
@@ -60,15 +60,15 @@ L["Ore"] = "Minerali"
 L["Artifacts"] = "Artefatti"
 L["Everfrost"] = "Semprefreddo"
 L["Gas"] = "Gas"
-L["Instances"] = true
-L["Zone"] = true
+L["Instances"] = "Istanze"
+L["Zone"] = "Zona"
 L["Trade Skill"] = "Abilit\195\160 Commercio"
 L["Alchemy Lab"] = "Laboratorio Alchemico"
 L["Altar Of Shadows"] = "Altare delle Ombre"
-L["Lightforged Beacon"] = true
-L["Mana Loom"] = true
+L["Lightforged Beacon"] = "Faro Forgialuce"
+L["Mana Loom"] = "Telaio di Mana"
 L["Moonwell"] = "Pozzo Lunare"
-L["Back "] = true
+L["Back "] = "Indietro "
 
 -- Menus
 L["Delete"] = "Cancella"
@@ -79,7 +79,7 @@ L["Show Horde"] = "Mostra Orda"
 L["Show Alliance"] = "Mostra Alleanza"
 L["Clear Selection"] = "Cancella Selezione"
 L["Options..."] = "Opzioni..."
-L["Skill"] = true
+L["Skill"] = "Abilità"
 L["Connection to"] = "Connesso a"
 L["Portal to"] = "Portale per"
 L["Boat to"] = "Nave per"
@@ -87,8 +87,19 @@ L["Zeppelin to"] = "Zeppelin per"
 L["Tram to"] = "Tram per"
 
 -- Instance types
-L["Dungeon"] = true
-L["Raid"] = true
-L["Scenario"] = true
-L["Solo"] = true
-L["Mythic Dungeon"] = true
+L["Dungeon"] = "Spedizione"
+L["Raid"] = "Incursione"
+L["Scenario"] = "Scenario"
+L["Solo"] = "Solo"
+L["Mythic Dungeon"] = "Spedizione Mitica"
+L["Name"] = "Nome"
+L["Info"] = "Info"
+L["Info2"] = "Info2"
+L["Info3"] = "Info3"
+L["Broken Isles"] = "Isole Disperse"
+L["Zandalar"] = "Zandalar"
+L["Kul Tiras"] = "Kul Tiras"
+L["Nazjatar"] = "Nazjatar"
+L["The Shadowlands"] = "Terretetre"
+L["Dragon Isles"] = "Isole dei Draghi"
+L["Khaz Algar"] = "Khaz Algar"

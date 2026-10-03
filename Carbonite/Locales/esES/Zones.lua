@@ -12,21 +12,21 @@ L["Abyssal Depths"] = "Profundidades Abisales"
 L["Ahn'kahet: The Old Kingdom"] = "Ahn'kahet: El Antiguo Reino"
 L["Temple of Ahn'Qiraj"] = "Ahn'Qiraj"					-- http://es.wowhead.com/zone=3428
 L["Ahn'Qiraj: The Fallen Kingdom"] = "Ahn'Qiraj: El Reino Caído"
-L["Alterac Mountains"] = true
+L["Alterac Mountains"] = "Montañas de Alterac"
 L["Alterac Valley"] = "Valle de Alterac"
 L["Ammen Vale"] = "Valle Ammen"
 L["Arathi Basin"] = "Cuenca de Arathi"
 L["Arathi Highlands"] = "Tierras Altas de Arathi"
 L["Arena of Annihilation"] = "Arena de la Aniquilación"			-- http://es.wowhead.com/zone=6219
 L["Ashenvale"] = "Vallefresno"
-L["Ashran"] = "Ashran"							-- http://es.wowhead.com/zone=6941
-L["Assault on Broken Shore"] = true
+L["Ashran"] = "Ashran"
+L["Assault on Broken Shore"] = "Asalto a la Costa Abrupta"
 L["Assault on Zan'vess"] = "Asalto a Zan'vess"				-- http://es.wowhead.com/zone=6328
 L["Auchenai Crypts"] = "Criptas Auchenai"
-L["Auchindoun"] = "Auchindoun"						-- http://es.wowhead.com/zone=6912
-L["Azjol-Nerub"] = "Azjol-Nerub"					-- http://es.wowhead.com/zone=4277
-L["Azshara"] = "Azshara"							-- http://es.wowhead.com/zone=16
-L["Azsuna"] = true
+L["Auchindoun"] = "Auchindoun"
+L["Azjol-Nerub"] = "Azjol-Nerub"
+L["Azshara"] = "Azshara"
+L["Azsuna"] = "Azsuna"
 L["Azuremyst Isle"] = "Isla Bruma Azur"
 L["Badlands"] = "Tierras Inhóspitas"
 L["Baradin Hold"] = "Bastión de Baradin"
@@ -48,11 +48,11 @@ L["Blasted Lands"] = "Las Tierras Devastadas"
 L["Blood in the Snow"] = "Sangre en la Nieve"				-- http://es.wowhead.com/zone=6678
 L["Bloodmaul Slag Mines"] = "Minas Machacasangre"			-- http://es.wowhead.com/zone=6874
 L["Bloodmyst Isle"] = "Isla Bruma de Sangre"
-L["Bonetown Scenario"] = true						-- is this needed (from zhTW)
+L["Bonetown Scenario"] = "Gesta de la Aldea de los Huesos"
 L["Borean Tundra"] = "Tundra Boreal"
-L["Brawl'gar Arena"] = true
+L["Brawl'gar Arena"] = "Arena Liza'gar"
 L["Brewmoon Festival"] = "Festival de la Cerveza Lunar"			-- http://es.wowhead.com/zone=6426
-L["Broken Shore"] = true
+L["Broken Shore"] = "Costa Abrupta"
 L["Burning Steppes"] = "Las Estepas Ardientes"
 L["Camp Narache"] = "Campamento Narache"
 L["Celestial Tournament"] = "Torneo Celestial"				-- http://es.wowhead.com/zone=6771
@@ -61,17 +61,17 @@ L["Crypt of Forgotten Kings"] = "Cripta de los Reyes Olvidados"		-- http://es.wo
 L["Crystalsong Forest"] = "Bosque Canto de Cristal"
 L["Dagger in the Dark"] = "Una Daga en la Oscuridad"			-- http://es.wowhead.com/zone=6565
 L["Dalaran Underbelly"] = true
-L["Dalaran"] = "Dalaran"						-- http://es.wowhead.com/zone=4395
+L["Dalaran"] = "Dalaran"
 L["Dark Heart of Pandaria"] = "Valle de la Flor Eterna"			-- http://es.wowhead.com/zone=6733
 L["Darkmoon Island"] = "Isla Luna Negra"				-- http://es.wowhead.com/zone=5861
 L["Darkshore"] = "Costa Oscura"
-L["Darnassus"] = "Darnassus"						-- http://es.wowhead.com/zone=1657
+L["Darnassus"] = "Darnassus"
 L["Deadwind Pass"] = "Paso de la Muerte"
 L["Deathknell"] = "Camposanto"
 L["Deepholm"] = "Infralar"
 L["Deeprun Tram"] = "Tranvía Subterráneo"
 L["Deepwind Gorge"] = "Cañón del Céfiro"				-- http://es.wowhead.com/zone=6665
-L["Desolace"] = "Desolace"						-- http://es.wowhead.com/zone=405
+L["Desolace"] = "Desolace"
 L["Dire Maul"] = "La Masacre"
 L["Domination Point"] = "Punto de Dominio"				-- http://es.wowhead.com/zone=6615
 L["Draenor"] = "Draenor"
@@ -79,8 +79,8 @@ L["Dragon Soul"] = "Alma de Dragón"					-- http://es.wowhead.com/zone=5892
 L["Dragonblight"] = "Cementerio de Dragones"
 L["Drak'Tharon Keep"] = "Fortaleza de Drak'Tharon"
 L["Dread Wastes"] = "Desierto del Pavor"
-L["Dun Morogh"] = "Dun Morogh"						-- http://es.wowhead.com/zone=1
-L["Durotar"] = "Durotar"						-- http://es.wowhead.com/zone=14
+L["Dun Morogh"] = "Dun Morogh"
+L["Durotar"] = "Durotar"
 L["Duskwood"] = "Bosque del Ocaso"
 L["Dustwallow Marsh"] = "Marjal Revolcafango"
 L["Eastern Kingdoms"] = "Reinos del Este"				-- please verify
@@ -91,33 +91,33 @@ L["End Time"] = "Fin de los Días"					-- http://es.wowhead.com/zone=5789
 L["Eversong Woods"] = "Bosque Canción Eterna"
 L["Eye of the Storm"] = "Ojo de la Tormenta"
 L["Felwood"] = "Frondavil"
-L["Feralas"] = "Feralas"						-- http://es.wowhead.com/zone=357
+L["Feralas"] = "Feralas"
 L["Firelands"] = "Tierras de Fuego"
 L["Frostfire Ridge"] = "Cresta Fuego Glacial"				-- http://es.wowhead.com/zone=6720
 L["Frostwall"] = "Muro de Hielo"					-- http://es.wowhead.com/zone=7004
 L["Gate of the Setting Sun"] = "Puerta del Sol Poniente"		-- http://es.wowhead.com/zone=5976
 L["Ghostlands"] = "Tierras Fantasma"
 L["Gilneas City"] = "Ciudad de Gilneas"
-L["Gilneas"] = "Gilneas"						-- http://es.wowhead.com/zone=4714
-L["Gnomeregan"] = "Gnomeregan"						-- http://es.wowhead.com/zone=721
-L["Gorgrond"] = "Gorgrond"						-- http://es.wowhead.com/zone=6721
+L["Gilneas"] = "Gilneas"
+L["Gnomeregan"] = "Gnomeregan"
+L["Gorgrond"] = "Gorgrond"
 L["Greenstone Village"] = "Aldea Verdemar"				-- http://es.wowhead.com/zone=6209
-L["Grim Batol"] = "Grim Batol"						-- http://es.wowhead.com/zone=4950
+L["Grim Batol"] = "Grim Batol"
 L["Grimrail Depot"] = "Terminal Malavía"				-- http://es.wowhead.com/zone=6984
 L["Grizzly Hills"] = "Colinas Pardas"
 L["Gruul's Lair"] = "Guarida de Gruul"
-L["Gundrak"] = "Gundrak"						-- http://es.wowhead.com/zone=4416
+L["Gundrak"] = "Gundrak"
 L["Halls of Lightning"] = "Cámaras de Relámpagos"
 L["Halls of Origination"] = "Cámaras de los Orígenes"
 L["Halls of Reflection"] = "Cámaras de Reflexión"
 L["Halls of Stone"] = "Cámaras de Piedra"
 L["Heart of Fear"] = "Corazón del Miedo"				-- http://es.wowhead.com/zone=6297
-L["Helheim"] = true
-L["Hellfire Citadel"] = true
+L["Helheim"] = "Helheim"
+L["Hellfire Citadel"] = "Ciudadela del Fuego Infernal"
 L["Hellfire Peninsula"] = "Península del Fuego Infernal"
 L["Hellfire Ramparts"] = "Murallas del Fuego Infernal"
 L["Highmaul"] = "Ogrópolis"						-- http://es.wowhead.com/zone=6996
-L["Highmountain"] = true
+L["Highmountain"] = "Monte Alto"
 L["Hillsbrad Foothills"] = "Laderas de Trabalomas"
 L["Hour of Twilight"] = "Hora del Crepúsculo"				-- http://es.wowhead.com/zone=5844
 L["Howling Fjord"] = "Fiordo Aquilonal"
@@ -133,31 +133,31 @@ L["Isle of Quel'Danas"] = "Isla de Quel'Danas"
 L["Isle of Thunder Scenario"] = true
 L["Isle of Thunder"] = "Isla del Trueno"
 L["Kalimdor"] = "Kalimdor"
-L["Karazhan"] = "Karazhan"						-- http://es.wowhead.com/zone=3457
+L["Karazhan"] = "Karazhan"
 L["Kelp'thar Forest"] = "Bosque Kelp'thar"
-L["Kezan"] = "Kezan"							-- http://es.wowhead.com/zone=4737
+L["Kezan"] = "Kezan"
 L["Krasarang Wilds"] = "Espesura Krasarang"
 L["Kun-Lai Summit"] = "Cima Kun-Lai"
 L["Lion's Landing"] = "Desembarco del León"				-- http://es.wowhead.com/zone=6575
-L["Loch Modan"] = "Loch Modan"						-- http://es.wowhead.com/zone=38
+L["Loch Modan"] = "Loch Modan"
 L["Lost City of the Tol'vir"] = "Ciudad Perdida de los Tol'vir"
 L["Lunarfall"] = "Bajaluna"						-- http://es.wowhead.com/zone=7078
 L["Magisters' Terrace"] = "Bancal del Magister"
 L["Magtheridon's Lair"] = "Guarida de Magtheridon"
 L["Mana-Tombs"] = "Tumbas de Maná"
-L["Maraudon"] = "Maraudon"						-- http://es.wowhead.com/zone=6514
-L["Mardum, the Shattered Abyss"] = true
+L["Maraudon"] = "Maraudon"
+L["Mardum, the Shattered Abyss"] = "Mardum, el Abismo Devastado"
 L["Mogu'shan Palace"] = "Palacio Mogu'shan"				-- http://es.wowhead.com/zone=6182
 L["Mogu'shan Vaults"] = "Cámaras Mogu'shan"				-- http://es.wowhead.com/zone=6125
 L["Molten Front"] = "Frente de Magma"					-- http://es.wowhead.com/zone=5733
 L["Moonglade"] = "Claro de la Luna"
 L["Mount Hyjal"] = "Monte Hyjal"
-L["Mulgore"] = "Mulgore"						-- http://es.wowhead.com/zone=215
+L["Mulgore"] = "Mulgore"
 L["Nagrand Arena"] = "Arena de Nagrand"
-L["Nagrand"] = "Nagrand"						-- http://es.wowhead.com/zone=3518 & http://es.wowhead.com/zone=6755
-L["Naxxramas"] = "Naxxramas"						-- http://es.wowhead.com/zone=3456
+L["Nagrand"] = "Nagrand"
+L["Naxxramas"] = "Naxxramas"
 L["Netherstorm"] = "Tormenta Abisal"
-L["Netherlight Temple"] = true
+L["Netherlight Temple"] = "Templo de la Luz Abisal"
 L["New Tinkertown"] = "Nueva Ciudad Manitas"
 L["Northern Barrens"] = "Los Baldíos del Norte"
 L["Northern Stranglethorn"] = "Norte de la Vega de Tuercespina"
@@ -165,9 +165,9 @@ L["Northrend"] = "Rasganorte"
 L["Northshire"] = "Villanorte"
 L["Old Hillsbrad Foothills"] = "Antiguas Laderas de Trabalomas"
 L["Onyxia's Lair"] = "Guarida de Onyxia"
-L["Orgrimmar"] = "Orgrimmar"						-- http://es.wowhead.com/zone=1637
+L["Orgrimmar"] = "Orgrimmar"
 L["Outland"] = "Terrallende"
-L["Pandaria" ] = "Pandaria"
+L["Pandaria"] = "Pandaria"
 L["Pit of Saron"] = "Foso de Saron"
 L["Plaguelands: The Scarlet Enclave"] = "Tierras de la Peste: El Enclave Escarlata"
 L["Ragefire Chasm"] = "Sima Ígnea"
@@ -180,7 +180,7 @@ L["Ruins of Gilneas"] = "Ruinas de Gilneas"
 L["Ruins of Lordaeron"] = "Ruinas de Lordaeron"
 L["Scarlet Halls"] = "Cámaras Escarlata"				-- http://es.wowhead.com/zone=6052
 L["Scarlet Monastery"] = "Monasterio Escarlata"
-L["Scholomance"] = "Scholomance"					-- http://es.wowhead.com/zone=6066
+L["Scholomance"] = "Scholomance"
 L["Searing Gorge"] = "La Garganta de Fuego"
 L["Serpentshrine Cavern"] = "Caverna Santuario Serpiente"
 L["Sethekk Halls"] = "Salas Sethekk"
@@ -197,7 +197,7 @@ L["Shrine of Seven Stars"] = "Santuario de las Siete Estrellas"
 L["Shrine of Two Moons"] = "Santuario de las Dos Lunas"
 L["Siege of Niuzao Temple"] = "Asedio del Templo de Niuzao"		-- http://es.wowhead.com/zone=6214
 L["Siege of Orgrimmar"] = "Asedio de Orgrimmar"				-- http://es.wowhead.com/zone=6738
-L["Silithus"] = "Silithus"						-- http://es.wowhead.com/zone=1377
+L["Silithus"] = "Silithus"
 L["Silvermoon City"] = "Ciudad de Lunargenta"
 L["Silverpine Forest"] = "Bosque de Argénteos"
 L["Silvershard Mines"] = "Minas Lonjaplata"				-- http://es.wowhead.com/zone=6126
@@ -206,22 +206,22 @@ L["Southern Barrens"] = "Los Baldíos del Sur"
 L["Spires of Arak"] = "Cumbres de Arak"					-- http://es.wowhead.com/zone=6722
 L["Stonetalon Mountains"] = "Sierra Espolón"
 L["Stormshield"] = "Escudo de Tormenta"					-- http://es.wowhead.com/zone=7332
-L["Stormheim"] = true
+L["Stormheim"] = "Tormenheim"
 L["Stormstout Brewery"] = "Cervecería del Trueno"			-- http://es.wowhead.com/zone=5963
 L["Stormwind City"] = "Ciudad de Ventormenta"
 L["The Stockade"] = "Las Mazmorras"					-- Replaces Stormwind Stockade http://es.wowhead.com/zone=717
 L["Strand of the Ancients"] = "Playa de los Ancestros"
 L["Stranglethorn Vale"] = "Vega de Tuercespina"
-L["Stratholme"] = "Stratholme"						-- http://es.wowhead.com/zone=2017
+L["Stratholme"] = "Stratholme"
 L["Sunstrider Isle"] = "Isla del Caminante del Sol"
 L["Sunwell Plateau"] = "Meseta de La Fuente del Sol"
-L["Suramar"] = true
+L["Suramar"] = "Suramar"
 L["Swamp of Sorrows"] = "Pantano de las Penas"
-L["Talador"] = "Talador"						-- http://es.wowhead.com/zone=6662
+L["Talador"] = "Talador"
 L["Tanaan Jungle"] = "Selva de Tanaan"					-- http://es.wowhead.com/zone=7025
-L["Tanaris"] = "Tanaris"						-- http://es.wowhead.com/zone=440
+L["Tanaris"] = "Tanaris"
 L["Tarren Mill vs Southshore"] = "Laderas de Trabalomas"		-- http://es.wowhead.com/zone=7107
-L["Teldrassil"] = "Teldrassil"						-- http://es.wowhead.com/zone=141
+L["Teldrassil"] = "Teldrassil"
 L["The Eye"] = "El Ojo"							-- Replaces Tempest Keep http://wow.zamimg.com/images/wow/maps/eses/zoom/3845-1.jpg
 L["Temple of Kotmogu"] = "Templo de Kotmogu"				-- http://es.wowhead.com/zone=6051
 L["Temple of the Jade Serpent"] = "Templo del Dragón de Jade"		-- http://es.wowhead.com/zone=5956
@@ -272,28 +272,28 @@ L["Tigers Peak Arena"] = "La Cima del Tigre"				-- Is this one corect? http://es
 L["Timeless Isle"] = "Isla Intemporal"
 L["Tirisfal Glades"] = "Claros de Tirisfal"
 L["Tol Barad Peninsula"] = "Península de Tol Barad"
-L["Tol Barad"] = "Tol Barad"						-- http://es.wowhead.com/zone=5095
+L["Tol Barad"] = "Tol Barad"
 L["Tol'vir Proving Grounds"] = true
 L["Townlong Steppes"] = "Estepas de Tong Long"
 L["Trial of the Champion"] = "Prueba del Campeón"
 L["Trial of the Crusader"] = "Prueba del Cruzado"
 L["Twilight Highlands"] = "Tierras Altas Crepusculares"
 L["Twin Peaks"] = "Cumbres Gemelas"
-L["Uldaman"] = "Uldaman"						-- http://es.wowhead.com/zone=1337
-L["Ulduar"] = "Ulduar"							-- http://es.wowhead.com/zone=4273
-L["Uldum"] = "Uldum"							-- http://es.wowhead.com/zone=5034
+L["Uldaman"] = "Uldaman"
+L["Ulduar"] = "Ulduar"
+L["Uldum"] = "Uldum"
 L["Undercity"] = "Entrañas"
-L["Unga Ingoo"] = "Unga Ingoo"						-- http://es.wowhead.com/zone=6309
+L["Unga Ingoo"] = "Unga Ingoo"
 L["Un'Goro Crater"] = "Cráter de Un'Goro"
 L["Unknown Zone"] = true
 L["Upper Blackrock Spire"] = "Cumbre de Roca Negra Superior"		-- http://es.wowhead.com/zone=7307
 L["Utgarde Keep"] = "Fortaleza de Utgarde"
 L["Utgarde Pinnacle"] = "Pináculo de Utgarde"
-L["Val'Sharah"] = true
+L["Val'Sharah"] = "Val'sharah"
 L["Vale of Eternal Blossoms"] = "Valle de la Flor Eterna"
 L["Valley of the Four Winds"] = "Valle de los Cuatro Vientos"
 L["Valley of Trials"] = "Valle de los Retos"
-L["Vashj'ir"] = "Vashj'ir"						-- http://es.wowhead.com/zone=5146
+L["Vashj'ir"] = "Vashj'ir"
 L["Vault of Archavon"] = "La Cámara de Archavon"
 L["Wailing Caverns"] = "Cuevas de los Lamentos"
 L["Warsong Gulch"] = "Garganta Grito de Guerra"
@@ -305,69 +305,183 @@ L["Wetlands"] = "Los Humedales"
 L["Wintergrasp"] = "Conquista del Invierno"
 L["Winterspring"] = "Cuna del Invierno"
 L["Zangarmarsh"] = "Marisma de Zangar"
-L["Zul'Aman"] = "Zul'Aman"						-- http://es.wowhead.com/zone=3805
-L["Zul'Drak"] = "Zul'Drak"						-- http://es.wowhead.com/zone=66
-L["Zul'Farrak"] = "Zul'Farrak"						-- http://es.wowhead.com/zone=1176
-L["Zul'Gurub"] = "Zul'Gurub"						-- http://es.wowhead.com/zone=1977
+L["Zul'Aman"] = "Zul'Aman"
+L["Zul'Drak"] = "Zul'Drak"
+L["Zul'Farrak"] = "Zul'Farrak"
+L["Zul'Gurub"] = "Zul'Gurub"
 
 L["Cantrips & Crows"] = true
-L["Circle of Wills"] = true
+L["Circle of Wills"] = "Círculo de Voluntades"
 L["The Black Market"] = "El Mercado Negro"				-- http://es.wowhead.com/npc=62943
 L["The Underbelly"] = "Los Bajos Fondos"				-- please verify http://es.wowhead.com/object=193610
 -- Zones Updates 20160902 has to be sorted
-L["Skyhold"] = true
-L["Emerald Dreamway"] = true
-L["Trueshot Lodge"] = true
-L["The Dreamgrove"] = true
-L["Thunder Totem"] = true
-L["Vault of the Wardens"] = true
-L["Niskara"] = true
-L["The Fel Hammer"] = true
-L["Violet Hold"] = true
-L["Hall of the Guardian"] = true
-L["Ursoc's Lair"] = true
-L["Black Rook Hold"] = true
-L["Malorne's Nightmare"] = true
-L["The Nighthold"] = true
-L["Halls of Valor"] = true
-L["Eye of Azshara"] = true
+L["Skyhold"] = "Bastión Celestial"
+L["Emerald Dreamway"] = "Camino del Sueño Esmeralda"
+L["Trueshot Lodge"] = "Refugio Alblanco"
+L["The Dreamgrove"] = "Arboleda de los Sueños"
+L["Thunder Totem"] = "Tótem del Trueno"
+L["Vault of the Wardens"] = "Cámara de las Celadoras"
+L["Niskara"] = "Niskara"
+L["The Fel Hammer"] = "El Martillo Vil"
+L["Violet Hold"] = "El Bastión Violeta"
+L["Hall of the Guardian"] = "Salón del Guardián"
+L["Ursoc's Lair"] = "Guarida de Ursoc"
+L["Black Rook Hold"] = "Torreón Grajo Negro"
+L["Malorne's Nightmare"] = "Pesadilla de Malorne"
+L["The Nighthold"] = "Bastión Nocturno"
+L["Halls of Valor"] = "Cámaras del Valor"
+L["Eye of Azshara"] = "Ojo de Azshara"
 L["Assault on Violet Hold"] = true
 L["Maw of Souls"] = true
-L["Neltharion's Lair"] = true
-L["Court of Stars"] = true
+L["Neltharion's Lair"] = "Guarida de Neltharion"
+L["Court of Stars"] = "Corte de las Estrellas"
 L["Emerald Nightmare"] = true
-L["The Cove of Nashal"] = true
-L["The Arcway"] = true
+L["The Cove of Nashal"] = "Cala de Nashal"
+L["The Arcway"] = "La Arquería"
 L["The Broken Isles"] = true
 L["Cave of the Blood Totem"] = true
-L["Cathedral of Eternal Night"] = true
-L["Tomb of Sargeras"] = true
-L["Felwing Ledge"] = true
-L["The Lost Glacier"] = true
-L["Fields of the Eternal Hunt"] = true
+L["Cathedral of Eternal Night"] = "Catedral de la Noche Eterna"
+L["Tomb of Sargeras"] = "Tumba de Sargeras"
+L["Felwing Ledge"] = "Cornisa Vuelovil"
+L["The Lost Glacier"] = "El Glaciar Perdido"
+L["Fields of the Eternal Hunt"] = "Campos de la Cacería Eterna"
 -- 7.3 Changes
-L["Argus"] = true
+L["Argus"] = "Argus"
 L["Mac'Aree"] = true
-L["Antoran Wastes"] = true
-L["Krokuun"] = true
-L["The Vindicaar"] = true
-L["The Deaths of Chromie"] = true
-L["The Seat of the Triumvirate"] = true
-L["Antorus, The Burning Throne"] = true
-L["Invasion Point: Aurinor"] = true
-L["Invasion Point: Bonich"] = true
-L["Invasion Point: Cen'gar"] = true
-L["Invasion Point: Naigtal"] = true
-L["Invasion Point: Sangua"] = true
-L["Invasion Point: Val"] = true
-L["Greater Invasion Point: Pit Lord Vilemus"] = true
-L["Greater Invasion Point: Mistress Alluradel"] = true
-L["Greater Invasion Point: Matron Folnuna"] = true
-L["Greater Invasion Point: Inquisitor Meto"] = true
-L["Greater Invasion Point: Sotanathor"] = true
-L["Greater Invasion Point: Occularus"] = true
+L["Antoran Wastes"] = "Baldío Antoran"
+L["Krokuun"] = "Krokuun"
+L["The Vindicaar"] = "El Vindicaar"
+L["The Deaths of Chromie"] = "Las Muertes de Cromi"
+L["The Seat of the Triumvirate"] = "El Trono del Triunvirato"
+L["Antorus, The Burning Throne"] = "Antorus, el Trono Ardiente"
+L["Invasion Point: Aurinor"] = "Punto de invasión: Aurinor"
+L["Invasion Point: Bonich"] = "Punto de invasión: Bonich"
+L["Invasion Point: Cen'gar"] = "Punto de invasión: Cen'gar"
+L["Invasion Point: Naigtal"] = "Punto de invasión: Naigtal"
+L["Invasion Point: Sangua"] = "Punto de invasión: Sangua"
+L["Invasion Point: Val"] = "Punto de invasión: Val"
+L["Greater Invasion Point: Pit Lord Vilemus"] = "Punto de invasión superior: Señor del foso Vilemus"
+L["Greater Invasion Point: Mistress Alluradel"] = "Punto de invasión superior: Maestra Alluradel"
+L["Greater Invasion Point: Matron Folnuna"] = "Punto de invasión superior: Matriarca Folnuna"
+L["Greater Invasion Point: Inquisitor Meto"] = "Punto de invasión superior: Inquisidor Meto"
+L["Greater Invasion Point: Sotanathor"] = "Punto de invasión superior: Sotanathor"
+L["Greater Invasion Point: Occularus"] = "Punto de invasión superior: Occularus"
 --
 L["Stormheim Invasion"] = true
 L["Azsuna Invasion"] = true
 L["Val'sharah Invasion"] = true
 L["Highmountain Invasion"] = true
+L["Mardum, The Shattered Abyss"] = "Mardum, el Abismo Devastado"
+L["Zuldazar"] = "Zuldazar"
+L["Nazmir"] = "Nazmir"
+L["Vol'Dun"] = "Vol'dun"
+L["Tiragarde Sound"] = "Estrecho de Tiragarde"
+L["Drustvar"] = "Drustvar"
+L["Stormsong Valley"] = "Valle Canto Tormenta"
+L["Tol Dagor"] = "Tol Dagor"
+L["Revendreth"] = "Revendreth"
+L["Bastion"] = "Bastión"
+L["Maldraxxus"] = "Maldraxxus"
+L["The Maw"] = "Las Fauces"
+L["Korthia"] = "Korthia"
+L["Zereth Mortis"] = "Zereth Mortis"
+L["Ardenweald"] = "Ardenweald"
+L["Heart of the Forest"] = "Corazón del Bosque"
+L["Oribos - Ring of Fates"] = "Oribos - Círculo del Destino"
+L["Oribos - Ring of Transference"] = "Oribos - Círculo de Transferencias"
+L["Oribos - The Crucible"] = "Oribos - Crisol"
+L["The Waking Shores"] = "Las Orillas del Despertar"
+L["Ohn'ahran Plains"] = "Llanuras de Ohn'ahra"
+L["The Azure Span"] = "Las Tierras Azures"
+L["Thaldraszus"] = "Thaldraszus"
+L["Valdrakken"] = "Valdrakken"
+L["The Forbidden Reach"] = "El Confín Olvidado"
+L["Zaralek Cavern"] = "Caverna Zaralek"
+L["Emerald Dream"] = "Sueño Esmeralda"
+L["Isle of Dorn"] = "Isla de Dorn"
+L["The Ringing Deeps"] = "Cavernas Resonantes"
+L["Hallowfall"] = "Santificación"
+L["Undermine"] = "Minahonda"
+L["Azj-Kahet"] = "Azj-Kahet"
+L["Azj-Kahet - Lower"] = "Azj-Kahet - Inferior"
+L["Dornogal"] = "Dornogal"
+L["Siren Isle"] = "Isla de la Sirena"
+L["City of Threads"] = "Ciudad Tejida"
+L["City of Threads - Lower"] = "Ciudad Tejida - Arrabal"
+L["Voidstorm"] = "Tormenta del Vacío"
+L["Harandar"] = "Harandar"
+L["Vaults of Atal'Utek"] = "Cámaras de Atal'Utek"
+L["The Coiled Isle"] = "Isla Serpenteante"
+L["Atal'Aman"] = "Atal'Aman"
+L["Exile's Reach"] = "Confín del Exilio"
+L["Mechagon Island"] = "Isla de Mecandria"
+L["Light's Hope Chapel"] = "Capilla de la Esperanza de la Luz"
+L["The Hall of Shadows"] = "Morada de las Sombras"
+L["Skywall"] = "Muro Celeste"
+L["Dreadscar Rift"] = "Falla Cicatriz del Terror"
+L["Darkheart Thicket"] = "Arboleda Corazón Oscuro"
+L["Shadowgore Citadel"] = "Ciudadela Sangrenegra"
+L["Gloaming Reef"] = "Arrecife del Ocaso"
+L["Trial of Valor"] = "Prueba del Valor"
+L["Hall of Communion"] = "Salas de Comunión"
+L["Un'gol Ruins"] = "Ruinas de Un'gol"
+L["Uncharted Island"] = "Isla Inexplorada"
+L["Skittering Hollow"] = "Cuenca Arácnida"
+L["The Rotting Mire"] = "Lodazal Hediondo"
+L["Verdant Wilds"] = "Espesura Verdeante"
+L["Molten Cay"] = "Cayo Volcánico"
+L["The Dread Chain"] = "Cadena Aterradora"
+L["Whispering Reef"] = "Arrecife Susurrante"
+L["Havenswood"] = "Bosqueamparo"
+L["Jorundall"] = "Jorundall"
+L["Crestfall"] = "Catacresta"
+L["Snowblossom Village"] = "Aldea Flor de Nieve"
+L["Atal'Dazar"] = "Atal'Dazar"
+L["Freehold"] = "Fuerte Libre"
+L["Kings' Rest"] = "Reposo de los Reyes"
+L["Shrine of the Storm"] = "Altar de la Tormenta"
+L["Siege of Boralus"] = "Asedio de Boralus"
+L["Temple of Sethraliss"] = "Templo de Sethraliss"
+L["The MOTHERLODE!!"] = "VETA MADRE"
+L["The Underrot"] = "Catacumbas Putrefactas"
+L["Waycrest Manor"] = "Mansión Crestavía"
+L["Mechagon"] = "Mecandria"
+L["Uldir"] = "Uldir"
+L["Battle of Dazar'alor"] = "Batalla de Dazar'alor"
+L["Crucible of Storms"] = "Crisol de Tormentas"
+L["Dazar'alor"] = "Dazar'alor"
+L["Vision of Orgrimmar"] = "Visión de Orgrimmar"
+L["Vision of Stormwind"] = "Visión de Ventormenta"
+L["Seat of the Primus"] = "Trono del Prelado"
+L["Tazavesh"] = "Tazavesh"
+L["Sporefall"] = "Micosis"
+L["Murder Row"] = "Frontal de la Muerte"
+L["Windrunner Spire"] = "Aguja Brisaveloz"
+L["The Blinding Vale"] = "Valle Cegador"
+L["Maisara Caverns"] = "Cavernas de Maisara"
+L["Shadow Enclave"] = "Enclave Sombrío"
+L["Twilight Crypts"] = "Criptas Crepusculares"
+L["Gulf of Memory"] = "Abismo del Recuerdo"
+L["Shadowguard Point"] = "Punto de la Guardia de las Sombras"
+L["Torment's Rise"] = "Alto del Tormento"
+L["The Grudge Pit"] = "El Foso de los Agravios"
+L["Den of Nalorakk"] = "Guarida de Nalorakk"
+L["The Darkway"] = "Pasaje Oscuro"
+L["Sunkiller Sanctum"] = "Sagrario Matasoles"
+L["The Voidspire"] = "La Aguja del Vacío"
+L["The Dreamrift"] = "La Falla Onírica"
+L["March on Quel'Danas"] = "Marcha a Quel'Danas"
+L["Arcantina"] = "Arcantina"
+L["Parhelion Plaza"] = "Plaza del Parhelio"
+L["Collegiate Calamity"] = "Calamidad de Colegiado"
+L["Nexus Point Xenas"] = "Punto de Nexo: Xenas"
+L["Voidscar Arena"] = "Arena Lacravacua"
+L["Altar of Fangs"] = "Altar de los Colmillos"
+L["Val"] = "Val"
+L["Naigtal"] = "Naigtal"
+L["The Venomous Abyss"] = "Abismo Venenoso"
+L["The Tidebound Grotto"] = "Gruta Mareal"
+L["The Ring of Glory"] = "Círculo de la Gloria"
+L["Venomfall Deeps"] = "Cascadas Llueveneno"
+L["Gnarldor Isle"] = "Isla Gnarldor"
+L["Tempest Keep"] = "El Castillo de la Tempestad"

@@ -20,8 +20,8 @@ NXClassLocToCap = {		-- Convert localized class name to generic caps
 }
 
 -- Main Carbonite
-L["Carbonite"] = true
-L["CARBONITE"] = true
+L["Carbonite"] = "Carbonite"
+L["CARBONITE"] = "CARBONITE"
 L["Loading"] = "载入中"
 L["Loading Done"] = "载入完成"
 L["None"] = true
@@ -30,7 +30,7 @@ L["Show Player Zone"] = "显示玩家区域"
 L["Menu"] = "菜单"
 L["Show Selected Zone"] = "显示选择区域"
 L["Add Note"] = "添加标记"
-L["TopRight"] = true
+L["TopRight"] = "右上"
 L["Help"] = "帮助"
 L["Options"] = "选项"
 L["Toggle Map"] = "切换地图显示"
@@ -42,7 +42,7 @@ L["Middle-Click to Toggle Guide"] = "中键切换百科指南窗口"
 L["Right-Click for Menu"] = "右键显示菜单"
 L["Carbonite requires v5.0 or higher"] = "需要v5.0或更高版本的Carbonite"
 L["GUID player"] = "玩家GUID"
-L["GUID NPC"] = true
+L["GUID NPC"] = "GUID NPC"
 L["GUID pet"] = "宠物GUID"
 L["Unit map error"] = "单位地图错误"
 L["Gather"] = "采集"
@@ -121,12 +121,12 @@ L["Minimize"] = "最小化"
 L["Auto Scale"] = "自动缩放"
 
 -- Stuff from old localization
-L["Searching for Artifacts"] = "寻找考古点"		-- NXlARTIFACTS
+L["Searching for Artifacts"] = "搜索古物"
 L["Extract Gas"] = "精炼气体"				-- NXlEXTRACTGAS
 L["Herb Gathering"] = "草药采集"			-- NXlHERBGATHERING
 L["In Conflict"] = "争夺中"				-- NXlINCONFLICT
 L["Opening"] = "打开"					-- NXlOpening
-L["Opening - No Text"] = true				-- NXlOpeningNoText
+L["Opening - No Text"] = "打开 - 无文本"
 L["Everfrost Chip"] = "永冻薄片"			-- NXlEverfrost
 
 L["yds"] = "码"
@@ -134,11 +134,11 @@ L["secs"] = "秒"
 L["mins"] = "分钟"
 
 -- NxUI.lua
-L[" Frame: %s Shown%d Vis%d P>%s"] = true
-L[" EScale %f, Lvl %f"] = true
-L[" LR %f, %f"] = true
-L[" BT %f, %f"] = true
-L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = true
+L[" Frame: %s Shown%d Vis%d P>%s"] = " 框体: %s 显示%d 可见%d P>%s"
+L[" EScale %f, Lvl %f"] = " EScale %f, 等级 %f"
+L[" LR %f, %f"] = " LR %f, %f"
+L[" BT %f, %f"] = " BT %f, %f"
+L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = "%s#%d %s ID%s (%s) show%d l%d x%d y%d"
 L["%.1f days"] = "%.1f 天"
 L["%.1f hours"] = "%.1f 小时"
 L["%d mins"] = "%d 分钟"
@@ -151,25 +151,25 @@ L["Detach found %s"] = "找到待分离窗口 %s"
 L["Search: [click]"] = "搜索：[点击此处]"
 L["Search: %[click%]"] = "搜索：%[点击此处%]"
 L["Reset old list data"] = "重置旧列表数据"
-L["!BUT %s"] = true
+L["!BUT %s"] = "!BUT %s"
 L["Key %s transfered to Watch List Item"] = "键 %s 已转移到监视列表"
 L["CLICK (.+):"] = true
 L["Key %s %s #%s %s"] = "键 %s %s #%s %s"
 L["shift left/right click to change size"] = "Shift-左键或右键点击改变大小"
 L["Reset old tool bar data"] = "重置旧工具栏数据"
-L["|cffffff00%dg"] = true
-L["%s |cffbfbfbf%ds"] = true
-L["%s |cff7f7f00%dc"] = true
+L["|cffffff00%dg"] = "|cffffff00%d金"
+L["%s |cffbfbfbf%ds"] = "%s |cffbfbfbf%d银"
+L["%s |cff7f7f00%dc"] = "%s |cff7f7f00%d铜"
 
 -- NxTravel.lua
 L["Connection: %s to %s"] = "连接：%s 到 %s"
 L["Fly: %s to %s"] = "飞行：%s 到 %s"
 
 -- NxHud.lua
-L[" %.1f deg"] = true
-L[" %d deg"] = true
-L["Remove Current Point"] = true
-L["Remove All Points"] = true
+L[" %.1f deg"] = " %.1f 度"
+L[" %d deg"] = " %d 度"
+L["Remove Current Point"] = "移除当前点"
+L["Remove All Points"] = "移除所有点"
 
 -- Carbonite.Info kill-marker tooltip
 L["kill"] = "击杀"
@@ -183,3 +183,9 @@ L["Right click"] = "右键点击"
 L["Toggle icons"] = "切换图标"
 L["Context menu"] = "右键菜单"
 L["Open settings"] = "打开设置"
+L["Whats New!"] = "新内容!"
+L["Don't show for this update again"] = "本次更新不再显示"
+L["Carbonite What's New"] = "Carbonite 新内容"
+L["Carbonite.Gathermate2_Data addon is not loaded!"] = "Carbonite.Gathermate2_Data 插件未加载!"
+L["nodes from Carbonite.Gathermate2_Data"] = "个节点来自 Carbonite.Gathermate2_Data"
+L["Health"] = "生命值"

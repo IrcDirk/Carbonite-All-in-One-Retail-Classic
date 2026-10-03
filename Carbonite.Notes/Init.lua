@@ -30,6 +30,8 @@ local defaults = {
             RXP             = true,    -- Show RXPGuides waypoint pins
             RXPSize         = 24,
             RXPArrow        = true,    -- Route RXPGuides arrow through Carbonite HUD
+            GatherLite      = true,    -- Show GatherLite gathering nodes
+            GatherLiteSize  = 14,
             ZygorArrow      = true,    -- Route ZygorGuidesViewer arrow through Carbonite HUD
         },
         Addons = {},

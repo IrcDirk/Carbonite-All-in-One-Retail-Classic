@@ -24,10 +24,10 @@ L["Warrior"] = "Воин"
 L["Deathknight"] = "Рыдцарь Смерти"
 L["Monk"] = "Монах"
 
-L["Com options reset (%f, %f)"] = true
-L["ComTest"] = true
-L["Disabling com functions!"] = true
-L["JoinChan Err %s"] = true
-L["SendSecG Error: %s"] = true
-L[" %s (pending)"] = true
-L["Com %d Bytes sec %d"] = true
+L["Com options reset (%f, %f)"] = "Настройки связи сброшены (%f, %f)"
+L["ComTest"] = "ComTest"
+L["Disabling com functions!"] = "Отключение функций связи!"
+L["JoinChan Err %s"] = "Ошибка JoinChan %s"
+L["SendSecG Error: %s"] = "Ошибка SendSecG: %s"
+L[" %s (pending)"] = " %s (ожидание)"
+L["Com %d Bytes sec %d"] = "Связь %d байт, сек %d"

@@ -22,7 +22,7 @@ L["ItemTypes"] = {
 	"Waffe",
 }
 
-L["-Warehouse-"] = true
+L["-Warehouse-"] = "-Lager-"
 L["Warehouse Module"] = "Lager Modul"
 L["Warehouse Options"] = "Lager Optionen"
 L["Add Warehouse Tooltip"] = "Lager Kurzinfo hinzuf\195\188gen"
@@ -51,7 +51,7 @@ L["Show Warehouse"] = "Zeige Warenhaus"
 
 L["Import"] = "Importieren"
 L["Cancel"] = "Abbruch"
-L["Export"] = "Export"
+L["Export"] = "Exportieren"
 L["Warehouse"] = "Lager"
 L[" Realm:%s %s"] = " Realm:%s %s"
 L[" Time On: %s%2d:%02d:%02d|r, Played: %s%s"] = " Online seid: %s%2d:%02d:%02d|r, gespielt: %s%s"
@@ -64,14 +64,14 @@ L[" Location: %s%s (%d, %d)"] = " Position: %s%s (%d, %d)"
 L[" Start XP: %s%s/%s (%.0f%%)|r Rest: %s%.0f%%"] = " Start EP: %s%s/%s (%.0f%%)|r ausgeruht: %s%.0f%%"
 L[" XP: %s%s/%s (%.0f%%)|r Rest: %s%.0f%%"] = " EP: %s%s/%s (%.0f%%)|r ausgeruht: %s%.0f%%"
 L[" Honor: %s%s|r  Conquest: %s%s"] = " Ehrenpunkte: %s%s|r  Eroberungspunkte: %s%s"
-L[" Valor: %s%s|r  Justice: %s%s"] = " Valor: %s%s|r  Justice: %s%s"	-- not translated not in Game anymore
+L[" Valor: %s%s|r  Justice: %s%s"] = " Tapferkeit: %s%s|r  Gerechtigkeit: %s%s"
 --L[" %s %s%s"] = true
 L["|cffafdfafAll: %s. |cffafdfafPlayed: %s%s"] = "|cffafdfafAlles: %s. |cffafdfafgespielt: %s%s"
-L["%s's Items"] = "%s's Items"
+L["%s's Items"] = "Gegenstände von %s"
 L["|cffff1010No bank data - visit your bank"] = "|cffff1010Keine Bankdaten vorhanden - besuche die Bank"
 L["|cffff1010No reagent bank data - visit your bank"] = "|cffff1010Keine Daten f\195\188r Handwerkslager vorhanden - besuche die Bank"
 L["---- Equipped ----"] = "---- Angelegt ----"
-L["Slot"] = "Slot"
+L["Slot"] = "Platz"
 L["---- %s Equipped ----"] = "---- %s Angelegt ----"
 L["All Items"] = "Alle Items"
 L["%s |cffcfcfff(%s Bank)"] = "%s |cffcfcfff(%s Bank)"
@@ -80,22 +80,22 @@ L["%s %d (%d Worn)"] = "%s %d (%d angelegt)"
 L["%s (%d Bank)"] = "%s (%d Bank)"
 L["%s (%d RBank)"] = "%s (%d HwBank)"
 L["%s (%s Mail)"] = "%s (%s Post)"
-L["%s (%s Pets)"] = true
+L["%s (%s Pets)"] = "%s (%s Haustiere)"
 L["%s|cFFFF0000[|cFF00FF00Bags:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00Taschen:%d|cFFFF0000]"
 L["%s|cFFFF0000[|cFF00FF00Worn:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00Angelegt:%d|cFFFF0000]"
 L["%s|cFFFF0000[|cFF00FF00Mail:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00Post:%d|cFFFF0000]"
 L["%s|cFFFF0000[|cFF00FF00Bank:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00Bank:%d|cFFFF0000]"
 L["%s|cFFFF0000[|cFF00FF00RBank:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00HwBank:%d|cFFFF0000]"
-L["%s|cFFFF0000[|cFF00FF00Pets:%d|cFFFF0000]"] = true
+L["%s|cFFFF0000[|cFF00FF00Pets:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00Haustiere:%d|cFFFF0000]"
 L["%s's %s Skills"] = "%s's %s Fertigkeiten"
 L["|cffff1010No data - open %s window"] = "|cffff1010Keine Daten - \195\182ffne %s Fenster"
 L["|cffffffffW%sarehouse:"] = "|cffffffffLager:"
 L["LOOT_OPENED %s (%s %s)"] = "LOOT_OFFEN %s (%s %s)"
 L["no LootTarget"] = "kein LootZiel"
-L["LOOT_SLOT_CLEARED #%s %s (quest)"] = "LOOT_SLOT_CLEARED #%s %s (quest)"
+L["LOOT_SLOT_CLEARED #%s %s (quest)"] = "LOOT_SLOT_CLEARED #%s %s (Quest)"
 L["%s deleted"] = "%s gel\195\182scht"
-L["enchant:(%d+)"] = "enzaubern:(%d+)"
-L["item:(%d+)"] = "item:(%d+)"
+L["enchant:(%d+)"] = true
+L["item:(%d+)"] = true
 
 -- Keybinds / Tastaturbelegungen
 L["Carbonite Warehouse"] = "Carbonite Lager"

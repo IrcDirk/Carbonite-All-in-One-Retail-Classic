@@ -28,6 +28,7 @@ AddonButtons.Adopted = {}    -- typeId -> { handler = fn }
 local QUESTIE_ICON    = "Interface\\AddOns\\Questie\\Icons\\available.blp"
 local RARESCAN_ICON   = "Interface\\AddOns\\RareScanner\\Media\\Icons\\OriginalSkull.blp"
 local RXP_ICON        = "Interface\\AddOns\\RXPGuides\\Textures\\rxp_logo-128"
+local GATHERLITE_ICON = "Interface\\Icons\\inv_misc_spyglass_02"
 local FALLBACK_ICON   = "Interface\\Icons\\INV_Misc_QuestionMark"
 
 -- HandyNotes itself doesn't ship a brandable toolbar texture; the
@@ -396,6 +397,46 @@ local function rxpHandler(_, _, click)
     end
 end
 
+local GATHERLITE_TIP = {
+    title = "GatherLite",
+    rows = {
+        { L["Left click"],  L["Toggle icons"] },
+        { L["Right click"], L["Context menu"] },
+    },
+}
+
+local function gatherLiteAvailable()
+    local Nx = _G.Nx
+    return Nx and Nx.Notes and Nx.Notes.IsGatherLiteAvailable
+        and Nx.Notes:IsGatherLiteAvailable() or false
+end
+
+local function initialGatherLitePressed()
+    local Nx = _G.Nx
+    return Nx and Nx.fdb and Nx.fdb.profile and Nx.fdb.profile.Notes
+        and Nx.fdb.profile.Notes.GatherLite or false
+end
+
+local function gatherLiteHandler(_, but, click)
+    local Nx, GL = _G.Nx, _G.GatherLite
+    if not GL or not Nx or not Nx.fdb or not gatherLiteAvailable() then return end
+    if click == "RightButton" then
+        if type(GL.OpenTrackingMenu) == "function" then
+            pcall(GL.OpenTrackingMenu, GL, but and but.Frm or UIParent, "worldmap")
+        end
+        return
+    end
+    local enabled = not Nx.fdb.profile.Notes.GatherLite
+    Nx.fdb.profile.Notes.GatherLite = enabled
+    Nx.Notes:BustIntegrationCache("GatherLite")
+    if enabled then
+        Nx.Notes:GatherLite(Nx.Map:GetCurrentMapAreaID())
+    else
+        local map = Nx.Map:GetMap(1)
+        if map then map:ClearIconType("!GLT") end
+    end
+end
+
 -- Make sure decorations survive any future Nx.Map:CreateToolBar
 -- rebuild — Notes/Warehouse Init each call it, and #2's phantom
 -- cleanup now destroys the old button frames (including our
@@ -440,6 +481,13 @@ local function tryAdopt()
             rxpHandler, initialRXPPressed(), RXP_TIP)
         appendOne("AddonBtn_RXP", "RXPGuides",
             rxpHandler, initialRXPPressed(), RXP_TIP)
+    end
+    if gatherLiteAvailable()
+        and not AddonButtons.Adopted["AddonBtn_GatherLite"] then
+        registerOne("AddonBtn_GatherLite", GATHERLITE_ICON, "GatherLite",
+            gatherLiteHandler, initialGatherLitePressed(), GATHERLITE_TIP)
+        appendOne("AddonBtn_GatherLite", "GatherLite",
+            gatherLiteHandler, initialGatherLitePressed(), GATHERLITE_TIP)
     end
 end
 

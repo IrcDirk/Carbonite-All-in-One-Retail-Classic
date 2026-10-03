@@ -57,6 +57,9 @@ L["RXPGuides Icon Size"] = true
 L["Route RXPGuides arrow through Carbonite"] = true
 L["Step"] = true
 L["Replaces the RXPGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = true
+L["Display GatherLite nodes On Map"] = true
+L["If you have GatherLite installed, shows its gathering nodes on the Carbonite map"] = true
+L["GatherLite Icon Size"] = true
 L["Route ZygorGuides arrow through Carbonite"] = true
 L["Replaces the ZygorGuides navigation arrow with Carbonite's own HUD travel arrow, pointing at the current step"] = true
 

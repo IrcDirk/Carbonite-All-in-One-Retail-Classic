@@ -24,10 +24,10 @@ L["Warrior"] = "Guerreiro"
 L["Deathknight"] = "Cavaleiro da Morte"
 L["Monk"] = "Monje"
 
-L["Com options reset (%f, %f)"] = true
-L["ComTest"] = true
-L["Disabling com functions!"] = true
-L["JoinChan Err %s"] = true
-L["SendSecG Error: %s"] = true
-L[" %s (pending)"] = true
-L["Com %d Bytes sec %d"] = true
+L["Com options reset (%f, %f)"] = "Opções de com redefinidas (%f, %f)"
+L["ComTest"] = "ComTest"
+L["Disabling com functions!"] = "Desativando funções de com!"
+L["JoinChan Err %s"] = "Erro JoinChan %s"
+L["SendSecG Error: %s"] = "Erro SendSecG: %s"
+L[" %s (pending)"] = " %s (pendente)"
+L["Com %d Bytes sec %d"] = "Com %d bytes seg %d"

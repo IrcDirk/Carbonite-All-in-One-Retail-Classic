@@ -41,9 +41,9 @@ L["Display Handynotes On Map"] = "地图上显示Handynotes"
 L["If you have HandyNotes installed, allows them on the Carbonite map"] = "允许Handynotes图标显示在Carbonite地图上"
 L["Handnotes Icon Size"] = "Handynotes图标大小"
 
-L["Display RareScanner icons On Map"] = true
-L["If you have RareScanner installed, allows its icons on the Carbonite map"] = true
-L["RareScanner Icon Size"] = true
+L["Display RareScanner icons On Map"] = "在地图上显示 RareScanner 图标"
+L["If you have RareScanner installed, allows its icons on the Carbonite map"] = "如果安装了 RareScanner,允许在 Carbonite 地图上显示其图标"
+L["RareScanner Icon Size"] = "RareScanner 图标大小"
 
 L["Display RXPGuides waypoints On Map"] = "在地图上显示 RXPGuides 路径点"
 L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = "如果安装了 RXPGuides，将其活动步骤路径点镜像到 Carbonite 地图上"
@@ -57,3 +57,11 @@ L["Replaces the ZygorGuides navigation arrow with Carbonite's own HUD travel arr
 -- Keybinds
 L["Carbonite Notes"] = "Carbonite 标记模块"
 L["NxTOGGLEFAV"] = "显示/隐藏标记"
+L["Display Questie quest objective icons On Map (Beware: might cause lags and fps loss)"] = "在地图上显示 Questie 任务目标图标(注意:可能导致卡顿和帧数下降)"
+L["If you have Questie installed, allows its icons for quest objectives on the Carbonite map"] = "如果安装了 Questie,允许在 Carbonite 地图上显示其任务目标图标"
+L["Display icons for Available quests from Questie on Carbonite Map"] = "在 Carbonite 地图上显示 Questie 的可接任务图标"
+L["If you have Questie installed, allows its icons for available quests on the Carbonite map"] = "如果安装了 Questie,允许在 Carbonite 地图上显示其可接任务图标"
+L["Questie Icon Size"] = "Questie 图标大小"
+L["Display GatherLite nodes On Map"] = "在地图上显示 GatherLite 采集点"
+L["If you have GatherLite installed, shows its gathering nodes on the Carbonite map"] = "如果安装了 GatherLite,在 Carbonite 地图上显示其采集点"
+L["GatherLite Icon Size"] = "GatherLite 图标大小"

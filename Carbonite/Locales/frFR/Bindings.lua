@@ -16,4 +16,4 @@ L["NxMAPTOGHERB"] = "Afficher/Cacher Plantes"
 L["NxMAPTOGMINE"] = "Afficher/Cacher Gisements"
 L["NxTOGGLEGUIDE"] = "Afficher/Cacher le Guide"
 L["NxMAPSKIPTARGET"] = "Passer la cible sur Map"
-
+L["NxMAPTOGTIMBER"] = "Afficher/Cacher Bois"

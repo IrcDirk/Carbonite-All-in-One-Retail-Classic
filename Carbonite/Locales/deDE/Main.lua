@@ -79,7 +79,7 @@ L["honor"] = "Ehre"
 L["Hit"] = "Treffer"
 L["Peak"] = "Spitze"
 L["Best"] = "am Besten"
-L["Total"] = "Total"
+L["Total"] = "Gesamt"
 L["Time"] = "Zeit"
 L["Event"] = "Ereignis"
 L["Events"] = "Ereignisse"
@@ -142,11 +142,11 @@ L["secs"] = "sek"
 L["mins"] = "min"
 
 -- NxUI.lua
-L[" Frame: %s Shown%d Vis%d P>%s"] = true
-L[" EScale %f, Lvl %f"] = true
-L[" LR %f, %f"] = true
-L[" BT %f, %f"] = true
-L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = true
+L[" Frame: %s Shown%d Vis%d P>%s"] = " Frame: %s Shown%d Vis%d P>%s"
+L[" EScale %f, Lvl %f"] = " EScale %f, Lvl %f"
+L[" LR %f, %f"] = " LR %f, %f"
+L[" BT %f, %f"] = " BT %f, %f"
+L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = "%s#%d %s ID%s (%s) show%d l%d x%d y%d"
 L["%.1f days"] = "%.1f Tage"
 L["%.1f hours"] = "%.1f Stunden"
 L["%d mins"] = "%d Minuten"
@@ -159,25 +159,25 @@ L["Detach found %s"] = "Abl\195\182sung gefunden %s"
 L["Search: [click]"] = "Suche: [Klick]"
 L["Search: %[click%]"] = "Suche: %[Klick%]"
 L["Reset old list data"] = "Alte Listendaten zur\195\188cksetzen"
-L["!BUT %s"] = true
-L["Key %s transfered to Watch List Item"] = true
-L["CLICK (.+):"] = "KLICK (.+):"
-L["Key %s %s #%s %s"] = true
+L["!BUT %s"] = "!BUT %s"
+L["Key %s transfered to Watch List Item"] = "Taste %s auf Gegenstand der Beobachtungsliste übertragen"
+L["CLICK (.+):"] = true
+L["Key %s %s #%s %s"] = "Taste %s %s #%s %s"
 L["shift left/right click to change size"] = "Umschalt Links/Rechts Klick um Grß195\182\195\159e zu \194\164ndern"
 L["Reset old tool bar data"] = "Alte Funktionsleistendaten zur\195\188cksetzen"
-L["|cffffff00%dg"] = true
-L["%s |cffbfbfbf%ds"] = true
-L["%s |cff7f7f00%dc"] = true
+L["|cffffff00%dg"] = "|cffffff00%dg"
+L["%s |cffbfbfbf%ds"] = "%s |cffbfbfbf%ds"
+L["%s |cff7f7f00%dc"] = "%s |cff7f7f00%dk"
 
 -- NxTravel.lua
 L["Connection: %s to %s"] = "Verbindung: %s nach %s"
 L["Fly: %s to %s"] = "Fliege: %s nach %s"
 
 -- NxHud.lua
-L[" %.1f deg"] = true
-L[" %d deg"] = true
-L["Remove Current Point"] = true
-L["Remove All Points"] = true
+L[" %.1f deg"] = " %.1f Grad"
+L[" %d deg"] = " %d Grad"
+L["Remove Current Point"] = "Aktuellen Punkt entfernen"
+L["Remove All Points"] = "Alle Punkte entfernen"
 
 -- Carbonite.Info kill-marker tooltip
 L["kill"] = "Tötung"
@@ -191,3 +191,9 @@ L["Right click"] = "Rechtsklick"
 L["Toggle icons"] = "Symbole umschalten"
 L["Context menu"] = "Kontextmenü"
 L["Open settings"] = "Einstellungen öffnen"
+L["Whats New!"] = "Was ist neu!"
+L["Don't show for this update again"] = "Für dieses Update nicht mehr anzeigen"
+L["Carbonite What's New"] = "Carbonite – Was ist neu"
+L["Carbonite.Gathermate2_Data addon is not loaded!"] = "Das Addon Carbonite.Gathermate2_Data ist nicht geladen!"
+L["nodes from Carbonite.Gathermate2_Data"] = "Fundorte aus Carbonite.Gathermate2_Data"
+L["Health"] = "Gesundheit"

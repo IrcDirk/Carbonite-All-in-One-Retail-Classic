@@ -489,9 +489,17 @@ function    Nx.Quest:TooltipProcess (stripColor, sourceTooltip)
     if not CanUseValue(tipStr) then
         Nx.TooltipLastDiffText = nil
         Nx.TooltipLastDiffNumLines = 0
-        if usePrivateTip and _G.NxQuestTooltipText then
-            _G.NxQuestTooltipText:Hide()
-            _G.NxQuestTooltipText.NxSourceTooltip = nil
+        local outputTip = usePrivateTip and PrepareQuestTooltipFrame(sourceTip) or sourceTip
+        local show = Nx.Quest:TooltipProcessUnitOnly(outputTip, sourceTip)
+        if usePrivateTip then
+            if show then
+                outputTip:Show()
+            else
+                outputTip:Hide()
+                outputTip.NxSourceTooltip = nil
+            end
+        elseif show then
+            sourceTip:Show()
         end
         return
     end
@@ -511,6 +519,54 @@ function    Nx.Quest:TooltipProcess (stripColor, sourceTooltip)
     end
 
     Nx.TooltipLastDiffNumLines = GetSafeTooltipLineCount (sourceTip)
+end
+
+function Nx.Quest:AddUnitQuestLines (tip, source, questStr)
+    if not source.GetUnit then
+        return false
+    end
+    local _, unit = source:GetUnit()
+    if not CanUseValue(unit) or not unit then
+        return false
+    end
+    local rawGuid = UnitGUID(unit)
+    if not CanUseValue(rawGuid) or not rawGuid then
+        return false
+    end
+    local _, _2, _3, _4, _5, npcID = strsplit('-', rawGuid)
+    local unitQuests = npcID and Nx.Units2Quests[tonumber(npcID)]
+    if not unitQuests then
+        return false
+    end
+    local added = false
+    for k, str in ipairs ({Nx.Split('|', unitQuests)}) do
+        local id, objn = Nx.Split(',', str)
+        id = tonumber(id)
+        objn = tonumber(objn)
+        local i, cur = self:FindCur (id)
+        if cur then
+            local color = GetCachedDifficultyColorStr(cur.Level)
+            tip:AddLine (format ("%s %s%d %s", questStr, color, cur.Level, cur.Title))
+            added = true
+            if cur[objn] then
+                local oName, oCount = Nx.Split(':', cur[objn]);
+                if oName and oCount then
+                    tip:AddLine (format ("    |cffb0b0b0%s:%s%s", oName, color, oCount))
+                else
+                    tip:AddLine (format ("    %s%s", color, cur[objn]))
+                end
+            end
+        end
+    end
+    return added
+end
+
+function Nx.Quest:TooltipProcessUnitOnly (outputTip, sourceTip)
+    if not Nx.QInit or not Nx.qdb.profile.Quest.AddTooltip then
+        return
+    end
+    local questStr = format (L["|cffffffffQ%suest:"], Nx.TXTBLUE)
+    return self:AddUnitQuestLines (outputTip or GameTooltip, sourceTip or GameTooltip, questStr)
 end
 
 function Nx.Quest:TooltipProcess2 (stripColor, tipStr, outputTip, sourceTip)
@@ -572,40 +628,7 @@ function Nx.Quest:TooltipProcess2 (stripColor, tipStr, outputTip, sourceTip)
         local tipStrLower = strlower (tipStr)
 
         local curq = self.CurQ
-        local unitName, unit = source:GetUnit()
-        local tipAddSuccess = false
-        -- Check if our tooltip is on a unit first
-        if CanUseValue(unit) and unit then
-            local rawGuid = UnitGUID(unit)
-            local npcID
-            if CanUseValue(rawGuid) and rawGuid then
-                local _, _2, _3, _4, _5, parsedID = strsplit('-', rawGuid)
-                npcID = parsedID
-            end
-            local unitQuests = Nx.Units2Quests[tonumber(npcID)]
-            if npcID and unitQuests then
-                local npcQuests = {Nx.Split('|', unitQuests)};
-                for k, str in ipairs (npcQuests) do
-                    local id, objn = Nx.Split(',', str)
-                    id = tonumber(id)
-                    objn = tonumber(objn)
-                    local i, cur = self:FindCur (id)
-                    if cur then
-                        local color = GetCachedDifficultyColorStr(cur.Level)
-                        tip:AddLine (format ("%s %s%d %s", questStr, color, cur.Level, cur.Title))
-                        tipAddSuccess = true
-                        if cur[objn] then
-                            local oName, oCount = Nx.Split(':', cur[objn]);
-                            if oName and oCount then
-                                tip:AddLine (format ("    |cffb0b0b0%s:%s%s", oName, color, oCount))
-                            else
-                                tip:AddLine (format ("    %s%s", color, cur[objn]))
-                            end
-                        end
-                    end
-                end
-            end
-        end
+        local tipAddSuccess = self:AddUnitQuestLines (tip, source, questStr)
         if not tipAddSuccess then
             -- Iterate over our current quests to find matches for item objectives
             for curi, cur in ipairs (curq) do

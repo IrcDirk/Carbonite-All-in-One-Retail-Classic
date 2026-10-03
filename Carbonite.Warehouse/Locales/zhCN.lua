@@ -77,22 +77,22 @@ L["%s %d (%d Worn)"] = "%s %d (装备:%d)"
 L["%s (%d Bank)"] = "%s (银行:%d)"
 L["%s (%d RBank)"] = "%s (材料:%d)"
 L["%s (%s Mail)"] = "%s (邮箱:%s)"
-L["%s (%s Pets)"] = true
+L["%s (%s Pets)"] = "%s (%s 宠物)"
 L["%s|cFFFF0000[|cFF00FF00Bags:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00背包:%d|cFFFF0000]"
 L["%s|cFFFF0000[|cFF00FF00Worn:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00装备:%d|cFFFF0000]"
 L["%s|cFFFF0000[|cFF00FF00Mail:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00邮箱:%d|cFFFF0000]"
 L["%s|cFFFF0000[|cFF00FF00Bank:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00银行:%d|cFFFF0000]"
 L["%s|cFFFF0000[|cFF00FF00RBank:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00材料:%d|cFFFF0000]"
-L["%s|cFFFF0000[|cFF00FF00Pets:%d|cFFFF0000]"] = true
+L["%s|cFFFF0000[|cFF00FF00Pets:%d|cFFFF0000]"] = "%s|cFFFF0000[|cFF00FF00宠物:%d|cFFFF0000]"
 L["%s's %s Skills"] = "%s的 %s 技能"
 L["|cffff1010No data - open %s window"] = "|cffff1010无数据 - 打开 %s 窗口"
 L["|cffffffffW%sarehouse:"] = "|cffffffff仓%s库:"
-L["LOOT_OPENED %s (%s %s)"] = true
+L["LOOT_OPENED %s (%s %s)"] = "LOOT_OPENED %s (%s %s)"
 L["no LootTarget"] = "无拾取对象"
 L["LOOT_SLOT_CLEARED #%s %s (quest)"] = "LOOT_SLOT_CLEARED #%s %s (任务)"
 L["%s deleted"] = "%s 已删除"
-L["enchant:(%d+)"] = "附魔:(%d+)"
-L["item:(%d+)"] = "物品:(%d+)"
+L["enchant:(%d+)"] = true
+L["item:(%d+)"] = true
 
 -- Keybinds
 L["Carbonite Warehouse"] = "Carbonite 仓库模块"

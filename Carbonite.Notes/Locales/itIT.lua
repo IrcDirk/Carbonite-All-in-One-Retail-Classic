@@ -41,13 +41,13 @@ L["Note Addons"] = "Addon Note"
 L["My Notes"] = "Le mie Note"
 
 L["Reset old notes data"] = "Reset vecchi dati note"
-L["Display Handynotes On Map"] = true
-L["If you have HandyNotes installed, allows them on the Carbonite map"] = true
-L["Handnotes Icon Size"] = true
+L["Display Handynotes On Map"] = "Mostra HandyNotes sulla Mappa"
+L["If you have HandyNotes installed, allows them on the Carbonite map"] = "Se hai HandyNotes installato, li consente sulla mappa di Carbonite"
+L["Handnotes Icon Size"] = "Dimensione Icone HandyNotes"
 
-L["Display RareScanner icons On Map"] = true
-L["If you have RareScanner installed, allows its icons on the Carbonite map"] = true
-L["RareScanner Icon Size"] = true
+L["Display RareScanner icons On Map"] = "Mostra icone RareScanner sulla Mappa"
+L["If you have RareScanner installed, allows its icons on the Carbonite map"] = "Se hai RareScanner installato, consente le sue icone sulla mappa di Carbonite"
+L["RareScanner Icon Size"] = "Dimensione Icone RareScanner"
 
 L["Display RXPGuides waypoints On Map"] = "Mostra waypoint RXPGuides sulla mappa"
 L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = "Se hai RXPGuides installato, replica i suoi marker dei passi attivi sulla mappa di Carbonite"
@@ -61,3 +61,11 @@ L["Replaces the ZygorGuides navigation arrow with Carbonite's own HUD travel arr
 -- Keybinds
 L["Carbonite Notes"] = "Note Carbonite"
 L["NxTOGGLEFAV"] = "mostra/nascondi Note"
+L["Display Questie quest objective icons On Map (Beware: might cause lags and fps loss)"] = "Mostra icone degli obiettivi missione di Questie sulla Mappa (Attenzione: può causare rallentamenti e calo di FPS)"
+L["If you have Questie installed, allows its icons for quest objectives on the Carbonite map"] = "Se hai Questie installato, consente le sue icone per gli obiettivi delle missioni sulla mappa di Carbonite"
+L["Display icons for Available quests from Questie on Carbonite Map"] = "Mostra icone delle missioni Disponibili di Questie sulla Mappa di Carbonite"
+L["If you have Questie installed, allows its icons for available quests on the Carbonite map"] = "Se hai Questie installato, consente le sue icone per le missioni disponibili sulla mappa di Carbonite"
+L["Questie Icon Size"] = "Dimensione Icone Questie"
+L["Display GatherLite nodes On Map"] = "Mostra nodi GatherLite sulla Mappa"
+L["If you have GatherLite installed, shows its gathering nodes on the Carbonite map"] = "Se hai GatherLite installato, mostra i suoi nodi di raccolta sulla mappa di Carbonite"
+L["GatherLite Icon Size"] = "Dimensione Icone GatherLite"

@@ -36,8 +36,8 @@ NXClassLocToCap = {		-- Convert localized class name to generic caps
 		"무기",
 	}
 -- Main Carbonite
-L["Carbonite"] = true
-L["CARBONITE"] = true
+L["Carbonite"] = "Carbonite"
+L["CARBONITE"] = "CARBONITE"
 L["Loading"] = "시작하는 중..."
 L["Loading Done"] = "성공적으로 시작했습니다."
 L["None"] = "없음"
@@ -46,7 +46,7 @@ L["Show Player Zone"] = "현재 지역 보기"
 L["Menu"] = "메뉴"
 L["Show Selected Zone"] = "선택 지역 보기"
 L["Add Note"] = "표시 추가"
-L["TopRight"] = true
+L["TopRight"] = "오른쪽 위"
 L["Help"] = "도움말"
 L["Options"] = "옵션"
 L["Toggle Map"] = "지도 전환"
@@ -60,7 +60,7 @@ L["Carbonite requires v5.0 or higher"] = "Carbonite v5.0 이상 필요"
 L["GUID player"] = "플레이어 GUID"
 L["GUID NPC"] = "NPC GUID"
 L["GUID pet"] = "애완동물 GUID"
-L["Unit map error"] = true
+L["Unit map error"] = "유닛 지도 오류"
 L["Gather"] = "채집"
 L["Entered"] = "진입"
 L["Level"] = "레벨"
@@ -135,7 +135,7 @@ L["Disable and Reload"] ="사용안함 그리고 재시작"
 -- UI Tooltips
 L["Close/Menu"] = "닫기/메뉴"
 L["Close/Unlock"] = "닫기/잠금 해제"
-L["Pick Color"] = true
+L["Pick Color"] = "색상 선택"
 L["Unlock"] = "잠금 해제"
 L["Maximize"] = "최대화"
 L["Restore"] = "되돌리기"
@@ -147,8 +147,8 @@ L["Searching for Artifacts"] = "유물 수색"		-- NXlARTIFACTS
 L["Extract Gas"] = "가스 추출"				-- NXlEXTRACTGAS
 L["Herb Gathering"] = "약초채집"			-- NXlHERBGATHERING
 L["In Conflict"] = "분쟁 지역"				-- NXlINCONFLICT
-L["Opening"] = true					-- NXlOpening
-L["Opening - No Text"] = true				-- NXlOpeningNoText
+L["Opening"] = "여는 중"
+L["Opening - No Text"] = "여는 중 - 텍스트 없음"
 L["Everfrost Chip"] = "영원의 서리 파편"			-- NXlEverfrost
 
 -- Are the ones below used?
@@ -177,47 +177,47 @@ L["Align Right"] = "오른쪽 정렬"
 L["Vertical"] = "수직"
 L["Put the game minimap into the Carbonite map?\n\nThis will make one unified map. The minimap buttons will go into the Carbonite button window. This can also be changed using the Map Minimap options page."] = ""
 
-L["yds"] = true
-L["secs"] = true
-L["mins"] = true
+L["yds"] = "야드"
+L["secs"] = "초"
+L["mins"] = "분"
 
 -- NxUI.lua
-L[" Frame: %s Shown%d Vis%d P>%s"] = true
-L[" EScale %f, Lvl %f"] = true
-L[" LR %f, %f"] = true
-L[" BT %f, %f"] = true
-L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = true
-L["%.1f days"] = true
-L["%.1f hours"] = true
-L["%d mins"] = true
-L["Reset old layout data"] = true
-L["Window version mismatch!"] = true
-L["XY missing (%s)"] = true
-L["Window not found (%s)"] = true
-L["Detach %s"] = true
-L["Detach found %s"] = true
-L["Search: [click]"] = true
-L["Search: %[click%]"] = true
-L["Reset old list data"] = true
-L["!BUT %s"] = true
-L["Key %s transfered to Watch List Item"] = true
+L[" Frame: %s Shown%d Vis%d P>%s"] = " 프레임: %s 표시%d 보임%d P>%s"
+L[" EScale %f, Lvl %f"] = " EScale %f, 레벨 %f"
+L[" LR %f, %f"] = " LR %f, %f"
+L[" BT %f, %f"] = " BT %f, %f"
+L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = "%s#%d %s ID%s (%s) show%d l%d x%d y%d"
+L["%.1f days"] = "%.1f일"
+L["%.1f hours"] = "%.1f시간"
+L["%d mins"] = "%d분"
+L["Reset old layout data"] = "오래된 배치 데이터 초기화"
+L["Window version mismatch!"] = "창 버전 불일치!"
+L["XY missing (%s)"] = "XY 없음 (%s)"
+L["Window not found (%s)"] = "창을 찾을 수 없음 (%s)"
+L["Detach %s"] = "분리 %s"
+L["Detach found %s"] = "분리 발견 %s"
+L["Search: [click]"] = "검색: [클릭]"
+L["Search: %[click%]"] = "검색: %[클릭%]"
+L["Reset old list data"] = "오래된 목록 데이터 초기화"
+L["!BUT %s"] = "!BUT %s"
+L["Key %s transfered to Watch List Item"] = "키 %s: 감시 목록 아이템으로 이전됨"
 L["CLICK (.+):"] = true
-L["Key %s %s #%s %s"] = true
-L["shift left/right click to change size"] = true
-L["Reset old tool bar data"] = true
-L["|cffffff00%dg"] = true
-L["%s |cffbfbfbf%ds"] = true
-L["%s |cff7f7f00%dc"] = true
+L["Key %s %s #%s %s"] = "키 %s %s #%s %s"
+L["shift left/right click to change size"] = "Shift+왼쪽/오른쪽 클릭: 크기 변경"
+L["Reset old tool bar data"] = "오래된 도구 모음 데이터 초기화"
+L["|cffffff00%dg"] = "|cffffff00%d골"
+L["%s |cffbfbfbf%ds"] = "%s |cffbfbfbf%d실"
+L["%s |cff7f7f00%dc"] = "%s |cff7f7f00%d동"
 
 -- NxTravel.lua
-L["Connection: %s to %s"] = true
-L["Fly: %s to %s"] = true
+L["Connection: %s to %s"] = "연결: %s → %s"
+L["Fly: %s to %s"] = "비행: %s → %s"
 
 -- NxHud.lua
-L[" %.1f deg"] = true
-L[" %d deg"] = true
-L["Remove Current Point"] = true
-L["Remove All Points"] = true
+L[" %.1f deg"] = " %.1f도"
+L[" %d deg"] = " %d도"
+L["Remove Current Point"] = "현재 지점 제거"
+L["Remove All Points"] = "모든 지점 제거"
 
 -- Carbonite.Info kill-marker tooltip
 L["kill"] = "처치"
@@ -231,3 +231,9 @@ L["Right click"] = "오른쪽 클릭"
 L["Toggle icons"] = "아이콘 전환"
 L["Context menu"] = "컨텍스트 메뉴"
 L["Open settings"] = "설정 열기"
+L["Whats New!"] = "새로운 소식!"
+L["Don't show for this update again"] = "이번 업데이트에서 다시 표시하지 않기"
+L["Carbonite What's New"] = "Carbonite 새로운 소식"
+L["Carbonite.Gathermate2_Data addon is not loaded!"] = "Carbonite.Gathermate2_Data 애드온이 로드되지 않았습니다!"
+L["nodes from Carbonite.Gathermate2_Data"] = "Carbonite.Gathermate2_Data의 채집 지점"
+L["Health"] = "생명력"

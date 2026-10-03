@@ -44,6 +44,15 @@ Nx.Whatsnew.Maps = {
         "Updated Flight Masters locales for DE,ES,FR,KO,PT,RU,TW Languages",
         "Fixed various small errors caused by division by zero."
     },
+    [1790892000] = {
+        "Oct 2nd 2026", "",
+        "Added GatherLite integration: its gathering nodes",
+        "   (ore, herbs, chests, fishing pools - both its",
+        "   bundled database and what you gathered yourself)",
+        "   show on the Carbonite map. New toolbar button:",
+        "   left click toggles the icons, right click opens",
+        "   GatherLite's menu of node types to show.",
+    },
     [1790632800] = {
         "Sept 29th 2026", "",
         "Experimental 3D map view: toggle it with the new 3D",

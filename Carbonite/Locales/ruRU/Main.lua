@@ -26,8 +26,8 @@ NXClassLocToCap = {		-- Convert localized class name to generic caps
 }
 
 -- Main Carbonite
-L["Carbonite"] = true
-L["CARBONITE"] = true
+L["Carbonite"] = "Carbonite"
+L["CARBONITE"] = "CARBONITE"
 L["Whats New!"] = "Новости аддона"
 L["Don't show for this update again"] = "Не показывать для этого обновления"
 L["Loading"] = "Загрузка"
@@ -50,7 +50,7 @@ L["Middle-Click to Toggle Guide"] = "Средний клик чтобы Вкл/�
 L["Right-Click for Menu"] = "Правый клик для Меню"
 L["Carbonite requires v5.0 or higher"] = "Carbonite нужна v5.0 или выше"
 L["GUID player"] = "GUID игрока"
-L["GUID NPC"] = true
+L["GUID NPC"] = "GUID НИП"
 L["GUID pet"] = "GUID питомца"
 L["Unit map error"] = "Ошибка модуля карты"
 L["Gather"] = "Добыча"
@@ -142,11 +142,11 @@ L["secs"] = "сек."
 L["mins"] = "мин."
 
 -- NxUI.lua
-L[" Frame: %s Shown%d Vis%d P>%s"] = true
-L[" EScale %f, Lvl %f"] = true
-L[" LR %f, %f"] = true
-L[" BT %f, %f"] = true
-L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = true
+L[" Frame: %s Shown%d Vis%d P>%s"] = " Frame: %s Shown%d Vis%d P>%s"
+L[" EScale %f, Lvl %f"] = " EScale %f, Lvl %f"
+L[" LR %f, %f"] = " LR %f, %f"
+L[" BT %f, %f"] = " BT %f, %f"
+L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = "%s#%d %s ID%s (%s) show%d l%d x%d y%d"
 L["%.1f days"] = "%.1f дней"
 L["%.1f hours"] = "%.1f часов"
 L["%d mins"] = "%d минут"
@@ -159,9 +159,9 @@ L["Detach found %s"] = "Обнаруженно открепление %s"
 L["Search: [click]"] = "Искать: [click]"
 L["Search: %[click%]"] = "Искать: %[click%]"
 L["Reset old list data"] = "Сброить старые данные списка"
-L["!BUT %s"] = true
+L["!BUT %s"] = "!BUT %s"
 L["Key %s transfered to Watch List Item"] = "Ключ %s перемещен в Журнал Отслеживания"
-L["CLICK (.+):"] = "клик (.+):"
+L["CLICK (.+):"] = true
 L["Key %s %s #%s %s"] = "Ключ %s %s #%s %s"
 L["shift left/right click to change size"] = "shift левый/правый клик для изменения размера"
 L["Reset old tool bar data"] = "Сбросить данные старой панели инструментов"
@@ -191,3 +191,7 @@ L["Right click"] = "Правый клик"
 L["Toggle icons"] = "Показать/скрыть иконки"
 L["Context menu"] = "Контекстное меню"
 L["Open settings"] = "Открыть настройки"
+L["Carbonite What's New"] = "Что нового в Carbonite"
+L["Carbonite.Gathermate2_Data addon is not loaded!"] = "Модификация Carbonite.Gathermate2_Data не загружена!"
+L["nodes from Carbonite.Gathermate2_Data"] = "точек из Carbonite.Gathermate2_Data"
+L["Health"] = "Здоровье"

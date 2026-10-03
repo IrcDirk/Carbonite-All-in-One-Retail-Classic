@@ -7,8 +7,8 @@ if not L then return end
 
 -- General Nodes
 L["Artifact"] = true
-L["Everfrost"] = true
-L["Gas"] = true
+L["Everfrost"] = "Siemprescarcha"
+L["Gas"] = "Gas"
 L["Ooze Covered"] = true
 
 -- Herbs
@@ -40,7 +40,7 @@ L["Frozen Herb"] = true
 L["Ghost Mushroom"] = true
 L["Glowcap"] = true
 L["Goldclover"] = true
-L["Golden Lotus"] = true
+L["Golden Lotus"] = "Loto Dorado"
 L["Golden Sansam"] = true
 L["Goldthorn"] = true
 L["Gorgrond Flytrap"] = true

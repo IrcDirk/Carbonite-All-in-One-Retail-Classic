@@ -45,9 +45,9 @@ L["Display Handynotes On Map"] = "HandyNotes auf der Karte anzeigen"
 L["If you have HandyNotes installed, allows them on the Carbonite map"] = "Falls das Addon HandyNotes installiert ist, werden sie Auf der Carbonite Karte angezeigt"
 L["Handnotes Icon Size"] = "HandyNotes Symbolgr\195\182\195\159e"
 
-L["Display RareScanner icons On Map"] = true
-L["If you have RareScanner installed, allows its icons on the Carbonite map"] = true
-L["RareScanner Icon Size"] = true
+L["Display RareScanner icons On Map"] = "RareScanner-Symbole auf der Karte anzeigen"
+L["If you have RareScanner installed, allows its icons on the Carbonite map"] = "Wenn RareScanner installiert ist, werden dessen Symbole auf der Carbonite-Karte erlaubt"
+L["RareScanner Icon Size"] = "RareScanner-Symbolgröße"
 
 L["Display RXPGuides waypoints On Map"] = "RXPGuides-Wegpunkte auf der Karte anzeigen"
 L["If you have RXPGuides installed, mirrors its active-step waypoint pins onto the Carbonite map"] = "Falls RXPGuides installiert ist, werden seine aktiven Schritt-Wegpunkte auf der Carbonite-Karte gespiegelt"
@@ -61,3 +61,11 @@ L["Replaces the ZygorGuides navigation arrow with Carbonite's own HUD travel arr
 -- Keybinds
 L["Carbonite Notes"] = "Carbonite Notizen"
 L["NxTOGGLEFAV"] = "Notizen ein/ausblenden"
+L["Display Questie quest objective icons On Map (Beware: might cause lags and fps loss)"] = "Questie-Symbole für Questziele auf der Karte anzeigen (Achtung: kann Ruckler und FPS-Verlust verursachen)"
+L["If you have Questie installed, allows its icons for quest objectives on the Carbonite map"] = "Wenn Questie installiert ist, werden dessen Symbole für Questziele auf der Carbonite-Karte erlaubt"
+L["Display icons for Available quests from Questie on Carbonite Map"] = "Symbole für verfügbare Quests von Questie auf der Carbonite-Karte anzeigen"
+L["If you have Questie installed, allows its icons for available quests on the Carbonite map"] = "Wenn Questie installiert ist, werden dessen Symbole für verfügbare Quests auf der Carbonite-Karte erlaubt"
+L["Questie Icon Size"] = "Questie-Symbolgröße"
+L["Display GatherLite nodes On Map"] = "GatherLite-Fundorte auf der Karte anzeigen"
+L["If you have GatherLite installed, shows its gathering nodes on the Carbonite map"] = "Wenn GatherLite installiert ist, werden dessen Sammelfundorte auf der Carbonite-Karte angezeigt"
+L["GatherLite Icon Size"] = "GatherLite-Symbolgröße"

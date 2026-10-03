@@ -230,5 +230,10 @@ Nx.QuestStartEndObject = {
     [180748] = "Ticking Present",
     [180793] = "Festive Gift",
     [181073] = "Fragrant Cauldron",
+    [415106] = "Burned-Out Remains",
+    [415107] = "Burned-Out Remains",
     [581822] = "Bloodstained Satchel",
+    [610954] = "Bounty Available: Vulgara the Insatiable!",
+    [649051] = "Wanted: Incinerator Gar'im",
+    [660964] = "Misplaced Packages",
 }

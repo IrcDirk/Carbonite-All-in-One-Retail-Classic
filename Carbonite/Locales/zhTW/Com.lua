@@ -24,10 +24,10 @@ L["Warrior"] = "戰士"
 L["Deathknight"] = "死亡騎士"
 L["Monk"] = "武僧"
 
-L["Com options reset (%f, %f)"] = true
-L["ComTest"] = true
-L["Disabling com functions!"] = true
-L["JoinChan Err %s"] = true
-L["SendSecG Error: %s"] = true
-L[" %s (pending)"] = true
-L["Com %d Bytes sec %d"] = true
+L["Com options reset (%f, %f)"] = "通訊選項已重設 (%f, %f)"
+L["ComTest"] = "ComTest"
+L["Disabling com functions!"] = "停用通訊功能！"
+L["JoinChan Err %s"] = "加入頻道錯誤 %s"
+L["SendSecG Error: %s"] = "SendSecG 錯誤：%s"
+L[" %s (pending)"] = " %s (等待中)"
+L["Com %d Bytes sec %d"] = "通訊 %d 位元組 每秒 %d"

@@ -61,7 +61,7 @@ L["Artifacts"] = "Artefakte"
 L["Everfrost"] = "Immerfrost"
 L["Gas"] = "Gase"
 L["Instances"] = "Instanzen"
-L["Zone"] = "Zone" -- doch lieber "Gebiete"?
+L["Zone"] = "Zone"
 L["Trade Skill"] = "Berufsf\195\164higkeiten"
 L["Alchemy Lab"] = "Alchemielabor"
 L["Altar Of Shadows"] = "Altar der Schatten"
@@ -69,11 +69,11 @@ L["Lightforged Beacon"] = "Lichtgeschmiedetes Signal"
 L["Mana Loom"] = "Mana-Webstuhl"
 L["Grace Loom"] ="Webstuhl der anmutigen Königin"
 L["Moonwell"] = "Mondbrunnen"
-L["Name"] = true
-L["Info"] = true
-L["Info2"] = true
-L["Info3"] = true
-L["Back "] = true
+L["Name"] = "Name"
+L["Info"] = "Info"
+L["Info2"] = "Info2"
+L["Info3"] = "Info3"
+L["Back "] = "Zurück "
 
 -- Menus
 L["Delete"] = "L\195\182schen"
@@ -92,8 +92,15 @@ L["Zeppelin to"] = "Zeppelin nach"
 L["Tram to"] = "Untergrundbahn nach" -- es gibt bisher nur die Zwergenuntergrundbahn
 
 -- Instance types
-L["Dungeon"] = true
-L["Raid"] = true
-L["Scenario"] = true
-L["Solo"] = true
-L["Mythic Dungeon"] = true
+L["Dungeon"] = "Dungeon"
+L["Raid"] = "Schlachtzug"
+L["Scenario"] = "Szenario"
+L["Solo"] = "Solo"
+L["Mythic Dungeon"] = "Mythischer Dungeon"
+L["Broken Isles"] = "Die Verheerten Inseln"
+L["Zandalar"] = "Zandalar"
+L["Kul Tiras"] = "Kul Tiras"
+L["Nazjatar"] = "Nazjatar"
+L["The Shadowlands"] = "Die Schattenlande"
+L["Dragon Isles"] = "Dracheninseln"
+L["Khaz Algar"] = "Khaz Algar"

@@ -36,9 +36,9 @@ L["One minute until the Arena"] = "Одна минута до боя на Аре
 L["Thirty seconds until the Arena"] = "Тридцать секунд до боя на Арене"
 L["Fifteen seconds until the Arena"] = "Пятнадцать до боя на Арене"
 
-L["Reset old info data %f"] = true
-L[" begins? in (%d+) "] = true
-L["(%d+) minutes? until the battle"] = true
+L["Reset old info data %f"] = "Сброс старых данных информации %f"
+L[" begins? in (%d+) "] = " начн.-тся через (%d+) "
+L["(%d+) minutes? until the battle"] = "(%d+) минут"
 
 -- Kill marker icons (Carbonite map skull/seal markers)
 L["Kill Icons"] = "Иконки убийств"
@@ -57,3 +57,14 @@ L["Adds a drop shadow to this font"] = "Добавляет тень к шриф�
 L["None"] = "Нет"
 L["Outline"] = "Контур"
 L["Thick Outline"] = "Толстый контур"
+L["Best"] = "Лучший"
+L["Hit"] = "Удар"
+L["Killed"] = "Убито"
+L["Peak"] = "Пик"
+L["Show Combat Graph"] = "Показать график боя"
+L["Time"] = "Время"
+L["Toggle Combat Graph"] = "Показать/скрыть график боя"
+L["Total"] = "Всего"
+L["crit"] = "крит"
+L["hit"] = "удар"
+L["honor"] = "честь"

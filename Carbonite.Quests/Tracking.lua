@@ -770,7 +770,14 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
     end
 
     if skipSame and self:IsTargeted (qId, qObj, x1, y1, x2, y2) then
-        tdbg ("  same target, name refresh only")
+        if tar and tar.MapId ~= mId then
+            tdbg ("  same target, map %s -> %s, re-route",
+                tostring(tar.MapId), tostring(mId))
+            tar.MapId = mId
+            self.Map.UpdateTrackingDelay = 0
+        else
+            tdbg ("  same target, name refresh only")
+        end
         Map:SetTargetName (name)
         return
     end

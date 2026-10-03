@@ -455,13 +455,15 @@ local function findItemCause(objText)
     for i = 1, CAUSE_KEEP do
         local c = causes[i]
         if c and c.kind == "item" and (now - c.t) <= CAUSE_WINDOW then
-            if not fallbackT or c.t > fallbackT then
+            if not fallback or (c.srcID and not fallback.srcID)
+                or (not fallback.srcID == not c.srcID and c.t > fallbackT) then
                 fallback, fallbackT = c, c.t
             end
             local name = c.item and names and names[c.item]
             if objText and name and name ~= ""
                 and objText:find(name, 1, true) then
-                if not bestT or c.t > bestT then
+                if not best or (c.srcID and not best.srcID)
+                    or (not best.srcID == not c.srcID and c.t > bestT) then
                     best, bestT = c, c.t
                 end
             end
@@ -1157,8 +1159,8 @@ local function npcHarvestTick()
     end
 
     while npcHarvest.nflight < harvest.batch and prog.cur <= prog.to do
-        local id = prog.cur
-        prog.cur = id + 1
+        local id = prog.queue and prog.queue[prog.cur] or prog.cur
+        prog.cur = prog.cur + 1
         local rec = d.NPC[id]
         local have = rec and nameSlot(rec).name
         if not have then
@@ -1185,10 +1187,11 @@ local function npcHarvestTick()
         end
         local log = harvestLog()
         if log then log:info("npc harvest finished: %d names in %s", prog.found or 0, LOCALE) end
+        prog.queue = nil
         return
     end
 
-    if prog.cur - (prog.lastReport or prog.from) >= 1000 then
+    if not prog.queue and prog.cur - (prog.lastReport or prog.from) >= 1000 then
         prog.lastReport = prog.cur
         local log = harvestLog()
         if log then
@@ -1197,7 +1200,7 @@ local function npcHarvestTick()
     end
 end
 
-function ObjCap:NpcHarvestStart(from, to)
+function ObjCap:NpcHarvestStart(from, to, queue)
     local d = db()
     if not d then return end
     if not (C_TooltipInfo and C_TooltipInfo.GetHyperlink) then
@@ -1210,7 +1213,10 @@ function ObjCap:NpcHarvestStart(from, to)
     refreshEnabled()
 
     local prog = d.NProg
-    if from or not prog or (prog.cur or 0) > (prog.to or 0) or prog.locale ~= LOCALE then
+    if queue then
+        prog = { from = 1, to = #queue, cur = 1, found = 0, locale = LOCALE, queue = queue }
+        d.NProg = prog
+    elseif from or not prog or (prog.cur or 0) > (prog.to or 0) or prog.locale ~= LOCALE then
         prog = {
             from = from or NPC_HARVEST_DEFAULT_FROM,
             to = to or NPC_HARVEST_DEFAULT_TO,
@@ -1252,6 +1258,52 @@ function ObjCap:NpcHarvestStatus()
     local d = db()
     local prog = d and d.NProg
     return npcHarvest.running, prog and prog.cur or 0, prog and prog.to or 0, prog and prog.found or 0
+end
+
+local ITEM_HARVEST_TIMEOUT = 10
+
+function ObjCap:ItemHarvest(ids)
+    local d = db()
+    local log = harvestLog()
+    if not d or not (C_Item and C_Item.RequestLoadItemDataByID and C_Item.GetItemNameByID) then
+        if log then log:info("this client has no C_Item item data API") end
+        return
+    end
+    local items = localeTable(d, "ITEM")
+    local pending, started = {}, GetTime()
+    for _, id in ipairs(ids) do
+        if not items[id] then
+            pending[id] = true
+            pcall(C_Item.RequestLoadItemDataByID, id)
+        end
+    end
+    local found, total = 0, 0
+    for _ in pairs(pending) do total = total + 1 end
+    if total == 0 then
+        if log then log:info("item harvest: all %d items already named in %s", #ids, LOCALE) end
+        return
+    end
+    local ticker
+    ticker = C_Timer.NewTicker(HARVEST_INTERVAL, function()
+        for id in pairs(pending) do
+            local ok, name = pcall(C_Item.GetItemNameByID, id)
+            name = ok and plain(name)
+            if type(name) == "string" and name ~= "" then
+                items[id] = items[id] or name
+                pending[id] = nil
+                found = found + 1
+            end
+        end
+        if not next(pending) or GetTime() - started > ITEM_HARVEST_TIMEOUT then
+            ticker:Cancel()
+            local missing = {}
+            for id in pairs(pending) do missing[#missing + 1] = id end
+            if log then
+                log:info("item harvest (%s): %d of %d named%s", LOCALE, found, total,
+                    #missing > 0 and (", no answer for " .. table.concat(missing, " ")) or "")
+            end
+        end
+    end)
 end
 
 -------------------------------------------------------------------------------
@@ -1831,7 +1883,19 @@ frame:SetScript("OnEvent", function(_, event, arg1, arg2, arg3)
         if ObjCap:IsEnabled() and arg1 then
             local msg = tostring(arg1)
             local itemID = tonumber(msg:match("item:(%d+)"))
+            local looted
             if itemID then
+                local now = GetTime()
+                for i = 1, CAUSE_KEEP do
+                    local c = causes[i]
+                    if c and c.kind == "item" and c.item == itemID and c.srcID
+                        and (now - c.t) <= CAUSE_WINDOW then
+                        looted = true
+                        break
+                    end
+                end
+            end
+            if itemID and not looted then
                 local mapID, x, y = playerPos()
                 pushCause("item", { item = itemID, map = mapID, x = x, y = y })
                 local d = db()
@@ -1993,6 +2057,14 @@ if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
             elseif cmd == "batch" then
                 log:info("harvest batch size: %d", ObjCap:SetHarvestBatch(args[2]))
                 return
+            elseif cmd == "harvestitem" then
+                local ids = {}
+                for i = 2, #args do
+                    local id = tonumber(args[i])
+                    if id then ids[#ids + 1] = id end
+                end
+                ObjCap:ItemHarvest(ids)
+                return
             elseif cmd == "harvestnpc" then
                 local sub = args[2]
                 if sub == "stop" then
@@ -2001,6 +2073,13 @@ if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
                     local running, cur, to, found = ObjCap:NpcHarvestStatus()
                     log:info("npc harvest %s at id %d/%d, %d names",
                         running and "running" or "idle", cur, to, found)
+                elseif sub == "list" then
+                    local ids = {}
+                    for i = 3, #args do
+                        local id = tonumber(args[i])
+                        if id then ids[#ids + 1] = id end
+                    end
+                    if #ids > 0 then ObjCap:NpcHarvestStart(nil, nil, ids) end
                 else
                     -- "harvestnpc" resumes, "harvestnpc 249000 270000" restarts on a range
                     ObjCap:NpcHarvestStart(tonumber(sub), tonumber(args[3]))

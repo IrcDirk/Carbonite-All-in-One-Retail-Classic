@@ -44,7 +44,7 @@ L["First Aid"] = "Secourisme"
 L["Fishing"] = "P\195\170che"
 L["Flying"] = "Voler"
 L["Herbalism"] = "Herboristerie" --"Herboriste" change patch10 by powerstk
-L["Inscription"] = "Inscription"
+L["Inscription"] = "Calligraphie"
 L["Jewelcrafting"] = "Joaillerie"
 L["Leatherworking"] = "Travail du Cuir"
 L["Mining"] = "Minage"
@@ -68,11 +68,11 @@ L["Altar Of Shadows"] = "Autel des Ombres"
 L["Lightforged Beacon"] = "Balise Sancteforge"
 L["Mana Loom"] = "Tisse-Mana"
 L["Moonwell"] = "Puis de Lune"
-L["Name"] = true
-L["Info"] = true
-L["Info2"] = true
-L["Info3"] = true
-L["Back "] = true
+L["Name"] = "Nom"
+L["Info"] = "Info"
+L["Info2"] = "Info2"
+L["Info3"] = "Info3"
+L["Back "] = "Retour "
 
 -- Menus
 L["Delete"] = "Effacer"
@@ -91,8 +91,15 @@ L["Zeppelin to"] = "Zeppelin Vers"
 L["Tram to"] = "Tram Vers"
 
 -- Instance types
-L["Dungeon"] = true
-L["Raid"] = true
-L["Scenario"] = true
-L["Solo"] = true
-L["Mythic Dungeon"] = true
+L["Dungeon"] = "Donjon"
+L["Raid"] = "Raid"
+L["Scenario"] = "Scénario"
+L["Solo"] = "Solo"
+L["Mythic Dungeon"] = "Donjon mythique"
+L["Broken Isles"] = "Îles Brisées"
+L["Zandalar"] = "Zandalar"
+L["Kul Tiras"] = "Kul Tiras"
+L["Nazjatar"] = "Nazjatar"
+L["The Shadowlands"] = "Ombreterre"
+L["Dragon Isles"] = "Îles aux Dragons"
+L["Khaz Algar"] = "Khaz Algar"

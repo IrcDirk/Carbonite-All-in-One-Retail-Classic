@@ -24,10 +24,10 @@ L["Warrior"] = "전사"
 L["Deathknight"] = "죽음의기사"
 L["Monk"] = "수도사"
 
-L["Com options reset (%f, %f)"] = true
-L["ComTest"] = true
-L["Disabling com functions!"] = true
-L["JoinChan Err %s"] = true
-L["SendSecG Error: %s"] = true
-L[" %s (pending)"] = true
-L["Com %d Bytes sec %d"] = true
+L["Com options reset (%f, %f)"] = "통신 옵션 초기화 (%f, %f)"
+L["ComTest"] = "ComTest"
+L["Disabling com functions!"] = "통신 기능 비활성화!"
+L["JoinChan Err %s"] = "JoinChan 오류 %s"
+L["SendSecG Error: %s"] = "SendSecG 오류: %s"
+L[" %s (pending)"] = " %s (대기 중)"
+L["Com %d Bytes sec %d"] = "통신 %d 바이트 초당 %d"

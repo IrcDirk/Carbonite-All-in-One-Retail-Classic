@@ -181,3 +181,7 @@ L["Right click"] = true
 L["Toggle icons"] = true
 L["Context menu"] = true
 L["Open settings"] = true
+L["Carbonite What's New"] = true
+L["Carbonite.Gathermate2_Data addon is not loaded!"] = true
+L["nodes from Carbonite.Gathermate2_Data"] = true
+L["Health"] = true

@@ -68,7 +68,7 @@ L["Altar Of Shadows"] = "黑暗祭坛"
 L["Lightforged Beacon"] = "光铸道标"
 L["Mana Loom"] = "魔法织布机"
 L["Moonwell"] = "月亮井"
-L["Back "] = true
+L["Back "] = "返回 "
 
 -- Menus
 L["Delete"] = "删除"
@@ -87,8 +87,19 @@ L["Zeppelin to"] = "飞艇："
 L["Tram to"] = "地铁："
 
 -- Instance types
-L["Dungeon"] = true
-L["Raid"] = true
-L["Scenario"] = true
-L["Solo"] = true
-L["Mythic Dungeon"] = true
+L["Dungeon"] = "地下城"
+L["Raid"] = "团队副本"
+L["Scenario"] = "场景战役"
+L["Solo"] = "单人"
+L["Mythic Dungeon"] = "史诗地下城"
+L["Name"] = "名称"
+L["Info"] = "信息"
+L["Info2"] = "信息2"
+L["Info3"] = "信息3"
+L["Broken Isles"] = "破碎群岛"
+L["Zandalar"] = "赞达拉"
+L["Kul Tiras"] = "库尔提拉斯"
+L["Nazjatar"] = "纳沙塔尔"
+L["The Shadowlands"] = "暗影界"
+L["Dragon Isles"] = "巨龙群岛"
+L["Khaz Algar"] = "卡兹阿加"

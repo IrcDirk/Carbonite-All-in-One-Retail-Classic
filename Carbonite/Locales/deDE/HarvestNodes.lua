@@ -8,7 +8,7 @@ if not L then return end
 -- General Nodes
 L["Artifact"] = "Artefakt"
 L["Everfrost"] = "Immerfrost"
-L["Gas"] = "Gas"
+L["Gas"] = "Gase"
 L["Ooze Covered"] = "Schlammbedeckte"
 
 -- Timber (WoD Lumber Mill)

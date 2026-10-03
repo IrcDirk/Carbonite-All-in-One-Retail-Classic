@@ -65,14 +65,14 @@ L["Zone"] = "지역"
 L["Trade Skill"] = "전문 기술"
 L["Alchemy Lab"] = "연금술 실험대"
 L["Altar Of Shadows"] = "어둠의 제단"
-L["Lightforged Beacon"] = true
+L["Lightforged Beacon"] = "빛벼림 봉화"
 L["Mana Loom"] = "마나 베틀"
 L["Moonwell"] = "달샘"
 L["Name"] = "이름"
 L["Info"] = "정보"
 L["Info2"] = "정보2"
 L["Info3"] = "정보3"
-L["Back "] = true
+L["Back "] = "뒤로 "
 
 -- Menus
 L["Delete"] = "삭제"
@@ -91,8 +91,15 @@ L["Zeppelin to"] = "비행선: "
 L["Tram to"] = "지하철: "
 
 -- Instance types
-L["Dungeon"] = true
-L["Raid"] = true
-L["Scenario"] = true
-L["Solo"] = true
-L["Mythic Dungeon"] = true
+L["Dungeon"] = "던전"
+L["Raid"] = "공격대"
+L["Scenario"] = "시나리오"
+L["Solo"] = "솔로"
+L["Mythic Dungeon"] = "신화 던전"
+L["Broken Isles"] = "부서진 섬"
+L["Zandalar"] = "잔달라"
+L["Kul Tiras"] = "쿨 티라스"
+L["Nazjatar"] = "나즈자타"
+L["The Shadowlands"] = "어둠땅"
+L["Dragon Isles"] = "용의 섬"
+L["Khaz Algar"] = "카즈 알가르"

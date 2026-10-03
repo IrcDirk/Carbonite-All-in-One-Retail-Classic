@@ -2857,6 +2857,18 @@ local function IsLayoutNumber (value)
         and value ~= math.huge and value ~= -math.huge
 end
 
+local LayoutAnchorFactors = {
+    TOPLEFT = { 0, 1 },
+    TOP = { .5, 1 },
+    TOPRIGHT = { 1, 1 },
+    LEFT = { 0, .5 },
+    CENTER = { .5, .5 },
+    RIGHT = { 1, .5 },
+    BOTTOMLEFT = { 0, 0 },
+    BOTTOM = { .5, 0 },
+    BOTTOMRIGHT = { 1, 0 },
+}
+
 function Nx.Window:CopyLayoutPosition (sourceMode, targetMode)
 
     sourceMode = sourceMode or ""
@@ -2870,10 +2882,40 @@ function Nx.Window:CopyLayoutPosition (sourceMode, targetMode)
         return
     end
 
-    data[targetMode.."A"] = data[sourceMode.."A"]
-    data[targetMode.."X"] = x
-    data[targetMode.."Y"] = y
-    data[targetMode.."S"] = data[sourceMode.."S"]
+    local aPt = data[sourceMode.."A"] or "TOPLEFT"
+    local factors = LayoutAnchorFactors[aPt]
+    local scale = data[sourceMode.."S"] or 1
+    local w = data[sourceMode.."W"]
+    local h = data[sourceMode.."H"]
+    local sw = GetScreenWidth()
+    local sh = GetScreenHeight()
+
+    if factors and aPt ~= "TOPLEFT" and IsLayoutNumber (w) and IsLayoutNumber (h)
+        and IsLayoutNumber (scale) and scale > 0
+        and type (sw) == "number" and type (sh) == "number"
+        and not (x < 0 and x > -1) and x < 100000
+        and not (y < 0 and y > -1) and y < 999999 then
+
+        if w < 0 then
+            w = sw * -w
+        end
+        if h < 0 then
+            h = sh * -h
+        end
+
+        local left = sw * factors[1] + x * scale - w * scale * factors[1]
+        local top = sh * factors[2] - y * scale + h * scale * (1 - factors[2])
+
+        data[targetMode.."A"] = nil
+        data[targetMode.."X"] = left / scale
+        data[targetMode.."Y"] = (sh - top) / scale
+        data[targetMode.."S"] = data[sourceMode.."S"]
+    else
+        data[targetMode.."A"] = data[sourceMode.."A"]
+        data[targetMode.."X"] = x
+        data[targetMode.."Y"] = y
+        data[targetMode.."S"] = data[sourceMode.."S"]
+    end
 
     -- CopyLayoutPosition intentionally does not copy the full layout size.
     -- A fresh profile can therefore acquire MinX/MinY before a minimized
@@ -2888,18 +2930,6 @@ function Nx.Window:CopyLayoutPosition (sourceMode, targetMode)
         end
     end
 end
-
-local LayoutAnchorFactors = {
-    TOPLEFT = { 0, 1 },
-    TOP = { .5, 1 },
-    TOPRIGHT = { 1, 1 },
-    LEFT = { 0, .5 },
-    CENTER = { .5, .5 },
-    RIGHT = { 1, .5 },
-    BOTTOMLEFT = { 0, 0 },
-    BOTTOM = { .5, 0 },
-    BOTTOMRIGHT = { 1, 0 },
-}
 
 ---------------------------------------------------------------------------------------
 -- Keep a saved window layout inside the current screen bounds

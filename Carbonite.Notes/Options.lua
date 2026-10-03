@@ -204,6 +204,37 @@ function Nx.Notes:GetOptionsConfig()
                     end,
                     disabled = function() return not _G.ZGV end,
                 },
+                gatherlite = {
+                    order = 13, type = "toggle", width = "full",
+                    name = L["Display GatherLite nodes On Map"],
+                    desc = L["If you have GatherLite installed, shows its gathering nodes on the Carbonite map"],
+                    get = function() return Nx.fdb.profile.Notes.GatherLite end,
+                    set = function()
+                        local map = Nx.Map:GetMap(1)
+                        Nx.fdb.profile.Notes.GatherLite = not Nx.fdb.profile.Notes.GatherLite
+                        Nx.Notes:BustIntegrationCache("GatherLite")
+                        if Nx.fdb.profile.Notes.GatherLite then
+                            Nx.Notes:GatherLite(Nx.Map:GetCurrentMapAreaID())
+                        else
+                            map:ClearIconType("!GLT")
+                        end
+                    end,
+                    disabled = function() return not Nx.Notes:IsGatherLiteAvailable() end,
+                },
+                gatherlitesize = {
+                    order = 14, type = "range", width = "normal",
+                    min = 8, max = 32, step = 1,
+                    name = L["GatherLite Icon Size"],
+                    get = function() return Nx.fdb.profile.Notes.GatherLiteSize end,
+                    set = function(_, value)
+                        local map = Nx.Map:GetMap(1)
+                        Nx.fdb.profile.Notes.GatherLiteSize = value
+                        map:ClearIconType("!GLT")
+                        Nx.Notes:BustIntegrationCache("GatherLite")
+                        Nx.Notes:GatherLite(Nx.Map:GetCurrentMapAreaID())
+                    end,
+                    disabled = function() return not Nx.Notes:IsGatherLiteAvailable() end,
+                },
             },
         }
     end

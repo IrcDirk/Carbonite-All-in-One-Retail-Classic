@@ -136,46 +136,46 @@ L["Opening - No Text"] = "Ouverture - pas de texte"			-- NXlOpeningNoText
 L["Everfrost Chip"] = "Morceau de permagivre"				-- NXlEverfrost
 
 L["yds"] = "m\195\168tres"
-L["secs"] = true
-L["mins"] = true
+L["secs"] = "s"
+L["mins"] = "min"
 
 -- NxUI.lua
-L[" Frame: %s Shown%d Vis%d P>%s"] = true
-L[" EScale %f, Lvl %f"] = true
-L[" LR %f, %f"] = true
-L[" BT %f, %f"] = true
-L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = true
+L[" Frame: %s Shown%d Vis%d P>%s"] = " Cadre: %s Affiché%d Vis%d P>%s"
+L[" EScale %f, Lvl %f"] = " EScale %f, Niv %f"
+L[" LR %f, %f"] = " LR %f, %f"
+L[" BT %f, %f"] = " BT %f, %f"
+L["%s#%d %s ID%s (%s) show%d l%d x%d y%d"] = "%s#%d %s ID%s (%s) affich%d l%d x%d y%d"
 L["%.1f days"] = "%.1f jours"
 L["%.1f hours"] = "%.1f heures"
-L["%d mins"] = true
+L["%d mins"] = "%d min"
 L["Reset old layout data"] = "R\195\169initialiser anciennes donn\195\169es mise en page"
-L["Window version mismatch!"] = true
+L["Window version mismatch!"] = "Version de fenêtre incompatible !"
 L["XY missing (%s)"] = "XY manquant (%s)"
 L["Window not found (%s)"] = "Fen\195\170tre non trouv\195\169e (%s)"
-L["Detach %s"] = true
-L["Detach found %s"] = true
+L["Detach %s"] = "Détacher %s"
+L["Detach found %s"] = "Détachement trouvé %s"
 L["Search: [click]"] = "Rechercher: [clic]"
 L["Search: %[click%]"] = "Rechercher: %[clic%]"
 L["Reset old list data"] = "R\195\169initialiser anciennes donn\195\169es liste"
 L["!BUT %s"] = "!MAIS %s"
-L["Key %s transfered to Watch List Item"] = true
-L["CLICK (.+):"] = "CLIC (.+):"
-L["Key %s %s #%s %s"] = true
+L["Key %s transfered to Watch List Item"] = "Touche %s transférée vers l'objet de la liste de suivi"
+L["CLICK (.+):"] = true
+L["Key %s %s #%s %s"] = "Touche %s %s #%s %s"
 L["shift left/right click to change size"] = "maj gauche/clic droit pour changer la taille"
 L["Reset old tool bar data"] = "R\195\169initialiser anciennes donn\195\169es barre d'outils"
-L["|cffffff00%dg"] = true
-L["%s |cffbfbfbf%ds"] = true
-L["%s |cff7f7f00%dc"] = true
+L["|cffffff00%dg"] = "|cffffff00%dpo"
+L["%s |cffbfbfbf%ds"] = "%s |cffbfbfbf%dpa"
+L["%s |cff7f7f00%dc"] = "%s |cff7f7f00%dpc"
 
 -- NxTravel.lua
 L["Connection: %s to %s"] = "Connection: %s vers %s"
 L["Fly: %s to %s"] = "Fly: %s vers %s"
 
 -- NxHud.lua
-L[" %.1f deg"] = true
-L[" %d deg"] = true
-L["Remove Current Point"] = true
-L["Remove All Points"] = true
+L[" %.1f deg"] = " %.1f deg"
+L[" %d deg"] = " %d deg"
+L["Remove Current Point"] = "Supprimer le point actuel"
+L["Remove All Points"] = "Supprimer tous les points"
 
 -- Carbonite.Info kill-marker tooltip
 L["kill"] = "tué"
@@ -189,3 +189,10 @@ L["Right click"] = "Clic droit"
 L["Toggle icons"] = "Afficher/masquer les icônes"
 L["Context menu"] = "Menu contextuel"
 L["Open settings"] = "Ouvrir les paramètres"
+L["Whats New!"] = "Quoi de neuf !"
+L["Don't show for this update again"] = "Ne plus afficher pour cette mise à jour"
+L["Toggle Combat Graph"] = "Afficher/Cacher le graphique de combat"
+L["Carbonite What's New"] = "Carbonite - Quoi de neuf"
+L["Carbonite.Gathermate2_Data addon is not loaded!"] = "L'addon Carbonite.Gathermate2_Data n'est pas chargé !"
+L["nodes from Carbonite.Gathermate2_Data"] = "nœuds depuis Carbonite.Gathermate2_Data"
+L["Health"] = "Vie"

@@ -53,6 +53,11 @@ local INTEGRATION_FIELDS = {
         RXPLastMapId = "nil",
         PrevRXPPins  = "nil",
     },
+    GatherLite = {
+        GLLastMapId = "nil",
+        GLLastSig   = "nil",
+        PrevGLPins  = "nil",
+    },
 }
 
 function Nx.Notes:BustIntegrationCache(name)
@@ -182,6 +187,10 @@ function Nx.Notes:UpdateIcons()
     end
     if Nx.fdb.profile.Notes.RXP and _G.RXP then
         self:RXP(mapId)
+    end
+    if Nx.fdb.profile.Notes.GatherLite and self.IsGatherLiteAvailable
+        and self:IsGatherLiteAvailable() then
+        self:GatherLite(mapId)
     end
 
     -- Early-exit when nothing's changed since the last !Fav rebuild.
