@@ -53,7 +53,7 @@ function Nx.Item.EnableLoadFromServer()
 
     self.ItemsRequested = 0
 
-    Item = Nx:ScheduleTimer (self.Timer, 1)
+    self.LoadTimer = Nx:ScheduleTimer (self.Timer, 1)
 end
 
 function Nx.Item.DisableLoadFromServer()

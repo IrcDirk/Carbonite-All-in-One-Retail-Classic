@@ -10535,8 +10535,8 @@ function Nx.ModQuests:Data3()
         },
         [95999] = {
             Quest = [=[WANTED: Incinerator Gar'im|1|25|0|0|0|2550]=],
-            Start = "649051|1433|32|24.4|46.2",
-            End = "344|1433|32|24.9|44.2",
+            Start = "649051|1433|32|24.3|46.3",
+            End = "344|1433|32|24.9|44.4",
             Objectives = {
                 [1] = {
                     "Broken Staff of Incinerator Gar'im|1433|35|72|85|15.03|3.34",
@@ -10547,7 +10547,7 @@ function Nx.ModQuests:Data3()
         },
         [96139] = {
             Quest = [=[The Valor Family|1|22|0|0|0|1750]=],
-            Start = "268|1431|32|72.6|47.5",
+            Start = "268|1431|32|72.6|47.6",
             End = "268|1431|32|72.6|47.6",
             Objectives = {
                 [1] = {
@@ -10563,8 +10563,8 @@ function Nx.ModQuests:Data3()
         },
         [98387] = {
             Quest = [=[Blackrock Blockade|1|21|0|19|0|1650]=],
-            Start = "382|1433|32|28.3|49.2",
-            End = "382|1433|32|28.3|49.1",
+            Start = "382|1433|32|28.3|48.9",
+            End = "382|1433|32|28.3|49",
             Objectives = {
                 [1] = {
                     "Blackrock Supplies|1433|35|72|65.5|15.03|3.34",
@@ -10625,6 +10625,93 @@ function Nx.ModQuests:Data3()
         [98386] = {
             Quest = [=[Alther's Mill|1|21|0|0|0|0]=],
             Start = "341|1433|32|27.1|48.7",
+        },
+        [98072] = {
+            Quest = [=[Crocs of the Sky|1|27|0|0|0|0]=],
+            Start = "2094|1437|32|8.6|55.7",
+            Objectives = {
+                [1] = {
+                    "Pristine Crimson Scale|1437|35|61|30.5|10.02|3.34",
+                    "Pristine Crimson Scale|1437|35|60.5|31|15.03|3.34",
+                    "Pristine Crimson Scale|1437|35|60.5|31.5|20.04|3.34",
+                    "Pristine Crimson Scale|1437|35|60.5|32|15.03|3.34",
+                },
+            },
+        },
+        [98245] = {
+            Quest = [=[Razormaw Needling|1|29|0|0|0|2350]=],
+            Start = "270637|1437|32|49.4|42",
+            End = "270637|1437|32|49.4|42.1",
+            Objectives = {
+                [1] = {
+                    "Razormaw Incisor|1437|35|67.5|26.5|10.02|3.34",
+                    "Razormaw Incisor|1437|35|67|27|30.06|3.34",
+                    "Razormaw Incisor|1437|35|67|27.5|40.08|3.34",
+                    "Razormaw Incisor|1437|35|66.5|28|50.1|23.38",
+                    "Razormaw Incisor|1437|35|67.5|31.5|40.08|3.34",
+                    "Razormaw Incisor|1437|35|68|32|30.06|3.34",
+                    "Razormaw Incisor|1437|35|68.5|32.5|25.05|3.34",
+                    "Razormaw Incisor|1437|35|69|33|15.03|3.34",
+                },
+            },
+        },
+        [98246] = {
+            Quest = [=[Trying Times|1|29|0|98291|0|2350]=],
+            Start = "270637|1437|32|49.4|42",
+            End = "270637|1437|32|49.4|42.1",
+            Objectives = {
+                [1] = {
+                    "Perfect Razormaw Egg|1437|35|69.5|28|10.02|3.34",
+                    "Perfect Razormaw Egg|1437|35|69|28.5|20.04|16.7",
+                    "Perfect Razormaw Egg|1437|35|68.5|31|25.05|3.34",
+                    "Perfect Razormaw Egg|1437|35|68|31.5|30.06|3.34",
+                    "Perfect Razormaw Egg|1437|35|67|32|35.07|10.02",
+                    "Perfect Razormaw Egg|1437|35|67.5|33.5|30.06|6.68",
+                    "Perfect Razormaw Egg|1437|35|68|34.5|20.04|6.68",
+                    "Perfect Razormaw Egg|1437|35|68.5|35.5|15.03|3.34",
+                },
+            },
+        },
+        [98282] = {
+            Quest = [=[Alchemical Hazards|1|22|0|0|0|1750]=],
+            Start = "1480|1437|32|11.9|58.8",
+            End = "1480|1437|32|11.8|58.8",
+            Objectives = {
+                [1] = {
+                    "Unruptured Stalker Gland|1437|35|51|60.5|5.01|3.34",
+                    "Unruptured Stalker Gland|1437|35|50|61|20.04|6.68",
+                    "Unruptured Stalker Gland|1437|35|50.5|62|15.03|3.34",
+                },
+            },
+        },
+        [98283] = {
+            Quest = [=[Carnage|1|30|0|0|0|3050]=],
+            Start = "1244|1437|32|56.2|40.5",
+            End = "1244|1437|32|56.4|40.2",
+            Objectives = {
+                [1] = {
+                    "Malignant Rotclaw Flesh|1437|35|56.5|28|15.03|3.34",
+                    "Malignant Rotclaw Flesh|1437|35|56.5|28.5|20.04|3.34",
+                    "Malignant Rotclaw Flesh|1437|35|56.5|29|15.03|3.34",
+                    "Malignant Rotclaw Flesh|1437|35|57|29.5|5.01|3.34",
+                },
+                [2] = {
+                    "Carnage|1437|32|69.3|28.2",
+                },
+            },
+        },
+        [98291] = {
+            Quest = [=[Death to the Dragonmaw|1|30|0|0|0|0]=],
+            Start = "270637|1437|32|49.4|42.1",
+        },
+        [98293] = {
+            Quest = [=[Forced Disarmament|1|30|0|0|0|0]=],
+            Start = "672330|1437|32|58.9|45.2",
+        },
+        [98815] = {
+            Quest = [=[Highland Hides|1|28|0|0|0|1150]=],
+            Start = "2094|1437|32|8.6|55.7",
+            End = "2094|1437|32|8.5|55.7",
         },
     }
     return ModQuests

@@ -12476,7 +12476,7 @@ function Nx.ModQuests:Data2()
         },
         [92640] = {
             Quest = [=[Desperate Times|1|11|0|93065|0|650]=],
-            Start = "252476|2521|32|66.3|76.6",
+            Start = "252476|2521|32|66.2|76.5",
             End = "252383|2521|32|66.2|76.6",
             Objectives = {
                 [1] = {
@@ -12520,7 +12520,7 @@ function Nx.ModQuests:Data2()
         },
         [92643] = {
             Quest = [=[The Turncoat|1|11|0|92644|0|650]=],
-            Start = "252476|2521|32|66.2|76.6",
+            Start = "252476|2521|32|66.2|76.5",
             End = "253372|2521|32|56|58.8",
             Objectives = {
                 [1] = {
@@ -12534,7 +12534,7 @@ function Nx.ModQuests:Data2()
         [92644] = {
             Quest = [=[Unfortunate News|1|11|0|94568|0|440]=],
             Start = "253372|2521|32|56|58.8",
-            End = "252476|2521|32|66.3|76.6",
+            End = "252476|2521|32|66.2|76.6",
         },
         [92645] = {
             Quest = [=[Breaking the Breaker|1|11|0|92880|0|650]=],
@@ -12620,7 +12620,7 @@ function Nx.ModQuests:Data2()
         [92860] = {
             Quest = [=[In Service of Zephras|1|12|0|93320|0|230]=],
             Start = "252475|2521|32|66.6|79.9",
-            End = "252383|2521|32|66.2|76.6",
+            End = "252383|2521|32|66.2|76.7",
         },
         [92880] = {
             Quest = [=[Return to Valanaar|1|11|0|92881|0|440]=],
@@ -12630,27 +12630,28 @@ function Nx.ModQuests:Data2()
         [92881] = {
             Quest = [=[The High Elder's Request|1|11|0|92643|0|90]=],
             Start = "252383|2521|32|66.2|76.6",
-            End = "252476|2521|32|66.2|76.6",
+            End = "252476|2521|32|66.2|76.5",
         },
         [92947] = {
             Quest = [=[Making Our Move|1|12|0|93958|0|900]=],
-            Start = "253844|2521|32|61.1|70.9",
-            End = "253576|2521|32|63.7|50.5",
+            Start = "253844|2521|32|61.2|70.9",
+            End = "253576|2521|32|63.8|50.5",
             Objectives = {
                 [1] = {
                     "Al'Aketh Guardian|2521|35|63|46.5|25.05|3.34",
                     "Al'Aketh Guardian|2521|35|61.5|47|45.09|3.34",
                     "Al'Aketh Guardian|2521|35|61|47.5|50.1|3.34",
-                    "Al'Aketh Guardian|2521|35|61|48|40.08|3.34",
+                    "Al'Aketh Guardian|2521|35|61|48|45.09|3.34",
                     "Al'Aketh Guardian|2521|35|60.5|48.5|40.08|3.34",
                     "Al'Aketh Guardian|2521|35|60|49|40.08|3.34",
                     "Al'Aketh Guardian|2521|35|59.5|49.5|40.08|6.68",
-                    "Al'Aketh Guardian|2521|35|59|50.5|40.08|3.34",
-                    "Al'Aketh Guardian|2521|35|58.5|51|45.09|3.34",
-                    "Al'Aketh Guardian|2521|35|59|51.5|45.09|3.34",
-                    "Al'Aketh Guardian|2521|35|59.5|52|40.08|3.34",
-                    "Al'Aketh Guardian|2521|35|60.5|52.5|30.06|3.34",
-                    "Al'Aketh Guardian|2521|35|62|53|5.01|3.34",
+                    "Al'Aketh Guardian|2521|35|59|50.5|45.09|3.34",
+                    "Al'Aketh Guardian|2521|35|58.5|51|50.1|3.34",
+                    "Al'Aketh Guardian|2521|35|59|51.5|45.09|6.68",
+                    "Al'Aketh Guardian|2521|35|59.5|52.5|40.08|3.34",
+                    "Al'Aketh Guardian|2521|35|60|53|35.07|3.34",
+                    "Al'Aketh Guardian|2521|35|60.5|53.5|30.06|3.34",
+                    "Al'Aketh Guardian|2521|35|61|54|10.02|3.34",
                 },
                 [2] = {
                     "Al'Aketh Spiritcaller|2521|35|64|44|20.04|3.34",
@@ -12663,25 +12664,30 @@ function Nx.ModQuests:Data2()
                     "Al'Aketh Spiritcaller|2521|35|60.5|48|35.07|3.34",
                     "Al'Aketh Spiritcaller|2521|35|60.5|48.5|30.06|3.34",
                     "Al'Aketh Spiritcaller|2521|35|60|49|35.07|3.34",
-                    "Al'Aketh Spiritcaller|2521|35|60|49.5|30.06|3.34",
-                    "Al'Aketh Spiritcaller|2521|35|59.5|50|35.07|6.68",
-                    "Al'Aketh Spiritcaller|2521|35|59.5|51|40.08|3.34",
-                    "Al'Aketh Spiritcaller|2521|35|59|51.5|45.09|3.34",
-                    "Al'Aketh Spiritcaller|2521|35|59.5|52|40.08|3.34",
-                    "Al'Aketh Spiritcaller|2521|35|60.5|52.5|25.05|3.34",
+                    "Al'Aketh Spiritcaller|2521|35|59.5|49.5|35.07|3.34",
+                    "Al'Aketh Spiritcaller|2521|35|59.5|50|40.08|3.34",
+                    "Al'Aketh Spiritcaller|2521|35|59|50.5|45.09|3.34",
+                    "Al'Aketh Spiritcaller|2521|35|59|51|50.1|6.68",
+                    "Al'Aketh Spiritcaller|2521|35|59.5|52|45.09|3.34",
+                    "Al'Aketh Spiritcaller|2521|35|60|52.5|40.08|3.34",
+                    "Al'Aketh Spiritcaller|2521|35|60.5|53|35.07|3.34",
+                    "Al'Aketh Spiritcaller|2521|35|61|53.5|30.06|3.34",
+                    "Al'Aketh Spiritcaller|2521|35|62|54|15.03|3.34",
                 },
                 [3] = {
                     "Al'Aketh Blademaster|2521|35|64.5|44|10.02|3.34",
-                    "Al'Aketh Blademaster|2521|35|64|44.5|20.04|6.68",
-                    "Al'Aketh Blademaster|2521|35|63.5|45.5|25.05|3.34",
-                    "Al'Aketh Blademaster|2521|35|63|46|25.05|3.34",
-                    "Al'Aketh Blademaster|2521|35|63|46.5|20.04|3.34",
-                    "Al'Aketh Blademaster|2521|35|62.5|47|25.05|3.34",
-                    "Al'Aketh Blademaster|2521|35|62|47.5|25.05|3.34",
+                    "Al'Aketh Blademaster|2521|35|64|44.5|20.04|3.34",
+                    "Al'Aketh Blademaster|2521|35|63.5|45|25.05|3.34",
+                    "Al'Aketh Blademaster|2521|35|63|45.5|30.06|3.34",
+                    "Al'Aketh Blademaster|2521|35|62.5|46|30.06|3.34",
+                    "Al'Aketh Blademaster|2521|35|62|46.5|30.06|3.34",
+                    "Al'Aketh Blademaster|2521|35|61.5|47|35.07|3.34",
+                    "Al'Aketh Blademaster|2521|35|60|47.5|45.09|3.34",
                     "Al'Aketh Blademaster|2521|35|59|48|50.1|6.68",
-                    "Al'Aketh Blademaster|2521|35|58.5|49|50.1|6.68",
-                    "Al'Aketh Blademaster|2521|35|58.5|50|45.09|10.02",
-                    "Al'Aketh Blademaster|2521|35|58.5|51.5|40.08|10.02",
+                    "Al'Aketh Blademaster|2521|35|58.5|49|50.1|26.72",
+                    "Al'Aketh Blademaster|2521|35|59.5|53|40.08|3.34",
+                    "Al'Aketh Blademaster|2521|35|60.5|53.5|25.05|3.34",
+                    "Al'Aketh Blademaster|2521|35|61.5|54|10.02|3.34",
                 },
                 [4] = {
                     "Report to Hyusaa Quickbreeze|2521|32|63.8|50.5",
@@ -12691,7 +12697,7 @@ function Nx.ModQuests:Data2()
         [93065] = {
             Quest = [=[Prepare for Battle|1|12|0|92947|0|460]=],
             Start = "252383|2521|32|66.2|76.6",
-            End = "253844|2521|32|61.1|70.9",
+            End = "253844|2521|32|61.2|70.9",
             Objectives = {
                 [1] = {
                     "Find Valennia on the Road|2521|32|61.2|70.9",
@@ -12700,13 +12706,13 @@ function Nx.ModQuests:Data2()
         },
         [93089] = {
             Quest = [=[What Comes Next|1|13|0|94946|0|90]=],
-            Start = "252476|2521|32|66.2|76.6",
+            Start = "252476|2521|32|66.2|76.5",
             End = "252475|2521|32|66.6|79.9",
         },
         [93159] = {
-            Quest = [=[The Strange Hermit|1|13|0|93172|0|230]=],
-            Start = "251684|2521|32|54|39",
-            End = "251684|2521|32|54|39",
+            Quest = [=[The Strange Hermit|1|13|0|93160|0|230]=],
+            Start = "251684|2521|32|54|38.9",
+            End = "251684|2521|32|54|38.9",
             Objectives = {
                 [1] = {
                     "Learn more about the Strange Hermit|2521|32|54|38.9",
@@ -12715,7 +12721,7 @@ function Nx.ModQuests:Data2()
         },
         [93160] = {
             Quest = [=[The Forest's Bounty|1|13|0|0|0|675]=],
-            Start = "251684|2521|32|54|39",
+            Start = "251684|2521|32|54|38.9",
             End = "251684|2521|32|54|38.9",
             Objectives = {
                 [1] = {
@@ -12749,7 +12755,7 @@ function Nx.ModQuests:Data2()
         },
         [93172] = {
             Quest = [=[Free the Hollows|1|13|0|0|0|675]=],
-            Start = "251684|2521|32|54|39",
+            Start = "251684|2521|32|54|38.9",
             End = "251684|2521|32|54|38.9",
             Objectives = {
                 [1] = {
@@ -12766,8 +12772,8 @@ function Nx.ModQuests:Data2()
             },
         },
         [93320] = {
-            Quest = [=[Tower Defense|1|11|0|92645|0|440]=],
-            Start = "252383|2521|32|66.2|76.6",
+            Quest = [=[Tower Defense|1|11|0|92642|0|440]=],
+            Start = "252383|2521|32|66.2|76.7",
             End = "252378|2521|32|69.6|67.1",
         },
         [93459] = {
@@ -12776,7 +12782,7 @@ function Nx.ModQuests:Data2()
         },
         [93835] = {
             Quest = [=[Confront Lorthuna|1|12|0|94369|0|460]=],
-            Start = "253590|2521|32|65.2|50.3",
+            Start = "253590|2521|32|65.2|50.4",
             End = "252475|2521|32|66.6|79.9",
             Objectives = {
                 [1] = {
@@ -12786,19 +12792,19 @@ function Nx.ModQuests:Data2()
         },
         [93958] = {
             Quest = [=[The Inner Sanctum|1|12|0|93835|0|900]=],
-            Start = "253576|2521|32|63.7|50.5",
-            End = "253590|2521|32|65.2|50.3",
+            Start = "253576|2521|32|63.8|50.5",
+            End = "253590|2521|32|65.2|50.4",
         },
         [93963] = {
             Quest = [=[Exploring the Alliance|1|13|0|0|0|1150]=],
-            Start = "1748|1453|32|80|38.4",
+            Start = "1748|1453|32|80.1|38.4",
             End = "1748|1453|32|80.1|38.4",
             Objectives = {
                 [1] = {
-                    "Receive Instructions from Randal Emerson|1453|32|79|44.7",
+                    "Receive Instructions from Randal Emerson|1453|32|79.1|44.9",
                 },
                 [2] = {
-                    "Speak with High Tinker Mekkatorque|1455|32|68.8|49.1",
+                    "Speak with High Tinker Mekkatorque|1455|32|68.9|48.9",
                 },
                 [3] = {
                     "Speak with King Magni Bronzebeard|1455|32|39.2|56",
@@ -12811,7 +12817,7 @@ function Nx.ModQuests:Data2()
         [94369] = {
             Quest = [=[The Fate of Zephras|1|12|0|93089|0|90]=],
             Start = "252475|2521|32|66.6|79.9",
-            End = "252476|2521|32|66.2|76.6",
+            End = "252476|2521|32|66.2|76.5",
             Objectives = {
                 [1] = {
                     "Speak with Talaanis Shadowsong|2521|32|66.2|76.5",
@@ -12825,7 +12831,7 @@ function Nx.ModQuests:Data2()
         },
         [94485] = {
             Quest = [=[Tears of the Lady|1|12|0|0|0|230]=],
-            Start = "257944|2521|32|61.7|39.1",
+            Start = "257944|2521|32|61.8|39.2",
             End = "257944|2521|32|61.7|39.1",
             Objectives = {
                 [1] = {
@@ -12844,8 +12850,8 @@ function Nx.ModQuests:Data2()
         },
         [94486] = {
             Quest = [=[Feathers for Binding|1|11|0|94488|0|875]=],
-            Start = "257944|2521|32|61.7|39.1",
-            End = "257944|2521|32|61.7|39.2",
+            Start = "257944|2521|32|61.8|39.2",
+            End = "257944|2521|32|61.7|39.1",
             Objectives = {
                 [1] = {
                     "Pristine Shriekling Feather|2521|35|58.5|36|35.07|3.34",
@@ -12863,7 +12869,7 @@ function Nx.ModQuests:Data2()
         },
         [94487] = {
             Quest = [=[Unwanted and Unworthy|1|11|0|0|0|875]=],
-            Start = "257944|2521|32|61.7|39.1",
+            Start = "257944|2521|32|61.8|39.2",
             End = "257944|2521|32|61.8|39.1",
             Objectives = {
                 [1] = {
@@ -12879,7 +12885,7 @@ function Nx.ModQuests:Data2()
         },
         [94488] = {
             Quest = [=[The Ties That Bind|1|11|0|0|0|875]=],
-            Start = "257944|2521|32|61.7|39.2",
+            Start = "257944|2521|32|61.7|39.1",
             End = "257944|2521|32|61.8|39.1",
             Objectives = {
                 [1] = {
@@ -12890,7 +12896,7 @@ function Nx.ModQuests:Data2()
         },
         [94489] = {
             Quest = [=[The Wounds of Betrayal|1|12|0|94491|0|900]=],
-            Start = "257944|2521|32|61.7|39.2",
+            Start = "257944|2521|32|61.7|39.1",
             End = "257944|2521|32|61.8|39.1",
             Objectives = {
                 [1] = {
@@ -12915,12 +12921,12 @@ function Nx.ModQuests:Data2()
         [94491] = {
             Quest = [=[The Fate of the Den|1|12|0|0|0|460]=],
             Start = "257944|2521|32|61.8|39.1",
-            End = "252359|2521|32|64|75",
+            End = "252359|2521|32|64|75.1",
         },
         [94568] = {
             Quest = [=[The Cult's True Plans|1|11|0|92640|0|440]=],
-            Start = "252476|2521|32|66.3|76.6",
-            End = "252476|2521|32|66.3|76.6",
+            Start = "252476|2521|32|66.2|76.6",
+            End = "252476|2521|32|66.2|76.5",
             Objectives = {
                 [1] = {
                     "Learn what you can from the crystal|2521|32|66.2|76.5",
@@ -12962,10 +12968,11 @@ function Nx.ModQuests:Data2()
         [94947] = {
             Quest = [=[Welcome to Azeroth|1|13|0|93963|0|675]=],
             Start = "259084|1416|32|12.4|56.3",
-            End = "1748|1453|32|80|38.4",
+            End = "1748|1453|32|80.1|38.4",
             Objectives = {
                 [1] = {
-                    "nil|1416|32|12|56.3",
+                    "Take the Skyborne Portal to Stormwind|1416|35|11|55.5|20.04|10.02",
+                    "Take the Skyborne Portal to Stormwind|1416|35|11.5|57|10.02|3.34",
                 },
             },
         },
@@ -12989,8 +12996,8 @@ function Nx.ModQuests:Data2()
         },
         [96390] = {
             Quest = [=[Nip 'Em in the Bud|1|13|0|0|0|900]=],
-            Start = "264936|1426|32|64.8|58.4",
-            End = "264936|1426|32|64.8|58.5",
+            Start = "264936|1426|32|64.9|58.5",
+            End = "264936|1426|32|64.8|58.4",
             Objectives = {
                 [1] = {
                     "Dark Iron Spy|1426|35|77|58|10.02|3.34",
@@ -13003,12 +13010,12 @@ function Nx.ModQuests:Data2()
         },
         [96391] = {
             Quest = [=[Underground Map|1|15|0|96393|0|1050]=],
-            End = "264936|1426|32|64.8|58.5",
+            End = "264936|1426|32|64.8|58.4",
         },
         [96392] = {
             Quest = [=[Farsen's Watch|1|13|0|96390|0|675]=],
-            Start = "264936|1426|32|64.8|58.4",
-            End = "264936|1426|32|64.8|58.4",
+            Start = "264936|1426|32|64.9|58.5",
+            End = "264936|1426|32|64.9|58.5",
             Objectives = {
                 [1] = {
                     "Use Farsen's Farsight|1426|32|64.9|58.5",
@@ -13017,18 +13024,18 @@ function Nx.ModQuests:Data2()
         },
         [96393] = {
             Quest = [=[Old Ironforge Incursion|1|16|0|0|0|4950]=],
-            Start = "264936|1426|32|64.8|58.5",
-            End = "2784|1455|32|39.5|55.8",
+            Start = "264936|1426|32|64.8|58.4",
+            End = "2784|1455|32|39.3|56.1",
         },
         [96394] = {
             Quest = [=[The Restless Dead|1|15|0|0|0|3550]=],
-            Start = "264943|1455|32|33|47.8",
-            End = "264943|1455|32|33|48",
+            Start = "264943|1455|32|32.5|47.7",
+            End = "264943|1455|32|33.4|47.9",
         },
         [96403] = {
             Quest = [=[Important Heirlooms|1|15|0|0|0|4600]=],
-            Start = "265003|1455|32|32.5|44.9",
-            End = "265003|1455|32|32|44.9",
+            Start = "265003|1455|32|32.3|44.5",
+            End = "265003|1455|32|32.2|44.8",
         },
         [96408] = {
             Quest = [=[A Visitor to Dun Morogh|1|13|0|96392|0|675]=],
@@ -13041,12 +13048,12 @@ function Nx.ModQuests:Data2()
         },
         [98423] = {
             Quest = [=[The Treaty of Understanding|1|16|0|0|0|3900]=],
-            End = "2784|1455|32|39.5|55.8",
+            End = "2784|1455|32|39.3|56.1",
         },
         [98512] = {
             Quest = [=[Al'Aketh Assassins|1|11|0|0|0|875]=],
             Start = "273017|2521|32|56.8|61.1",
-            End = "273017|2521|32|56.9|61.1",
+            End = "273017|2521|32|56.8|61.1",
             Objectives = {
                 [1] = {
                     "Al'Aketh Assassin|2521|35|55|58.5|15.03|3.34",
@@ -13060,8 +13067,8 @@ function Nx.ModQuests:Data2()
         },
         [86585] = {
             Quest = [=[Banner of the Fallen|1|17|0|0|0|1250]=],
-            Start = "269153|1432|32|31.7|86.1",
-            End = "1092|1432|32|23.1|73.8",
+            Start = "269153|1432|32|31.8|86.2",
+            End = "1092|1432|32|23.2|73.7",
             Objectives = {
                 [1] = {
                     "Headsplitter|1432|32|33.8|87.8",
@@ -13254,6 +13261,46 @@ function Nx.ModQuests:Data2()
                     "Cycles of Morality|1453|32|76.2|29.3",
                 },
             },
+        },
+        [78142] = {
+            Quest = [=[Bewitchments and Glamours|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [78143] = {
+            Quest = [=[Secrets of the Dreamers|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [78145] = {
+            Quest = [=[Arcanic Systems Manual|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [78147] = {
+            Quest = [=[Crimes Against Anatomy|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [78149] = {
+            Quest = [=[Fury of the Land|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [78150] = {
+            Quest = [=[Friend of the Library|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [79091] = {
+            Quest = [=[Archmage Antonidas: The Unabridged Autobiography|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [79092] = {
+            Quest = [=[Archmage Theocritus' Research Journal|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [79093] = {
+            Quest = [=[Rumi of Gnomeregan: The Collected Works|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [79097] = {
+            Quest = [=[Baxtan: On Destructive Magics|3|20|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
         },
     }
     return ModQuests

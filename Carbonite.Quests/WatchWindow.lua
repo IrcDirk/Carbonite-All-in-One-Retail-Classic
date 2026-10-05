@@ -34,6 +34,7 @@ local sort       = sort     or table.sort
 local wipe       = wipe     or table.wipe
 local GetTime              = GetTime
 local InCombatLockdown     = InCombatLockdown
+local ITEM_GRACE           = 3
 local GetQuestObjectiveInfo = GetQuestObjectiveInfo
 
 -- Font strings in the compact watch can show a standalone profession atlas
@@ -389,6 +390,17 @@ function Nx.Quest.Watch:Open()
 
     self.Opened = true
 
+    local CombatLockdown = Carbonite and Carbonite.Modules and Carbonite.Modules.CombatLockdown
+    if CombatLockdown and not self.CombatExitHooked then
+        self.CombatExitHooked = true
+        CombatLockdown:OnExit (function()
+            if self.Opened then
+                self.ForceListRefresh = true
+                self:Update()
+            end
+        end)
+    end
+
     local fixedSize = Nx.qdb.profile.QuestWatch.FixedSize
 
     self.Modern = Nx.qdb.profile.QuestWatch.ModernLook and self:ModernAvailable() or false
@@ -687,7 +699,7 @@ end
 
 function Nx.Quest.Watch:Menu_OnShowQuest()
 
-    ToggleQuestLog()
+    Nx.Quest:ToggleQuestWindow()
     --ShowUIPanel (QuestMapFrame)
 
     Nx.Quest.List.Bar:Select (1)
@@ -2498,11 +2510,22 @@ function Nx.Quest.Watch:UpdateList()
                             -- finished, unless Blizzard's API explicitly
                             -- says to keep it visible after completion
                             -- (some hand-in items must stay clickable).
-                            local showItem = cur.ItemLink
+                            local itemImg, itemCharges = cur.ItemImg, cur.ItemCharges
+                            local seen = qId > 0 and self.ItemSeen and self.ItemSeen[qId]
+                            if cur.ItemLink and qId > 0 then
+                                self.ItemSeen = self.ItemSeen or {}
+                                self.ItemSeen[qId] = { Img = itemImg, Charges = itemCharges, T = GetTime() }
+                            elseif seen and not isComplete and GetTime() - seen.T < ITEM_GRACE then
+                                itemImg, itemCharges = seen.Img, seen.Charges
+                            else
+                                seen = nil
+                            end
+                            local showItem = (cur.ItemLink or seen)
                                 and Nx.qdb.profile.QuestWatch.ItemScale >= 1
                                 and (not isComplete or cur.ItemShowOnComplete)
                             if showItem then
-                                list:ItemSetFrame ("WatchItem~" .. cur.QI .. "~" .. cur.ItemImg .. "~" .. cur.ItemCharges)
+                                list:ItemSetFrame ("WatchItem~" .. cur.QI .. "~" .. itemImg .. "~" .. itemCharges
+                                    .. (self.Modern and "~R" or ""))
                             end
                             list:ItemSetButtonTip ((cur.ObjText or "?") .. (cur.PartyDesc or ""))
                             local color = isComplete and compColor or incompColor
@@ -3066,7 +3089,7 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
 
                 if IsAltKeyDown() then
                     Quest.IgnoreAlt = true
-                    ToggleQuestLog()
+                    Nx.Quest:ToggleQuestWindow()
                     Quest.IgnoreAlt = nil
                     Quest.List.Bar:Select (1)
                     Quest.List:Select (qId, qIndex)

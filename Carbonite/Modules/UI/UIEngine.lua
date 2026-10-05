@@ -6509,7 +6509,7 @@ end
 function Nx.List:Resize (width, height)
     local f = self.Frm
 
-    if f:IsProtected() then
+    if f:IsProtected() and InCombatLockdown() then
         return
     end
 
@@ -6590,6 +6590,9 @@ function Nx.List:Resize (width, height)
 
     local x = 0
     local clipW = width - padW * 2
+    if self.Slider then
+        clipW = clipW - self.Slider.Frm:GetWidth()
+    end
 
     for k, column in ipairs (self.Columns) do
 
@@ -6626,12 +6629,14 @@ function Nx.List:CreateStrings()
 
     local x = 0
     local strNum = 1
+    local rightPads = self:GetWatchItemRightPads (lineH)
 
     for k, column in ipairs (self.Columns) do
 
         local colW = column.ClipW
         local offX = 0
         local offY = 0
+        local lastCol = k == #self.Columns
 
         for n = 1, self.Vis do
 
@@ -6654,7 +6659,8 @@ function Nx.List:CreateStrings()
             fstr:SetPoint ("TOPLEFT", padW + x + offX, -(n - 1) * lineH - hdrH - padH - offY)
 
             if not self.ShowAll then
-                fstr:SetWidth (colW - offX)
+                local pad = lastCol and rightPads and rightPads[self.Top + n - 1] or 0
+                fstr:SetWidth (colW - offX - pad)
             end
 
             fstr:SetHeight (lineH)
@@ -6915,7 +6921,7 @@ function Nx.List:Update (showLast)
 
             if data then
 
-                local typ, v1, v2, v3 = Nx.Split ("~", data)
+                local typ, v1, v2, v3, v4 = Nx.Split ("~", data)
 
 --                Nx.prt ("%s", -(n - 1) * lineH - adjY - offY)
 
@@ -6934,7 +6940,12 @@ function Nx.List:Update (showLast)
 
                     local scale = self.ItemFrameScale * .07 * lineH / 13
 
-                    f:SetPoint ("TOPRIGHT", lfrm, "TOPLEFT", offX, -(n - 1) * lineH / scale - adjY - offY)
+                    if v4 == "R" then
+                        local sliderW = self.Slider and self.Slider.Frm:GetWidth() or 0
+                        f:SetPoint ("TOPRIGHT", lfrm, "TOPRIGHT", -(2 + sliderW) / scale, -((n - 1) * lineH + hdrH) / scale)
+                    else
+                        f:SetPoint ("TOPRIGHT", lfrm, "TOPLEFT", offX, -(n - 1) * lineH / scale - adjY - offY)
+                    end
 
                     f["rangeTimer"] = -1
 
@@ -7369,6 +7380,24 @@ function Nx.List:ItemSetFrame (typ)
     end
 
     self.FrmData[self.Num] = typ
+end
+
+function Nx.List:GetWatchItemRightPads (lineH)
+
+    if not self.FrmData then
+        return
+    end
+    local pads
+    for line, data in pairs (self.FrmData) do
+        if type (data) == "string" and strsub (data, 1, 10) == "WatchItem~" and strsub (data, -2) == "~R" then
+            local size = 30 * (self.ItemFrameScale or 10) * .07 * lineH / 13 + 4
+            pads = pads or {}
+            for n = 0, ceil (size / lineH) - 1 do
+                pads[line + n] = max (pads[line + n] or 0, size)
+            end
+        end
+    end
+    return pads
 end
 
 function Nx.List:ItemSetOffset (offX, offY)

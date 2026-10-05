@@ -437,7 +437,7 @@ end
 -- number. Returns 0 when conversion fails — for that tick the readout
 -- snaps to 0 and recovers automatically when the taint clears.
 local function _safeN (v)
-	if v == nil then
+	if v == nil or (issecretvalue and issecretvalue (v)) then
 		return 0
 	end
 	local ok, r = pcall (function () return v + 0 end)
@@ -483,10 +483,11 @@ function Nx.Info:OnTimer()
 
 	if tarName then
 
-		m = UnitPowerMax ("target") > 0 and 0 or -1
+		local powerMax = _safeN (UnitPowerMax ("target"))
+		m = powerMax > 0 and 0 or -1
 		if not UnitIsDeadOrGhost ("target") then
-			h = UnitHealth ("target")
-			m = UnitPowerMax ("target") > 0 and UnitPower ("target") or -1
+			h = _safeN (UnitHealth ("target"))
+			m = powerMax > 0 and _safeN (UnitPower ("target")) or -1
 		end
 
 		vars["THealthMax"] = max (_safeN (UnitHealthMax ("target")), 1)

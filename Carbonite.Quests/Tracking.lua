@@ -647,6 +647,9 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
         tdbg ("  NO TARGET: %s", tostring(why))
         clearOwnTarget (true)
         if not skipSame and why == "no position" then
+            if Nx.Quest.TrackDebug and debugstack then
+                tdbg ("  caller:\n%s", debugstack (2, 8, 0))
+            end
             if not Nx.Quest:PatchQuestFromBlizzard (qId) then
                 Nx.Quest:MsgNotInDB ("Z")
             end

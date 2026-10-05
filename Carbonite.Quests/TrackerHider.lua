@@ -3,8 +3,8 @@
 -- WatchFrame, QuestWatchFrame, QuestTimerFrame) when the user has the Carbonite
 -- tracker enabled. Also owns the EditMode hooks that suspend
 -- hiding while the user is editing layouts, and the larger
--- ToggleQuestLog overrides that route Blizzard panel state through
--- Carbonite's map. Lifted from NxQuest.lua to keep the engine file
+-- quest log key overrides that route the quest log key to
+-- Carbonite's quest window. Lifted from NxQuest.lua to keep the engine file
 -- focused.
 
 local L = LibStub('AceLocale-3.0'):GetLocale('Carbonite.Quest', true)
@@ -587,26 +587,33 @@ function Nx.Quest:Init()
         end
         QuestLogFrame:HookScript("OnShow", func)
     else
-        -- Retail: Override ToggleQuestLog
-        Nx.Quest.OldToggleQuestLog = ToggleQuestLog
-        function ToggleQuestLog(...)
-            Nx.Map.WMFOnShow = false
-            local orig = IsAltKeyDown() and not self.IgnoreAlt
-            if Nx.qdb.profile.Quest.UseAltLKey then
-                orig = not orig
+        local questKeyButton = CreateFrame("Button", "NxQuestToggleKeyButton", UIParent)
+        questKeyButton:SetScript("OnClick", function()
+            Nx.Quest:ToggleQuestWindow()
+        end)
+        local questKeyOwner = CreateFrame("Frame")
+        local function ApplyQuestKeyOverrides()
+            if Nx.SetCarboniteKeyOverrides then
+                Nx.SetCarboniteKeyOverrides(questKeyOwner, "TOGGLEQUESTLOG", "NxQuestToggleKeyButton",
+                    not Nx.qdb.profile.Quest.UseAltLKey)
             end
-            if not orig then
-                if self.InShowUIPanel then
-                    Nx.Quest:HideUIPanel(QuestMapFrame)
-                    self.InShowUIPanel = false
-                else
-                    Nx.Quest:ShowUIPanel(QuestMapFrame)
-                    self.InShowUIPanel = true
-                end
-            else
-                Nx.Quest.OldToggleQuestLog(...)
-            end
-            Nx.Map.WMFOnShow = true
         end
+        Nx.Quest.ApplyQuestKeyOverrides = ApplyQuestKeyOverrides
+        if Nx.KeyOverrideAppliers then
+            Nx.KeyOverrideAppliers.quest = ApplyQuestKeyOverrides
+        end
+        questKeyOwner:RegisterEvent("PLAYER_ENTERING_WORLD")
+        questKeyOwner:RegisterEvent("PLAYER_REGEN_ENABLED")
+        questKeyOwner:SetScript("OnEvent", function(owner, event)
+            if event == "PLAYER_ENTERING_WORLD" and Nx.Quest.SeedUserWaypoint
+                and not Nx.Quest.UserWaypointSeeded then
+                Nx.Quest:SeedUserWaypoint()
+            end
+            if event == "PLAYER_REGEN_ENABLED" and not owner.pending then
+                return
+            end
+            ApplyQuestKeyOverrides()
+        end)
+        ApplyQuestKeyOverrides()
     end
 end

@@ -54,6 +54,9 @@ function Nx.Quest:GetOptionsConfig()
                             end,
                             set = function()
                                 Nx.qdb.profile.Quest.UseAltLKey = not Nx.qdb.profile.Quest.UseAltLKey
+                                if Nx.Quest.ApplyQuestKeyOverrides then
+                                    Nx.Quest.ApplyQuestKeyOverrides()
+                                end
                             end,
                         },
                         qlsidebyside = {

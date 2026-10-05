@@ -47387,15 +47387,15 @@ function Nx.ModQuests:Data6()
         },
         [91899] = {
             Quest = [=[A Sealed Crate|3|60|0|0|0|0]=],
-            End = "256390|1433|32|9.7|71",
+            End = "256390|1433|32|9.7|70.9",
         },
         [91904] = {
             Quest = [=[A Sealed Crate|3|60|0|0|0|0]=],
             End = "256390|1433|32|9.6|70.9",
         },
         [98247] = {
-            Quest = [=[Shipping Label|1|60|0|0|0|650]=],
-            End = "256390|1433|32|9.7|71",
+            Quest = [=[Shipping Label|1|60|0|0|0|0]=],
+            End = "256390|1433|32|9.7|70.9",
         },
         [91900] = {
             Quest = [=[A Sealed Crate|3|60|0|0|0|0]=],
@@ -47404,6 +47404,10 @@ function Nx.ModQuests:Data6()
         [91905] = {
             Quest = [=[A Sealed Crate|3|60|0|0|0|0]=],
             End = "256390|1433|32|9.8|71",
+        },
+        [98372] = {
+            Quest = [=[An Unfortunate End|3|60|0|0|0|0]=],
+            End = "271866|1431|32|30|67.6",
         },
     }
     return ModQuests

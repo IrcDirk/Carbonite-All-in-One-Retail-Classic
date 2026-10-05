@@ -648,7 +648,7 @@ function Nx.Quest:TooltipProcess2 (stripColor, tipStr, outputTip, sourceTip)
                     if not s1 then
                         for n = 1, cur.LBCnt do
                             if cur[n] then    -- V4
-                                s1 = strfind (cur[n], tipStr)
+                                s1 = strfind (cur[n], tipStr, 1, true)
                                 if s1 then
                                     break
                                 end
@@ -663,7 +663,7 @@ function Nx.Quest:TooltipProcess2 (stripColor, tipStr, outputTip, sourceTip)
                         tipAddSuccess = true
 
                         for n = 1, cur.LBCnt do
-                            if strfind (cur[n], tipStr) then
+                            if strfind (cur[n], tipStr, 1, true) then
                                 local color, s1 = self:CalcPercentColor (cur[n], cur[n + 100])
                                 if s1 then
                                     local oName = strsub (cur[n], 1, s1 - 1)

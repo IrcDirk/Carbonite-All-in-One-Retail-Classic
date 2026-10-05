@@ -4448,57 +4448,128 @@ Nx.Map.WMFOnShow = true
 -- Unavoidable while we redirect the Blizzard map; the per-login variant of
 -- this taint (SetupPipeline's old ShowUIPanel/HideUIPanel priming) has been
 -- removed, so this only bites in sessions where the Blizzard map was opened.
+Nx.Map.QuestLogRequestedAt = nil
+
+local function MarkQuestLogRequest()
+    Nx.Map.QuestLogRequestedAt = GetTime()
+end
+for _, method in ipairs({ "HandleUserActionToggleQuestLog", "HandleUserActionOpenQuestLog" }) do
+    if type(WorldMapFrame[method]) == "function" then
+        hooksecurefunc(WorldMapFrame, method, MarkQuestLogRequest)
+    end
+end
+
 WorldMapFrame:HookScript("OnShow", function()
     -- Fix for ElvUI constant WorldMapFrame Show and Hide
     if ElvUI then
         ElvUI[1].global.general.fadeMapWhenMoving = false
     end
 
-    if Nx.Map.WMFOnShow then
-        -- Determine if we should use original behavior
-        local orgin = IsAltKeyDown()
-        if not Nx.db.profile.Map.MaxOverride then
-            orgin = not orgin
-        end
-
-        if Nx.Map.BlizzToggling or orgin then
-            -- Use Blizzard world map
-            if WorldMapFrame:IsShown() then
-                Nx.Map:RestoreBlizzBountyMap()
-                local map = Nx.Map:GetMap(1)
-                map:DetachWorldMap()
-            end
-        else
-            -- DugisGuide compatibility fix
-            if DugisGuideViewer then
-                local isGuideMode, isEssentialMode, isOffMode = DugisGuideViewer.GetPluginMode()
-                if not isOffMode and GPSArrowIcon and not GPSArrowIcon:IsShown() then
-                    HideUIPanel(WorldMapFrame)
-                    return
-                end
-            end
-
-            -- Redirect to Carbonite map
-            HideUIPanel(WorldMapFrame)
-            Nx.Map:ToggleSize()
-        end
+    if not Nx.Map.WMFOnShow then
+        return
     end
+
+    local shownAt = GetTime()
+    local orgin = IsAltKeyDown()
+    if not Nx.db.profile.Map.MaxOverride then
+        orgin = not orgin
+    end
+    local keepBlizzard = Nx.Map.BlizzToggling or orgin
+
+    C_Timer.After(0, function()
+        if not WorldMapFrame:IsShown() then
+            return
+        end
+        if keepBlizzard or Nx.Map.QuestLogRequestedAt == shownAt then
+            Nx.Map:RestoreBlizzBountyMap()
+            Nx.Map:GetMap(1):DetachWorldMap()
+            return
+        end
+
+        -- DugisGuide compatibility fix
+        if DugisGuideViewer then
+            local isGuideMode, isEssentialMode, isOffMode = DugisGuideViewer.GetPluginMode()
+            if not isOffMode and GPSArrowIcon and not GPSArrowIcon:IsShown() then
+                HideUIPanel(WorldMapFrame)
+                return
+            end
+        end
+
+        -- Redirect to Carbonite map
+        HideUIPanel(WorldMapFrame)
+        Nx.Map:ToggleSize()
+    end)
 end)
 
----
--- Global function to toggle world map
--- Respects settings for whether to use Carbonite or Blizzard map
---
-function ToggleWorldMap()
-    if Nx.Map.BlizzToggling or WorldMapFrame:IsShown() or IsAltKeyDown() or not Nx.db.profile.Map.MaxOverride then
-        if not Nx.db.profile.Map.MaxOverride and IsAltKeyDown() then
-            Nx.Map:ToggleSize()
-        else
-            Nx.Map:BlizzToggleWorldMap()
+local function SetCarboniteKeyOverrides(owner, command, buttonName, carboniteOnPlainKey)
+    if InCombatLockdown() then
+        owner.pending = true
+        return
+    end
+    owner.pending = nil
+    ClearOverrideBindings(owner)
+    local keys = { GetBindingKey(command) }
+    for _, key in ipairs(keys) do
+        local altKey = not string.find(key, "-", 1, true) and ("ALT-" .. key) or nil
+        if carboniteOnPlainKey then
+            SetOverrideBindingClick(owner, false, key, buttonName)
+            if altKey then
+                SetOverrideBinding(owner, false, altKey, command)
+            end
+        elseif altKey then
+            SetOverrideBindingClick(owner, false, altKey, buttonName)
         end
+    end
+end
+Nx.SetCarboniteKeyOverrides = SetCarboniteKeyOverrides
+
+local mapKeyButton = CreateFrame("Button", "NxMapToggleKeyButton", UIParent)
+mapKeyButton:SetScript("OnClick", function()
+    if WorldMapFrame:IsShown() then
+        Nx.Map:BlizzToggleWorldMap()
     else
         Nx.Map:ToggleSize()
     end
+end)
+
+local mapKeyOwner = CreateFrame("Frame")
+function Nx.Map:ApplyMapKeyOverrides()
+    if not (Nx.db and Nx.db.profile and Nx.db.profile.Map) then
+        return
+    end
+    SetCarboniteKeyOverrides(mapKeyOwner, "TOGGLEWORLDMAP", "NxMapToggleKeyButton",
+        Nx.db.profile.Map.MaxOverride and true or false)
+end
+mapKeyOwner:RegisterEvent("PLAYER_ENTERING_WORLD")
+mapKeyOwner:RegisterEvent("PLAYER_REGEN_ENABLED")
+mapKeyOwner:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_REGEN_ENABLED" and not self.pending then
+        return
+    end
+    Nx.Map:ApplyMapKeyOverrides()
+end)
+
+Nx.KeyOverrideAppliers = Nx.KeyOverrideAppliers or {}
+Nx.KeyOverrideAppliers.map = function()
+    Nx.Map:ApplyMapKeyOverrides()
+end
+
+local reapplyScheduled = false
+local function ReapplyKeyOverrides()
+    if reapplyScheduled then
+        return
+    end
+    reapplyScheduled = true
+    C_Timer.After(0, function()
+        reapplyScheduled = false
+        for _, apply in pairs(Nx.KeyOverrideAppliers) do
+            apply()
+        end
+    end)
+end
+hooksecurefunc("SetBinding", ReapplyKeyOverrides)
+if LoadBindings then
+    hooksecurefunc("LoadBindings", ReapplyKeyOverrides)
 end
 
 -------------------------------------------------------------------------------
@@ -13160,7 +13231,9 @@ function Nx.Map:IconOnEnter(motion)
                         end
                     end
                 end
-                this.NxTip = TooltipText
+                if TooltipText ~= "" then
+                    this.NxTip = TooltipText
+                end
             end
         end
     end

@@ -137,6 +137,9 @@ function Nx.Quest.List:Open()
         -- Retail / Wrath+ Classic. Lets the map blob/arrow follow Blizzard's
         -- super-tracked quest (e.g. set by clicking a quest POI).
         CarboniteQuest:RegisterEvent ("SUPER_TRACKING_CHANGED", "OnQuestUpdate")
+        if C_Map and C_Map.GetUserWaypoint then
+            CarboniteQuest:RegisterEvent ("USER_WAYPOINT_UPDATED", "OnQuestUpdate")
+        end
 
         -- Toggle-on-second-click for the super-tracked quest. Blizzard's
         -- world-map quest pin sits on top of Carbonite's icon and eats
@@ -641,6 +644,16 @@ function Nx.Quest.List:UpdateMenu()
 end
 
 -------------------------------------------------------------------------------
+
+function Nx.Quest:ToggleQuestWindow()
+    if self.InShowUIPanel then
+        self:HideUIPanel (QuestMapFrame)
+        self.InShowUIPanel = false
+    else
+        self:ShowUIPanel (QuestMapFrame)
+        self.InShowUIPanel = true
+    end
+end
 
 function Nx.Quest:ShowUIPanel (frame)
     if self.InShowUIPanel then
@@ -1816,6 +1829,8 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
         end
     elseif event == "SUPER_TRACKING_CHANGED" then
         Nx.Quest:OnSuperTrackChanged()
+    elseif event == "USER_WAYPOINT_UPDATED" then
+        Nx.Quest:OnUserWaypointUpdated()
     elseif event == "QUEST_POI_UPDATE" then
         -- Blizzard's QuestDataProvider refreshes unconditionally for this
         -- event. Carbonite used to leave the registration disabled and, even
@@ -2125,7 +2140,7 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             -- goto arrow re-resolves through GetNextWaypoint and follows
             -- the new objective. Cheap: it just re-runs TrackOnMap for
             -- the active quest.
-            Nx.Quest:OnSuperTrackChanged()
+            Nx.Quest:OnSuperTrackChanged(true)
 
             do
                 local typ, tid = Nx.Map:GetTargetInfo()

@@ -453,7 +453,7 @@ end
 
 function Nx.Quest:Menu_OnShowQuest()
 
-    ToggleQuestLog()
+    self:ToggleQuestWindow()
     --ShowUIPanel (QuestMapFrame)
 
     self.List.Bar:Select (1)
@@ -609,8 +609,120 @@ function Nx.Quest:SetActiveCarboniteQuest(qId, qIndex)
     self._addWatchSuppress = prevSuppress
 end
 
-function Nx.Quest:OnSuperTrackChanged()
+function Nx.Quest:TrackUserWaypoint()
+    local point = C_Map and C_Map.GetUserWaypoint and C_Map.GetUserWaypoint()
+    if not (point and point.uiMapID and point.position) then
+        return
+    end
+    local MapIDs = Carbonite and Carbonite.Modules and Carbonite.Modules.Map and Carbonite.Modules.Map.MapIDs
+    local mid = MapIDs and MapIDs:CanonicalizeMapID (point.uiMapID) or point.uiMapID
+    if Nx.OldMapIDs then
+        if mid == 1414 then mid = 12 end
+        if mid == 1415 then mid = 13 end
+    end
+    local map = Nx.Map:GetMap (1)
+    if not (map and Nx.Map.MapWorldInfo and Nx.Map.MapWorldInfo[mid]) then
+        return
+    end
+    local zx, zy = point.position.x, point.position.y
+    if not (zx and zy) then
+        return
+    end
+    zx, zy = zx * 100, zy * 100
+    local zoneName = MapIDs and MapIDs:IdToName (mid)
+    local name = format ("%s%.1f, %.1f", zoneName and (zoneName .. " ") or "", zx, zy)
+    for _, tar in ipairs (map.Targets or {}) do
+        if tar.UserWaypoint and tar.MapId == mid and tar.TargetName == name then
+            return
+        end
+    end
+    local tar = map:SetTargetXY (mid, zx, zy, name)
+    if tar then
+        tar.UserWaypoint = true
+    end
+end
+
+local function UserWaypointSig()
+    if not (C_Map and C_Map.HasUserWaypoint and C_Map.HasUserWaypoint()) then
+        return nil
+    end
+    local point = C_Map.GetUserWaypoint()
+    if not (point and point.uiMapID and point.position) then
+        return nil
+    end
+    local x, y = point.position.x, point.position.y
+    if not (x and y) then
+        return nil
+    end
+    return format ("%d:%.4f:%.4f", point.uiMapID, x, y)
+end
+
+function Nx.Quest:SeedUserWaypoint()
+    self.LastUserWaypointSig = UserWaypointSig()
+    self.UserWaypointSeeded = true
+end
+
+function Nx.Quest:ClearUserWaypointTarget()
+    local map = Nx.Map:GetMap (1)
+    local first = map and map.Targets and map.Targets[1]
+    if first and first.UserWaypoint then
+        map:ClearTargets()
+    end
+end
+
+function Nx.Quest:OnUserWaypointUpdated()
+    if not self.UserWaypointSeeded then
+        self:SeedUserWaypoint()
+        return
+    end
+    local sig = UserWaypointSig()
+    if not sig then
+        if self.LastUserWaypointSig then
+            self:ClearUserWaypointTarget()
+        end
+        self.LastUserWaypointSig = nil
+        return
+    end
+    if sig ~= self.LastUserWaypointSig then
+        self.LastUserWaypointSig = sig
+        self.UserWaypointTime = GetTime()
+        self:TrackUserWaypoint()
+    end
+end
+
+function Nx.Quest:IsFreshUserWaypoint()
+    local sig = UserWaypointSig()
+    if not sig then
+        return false
+    end
+    return sig ~= self.LastUserWaypointSig
+        or GetTime() - (self.UserWaypointTime or 0) < 2
+end
+
+function Nx.Quest:OnSuperTrackChanged(isRefresh)
     if not C_SuperTrack then
+        return
+    end
+
+    if isRefresh then
+        local map = Nx.Map:GetMap (1)
+        local first = map and map.Targets and map.Targets[1]
+        if first and first.UserWaypoint then
+            return
+        end
+    end
+
+    local liveType = C_SuperTrack.GetHighestPrioritySuperTrackingType
+        and C_SuperTrack.GetHighestPrioritySuperTrackingType()
+    local userWaypointType = Enum and Enum.SuperTrackingType and Enum.SuperTrackingType.UserWaypoint
+    if (C_SuperTrack.IsSuperTrackingUserWaypoint and C_SuperTrack.IsSuperTrackingUserWaypoint())
+        or (userWaypointType and liveType == userWaypointType) then
+        self.ActiveQID = 0
+        self.ActiveObjI = 0
+        if self.UpdateQuestBlob then
+            self:UpdateQuestBlob (nil)
+        end
+        self:OnUserWaypointUpdated()
         return
     end
 
@@ -635,6 +747,13 @@ function Nx.Quest:OnSuperTrackChanged()
             if Nx.Quest.UpdateQuestBlob then
                 Nx.Quest:UpdateQuestBlob (nil)
             end
+        end
+        if self:IsFreshUserWaypoint() then
+            self.ActiveQID = 0
+            self.ActiveObjI = 0
+            clearBlob()
+            self:OnUserWaypointUpdated()
+            return
         end
         if self.UserClearedActive then
             self.UserClearedActive = nil
@@ -753,7 +872,7 @@ function Nx.Quest:OnSuperTrackChanged()
         end
     end
     if not InCombatLockdown() then
-        self:TrackOnMap(liveQID, pickedObj, true, true)
+        self:TrackOnMap(liveQID, pickedObj, true, true, isRefresh)
     end
     -- Mirror the picked objective into ActiveObjI so the (qId, objI) toggle
     -- check in the click handlers can see it. Without this, super-track

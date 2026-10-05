@@ -76,6 +76,7 @@ function Nx.Notes:Questie(mapId)
                 and not frame.hidden then
                 local dataType = data.Type
                 if (showAvailable and dataType == "available")
+                    or dataType == "complete"
                     or dataType == "monster" or dataType == "item" then
                     pushIcon(frame, data)
                 end

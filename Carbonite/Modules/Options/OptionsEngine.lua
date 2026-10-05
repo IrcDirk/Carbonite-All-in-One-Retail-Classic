@@ -463,6 +463,9 @@ local function mapConfig()
                             end,
                             set = function()
                                 Nx.db.profile.Map.MaxOverride = not Nx.db.profile.Map.MaxOverride
+                                if Nx.Map.ApplyMapKeyOverrides then
+                                    Nx.Map:ApplyMapKeyOverrides()
+                                end
                             end,
                         },
                         -- Combat compatibility mode
