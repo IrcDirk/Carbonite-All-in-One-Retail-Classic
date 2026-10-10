@@ -76,6 +76,7 @@ function Nx.Notes:Questie(mapId)
                 and not frame.hidden then
                 local dataType = data.Type
                 if (showAvailable and dataType == "available")
+                    or dataType == "complete"
                     or dataType == "monster" or dataType == "item" then
                     pushIcon(frame, data)
                 end
@@ -173,6 +174,9 @@ function Nx.Notes:Questie(mapId)
         -- name (gray, indented) for an active objective. Same color
         -- convention Questie's own tooltip uses.
         local nm = data.Name
+        if not nm and data.QuestData then
+            nm = data.QuestData.starterName or data.QuestData.finisherName or data.QuestData.name
+        end
         if isGiver and nm then
             lines[#lines+1] = "|cFF33FF33" .. tostring(nm) .. "|r"
         end
@@ -189,7 +193,7 @@ function Nx.Notes:Questie(mapId)
                 end
             end
             if not title then
-                local name = q.name or q.Name
+                local name = q.name or q.Name or q.questName
                 if QuestieDBQ and QuestieDBQ.QueryQuestSingle and not name then
                     local ok, n = pcall(QuestieDBQ.QueryQuestSingle, q.Id, "name")
                     if ok and n then name = n end
@@ -233,10 +237,18 @@ function Nx.Notes:Questie(mapId)
             or (icon.data and (icon.data.IconScale or 1) < 0.85)
         local layer = isManual and "!QUE_T" or "!QUE"
         local qnote = map:AddIconPt(layer, wx, wy, nil, "FFFFFF", texture)
-        qnote.mapID, qnote.MapId = mapId, mapId
-        map:SetIconUserData(qnote, icon)
-        local tip = buildQuestieTip(icon.data)
-        if tip then map:SetIconTip(qnote, tip) end
+        if qnote then
+            qnote.mapID, qnote.MapId = mapId, mapId
+            map:SetIconUserData(qnote, icon)
+            local tip = buildQuestieTip(icon.data)
+            if tip then
+                qnote.tip = tip
+                qnote.Tip = tip
+                qnote.Tooltip = tip
+                qnote.TipFunc = function() return tip end
+                map:SetIconTip(qnote, tip)
+            end
+        end
     end
 
     -- Patrol-path harvester. Questie stores its rendered patrol
