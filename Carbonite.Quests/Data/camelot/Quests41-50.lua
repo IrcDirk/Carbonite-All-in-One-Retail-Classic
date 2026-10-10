@@ -14119,6 +14119,22 @@ function Nx.ModQuests:Data5()
                 },
             },
         },
+        [81947] = {
+            Quest = [=[Sanguine Sorcery|3|45|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [81953] = {
+            Quest = [=[Stonewrought Design|3|45|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [81955] = {
+            Quest = [=[A Mind of Metal|3|45|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
+        [81956] = {
+            Quest = [=[Conjurer's Codex|3|45|0|0|0|0]=],
+            End = "211033|1453|32|48.9|86.5",
+        },
     }
     return ModQuests
 end

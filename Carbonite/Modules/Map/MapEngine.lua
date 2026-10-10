@@ -12951,7 +12951,7 @@ function Nx.Map:QuestIconClick (this, button)
                     -- trips protected SetPassThroughButtons
                     -- in combat).
                     Nx.SuperTrackSafe(function()
-                        C_SuperTrack.SetSuperTrackedQuestID(0)
+                        Nx.SetSuperTrackedQuestIDSafe(0)
                         if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
                     end)
                 end)
@@ -12982,15 +12982,9 @@ function Nx.Map:QuestIconClick (this, button)
                     -- Combat re-check at fire time (see
                     -- toggle-off branch above).
                     Nx.SuperTrackSafe(function()
-                        if C_SuperTrack.SetSuperTrackedUserWaypoint
-                           and C_SuperTrack.IsSuperTrackingUserWaypoint
-                           and C_SuperTrack.IsSuperTrackingUserWaypoint() then
-                            C_SuperTrack.SetSuperTrackedUserWaypoint(false)
-                        end
-                        if C_SuperTrack.ClearAllSuperTracked then
-                            C_SuperTrack.ClearAllSuperTracked()
-                        end
-                        C_SuperTrack.SetSuperTrackedQuestID(_live)
+                        Nx.SetSuperTrackedUserWaypointSafe(false)
+                        Nx.ClearNonQuestSuperTrackSafe()
+                        Nx.SetSuperTrackedQuestIDSafe(_live)
                         if Nx.Quest then Nx.Quest._addWatchSuppress = _restore end
                     end)
                 end)

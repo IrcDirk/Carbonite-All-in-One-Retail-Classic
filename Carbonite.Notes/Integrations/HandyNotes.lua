@@ -104,8 +104,9 @@ function Nx.Notes:HandyNotes(mapId)
 
     -- Reuse temp frame instead of creating new ones.
     local tempIcon = getHandyTempFrame()
-    local tmpFrame = _G.WorldMapFrame:GetCanvas()
+    local tmpFrame = _G.UIParent
     tempIcon:SetParent(tmpFrame)
+    tempIcon:Show()
 
     for pluginName, pluginHandler in pairs(_G.HandyNotes.plugins) do
         _G.HandyNotes:UpdateWorldMapPlugin(pluginName)

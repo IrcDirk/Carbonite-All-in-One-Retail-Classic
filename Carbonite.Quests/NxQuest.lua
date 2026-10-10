@@ -290,6 +290,10 @@ if C_QuestLog and C_QuestLog.AddQuestWatch and not AddQuestWatch then
             -- combat-protected SetPassThroughButtons (same family as
             -- the C_SuperTrack sites). Synchronous out of combat.
             Nx.SuperTrackSafe(function()
+                if C_QuestLog.GetQuestWatchType
+                   and C_QuestLog.GetQuestWatchType(questID) ~= nil then
+                    return
+                end
                 C_QuestLog.AddQuestWatch(questID)
             end)
         end
@@ -307,6 +311,10 @@ if C_QuestLog and C_QuestLog.RemoveQuestWatch and not RemoveQuestWatch then
         if questID then
             -- Combat-defer (see AddQuestWatch shim above).
             Nx.SuperTrackSafe(function()
+                if C_QuestLog.GetQuestWatchType
+                   and C_QuestLog.GetQuestWatchType(questID) == nil then
+                    return
+                end
                 C_QuestLog.RemoveQuestWatch(questID)
             end)
         end

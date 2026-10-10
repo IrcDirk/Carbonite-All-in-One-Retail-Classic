@@ -166,19 +166,11 @@ function Nx.Quest.List:Open()
                         -- Blizzard's secure call chain, and re-firing
                         -- SUPER_TRACKING_CHANGED from our taint trips the
                         -- combat-protected SetPassThroughButtons in the
-                        -- QuestDataProvider listeners. The suppress flag
-                        -- moves inside so it's armed right before the call.
+                        -- QuestDataProvider listeners.
                         Nx.SuperTrackSafe(function()
-                            Nx.Quest._stSuppressHook = true
                             Nx.SetSuperTrackedQuestIDSafe(0)
                         end)
                     end
-                    return
-                end
-
-                -- Skip our own toggle-clear so the hook doesn't recurse.
-                if Nx.Quest._stSuppressHook then
-                    Nx.Quest._stSuppressHook = false
                     return
                 end
 
@@ -199,7 +191,6 @@ function Nx.Quest.List:Open()
                     -- SetPassThroughButtons). The blob hide rides along:
                     -- WorldMapBlobFrame refuses insecure calls in combat.
                     Nx.SuperTrackSafe(function()
-                        Nx.Quest._stSuppressHook = true
                         Nx.Quest.UserClearedActive = true
                         Nx.SetSuperTrackedQuestIDSafe(0)
                         -- Blizzard quest area blob is drawn into a

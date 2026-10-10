@@ -2896,14 +2896,8 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                     -- closure runs synchronously, preserving the
                     -- toggle-off detection just below.
                     Nx.SuperTrackSafe(function()
-                        if C_SuperTrack.SetSuperTrackedUserWaypoint
-                           and C_SuperTrack.IsSuperTrackingUserWaypoint
-                           and C_SuperTrack.IsSuperTrackingUserWaypoint() then
-                            Nx.SetSuperTrackedUserWaypointSafe(false)
-                        end
-                        if C_SuperTrack.ClearAllSuperTracked then
-                            Nx.ClearAllSuperTrackedSafe()
-                        end
+                        Nx.SetSuperTrackedUserWaypointSafe(false)
+                        Nx.ClearNonQuestSuperTrackSafe()
                         -- Will trigger our SetSuperTrackedQuestID hook. If that
                         -- hook toggles off (clicking the active quest again), it
                         -- clears ActiveQID + the goto arrow + the blob. We have

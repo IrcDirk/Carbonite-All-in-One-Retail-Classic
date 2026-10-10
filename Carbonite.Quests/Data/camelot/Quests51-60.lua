@@ -47409,6 +47409,10 @@ function Nx.ModQuests:Data6()
             Quest = [=[An Unfortunate End|3|60|0|0|0|0]=],
             End = "271866|1431|32|30|67.6",
         },
+        [84396] = {
+            Quest = [=[Magma or Lava?|3|60|0|0|0|0]=],
+            End = "5497|1453|32|49.5|85.9",
+        },
     }
     return ModQuests
 end
