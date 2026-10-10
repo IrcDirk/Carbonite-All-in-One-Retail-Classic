@@ -49,6 +49,12 @@ function Nx.Notes:Questie(mapId)
 
     local showAvailable = Nx.fdb.profile.Notes.QuestieSE
 
+ -- Harvest Questie's frames for this map, building a content hash
+    -- for dirty detection. Questie uses FakeShow/FakeHide rather than
+    -- recreating frames when its display-type toggles flip, so the
+    -- hash must include `frame.hidden` — otherwise toggling "Available
+    -- Quests" off→on inside Questie's menu won't invalidate our
+    -- cache and the icons won't reappear until the user changes zone.
     local icons = {}
     local currentHash = 0
 
@@ -80,6 +86,11 @@ function Nx.Notes:Questie(mapId)
         end
     end
 
+-- Manual icons (townsfolk: bankers, mailboxes, profession trainers,
+    -- vendors, etc.) live in QuestieMap.manualFrames keyed by `typ` and
+    -- then by data.id. Questie's right-click menu toggles these via
+    -- Show/HideManualIcons (also Fake-hide based) so we skip hidden
+    -- frames the same way.
     if QuestieMap.manualFrames then
         for _, byId in pairs(QuestieMap.manualFrames) do
             for _, frameList in pairs(byId) do
@@ -115,6 +126,11 @@ function Nx.Notes:Questie(mapId)
     map:SetIconTypeNoDockMinimap("!QUE", true)
     map:SetIconTypeLevel("!QUE", 20)
 
+    -- Townsfolk (manualFrames) — bankers, mailboxes, profession trainers,
+    -- vendors, etc. — get a smaller icon size than quest POIs. Questie
+    -- itself renders these at 16 * iconScale (≈ 11px default); putting
+    -- them in the !QUE layer makes them stamp at QuestieSize (32+),
+    -- which dominates the map. Separate layer with a townsfolk size.
     local townSize = math.floor((Nx.fdb.profile.Notes.QuestieSize or 32) * 0.45)
     if townSize < 12 then townSize = 12 end
     map:InitIconType("!QUE_T", "WP", "", townSize, townSize)
@@ -122,13 +138,23 @@ function Nx.Notes:Questie(mapId)
     map:SetIconTypeNoDockMinimap("!QUE_T", true)
     map:SetIconTypeLevel("!QUE_T", 20)
 
+    -- Format a Questie-style tooltip directly from frame.data. Trying
+    -- to scrape Questie's live MapIconTooltip:Show output is fragile —
+    -- it walks HBDPins.worldmapProvider, which is empty unless
+    -- Blizzard's WorldMap is currently visible. The data we need
+    -- (quest name, type, objective description) lives on the frame
+    -- regardless, so we just build the lines ourselves.
     local QuestieLib  = _G.QuestieLoader and _G.QuestieLoader:ImportModule("QuestieLib")
     local QuestieDBQ  = _G.QuestieLoader and _G.QuestieLoader:ImportModule("QuestieDB")
     local function buildQuestieTip(data)
         if not data then return nil end
 
         local lines = {}
-
+        
+-- Townsfolk / manual icons (Type="manual") carry their tooltip
+        -- pre-built in ManualTooltipData = { Title, Body = {{label,
+        -- value}, ...} }. Use it verbatim and skip the quest-tooltip
+        -- path entirely.
         if data.Type == "manual" and data.ManualTooltipData then
             local m = data.ManualTooltipData
             if m.Title then
@@ -217,8 +243,13 @@ function Nx.Notes:Questie(mapId)
 
     for _, icon in ipairs(icons) do
         local texture = icon.texture and icon.texture:GetTexture()
+        -- frame.x / frame.y are stored in 0..100 percentage form
         local wx, wy = Nx.Map:GetWorldPos(mapId, icon.x, icon.y)
 
+        -- Townsfolk (manual icons) render smaller than quest POIs.
+        -- Detect via the Questie-set frame flag isManualIcon (most
+        -- reliable), data.Type, or data.IconScale (manual icons use
+        -- 0.7; quest icons use 1.0).
         local isManual = icon.isManualIcon
             or (icon.data and icon.data.Type == "manual")
             or (icon.data and (icon.data.IconScale or 1) < 0.85)
@@ -241,7 +272,17 @@ function Nx.Notes:Questie(mapId)
         end
     end
 
-    -- Patrol-path harvester
+-- Patrol-path harvester. Questie stores its rendered patrol
+    -- segments as Button frames inside `frame.data.lineFrames`
+    -- (see QuestieFramePool:CreateLine). Each entry's `.line` is a
+    -- Line region anchored to the WorldMap canvas; reading its
+    -- start/end points back out and converting pixel offsets to
+    -- 0..100 map coords lets us replot the exact same path on
+    -- Carbonite's canvas, even when the underlying npc.waypoints
+    -- entry isn't in our snapshot of the Questie DB. This is the
+    -- only path that catches item-start patrols like quest 9871
+    -- "Murkblood Invaders".
+    
     do
         local MapMod  = Carbonite:GetModule("Map", true)
         local Layer   = Carbonite.Modules.Map.Layer
@@ -255,8 +296,8 @@ function Nx.Notes:Questie(mapId)
 
             local cw, ch = canvas:GetWidth(), canvas:GetHeight()
             if cw and ch and cw > 0 and ch > 0 then
-                local seen     = {}
-                local tipCache = {}
+                local seen     = {} -- dedupe by lineFrame ref (icons share lines)
+                local tipCache = {} -- frame.data -> built tooltip
 
                 local function dataTip(data)
                     if not data then return nil end
@@ -278,8 +319,11 @@ function Nx.Notes:Questie(mapId)
                     if not (sx and sy and ex and ey) then return end
                     local _, _, _, fx, fy = lineFrame:GetPoint(1)
                     if not (fx and fy) then return end
+                    -- canvas-relative pixel offsets (Y is negative-down
+                    -- under a TOPLEFT anchor)
                     local sxp, syp = fx + sx, fy + sy
                     local exp, eyp = fx + ex, fy + ey
+                    -- back to 0..100 percent
                     local sxPct = sxp / cw * 100
                     local syPct = -syp / ch * 100
                     local exPct = exp / cw * 100
@@ -308,6 +352,9 @@ function Nx.Notes:Questie(mapId)
                         local data  = frame and frame.data
                         if frame and data and frame.UiMapID == mapId
                             and type(data.lineFrames) == "table" then
+                              -- Best-effort NPC id: prefer the objective
+                            -- target, fall back to the first spawnList
+                            -- key (Questie uses npcId as the spawn key).
                             local npcId = data.ObjectiveTargetId
                             if not npcId and data.ObjectiveData
                                 and data.ObjectiveData.spawnList then
