@@ -49,14 +49,9 @@ function Nx.Notes:Questie(mapId)
 
     local showAvailable = Nx.fdb.profile.Notes.QuestieSE
 
-    -- Harvest Questie's frames for this map, building a content hash
-    -- for dirty detection. Questie uses FakeShow/FakeHide rather than
-    -- recreating frames when its display-type toggles flip, so the
-    -- hash must include `frame.hidden` — otherwise toggling "Available
-    -- Quests" off→on inside Questie's menu won't invalidate our
-    -- cache and the icons won't reappear until the user changes zone.
     local icons = {}
     local currentHash = 0
+
     local function pushIcon(frame, data)
         icons[#icons + 1] = frame
         local qid = (data.QuestData and data.QuestData.Id)
@@ -75,6 +70,7 @@ function Nx.Notes:Questie(mapId)
             if frame and data and data.QuestData and frame.UiMapID == mapId
                 and not frame.hidden then
                 local dataType = data.Type
+
                 if (showAvailable and dataType == "available")
                     or dataType == "complete"
                     or dataType == "monster" or dataType == "item" then
@@ -84,11 +80,6 @@ function Nx.Notes:Questie(mapId)
         end
     end
 
-    -- Manual icons (townsfolk: bankers, mailboxes, profession trainers,
-    -- vendors, etc.) live in QuestieMap.manualFrames keyed by `typ` and
-    -- then by data.id. Questie's right-click menu toggles these via
-    -- Show/HideManualIcons (also Fake-hide based) so we skip hidden
-    -- frames the same way.
     if QuestieMap.manualFrames then
         for _, byId in pairs(QuestieMap.manualFrames) do
             for _, frameList in pairs(byId) do
@@ -124,11 +115,6 @@ function Nx.Notes:Questie(mapId)
     map:SetIconTypeNoDockMinimap("!QUE", true)
     map:SetIconTypeLevel("!QUE", 20)
 
-    -- Townsfolk (manualFrames) — bankers, mailboxes, profession trainers,
-    -- vendors, etc. — get a smaller icon size than quest POIs. Questie
-    -- itself renders these at 16 * iconScale (≈ 11px default); putting
-    -- them in the !QUE layer makes them stamp at QuestieSize (32+),
-    -- which dominates the map. Separate layer with a townsfolk size.
     local townSize = math.floor((Nx.fdb.profile.Notes.QuestieSize or 32) * 0.45)
     if townSize < 12 then townSize = 12 end
     map:InitIconType("!QUE_T", "WP", "", townSize, townSize)
@@ -136,21 +122,13 @@ function Nx.Notes:Questie(mapId)
     map:SetIconTypeNoDockMinimap("!QUE_T", true)
     map:SetIconTypeLevel("!QUE_T", 20)
 
-    -- Format a Questie-style tooltip directly from frame.data. Trying
-    -- to scrape Questie's live MapIconTooltip:Show output is fragile —
-    -- it walks HBDPins.worldmapProvider, which is empty unless
-    -- Blizzard's WorldMap is currently visible. The data we need
-    -- (quest name, type, objective description) lives on the frame
-    -- regardless, so we just build the lines ourselves.
     local QuestieLib  = _G.QuestieLoader and _G.QuestieLoader:ImportModule("QuestieLib")
     local QuestieDBQ  = _G.QuestieLoader and _G.QuestieLoader:ImportModule("QuestieDB")
     local function buildQuestieTip(data)
         if not data then return nil end
+
         local lines = {}
-        -- Townsfolk / manual icons (Type="manual") carry their tooltip
-        -- pre-built in ManualTooltipData = { Title, Body = {{label,
-        -- value}, ...} }. Use it verbatim and skip the quest-tooltip
-        -- path entirely.
+
         if data.Type == "manual" and data.ManualTooltipData then
             local m = data.ManualTooltipData
             if m.Title then
@@ -159,108 +137,111 @@ function Nx.Notes:Questie(mapId)
             if type(m.Body) == "table" then
                 for _, row in ipairs(m.Body) do
                     if type(row) == "table" and row[1] and row[2] then
-                        lines[#lines+1] = "|cFFCCCCCC" .. tostring(row[1]) .. " " .. tostring(row[2]) .. "|r"
+                        lines[#lines+1] = "|cFFCCCCCC" .. tostring(row[1]) .. " " .. tostring(row[row[2] and 2 or 1]) .. "|r"
                     elseif type(row) == "string" then
                         lines[#lines+1] = "|cFFCCCCCC" .. row .. "|r"
                     end
                 end
             end
-            if #lines == 0 then return nil end
-            lines[#lines+1] = " \t|cff80ff80Questie|r"
-            return table.concat(lines, "\n")
+            if #lines > 0 then
+                lines[#lines+1] = " \t|cff80ff80Questie|r"
+                return table.concat(lines, "\n")
+            end
         end
+
         local isGiver = data.Type == "available" or data.Type == "complete"
-        -- Top line: giver name (green) for available/complete, NPC
-        -- name (gray, indented) for an active objective. Same color
-        -- convention Questie's own tooltip uses.
+
         local nm = data.Name
         if not nm and data.QuestData then
             nm = data.QuestData.starterName or data.QuestData.finisherName or data.QuestData.name
         end
+
         if isGiver and nm then
             lines[#lines+1] = "|cFF33FF33" .. tostring(nm) .. "|r"
         end
-        -- Quest title with level + state tag, via Questie's own
-        -- helper so we match Questie's formatting exactly.
+
         local q = data.QuestData
-        if q and q.Id then
-            local title
-            if QuestieLib and QuestieLib.GetColoredQuestName then
-                local ok, result = pcall(QuestieLib.GetColoredQuestName,
-                    QuestieLib, q.Id, true, true)
+        local title = nil
+
+        if q then
+            if QuestieLib and QuestieLib.GetColoredQuestName and q.Id then
+                local ok, result = pcall(QuestieLib.GetColoredQuestName, QuestieLib, q.Id, true, true)
                 if ok and type(result) == "string" and result ~= "" then
                     title = result
                 end
             end
+
             if not title then
                 local name = q.name or q.Name or q.questName
-                if QuestieDBQ and QuestieDBQ.QueryQuestSingle and not name then
+                if QuestieDBQ and QuestieDBQ.QueryQuestSingle and q.Id and not name then
                     local ok, n = pcall(QuestieDBQ.QueryQuestSingle, q.Id, "name")
                     if ok and n then name = n end
                 end
-                title = "|cFFFFFFFF" .. tostring(name or ("Quest " .. q.Id)) .. "|r"
+                if name then
+                    title = "|cFFFFFFFF" .. tostring(name) .. "|r"
+                end
             end
-            if data.Type == "monster" or data.Type == "item" or data.Type == "event" then
-                title = title .. " |cFFFFFF00(Active)|r"
-            elseif data.Type == "available" then
-                title = title .. " |cFFAAAAAA(Available)|r"
-            elseif data.Type == "complete" then
-                title = title .. " |cFF33FF33(Complete)|r"
-            end
-            lines[#lines+1] = title
         end
-        -- For active-objective frames, indent the source NPC + the
-        -- objective description (matches Questie's tooltip layout).
-        if not isGiver and nm then
-            lines[#lines+1] = "|cFFAAAAAA   " .. tostring(nm) .. "|r"
+
+        if not title then
+            if q and q.Id then
+                title = "|cFFFFFFFFQuest #" .. tostring(q.Id) .. "|r"
+            elseif data.id then
+                title = "|cFFFFFFFFQuest #" .. tostring(data.id) .. "|r"
+            else
+                title = "|cFFFFFFFFZakończone zadanie (Complete)|r"
+            end
+        end
+
+        if data.Type == "monster" or data.Type == "item" or data.Type == "event" then
+            title = title .. " |cFFFFFF00(Active)|r"
+        elseif data.Type == "available" then
+            title = title .. " |cFFAAAAAA(Available)|r"
+        elseif data.Type == "complete" then
+            title = title .. " |cFF33FF33(Complete)|r"
+        end
+
+        lines[#lines+1] = title
+
+        if not isGiver and data.Name then
+            lines[#lines+1] = "|cFFAAAAAA   " .. tostring(data.Name) .. "|r"
         end
         if data.ObjectiveData and data.ObjectiveData.Description then
             lines[#lines+1] = "|cFFCCCCCC   " .. tostring(data.ObjectiveData.Description) .. "|r"
         end
-        if #lines == 0 then return nil end
-        -- Right-aligned source tag, matches the HandyNotes icon tip
-        -- and the patrol-path hover tooltip.
+
         lines[#lines+1] = " \t|cff80ff80Questie|r"
+
         return table.concat(lines, "\n")
     end
 
     for _, icon in ipairs(icons) do
         local texture = icon.texture and icon.texture:GetTexture()
-        -- frame.x / frame.y are stored in 0..100 percentage form
         local wx, wy = Nx.Map:GetWorldPos(mapId, icon.x, icon.y)
-        -- Townsfolk (manual icons) render smaller than quest POIs.
-        -- Detect via the Questie-set frame flag isManualIcon (most
-        -- reliable), data.Type, or data.IconScale (manual icons use
-        -- 0.7; quest icons use 1.0).
+
         local isManual = icon.isManualIcon
             or (icon.data and icon.data.Type == "manual")
             or (icon.data and (icon.data.IconScale or 1) < 0.85)
         local layer = isManual and "!QUE_T" or "!QUE"
+        
         local qnote = map:AddIconPt(layer, wx, wy, nil, "FFFFFF", texture)
         if qnote then
             qnote.mapID, qnote.MapId = mapId, mapId
-            map:SetIconUserData(qnote, icon)
-            local tip = buildQuestieTip(icon.data)
-            if tip then
-                qnote.tip = tip
-                qnote.Tip = tip
-                qnote.Tooltip = tip
-                qnote.TipFunc = function() return tip end
-                map:SetIconTip(qnote, tip)
+            
+            local tipText = buildQuestieTip(icon.data)
+            if tipText then 
+                -- Key fix: Assigning the text and a function that returns the text directly to Carbonite
+                qnote.tip = tipText
+                qnote.Tip = tipText
+                qnote.Tooltip = tipText
+                qnote.TipFunc = function() return tipText end
+                
+                map:SetIconTip(qnote, tipText)
             end
         end
     end
 
-    -- Patrol-path harvester. Questie stores its rendered patrol
-    -- segments as Button frames inside `frame.data.lineFrames`
-    -- (see QuestieFramePool:CreateLine). Each entry's `.line` is a
-    -- Line region anchored to the WorldMap canvas; reading its
-    -- start/end points back out and converting pixel offsets to
-    -- 0..100 map coords lets us replot the exact same path on
-    -- Carbonite's canvas, even when the underlying npc.waypoints
-    -- entry isn't in our snapshot of the Questie DB. This is the
-    -- only path that catches item-start patrols like quest 9871
-    -- "Murkblood Invaders".
+    -- Patrol-path harvester
     do
         local MapMod  = Carbonite:GetModule("Map", true)
         local Layer   = Carbonite.Modules.Map.Layer
@@ -274,8 +255,8 @@ function Nx.Notes:Questie(mapId)
 
             local cw, ch = canvas:GetWidth(), canvas:GetHeight()
             if cw and ch and cw > 0 and ch > 0 then
-                local seen     = {}  -- dedupe by lineFrame ref (icons share lines)
-                local tipCache = {}  -- frame.data -> built tooltip
+                local seen     = {}
+                local tipCache = {}
 
                 local function dataTip(data)
                     if not data then return nil end
@@ -297,11 +278,8 @@ function Nx.Notes:Questie(mapId)
                     if not (sx and sy and ex and ey) then return end
                     local _, _, _, fx, fy = lineFrame:GetPoint(1)
                     if not (fx and fy) then return end
-                    -- canvas-relative pixel offsets (Y is negative-down
-                    -- under a TOPLEFT anchor)
                     local sxp, syp = fx + sx, fy + sy
                     local exp, eyp = fx + ex, fy + ey
-                    -- back to 0..100 percent
                     local sxPct = sxp / cw * 100
                     local syPct = -syp / ch * 100
                     local exPct = exp / cw * 100
@@ -330,9 +308,6 @@ function Nx.Notes:Questie(mapId)
                         local data  = frame and frame.data
                         if frame and data and frame.UiMapID == mapId
                             and type(data.lineFrames) == "table" then
-                            -- Best-effort NPC id: prefer the objective
-                            -- target, fall back to the first spawnList
-                            -- key (Questie uses npcId as the spawn key).
                             local npcId = data.ObjectiveTargetId
                             if not npcId and data.ObjectiveData
                                 and data.ObjectiveData.spawnList then
