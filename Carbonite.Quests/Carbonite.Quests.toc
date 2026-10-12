@@ -41,3 +41,5 @@ SuperTrack.lua
 WatchHider.lua
 QuestWatchSurface.lua
 QuestRouting.lua
+# Optional quest/map diagnostics (must load last).
+QuestProfiler.lua

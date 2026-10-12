@@ -41,3 +41,5 @@ QuestWatchSurface.lua
 QuestRouting.lua
 Plugin.lua
 Data\Shared\QuestDataLoader.lua
+# Optional quest/map diagnostics (must load last).
+QuestProfiler.lua
