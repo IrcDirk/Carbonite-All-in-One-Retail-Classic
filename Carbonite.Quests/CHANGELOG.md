@@ -1,5 +1,17 @@
 # Carbonite Quests Project Changelog
 
+## 2026-10-12 — Clearer profiler reports
+
+- Added plain-language summaries and function timings ranked by maximum duration.
+- Clarified recent-window and baseline comparisons, measurement limits, and raw sample details.
+- Skipped baseline comparisons when the client/build differs.
+
+## 2026-10-12 — Integrated quest and map profiler
+
+- Added optional quest/map/travel timing with bounded samples, session call summaries, baseline comparisons, and copyable reports.
+- Loaded the profiler last on all seven quest-module client TOCs; monitoring starts disabled each session.
+- Added PROFILER.md with capture commands, metric limits, and validation status.
+
 ## 2026-09-29 — Experimental 3D map view, area names, client-derived minimap tiles
 
 - Added an opt-in tilted "3D" map view (toolbar `3D` button, Map Options →
