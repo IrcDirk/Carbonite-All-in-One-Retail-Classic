@@ -35,7 +35,9 @@ local wipe       = wipe     or table.wipe
 local GetTime              = GetTime
 local InCombatLockdown     = InCombatLockdown
 local ITEM_GRACE           = 3
-local GetQuestObjectiveInfo = GetQuestObjectiveInfo
+local function GetQuestObjectiveInfo(questID, objectiveIndex)
+    return Nx.Quest:GetDisplayObjectiveInfo(questID, objectiveIndex)
+end
 
 -- Font strings in the compact watch can show a standalone profession atlas
 -- escape as raw text after wrapping. Keep the quality tier visible as text.
@@ -1946,6 +1948,7 @@ end
 function Nx.Quest.Watch:UpdateList()
 --    Nx.prt ("QWatchUpdate")
     self.UpdateListCount = (self.UpdateListCount or 0) + 1
+    Nx.Quest:PrepareCatalogDisplay("watch-list-display")
 
     local Nx = Nx
     local Quest = Nx.Quest
@@ -2406,7 +2409,10 @@ function Nx.Quest.Watch:UpdateList()
                     --if not IsQuestTask(qId) then
                     if true then
                         if 1 then
-                            local level, isComplete = cur.Level, cur.CompleteMerge
+                            local catalogRecord = Quest:GetCatalogDisplayRecord(cur)
+                            local title = catalogRecord and catalogRecord.title or cur.Title
+                            local level = catalogRecord and catalogRecord.level or cur.Level
+                            local isComplete = cur.CompleteMerge
                             local isAC = cur.IsAutoComplete
                             -- Cached flags can drift from server truth between
                             -- RecordQuestsLog passes. In particular, once
@@ -2442,7 +2448,8 @@ function Nx.Quest.Watch:UpdateList()
                             end
                             local quest = cur.Q
                             local qi = cur.QI
-                            local lbNum = cur.LBCnt
+                            local lbNum = catalogRecord and catalogRecord.objectiveDataReliable ~= false
+                                and catalogRecord.objectiveCount or cur.LBCnt
 --                            local link, item, charges = GetQuestLogSpecialItemInfo (questIndex)
                             list:ItemAdd (qId * 0x10000 + qi)
                             local trackMode = Quest.Tracking[qId] or 0
@@ -2534,7 +2541,7 @@ function Nx.Quest.Watch:UpdateList()
                                 local colStr = GetCachedDifficultyColorStr(level)
                                 lvlStr = format ("%s%2d%s ", colStr, level, cur.TagShort)
                             end
-                            local nameStr = format ("%s%s%s", lvlStr, color, cur.Title)
+                            local nameStr = format ("%s%s%s", lvlStr, color, title)
                             if isSuperTracked and not self.Modern then
                                 -- Yellow chevron marks the super-tracked quest.
                                 nameStr = "|cffffd200>|r " .. nameStr
@@ -2592,8 +2599,14 @@ function Nx.Quest.Watch:UpdateList()
                                         desc, zone = Nx.Quest:UnpackObjectiveNew (obj[1])
                                     end
                                     if ln <= lbNum then
-                                        desc = cur[ln]
-                                        done = cur[ln + 300]
+                                        local cachedText, _, cachedDone =
+                                            Quest:GetCatalogDisplayObjective(catalogRecord, ln)
+                                        desc = cachedText or cur[ln]
+                                        if cachedText then
+                                            done = cachedDone
+                                        else
+                                            done = cur[ln + 300]
+                                        end
                                     end
                                     -- Skip rows where the only desc we have
                                     -- is the "nil" placeholder (POI desc not

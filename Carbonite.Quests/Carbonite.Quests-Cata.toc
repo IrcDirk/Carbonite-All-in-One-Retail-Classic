@@ -17,6 +17,8 @@ Data\cata\QuestNPC.lua
 Data\cata\QuestStartEnd.xml
 Data\cata\QuestData.xml
 NxQuest.lua
+QuestCatalog.lua
+QuestCatalogDisplay.lua
 # Extracted modules (load after NxQuest.lua so Nx.Quest namespace + Nx.Quest.defaults are set up).
 Options.lua
 Init.lua
@@ -40,5 +42,3 @@ QuestWatchSurface.lua
 QuestRouting.lua
 Plugin.lua
 Data\Shared\QuestDataLoader.lua
-# Optional quest/map diagnostics (must load last).
-QuestProfiler.lua

@@ -67,14 +67,14 @@ local function SelectQuestLogEntry(logIndex)
 end
 
 local function GetNumQuestLeaderBoards(logIndex)
-    return QuestAPI and QuestAPI:GetNumObjectivesForLogIndex(logIndex) or 0
+    return Nx.Quest:GetDisplayObjectiveCount(logIndex)
 end
 
 local function GetQuestLogLeaderBoard(objectiveIndex, logIndex)
     if not QuestAPI then
         return nil
     end
-    return QuestAPI:GetObjectiveForLogIndex(objectiveIndex, logIndex)
+    return Nx.Quest:GetDisplayObjectiveByLogIndex(objectiveIndex, logIndex)
 end
 
 -- Promoted from NxQuest.lua's file-local cache helper.
@@ -2374,13 +2374,15 @@ function Nx.Quest.List:Update()
     local Map = Nx.Map
     local qLocColors = Quest.QLocColors
     local showQId = Nx.qdb.profile.Quest.ShowId
+    Quest:PrepareCatalogDisplay("quest-list-display")
 
     -- Title
 
     -- The shared Quest API preserves the native two-return count shape; the
     -- second value is the accepted-quest count without headers where supplied.
     local _, i = GetNumQuestLogEntries()
-    i = i or 0
+    i = Quest.Catalog.hasStateSnapshot and not Quest.Catalog.stateDirty
+        and Quest.Catalog:GetQuestLogQuestCount() or i or 0
 
     local dailyStr = ""
     local dailysDone = GetDailyQuestsCompleted()
@@ -2424,7 +2426,10 @@ function Nx.Quest.List:Update()
             local quest = cur.Q
             local qId = cur.QId
 
-            local title, level, tag, isComplete = cur.Title, cur.Level, cur.Tag, cur.Complete
+            local catalogRecord = Quest:GetCatalogDisplayRecord(cur)
+            local title = catalogRecord and catalogRecord.title or cur.Title
+            local level = catalogRecord and catalogRecord.level or cur.Level
+            local tag, isComplete = cur.Tag, cur.Complete
             local qn = cur.QI
 
             if qn > 0 then
