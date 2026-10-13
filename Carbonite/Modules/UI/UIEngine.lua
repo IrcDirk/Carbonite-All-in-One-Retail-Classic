@@ -2890,7 +2890,49 @@ function Nx.Window:CopyLayoutPosition (sourceMode, targetMode)
     local sw = GetScreenWidth()
     local sh = GetScreenHeight()
 
-    if factors and aPt ~= "TOPLEFT" and IsLayoutNumber (w) and IsLayoutNumber (h)
+    if self.MinimizeToEdge and factors
+        and IsLayoutNumber (x) and IsLayoutNumber (y)
+        and IsLayoutNumber (w) and IsLayoutNumber (h)
+        and IsLayoutNumber (scale) and scale > 0
+        and IsLayoutNumber (sw) and sw > 0 and IsLayoutNumber (sh) and sh > 0
+        and not (x < 0 and x > -1) and x < 100000
+        and not (y < 0 and y > -1) and y < 999999 then
+
+        if w < 0 then
+            w = sw * -w
+        end
+        if h < 0 then
+            h = sh * -h
+        end
+
+        local left = sw * factors[1] + x * scale - w * scale * factors[1]
+        local right = left + w * scale
+        local top = sh * factors[2] - y * scale + h * scale * (1 - factors[2])
+        local anchor = data["MinimizeAnchor"]
+
+        if sourceMode ~= "Min" or (anchor ~= "TOPLEFT" and anchor ~= "TOPRIGHT") then
+            local leftGap = math.max (0, left)
+            local rightGap = math.max (0, sw - right)
+
+            -- Within ten percent of a screen edge, collapse toward that edge.
+            -- Elsewhere use the side containing the minimize control.
+            if math.min (leftGap, rightGap) <= sw * .1 and leftGap ~= rightGap then
+                anchor = leftGap < rightGap and "TOPLEFT" or "TOPRIGHT"
+            else
+                local button = self.ButMiner and self.ButMiner.Frm
+                local point = button and button:GetPoint()
+                anchor = type (point) == "string" and string.find (point, "LEFT", 1, true)
+                    and "TOPLEFT" or "TOPRIGHT"
+            end
+            data["MinimizeAnchor"] = anchor
+        end
+
+        data[targetMode.."A"] = anchor ~= "TOPLEFT" and anchor or nil
+        data[targetMode.."X"] = anchor == "TOPRIGHT" and (right - sw) / scale or left / scale
+        data[targetMode.."Y"] = (sh - top) / scale
+        data[targetMode.."S"] = data[sourceMode.."S"]
+
+    elseif factors and aPt ~= "TOPLEFT" and IsLayoutNumber (w) and IsLayoutNumber (h)
         and IsLayoutNumber (scale) and scale > 0
         and type (sw) == "number" and type (sh) == "number"
         and not (x < 0 and x > -1) and x < 100000

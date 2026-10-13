@@ -200,6 +200,28 @@ function Nx.Quest.Watch:ModernAvailable()
 end
 
 local MODERN_EDGE = 2           -- inset from the frame edge for bar/lines
+local WATCH_LOCK_W = 12
+local WATCH_CONTROL_GAP = 4
+local MODERN_CONTROL_W = WATCH_LOCK_W + WATCH_CONTROL_GAP + 16
+
+-- The close control becomes the unlock control when the watch is locked,
+-- even with ShowClose disabled. Always reserve its own header slot.
+local function PositionWatchHeaderControls (win, top, height)
+    local close = win.ButClose and win.ButClose.Frm
+    if close then
+        close:ClearAllPoints()
+        close:SetPoint ("TOPRIGHT", win.Frm, "TOPRIGHT", -win.BorderW,
+            top - floor ((height - close:GetHeight()) / 2))
+    end
+
+    local miner = win.ButMiner and win.ButMiner.Frm
+    if miner then
+        miner:ClearAllPoints()
+        miner:SetPoint ("TOPRIGHT", win.Frm, "TOPRIGHT",
+            -win.BorderW - WATCH_LOCK_W - WATCH_CONTROL_GAP,
+            top - floor ((height - miner:GetHeight()) / 2))
+    end
+end
 
 local function MakeHeaderLine (f, bw, y)
     local t = f:CreateTexture (nil, "OVERLAY", nil, -7)
@@ -240,7 +262,6 @@ function Nx.Quest.Watch:SetupModernChrome (win)
     local fs1, fs2 = win.TitleFStr[1], win.TitleFStr[2]
     fs1:ClearAllPoints()
     fs1:SetPoint ("TOPLEFT", f, "TOPLEFT", MODERN_EDGE + 12, barTop)
-    fs1:SetPoint ("TOPRIGHT", f, "TOPRIGHT", -bw, barTop)
     fs1:SetHeight (barH)
     fs1:SetDrawLayer ("OVERLAY", 0)
     fs2:ClearAllPoints()
@@ -253,16 +274,16 @@ function Nx.Quest.Watch:SetupModernChrome (win)
     cnt:SetFontObject ("NxFontS")
     cnt:SetJustifyH ("RIGHT")
     cnt:SetHeight (barH)
-    cnt:SetPoint ("TOPRIGHT", f, "TOPRIGHT", -bw - 20 - (win.Closer and 14 or 0), barTop)
+    cnt:SetPoint ("TOPRIGHT", f, "TOPRIGHT", -bw - MODERN_CONTROL_W - WATCH_CONTROL_GAP, barTop)
     self.CountFStr = cnt
+    fs1:SetPoint ("TOPRIGHT", cnt, "TOPLEFT", -8, 0)
 
     local miner = win.ButMiner
     if miner then
         miner:SetType ("QuestWatchMinBlizz")
-        miner.Frm:ClearAllPoints()
-        miner.Frm:SetPoint ("TOPRIGHT", f, "TOPRIGHT", -bw - (win.Closer and 14 or 0), barTop - floor ((barH - 16) / 2))
         miner:Update()
     end
+    PositionWatchHeaderControls (win, barTop, barH)
 
     self.HdrLine1 = MakeHeaderLine (f, bw, -bh - titleH)
     self.HdrLine2 = MakeHeaderLine (f, bw, -bh - titleH - lineH)
@@ -307,8 +328,8 @@ function Nx.Quest.Watch:GetModernMinWidth()
     if self.CountFStr then
         countW = max (countW, self.CountFStr:GetStringWidth() or 0)
     end
-    local closerW = win.Closer and 14 or 0
-    return floor (win.BorderW * 2 + 2 + titleW + 8 + countW + 4 + 20 + closerW + 2 + .5)
+    return floor (MODERN_EDGE + 12 + titleW + 8 + countW
+        + WATCH_CONTROL_GAP + MODERN_CONTROL_W + win.BorderW + .5)
 end
 
 function Nx.Quest.Watch:ApplyModernMinWidth()
@@ -418,6 +439,10 @@ function Nx.Quest.Watch:Open()
     local win = Nx.Window:Create ("NxQuestWatch", nil, nil, nil, self.Modern and 2 or 1, border)
     self.Win = win
 
+    -- Shared layouts retain the screen-side edge instead of always retaining
+    -- the left edge. Other Carbonite windows keep their existing behavior.
+    win.MinimizeToEdge = true
+
     win:InitLayoutData (nil, -.80, -.35, -.2, -.1)
 
     -- The user can treat the two layouts as one movable window or retain the
@@ -500,6 +525,8 @@ function Nx.Quest.Watch:Open()
 
     if self.Modern then
         self:SetupModernChrome (win)
+    else
+        PositionWatchHeaderControls (win, fixedSize and -3 or -win.BorderH, 12)
     end
 
     -- List
