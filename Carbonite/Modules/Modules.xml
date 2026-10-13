@@ -225,4 +225,7 @@
     <Script file="Integrations\TomTomWaypoints.lua" />
     <Script file="Integrations\LDB.lua" />
     <Script file="Integrations\Spy.lua" />
+    <!-- Optional quest/map measurements; loaded by Carbonite itself. -->
+    <Script file="Diagnostics\QuestProfiler.lua" />
+    <Script file="Diagnostics\DiagnosticDisplay.lua" />
 </Ui>

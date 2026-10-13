@@ -1,16 +1,40 @@
 # Carbonite Quests Project Changelog
 
-## 2026-10-12 — Clearer profiler reports
+## 2026-10-12 — Map and Quest diagnostic interface
 
-- Added plain-language summaries and function timings ranked by maximum duration.
-- Clarified recent-window and baseline comparisons, measurement limits, and raw sample details.
-- Skipped baseline comparisons when the client/build differs.
+- Added a shared native diagnostic window with Overview, Functions, Compare, Help, and Export views.
+- Put recording state, session measurements, quest activity, and suggested next actions ahead of technical detail.
+- Added ranked bars with exact timing values, explicit millisecond units, a common zero baseline, and aligned numeric columns.
+- Replaced competing Map profiler implementations with scoped views of one measurement source.
+- Located diagnostics under Maps and Quest Module, with common tasks on Overview and specialized controls on Compare and Advanced.
+- Added adjustable content text size, screen fitting, stable snapshots, and an explicit Select report / Ctrl+C export workflow.
+- Kept Map and Quest recording, references, and resets independent; assigned quest-owned objective-area updates to Quest diagnostics.
+- Distinguished earlier saved samples from current-session measurements and prevented stale samples from becoming a fresh idle reference.
+- Preserved earlier split Map captures within the shared capacity and identified older references that need recapturing.
+- Kept unavailable Lua heap readings distinct from measured zero values.
+- Kept combined markers visible in both views and preserved the other view's marker when clearing one scope.
+- Updated the profiler guide with metric definitions, comparison requirements, interface locations, and chat commands.
 
-## 2026-10-12 — Integrated quest and map profiler
+### Validation
 
-- Added optional quest/map/travel timing with bounded samples, session call summaries, baseline comparisons, and copyable reports.
-- Loaded the profiler last on all seven quest-module client TOCs; monitoring starts disabled each session.
-- Added PROFILER.md with capture commands, metric limits, and validation status.
+- 743 simulated behavior, migration, and option-provider checks passed across six client fixtures.
+- Reviewed 13 native-layout simulations, including large text, empty data and unavailable Quest states; no simulated text-height or button-label issue remained.
+- Parsed the distributed Lua changes with the available Lua 5.4 runtime. New code uses Lua 5.1 language constructs; live Warcraft validation remains required.
+- Third-party library contents remain identical to the supplied base.
+
+## 2026-10-12 — Recovered quest catalog display and diagnostics
+
+- Integrated the supplied quest catalog into every existing Quest client TOC.
+- Connected quest-window and tracker titles and objectives to the catalog's committed snapshot, with the established quest API as the missing-data fallback.
+- Added quest Diagnostics with readable Capture and Commands tabs, catalog scan/refresh counters, and copyable reports.
+- Loaded optional profiling through Carbonite so map/travel capture remains available independently of Carbonite.Quests.
+- Added separate quest/map capture controls, reports, data resets, and baselines. Monitoring starts disabled after reload; samples remain bounded.
+- Added grouped `/carb profiler help` and `/carb help profiler` command guides.
+- Corrected numeric progress parsing and guarded restricted booleans and missing structured objective data in the recovered catalog.
+
+### Validation
+
+- Lua syntax checks and 396 simulated API integration checks pass. Actual Warcraft UI layout, item use, quest transitions, and taint validation remain required.
 
 ## 2026-09-29 — Experimental 3D map view, area names, client-derived minimap tiles
 

@@ -1843,6 +1843,10 @@ function Nx.Quest:GetOptionsConfig()
             },
         }
     end
+    if Nx.QuestProfiler then
+        questoptions.args.diagnostics = Nx.QuestProfiler:GetOptionsConfig("quest")
+        questoptions.args.diagnostics.order = 5
+    end
     Nx.Opts:AddToProfileMenu(L["Quest"], 3, Nx.qdb)
 
     -- Remove database options for levels above max player level

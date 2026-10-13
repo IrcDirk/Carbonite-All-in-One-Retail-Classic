@@ -40,3 +40,6 @@ Data\Shared\NxMapGuide.lua
 Modules\Modules.xml
 
 Carbonite.xml
+# Map diagnostics (load after all map modules).
+Diagnostics\ProfilerCore.lua
+Diagnostics\MapProfiler.lua

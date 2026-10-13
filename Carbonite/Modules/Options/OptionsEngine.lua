@@ -1713,6 +1713,12 @@ local function mapConfig()
             },
         }
     end
+    -- Attach diagnostics when this lazy provider is evaluated. Both modular
+    -- and legacy option registration use mapConfig, including cached tables.
+    local profiler = Nx.MapProfiler
+    if profiler and type(profiler.GetOptions) == "function" then
+        map.args.profilerDiagnostics = map.args.profilerDiagnostics or profiler:GetOptions()
+    end
     return map
 end
 
