@@ -4501,7 +4501,7 @@ WorldMapFrame:HookScript("OnShow", function()
     end)
 end)
 
-local function SetCarboniteKeyOverrides(owner, command, buttonName, carboniteOnPlainKey)
+local function SetCarboniteKeyOverrides(owner, command, buttonName, carboniteOnPlainKey, originalCommand)
     if InCombatLockdown() then
         owner.pending = true
         return
@@ -4509,15 +4509,22 @@ local function SetCarboniteKeyOverrides(owner, command, buttonName, carboniteOnP
     owner.pending = nil
     ClearOverrideBindings(owner)
     local keys = { GetBindingKey(command) }
+    if carboniteOnPlainKey then
+        for _, key in ipairs(keys) do
+            SetOverrideBindingClick(owner, false, key, buttonName)
+        end
+    end
+
+    -- Install alternate keys last so a saved ALT-M secondary binding cannot
+    -- overwrite the original-map shortcut with another Carbonite click.
     for _, key in ipairs(keys) do
         local altKey = not string.find(key, "-", 1, true) and ("ALT-" .. key) or nil
-        if carboniteOnPlainKey then
-            SetOverrideBindingClick(owner, false, key, buttonName)
-            if altKey then
-                SetOverrideBinding(owner, false, altKey, command)
+        if altKey then
+            if carboniteOnPlainKey then
+                SetOverrideBinding(owner, false, altKey, originalCommand or command)
+            else
+                SetOverrideBindingClick(owner, false, altKey, buttonName)
             end
-        elseif altKey then
-            SetOverrideBindingClick(owner, false, altKey, buttonName)
         end
     end
 end
@@ -4525,7 +4532,15 @@ Nx.SetCarboniteKeyOverrides = SetCarboniteKeyOverrides
 
 local mapKeyButton = CreateFrame("Button", "NxMapToggleKeyButton", UIParent)
 mapKeyButton:SetScript("OnClick", function()
-    if WorldMapFrame:IsShown() then
+    -- Modified primary bindings can also reach this button. Honor the map
+    -- preference here rather than assuming every click requests Carbonite.
+    local useBlizzard = IsAltKeyDown() and true or false
+    if not Nx.db.profile.Map.MaxOverride then
+        useBlizzard = not useBlizzard
+    end
+    if useBlizzard then
+        Nx:NXMapKeyTogOriginal()
+    elseif WorldMapFrame:IsShown() then
         Nx.Map:BlizzToggleWorldMap()
     else
         Nx.Map:ToggleSize()
@@ -4538,7 +4553,7 @@ function Nx.Map:ApplyMapKeyOverrides()
         return
     end
     SetCarboniteKeyOverrides(mapKeyOwner, "TOGGLEWORLDMAP", "NxMapToggleKeyButton",
-        Nx.db.profile.Map.MaxOverride and true or false)
+        Nx.db.profile.Map.MaxOverride and true or false, "NxMAPTOGORIGINAL")
 end
 mapKeyOwner:RegisterEvent("PLAYER_ENTERING_WORLD")
 mapKeyOwner:RegisterEvent("PLAYER_REGEN_ENABLED")
