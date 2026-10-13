@@ -14,6 +14,7 @@ Carbonite.Modules.Map.MapIDs = MapIDs
 -- this as a file-local `ContZoneCache`).
 local contZoneCache = {}
 local playerMapAliasCache = {}
+local instanceMapSelection = {}
 
 local function nxMap() return _G.Nx and _G.Nx.Map end
 
@@ -61,25 +62,180 @@ function MapIDs:CanonicalizeMapID(mapID)
     return mapID
 end
 
+local function GetSafeMapInfo(mapID)
+    local C_Map = _G.C_Map
+    if not mapID or mapID <= 0 or not C_Map or not C_Map.GetMapInfo then
+        return nil
+    end
+    local ok, info = pcall(C_Map.GetMapInfo, mapID)
+    return ok and type(info) == "table" and info or nil
+end
+
+local function IsInteriorMap(mapID)
+    local NxMap = nxMap()
+    local row = NxMap and NxMap.MapWorldInfo and NxMap.MapWorldInfo[mapID]
+    if row then return row.Instance == true end
+
+    local info = GetSafeMapInfo(mapID)
+    local mapTypes = _G.Enum and _G.Enum.UIMapType or {}
+    return info and (info.mapType == (mapTypes.Dungeon or 4)
+        or info.mapType == (mapTypes.Micro or 5)
+        or info.mapType == (mapTypes.Orphan or 6)) or false
+end
+
+local function HasInstanceMapArt(mapID)
+    local NxMap = nxMap()
+    if NxMap and NxMap.GetInstanceMapArt then
+        local ok, layer = pcall(NxMap.GetInstanceMapArt, NxMap, mapID)
+        return ok and layer ~= nil
+    end
+    local C_Map = _G.C_Map
+    if C_Map and C_Map.MapHasArt then
+        local ok, hasArt = pcall(C_Map.MapHasArt, mapID)
+        return ok and hasArt == true
+    end
+    return false
+end
+
+-- Some instance overview/micro maps have no art assignment. Blizzard's
+-- displayable helper then climbs to the outdoor entrance zone. Keep the
+-- actual interior, or a uniquely identifiable floor from its own map family.
+function MapIDs:GetPlayerInstanceMapID(rawMapID, displayableMapID)
+    if not rawMapID or rawMapID <= 0 then return nil end
+
+    local inInstance = false
+    if _G.IsInInstance then
+        local ok, value = pcall(_G.IsInInstance)
+        inInstance = ok and value == true
+    end
+    if not inInstance then
+        local NxMap = nxMap()
+        local canonicalID = self:CanonicalizeMapID(rawMapID)
+        local row = NxMap and NxMap.MapWorldInfo and NxMap.MapWorldInfo[canonicalID]
+        if not (row and row.Instance) then
+            local info = not row and GetSafeMapInfo(rawMapID)
+            local mapTypes = _G.Enum and _G.Enum.UIMapType or {}
+            if not info or info.mapType ~= (mapTypes.Dungeon or 4) then return nil end
+        end
+    end
+
+    local function finish(mapID)
+        mapID = self:CanonicalizeMapID(mapID)
+        local NxMap = nxMap()
+        if NxMap and NxMap.MapWorldInfo and not NxMap.MapWorldInfo[mapID]
+            and NxMap.GetZoneInfo then
+            -- Register a new floor before IdToContZone/Coords reads its row.
+            pcall(NxMap.GetZoneInfo, NxMap, mapID)
+        end
+        return mapID
+    end
+
+    if rawMapID == displayableMapID then return finish(rawMapID) end
+
+    local now = _G.GetTime and _G.GetTime() or 0
+    if _G.GetTime and instanceMapSelection.rawMapID == rawMapID
+        and instanceMapSelection.displayableMapID == displayableMapID
+        and now < (instanceMapSelection.retryTime or 0) then
+        return finish(instanceMapSelection.mapID)
+    end
+
+    local function selectMap(mapID)
+        instanceMapSelection.rawMapID = rawMapID
+        instanceMapSelection.displayableMapID = displayableMapID
+        instanceMapSelection.mapID = mapID
+        instanceMapSelection.retryTime = now + 0.5
+        return finish(mapID)
+    end
+
+    if HasInstanceMapArt(rawMapID) then return selectMap(rawMapID) end
+
+    -- An artless micro map can sit inside a renderable dungeon floor. Stop
+    -- at the outdoor boundary instead of inheriting its unrelated artwork.
+    local info = GetSafeMapInfo(rawMapID)
+    local seen = { [rawMapID] = true }
+    for _ = 1, 16 do
+        local parentID = info and info.parentMapID
+        if not parentID or parentID <= 0 or seen[parentID]
+            or not IsInteriorMap(parentID) then break end
+        seen[parentID] = true
+        if HasInstanceMapArt(parentID) then return selectMap(parentID) end
+        info = GetSafeMapInfo(parentID)
+    end
+
+    local C_Map = _G.C_Map
+    local candidates, candidateSet = {}, {}
+    local function addCandidates(members)
+        if type(members) ~= "table" then return end
+        for _, member in ipairs(members) do
+            local mapID = member.mapID
+            if mapID and mapID ~= rawMapID and not candidateSet[mapID]
+                and IsInteriorMap(mapID) then
+                candidateSet[mapID] = true
+                candidates[#candidates + 1] = mapID
+            end
+        end
+    end
+
+    if C_Map and C_Map.GetMapGroupID and C_Map.GetMapGroupMembersInfo then
+        local groupOK, groupID = pcall(C_Map.GetMapGroupID, rawMapID)
+        if groupOK and groupID and groupID > 0 then
+            local membersOK, members = pcall(C_Map.GetMapGroupMembersInfo, groupID)
+            if membersOK and type(members) == "table" then
+                for _, member in ipairs(members) do
+                    -- The raw ID already identifies a floor: wait for that
+                    -- floor's art rather than showing another ready floor.
+                    if member.mapID == rawMapID then return selectMap(rawMapID) end
+                end
+                addCandidates(members)
+            end
+        end
+    end
+    if C_Map and C_Map.GetMapChildrenInfo then
+        local childrenOK, children = pcall(C_Map.GetMapChildrenInfo, rawMapID, nil, true)
+        if childrenOK then addCandidates(children) end
+    end
+
+    local artMapID, artCount, positionMapID, positionCount = nil, 0, nil, 0
+    for _, mapID in ipairs(candidates) do
+        if HasInstanceMapArt(mapID) then
+            artMapID, artCount = mapID, artCount + 1
+            local x, y = self:GetPlayerPositionOnMap(mapID)
+            if x and y and x >= 0 and x <= 1 and y >= 0 and y <= 1 then
+                positionMapID, positionCount = mapID, positionCount + 1
+            end
+        end
+    end
+    if positionCount == 1 then return selectMap(positionMapID) end
+    if #candidates == 1 and artCount == 1 then return selectMap(artMapID) end
+
+    -- Missing/ambiguous art is transient. Retry without replacing the
+    -- instance with its entrance zone or permanently caching a failed lookup.
+    return selectMap(rawMapID)
+end
+
 -- Displayable map for the player, with Carbonite city aliases and the legacy
 -- OldMapIDs remap applied (1414 → 12, 1415 → 13 on pre-MoP clients).
 function MapIDs:GetDisplayableMapForPlayer()
     local MapUtil = _G.MapUtil
     local C_Map = _G.C_Map
     local rawMapID = C_Map and C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player")
-    local displayableMapID = (MapUtil and MapUtil.GetDisplayableMapForPlayer and MapUtil.GetDisplayableMapForPlayer())
-        or rawMapID
-        or 0
+    local displayableMapID = rawMapID or 0
+    if MapUtil and MapUtil.GetDisplayableMapForPlayer then
+        local ok, mapID = pcall(MapUtil.GetDisplayableMapForPlayer)
+        if ok and mapID then displayableMapID = mapID end
+    end
 
     -- Blizzard's displayable helper deliberately climbs away from maps that
     -- have no C_Map art. Carbonite can still render its legacy city tiles, so
     -- retain a raw city map only when its flavor data declares legacy art
     -- (Exodar is the common MoP example), and canonicalize declared aliases.
-    -- Every other map keeps Blizzard's displayable-parent behavior.
+    -- Outdoor maps keep Blizzard's displayable-parent behavior; interiors
+    -- retain their own art or a floor resolved from their map family.
     local rawCanonicalID = self:CanonicalizeMapID(rawMapID)
     local NxMap = nxMap()
     local rawInfo = NxMap and NxMap.MapWorldInfo and NxMap.MapWorldInfo[rawCanonicalID]
     local mapID = rawInfo and rawInfo.City and rawInfo.LegacyMapArt and rawCanonicalID
+        or self:GetPlayerInstanceMapID(rawMapID, displayableMapID)
         or self:CanonicalizeMapID(displayableMapID)
         or 0
 

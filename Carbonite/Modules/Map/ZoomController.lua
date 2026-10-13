@@ -150,6 +150,13 @@ function ZoomController:GotoCurrentZone()
     local m = mapInst()
     if not m then return end
 
+    local MapIDs = Carbonite.Modules.Map.MapIDs
+    local mapID = MapIDs and MapIDs:GetDisplayableMapForPlayer()
+    if mapID and m.UsesModernInstanceCanvas and m:UsesModernInstanceCanvas(mapID) then
+        self:CenterMap(mapID)
+        return
+    end
+
     if m.InstanceId then
         -- Prefer the user's remembered scale; fall back to a sane
         -- instance-friendly default. Never the legacy hard-coded 20
@@ -165,8 +172,6 @@ function ZoomController:GotoCurrentZone()
     -- CenterMap fits the new zone to the window, which is what users
     -- expect when arriving in a new area.
     if m.SetToCurrentZone then m:SetToCurrentZone() end
-    local MapIDs = Carbonite.Modules.Map.MapIDs
-    local mapID = MapIDs and MapIDs:GetDisplayableMapForPlayer()
     if mapID then self:CenterMap(mapID) end
 end
 
@@ -181,6 +186,19 @@ function ZoomController:CenterMap(mapID, scale)
     m.MapH = (m.Frm and m.Frm:GetHeight() or 1) - (m.TitleH or 0)
 
     local Coords = Carbonite.Modules.Map.Coords
+    if m.UsesModernInstanceCanvas and m:UsesModernInstanceCanvas(mapID) then
+        local x1, y1 = Coords:WorldFromZone(mapID, 0, 0)
+        local x2, y2 = Coords:WorldFromZone(mapID, 100, 100)
+        if x2 <= x1 or y2 <= y1 or m.MapW <= 0 or m.MapH <= 0 then return end
+        local fitScale = math.min(m.MapW / (x2 - x1), m.MapH / (y2 - y1)) * 0.95
+        self:Move((x1 + x2) * 0.5, (y1 + y2) * 0.5, fitScale, 1)
+        -- Show a readable map on the first entry/reload frame, rather than
+        -- animating outward from the retained outdoor scale's sub-pixel map.
+        m.Scale, m.ScaleDraw, m.RealScale = fitScale, fitScale, fitScale
+        m.MapPosXDraw, m.MapPosYDraw = m.MapPosX, m.MapPosY
+        m.StepTime = 0
+        return
+    end
     local x, y = Coords:WorldFromZone(mapID, 50, 50)
 
     local size = math.min(m.MapW / 1002, m.MapH / 668)
