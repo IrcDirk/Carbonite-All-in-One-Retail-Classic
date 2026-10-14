@@ -26,7 +26,42 @@ local DEFAULT_HIT_RADIUS = 3       -- zone units (zone is 0..100)
 -- onto the wrong zone after a group member changes maps.
 -- ---------------------------------------------------------------
 
-function GroupTracking:GetUnitPosition(unit)
+local function IsInteriorMap(mapID)
+    local NxMap = _G.Nx and _G.Nx.Map
+    local info = NxMap and NxMap.MapWorldInfo and NxMap.MapWorldInfo[mapID]
+    if info then return info.Instance == true end
+    local C_Map = _G.C_Map
+    if not C_Map or not C_Map.GetMapInfo then return false end
+    local ok, mapInfo = pcall(C_Map.GetMapInfo, mapID)
+    local mapTypes = _G.Enum and _G.Enum.UIMapType or {}
+    return ok and mapInfo and (mapInfo.mapType == (mapTypes.Dungeon or 4)
+        or mapInfo.mapType == (mapTypes.Micro or 5)
+        or mapInfo.mapType == (mapTypes.Orphan or 6)) or false
+end
+
+local function HasInteriorAncestor(mapID, ancestorID)
+    local C_Map = _G.C_Map
+    if not C_Map or not C_Map.GetMapInfo then return false end
+    local seen = {}
+    for _ = 1, 16 do
+        if not mapID or mapID <= 0 or seen[mapID] or not IsInteriorMap(mapID) then
+            return false
+        end
+        if mapID == ancestorID then return true end
+        seen[mapID] = true
+        local ok, info = pcall(C_Map.GetMapInfo, mapID)
+        if not ok or not info then return false end
+        mapID = info.parentMapID
+    end
+    return false
+end
+
+local function IsPublicCoordinate(value)
+    if _G.issecretvalue and _G.issecretvalue(value) then return false end
+    return type(value) == "number" and value >= 0 and value <= 1
+end
+
+function GroupTracking:GetUnitPosition(unit, displayMapID)
     if not unit or not _G.C_Map then return 0, 0 end
     local queryMapID = _G.C_Map.GetBestMapForUnit and _G.C_Map.GetBestMapForUnit(unit)
     if not queryMapID then return 0, 0 end
@@ -37,16 +72,31 @@ function GroupTracking:GetUnitPosition(unit)
         and MapIDs:CanonicalizeMapID(queryMapID)
         or queryMapID
 
-    -- Compare Carbonite's logical map IDs, but query the position on
-    -- Blizzard's actual player map.
-    if unit ~= "player" and NxMap and NxMap.RMapId and logicalMapID ~= NxMap.RMapId then
+    displayMapID = displayMapID or (NxMap and NxMap.RMapId)
+    local positionMapID = queryMapID
+    if displayMapID and IsInteriorMap(displayMapID) then
+        if logicalMapID ~= displayMapID and not (
+            HasInteriorAncestor(logicalMapID, displayMapID)
+            or HasInteriorAncestor(displayMapID, logicalMapID)
+        ) then
+            return 0, 0
+        end
+        -- Position and artwork must use the same map, particularly when an
+        -- artless micro/overview map reports different normalized coordinates.
+        positionMapID = displayMapID
+    elseif unit ~= "player" and displayMapID and logicalMapID ~= displayMapID then
         return 0, 0
     end
 
-    local pos = _G.C_Map.GetPlayerMapPosition and _G.C_Map.GetPlayerMapPosition(queryMapID, unit)
-    if not pos then return 0, 0 end
-    local x, y = pos:GetXY()
-    return x or 0, y or 0
+    if not _G.C_Map.GetPlayerMapPosition then return 0, 0 end
+    local ok, pos = pcall(_G.C_Map.GetPlayerMapPosition, positionMapID, unit)
+    if (not ok or not pos) and positionMapID ~= queryMapID and logicalMapID == displayMapID then
+        ok, pos = pcall(_G.C_Map.GetPlayerMapPosition, queryMapID, unit)
+    end
+    if not ok or not pos or not pos.GetXY then return 0, 0 end
+    local xyOK, x, y = pcall(pos.GetXY, pos)
+    if not xyOK or not IsPublicCoordinate(x) or not IsPublicCoordinate(y) then return 0, 0 end
+    return x, y
 end
 
 -- ---------------------------------------------------------------

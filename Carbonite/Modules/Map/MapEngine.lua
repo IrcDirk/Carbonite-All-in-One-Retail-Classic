@@ -1960,9 +1960,20 @@ function Nx.Map:DetachWorldMap() end
 -- Instance art lives on Carbonite's own WMDF canvas. Keep every overlay and
 -- marker anchored to that exact frame instead of inferring its rectangle from
 -- the outer window, title height, or the independent Blizzard world map.
+function Nx.Map:UsesModernInstanceCanvas(mapID)
+    local info = self.MapWorldInfo and self.MapWorldInfo[mapID]
+    if info and info.BaseMap then info = self.MapWorldInfo[info.BaseMap] end
+    return info and info.Instance == true and not info.Garrison
+        and not self.InstMapAtlas or false
+end
+
 function Nx.Map:GetInstanceMapCanvas()
     local canvas = Nx.Map.WMDF
-    if not canvas or not canvas.GetParent or canvas:GetParent() ~= self.Frm
+    local viewport = Nx.Map.WMVP
+    if not canvas or not canvas.GetParent
+        or (canvas:GetParent() ~= self.Frm
+            and not (canvas:GetParent() == viewport and viewport
+                and viewport:GetParent() == self.Frm))
         or not canvas.IsShown or not canvas:IsShown() then
         return nil
     end
@@ -2019,9 +2030,11 @@ function Nx.Map:UpdateWorldMap()
     ]]--
 
     if f then
-        -- Hide WorldMapFrm for instance maps with NXInstanceMaps option enabled
-        -- These maps are rendered via MoveWorldMap instead to avoid duplicate textures
-        local isInstanceWithOverlay = (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps
+        -- The modern instance canvas owns both fixed and zoomable artwork.
+        -- A stopped pan/zoom must not reveal the legacy world-map frame above it.
+        local isInstanceWithOverlay = self:UsesModernInstanceCanvas(Nx.Map.RMapId)
+            or ((self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
+                and self.CurOpts.NXInstanceMaps)
 
         if self.StepTime ~= 0 or self.Scrolling or IsShiftKeyDown() or isInstanceWithOverlay then
             f:Hide()
@@ -4011,7 +4024,12 @@ function Nx.Map:Menu_OnPlyrFollow (item)
 end
 
 function Nx.Map:Menu_InstanceMap (item)
+    local previous = self.CurOpts.NXInstanceMaps
     self.CurOpts.NXInstanceMaps = item:GetChecked()
+    if previous ~= self.CurOpts.NXInstanceMaps and not self.CurOpts.NXInstanceMaps
+        and self:UsesModernInstanceCanvas(Nx.Map:GetCurrentMapId()) then
+        self:CenterMap(Nx.Map:GetCurrentMapId())
+    end
 end
 
 function Nx.Map:Menu_OnShowWorld (item)
@@ -6162,12 +6180,34 @@ end
 --------
 -- Update map. Called every tick, make it quick
 
+function Nx.Map:ApplyInstanceEntryScale(wasInstanceCanvas, previousScale)
+    local isInstanceCanvas = self:UsesModernInstanceCanvas(self.MapId)
+    if isInstanceCanvas and not wasInstanceCanvas then
+        self.InstanceOutdoorScale = previousScale or self.Scale
+        self:CenterMap(self.MapId)
+        return
+    end
+    if wasInstanceCanvas and not isInstanceCanvas then
+        previousScale = self.InstanceOutdoorScale or previousScale
+        self.InstanceOutdoorScale = nil
+    end
+    -- Keep ordinary zone transitions and floor changes at the user's zoom.
+    if type(previousScale) == "number" and previousScale > 0 then
+        self.Scale, self.RealScale = previousScale, previousScale
+        if wasInstanceCanvas then
+            self.ScaleDraw = previousScale
+            self.ScaleDrawW, self.ScaleW = 1 / previousScale, 1 / previousScale
+        end
+    end
+end
+
 function Nx.Map:Update (elapsed)
     if IS_BACKGROUND_WORLD_CACHING then
         return
     end
     local Nx = Nx
     local Map = Nx.Map
+    local wasInstanceCanvas = self:UsesModernInstanceCanvas(self.MapId)
 
     -- Debug profiling for stutter detection
     local debugProfile = Nx.db.profile.Debug.DebugMap
@@ -6435,6 +6475,10 @@ function Nx.Map:Update (elapsed)
     if (Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
         Nx.Map.MoveWorldMap()
         Nx.Map:GetMap(1).PlyrFrm:Hide()
+    elseif self:UsesModernInstanceCanvas(Nx.Map.RMapId) then
+        -- The zoomable renderer updates the same canvas later in this pass.
+        -- Keep it visible here so unit pins are not torn down every frame.
+        Nx.Map:GetMap(1).PlyrFrm:Hide()
     else
         Nx.Map.RestoreWorldMap()
         Nx.Map:GetMap(1).PlyrFrm:Show()
@@ -6446,7 +6490,17 @@ function Nx.Map:Update (elapsed)
     local dungeontest = Nx.Map:GetCurrentMapDungeonLevel()
     self.InstanceId = false
 
-    if self:IsInstanceMap (Nx.Map.UpdateMapID) and not self.CurOpts.NXInstanceMaps then
+    if self:UsesModernInstanceCanvas(Nx.Map.UpdateMapID) then
+        self.InstanceId = not self.CurOpts.NXInstanceMaps and Nx.Map.UpdateMapID or false
+        self.PlyrRZX, self.PlyrRZY = plZX * 100, plZY * 100
+        if plZX ~= 0 or plZY ~= 0 then
+            self.PlyrX, self.PlyrY = self:GetWorldPos(
+                Nx.Map.UpdateMapID, self.PlyrRZX, self.PlyrRZY
+            )
+        end
+        self.PlyrSpeed = 0
+        Nx.Map.MouseOver = false
+    elseif self:IsInstanceMap (Nx.Map.UpdateMapID) and not self.CurOpts.NXInstanceMaps then
         self.InstanceId = Nx.Map.UpdateMapID
         plZX = plZX * 100
         plZY = plZY * 100
@@ -6699,14 +6753,7 @@ function Nx.Map:Update (elapsed)
         end
     end
 
-    -- Preserve zoom across every map boundary (outdoor zones, cities,
-    -- instances, delves, and battlegrounds). Recentring still applies, so the
-    -- new map remains focused correctly; only the transition-time scale reset
-    -- is discarded.
-    if type(scaleBeforeMapChange) == "number" and scaleBeforeMapChange > 0 then
-        self.Scale = scaleBeforeMapChange
-        self.RealScale = scaleBeforeMapChange
-    end
+    self:ApplyInstanceEntryScale(wasInstanceCanvas, scaleBeforeMapChange)
 
     -- Adjust draw scale and position
 
@@ -6785,9 +6832,10 @@ function Nx.Map:Update (elapsed)
 
     self:ResetIcons()
 
-    -- The tilted view only lives between the detail zoom and the world zoom;
-    -- below the limit the whole map falls back to plain 2D drawing.
-    self.View3DActive = self.View3D and self.ScaleDraw >= (P3D().View3DMiniScale or .12) or false
+    -- Instance artwork and native unit pins share a flat canvas. Keep the
+    -- saved tilted-view preference for outdoor maps and its normal zoom limit.
+    self.View3DActive = not self:UsesModernInstanceCanvas(self.MapId)
+        and self.View3D and self.ScaleDraw >= (P3D().View3DMiniScale or .12) or false
     if self.View3DActive then
         -- Everything the projection depends on. While it is unchanged the
         -- tile geometry and the occlusion cache stay valid, so a static
@@ -9169,9 +9217,11 @@ end
 -- Shows world map background when enabled in options
 --
 function Nx.Map:MoveContinents()
-    -- Skip continent tiles for instance maps with NXInstanceMaps enabled
-    -- These maps are rendered via MoveWorldMap instead
-    local isInstanceWithOverlay = (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps
+    -- MoveWorldMap owns modern instance art in both display modes.
+    -- Preserve the existing fixed-overlay behavior for legacy maps and BGs.
+    local isInstanceWithOverlay = self:UsesModernInstanceCanvas(Nx.Map.RMapId)
+        or ((self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
+            and self.CurOpts.NXInstanceMaps)
 
     -- The tilted view drops the art while minimap blocks cover the view;
     -- art returns only at world zoom (several continents in view).
@@ -9501,9 +9551,10 @@ function Nx.Map:MoveCurZoneTiles (clear)
         wzone = {}
     end
 
-    -- Skip drawing zone tiles for instance maps when NXInstanceMaps option is enabled
-    -- These maps are drawn by MoveWorldMap/UpdateWorldMap instead to avoid duplicate textures
-    local isInstanceWithOverlay = (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps
+    -- Avoid drawing another zone layer above the modern instance canvas.
+    local isInstanceWithOverlay = self:UsesModernInstanceCanvas(Nx.Map.RMapId)
+        or ((self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
+            and self.CurOpts.NXInstanceMaps)
 
     if not clear and not isInstanceWithOverlay and
             (wzone.City or wzone.ModernZoneArt or
@@ -9580,6 +9631,36 @@ function Nx.Map:GetArtLayerTextures (id, layer)
         T = T[1]
     end
     return T
+end
+
+local function IsValidInstanceArtDimension(value)
+    if _G.issecretvalue and _G.issecretvalue(value) then return false end
+    return type(value) == "number" and value > 0 and value < math.huge
+end
+
+-- Resolve complete instance art without assuming layer 1 is populated.
+-- Loading screens can expose the map before its dimensions/textures arrive.
+function Nx.Map:GetInstanceMapArt(mapID)
+    local artMapID = self:GetArtSourceMapID(mapID)
+    local layersOK, layers = pcall(self.GetArtLayers, self, artMapID)
+    if not layersOK or type(layers) ~= "table" then return nil end
+
+    for layerIndex, layer in ipairs(layers) do
+        if type(layer) == "table"
+            and IsValidInstanceArtDimension(layer.layerWidth)
+            and IsValidInstanceArtDimension(layer.layerHeight)
+            and IsValidInstanceArtDimension(layer.tileWidth)
+            and IsValidInstanceArtDimension(layer.tileHeight) then
+            local rows = math.ceil(layer.layerHeight / layer.tileHeight)
+            local cols = math.ceil(layer.layerWidth / layer.tileWidth)
+            local texturesOK, textures = pcall(self.GetArtLayerTextures, self, artMapID, layerIndex)
+            if texturesOK and type(textures) == "table"
+                and textures[1] and textures[rows * cols] then
+                return layer, textures
+            end
+        end
+    end
+    return nil
 end
 
 -- Safe current-layer index. canvas:GetCurrentLayerIndex() ERRORS when the
@@ -9901,12 +9982,19 @@ function Nx.Map:UpdateZones()
 
     local freeOrScale = self.ScaleDraw <= s
 
-    -- Skip zone tile updates for instance maps when NXInstanceMaps option is enabled
-    -- These are rendered via MoveWorldMap to prevent duplicate moving textures
-    local isInstanceWithOverlay = (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps
+    -- The modern instance canvas replaces zone art and outdoor detail tiles.
+    local modernInstanceCanvas = self:UsesModernInstanceCanvas(Nx.Map.RMapId)
+    local isInstanceWithOverlay = modernInstanceCanvas
+        or ((self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
+            and self.CurOpts.NXInstanceMaps)
     if isInstanceWithOverlay then
         self:MoveCurZoneTiles(true)  -- Clear tiles
-        self:UpdateMiniFrames()
+        if modernInstanceCanvas then
+            self:HideMiniFrames()
+            self.Mini3D, self.View3DBaseH = nil, 0
+        else
+            self:UpdateMiniFrames()
+        end
         return
     end
 
@@ -10098,6 +10186,7 @@ end
 -- Update the overlays
 
 function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
+    if self:UsesModernInstanceCanvas(Nx.Map.RMapId) then return end
     if(mapId == 0) then mapId = Nx.Map:GetCurrentMapAreaID(); end
     if (mapId == nil or mapId == -1) then
         return
@@ -10348,6 +10437,15 @@ function Nx.Map:ShouldHideQuelThalasZone(mapId)
 end
 
 function Nx.Map:UpdateMiniFrames()
+
+    -- These are outdoor minimap-detail textures, separate from the live
+    -- docked minimap. Instance records inherit an entrance continent, so
+    -- GetMiniInfo can resolve surface tiles that become opaque on mouseover.
+    if self:UsesModernInstanceCanvas(self.MapId) then
+        self:HideMiniFrames()
+        self.Mini3D, self.View3DBaseH = nil, 0
+        return
+    end
 
 --[[
     SaveView (5)
@@ -13756,6 +13854,13 @@ function Nx.Map:UpdateInstanceMap()
     -- Skip drawing tiles when NXInstanceMaps is enabled
     -- MoveWorldMap() handles rendering in that case, so we don't want duplicates
     if (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
+        return
+    end
+
+    if self:UsesModernInstanceCanvas(mapId) then
+        Nx.Map.MoveWorldMap(self, mapId, true)
+        self:HideNewPlrFrame()
+        self.PlyrFrm:Hide()
         return
     end
 
@@ -17827,6 +17932,7 @@ function Nx.Map.RestoreWorldMap()
     end)
 
     Nx.Map.WMDF:Hide()
+    if Nx.Map.WMVP then Nx.Map.WMVP:Hide() end
     local index = 1
     local bossButton = _G["NXEJMapButton"..index]
     while bossButton do
@@ -17842,31 +17948,70 @@ end
 -- Creates texture tiles and positions them to display zone map
 -- Also handles player position frame setup
 --
-function Nx.Map.MoveWorldMap()
-    local curId = Nx.Map:GetCurrentMapId()
+function Nx.Map.MoveWorldMap(map, mapID, zoomable)
+    map = map or Nx.Map:GetMap(1)
+    local curId = mapID or Nx.Map:GetCurrentMapId()
     if not Nx.Map.NInstMapId or Nx.Map.NInstMapId ~= curId then
         Nx.Map.NInstMapId = curId
     end
     Nx.Map:SetCurrentMap (Nx.Map.NInstMapId)
 
-    local mapInfo = C_Map.GetMapInfo(curId)
-    if not mapInfo or not mapInfo.name then
+    local mapInfo
+    if C_Map and C_Map.GetMapInfo then
+        local ok, info = pcall(C_Map.GetMapInfo, curId)
+        if ok then mapInfo = info end
+    end
+    if type(mapInfo) ~= "table" or not mapInfo.name then
+        Nx.Map.RestoreWorldMap()
         return
     end
-    local layers = Nx.Map:GetArtLayers(curId)
-    local layerInfo = layers and layers[1]
+    local layerInfo, textures = Nx.Map:GetInstanceMapArt(curId)
     if not layerInfo then
+        -- Hide the previous instance/floor while Blizzard is loading the new
+        -- art. MoveWorldMap runs again on the next update and retries it.
+        Nx.Map.RestoreWorldMap()
         return
     end
     local rows = math.ceil(layerInfo.layerHeight / layerInfo.tileHeight)
     local cols = math.ceil(layerInfo.layerWidth / layerInfo.tileWidth)
     local numtiles = rows * cols
 
+    local width, height = map.MapW, map.MapH
+    local offsetX, offsetY = 0, 0
+    if zoomable then
+        local x1, y1 = map:GetWorldPos(curId, 0, 0)
+        local x2, y2 = map:GetWorldPos(curId, 100, 100)
+        local scale = map.ScaleDraw
+        if not scale or scale <= 0 or x2 <= x1 or y2 <= y1 then
+            Nx.Map.RestoreWorldMap()
+            return
+        end
+        width, height = (x2 - x1) * scale, (y2 - y1) * scale
+        offsetX = (x1 - map.MapPosXDraw) * scale + map.MapW * 0.5
+        offsetY = (y1 - map.MapPosYDraw) * scale + map.MapH * 0.5
+    end
+    if width <= 0 or height <= 0 or map.MapW <= 0 or map.MapH <= 0 then
+        Nx.Map.RestoreWorldMap()
+        return
+    end
+
+    if not Nx.Map.WMVP then
+        Nx.Map.WMVP = CreateFrame("Frame", nil, map.Frm)
+    end
+    local viewport = Nx.Map.WMVP
+    viewport:SetParent(map.Frm)
+    viewport:ClearAllPoints()
+    viewport:SetPoint("TOPLEFT", map.Frm, "TOPLEFT", map.PadX or 0, -(map.TitleH or 0))
+    viewport:SetSize(map.MapW, map.MapH)
+    viewport:SetFrameLevel(map.Frm:GetFrameLevel() + 1)
+    if viewport.SetClipsChildren then viewport:SetClipsChildren(true) end
+    viewport:Show()
+
     if not Nx.Map.WMDF then
         -- Keep the instance-art canvas in its map window's inherited strata.
         -- A fixed BACKGROUND strata remains behind the window when Carbonite
         -- raises that window during a header drag or border resize.
-        Nx.Map.WMDF = CreateFrame("Frame", "WMDF", Nx.Map:GetMap(1).Frm)
+        Nx.Map.WMDF = CreateFrame("Frame", "WMDF", viewport)
         Nx.Map.WMDT = {}
         Nx.Map.EJMB = {}
     end
@@ -17889,21 +18034,17 @@ function Nx.Map.MoveWorldMap()
         Nx.Map.WMDTCount = numtiles
     end
 
-    local map = Nx.Map:GetMap(1)
-    Nx.Map.WMDF:SetParent(map.Frm)
-    Nx.Map.WMDF:SetFrameLevel(20)
+    Nx.Map.WMDF:SetParent(viewport)
+    Nx.Map.WMDF:SetScale(1)
+    Nx.Map.WMDF:SetFrameLevel(viewport:GetFrameLevel() + 1)
     Nx.Map.WMDF:ClearAllPoints()
-    Nx.Map.WMDF:SetPoint(
-        "TOPLEFT", map.Frm, "TOPLEFT", map.PadX or 0, -(map.TitleH or 0)
-    )
-    Nx.Map.WMDF:SetWidth(map.MapW)
-    Nx.Map.WMDF:SetHeight(map.MapH)
+    Nx.Map.WMDF:SetPoint("TOPLEFT", viewport, "TOPLEFT", offsetX, -offsetY)
+    Nx.Map.WMDF:SetWidth(width)
+    Nx.Map.WMDF:SetHeight(height)
     if Nx.Map.WMDF.SetClipsChildren then
         Nx.Map.WMDF:SetClipsChildren(true)
     end
     Nx.Map.WMDF:Show()
-
-    local textures = Nx.Map:GetArtLayerTextures(curId, 1)
 
     -- Blizzard lays full tileWidth/tileHeight textures over a canvas sized
     -- layerWidth/layerHeight. The final row/column is clipped, not squeezed
@@ -17933,9 +18074,12 @@ function Nx.Map.MoveWorldMap()
         end
     end
     NXWorldMapUnitPositionFrame:SetParent(Nx.Map.WMDF)
+    NXWorldMapUnitPositionFrame:SetScale(1)
+    NXWorldMapUnitPositionFrame:ClearAllPoints()
     NXWorldMapUnitPositionFrame:SetAllPoints()
-    NXWorldMapUnitPositionFrame:SetFrameLevel(40)
-    Nx.Map:NXWorldMapUnitPositionFrame_UpdatePlayerPins()
+    NXWorldMapUnitPositionFrame:SetFrameLevel(Nx.Map.WMDF:GetFrameLevel() + 4)
+    NXWorldMapUnitPositionFrame:Show()
+    Nx.Map.NXWorldMapUnitPositionFrame_UpdatePlayerPins(curId)
 
 --[[    local numEncounters = 0;
     if Nx.db.char.Map.ShowRaidBoss then
@@ -18038,7 +18182,42 @@ end
 ---
 -- Update player pins, choosing full or periodic update as needed
 --
-function Nx.Map.NXWorldMapUnitPositionFrame_UpdatePlayerPins()
+function Nx.Map.NXWorldMapUnitPositionFrame_UpdatePlayerPins(mapID)
+    local frame = NXWorldMapUnitPositionFrame
+    mapID = type(mapID) == "number" and mapID or Nx.Map:GetCurrentMapId()
+    if frame.SetUiMapID and frame.NxUiMapID ~= mapID then
+        local ok = pcall(frame.SetUiMapID, frame, mapID)
+        if not ok then frame:Hide(); return end
+        frame.NxUiMapID = mapID
+        if frame.SetNeedsFullUpdate then frame:SetNeedsFullUpdate() end
+    end
+
+    -- Blizzard's native unit renderer places moving units on SetUiMapID's
+    -- coordinate space and filters units on other maps/floors itself.
+    if frame.UpdatePlayerPins and frame.SetPinSize and frame.SetPinTexture then
+        local options = Nx.db.profile.Map
+        local playerSize = options.InstancePlayerSize or 27
+        local groupSize = options.InstanceGroupSize or 11
+        if frame.NxPlayerSize ~= playerSize or frame.NxGroupSize ~= groupSize then
+            frame:SetPinSize("player", playerSize)
+            frame:SetPinSize("party", groupSize)
+            frame:SetPinSize("raid", groupSize)
+            frame:SetPinTexture("player", "UI-WorldMapArrow")
+            if frame.SetShouldShowUnits then
+                frame:SetShouldShowUnits("player", playerSize > 0)
+                frame:SetShouldShowUnits("party", groupSize > 0)
+                frame:SetShouldShowUnits("raid", groupSize > 0)
+            end
+            if frame.SetUseClassColor then
+                frame:SetUseClassColor("player", false)
+                frame:SetUseClassColor("party", true)
+                frame:SetUseClassColor("raid", true)
+            end
+            frame.NxPlayerSize, frame.NxGroupSize = playerSize, groupSize
+        end
+        frame:UpdatePlayerPins()
+        return
+    end
     if NXWorldMapUnitPositionFrame:NeedsFullUpdate() then
         Nx.Map.NXWorldMapUnitPositionFrame_UpdateFull(GetTime())
     elseif NXWorldMapUnitPositionFrame:NeedsPeriodicUpdate() then
