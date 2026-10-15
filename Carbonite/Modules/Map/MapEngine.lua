@@ -2419,6 +2419,8 @@ function Nx.Map:MinimapOwnInit()
         self.MMOriginalParent = mm:GetParent()
         self.MMOriginalStrata = mm:GetFrameStrata()
         self.MMOriginalLevel = mm:GetFrameLevel()
+        self.MMOriginalShown = mm:IsShown()
+        self.MMOriginalAlpha = mm:GetAlpha()
         self.MMOriginalPoints = {}
         for index = 1, mm:GetNumPoints() do
             self.MMOriginalPoints[index] = { mm:GetPoint(index) }
@@ -2461,6 +2463,11 @@ function Nx.Map:MinimapOwnInit()
         end
         self.MMArrowName = nil
         self.MMBlizzardPlayerArrowActive = false
+        if self.MMHiddenByMap and not InCombatLockdown() then
+            self.MMHiddenByMap = nil
+            mm:SetAlpha(self.MMOriginalAlpha or 1)
+            if self.MMOriginalShown then mm:Show() else mm:Hide() end
+        end
         self:MinimapSetInputMode("blizzard", true)
         self.Win:Show (self.StartupShown)
         Nx.Map:MinimapButtonShowUpdate()
@@ -2539,6 +2546,16 @@ function Nx.Map:MinimapOwnInit()
 
     hooksecurefunc("Minimap_ZoomIn", Nx.Map.Minimap_ZoomInClick)
     hooksecurefunc("Minimap_ZoomOut", Nx.Map.Minimap_ZoomOutClick)
+
+    if not self.MMVisibilityHooked then
+        self.MMVisibilityHooked = true
+        self.MMHiddenByMap = true
+        self.Frm:HookScript("OnHide", function() self:MinimapSyncVisibility() end)
+        self.Frm:HookScript("OnShow", function() self.MMZoomChanged = true end)
+        mm:HookScript("OnShow", function() self:MinimapSyncVisibility() end)
+        self.Win:Show(self.StartupShown)
+    end
+    self:MinimapSyncVisibility()
 end
 
 ---
@@ -3010,6 +3027,30 @@ function Nx.Map:MinimapSyncLayer(preferredLevel, hostOffset, aboveHost)
     return level
 end
 
+-- UIParent ownership keeps the minimap outside the movable map hierarchy.
+-- Synchronize visibility explicitly, including updates while the map is closed.
+function Nx.Map:MinimapIsHostVisible()
+    return self.Win and self.Win.Frm:IsVisible()
+        and self.Frm and self.Frm:IsVisible() or false
+end
+
+function Nx.Map:MinimapSyncVisibility()
+    local mm = self.MMFrm
+    if not self.MMOwn or not mm then return true end
+    local visible = self:MinimapIsHostVisible()
+    if visible and not self.MMHiddenByMap then return true end
+
+    -- Reopening waits for a safe positioning pass before showing the map.
+    self.MMHiddenByMap = true
+    local inCombat = InCombatLockdown()
+    if inCombat and mm.IsProtected and mm:IsProtected() then
+        mm:SetAlpha(0)
+    elseif mm:IsShown() then
+        mm:Hide()
+    end
+    return visible and not inCombat
+end
+
 ---
 -- Return whether the owned Blizzard minimap is a meaningful visible surface.
 -- Carbonite deliberately leaves the frame shown at 2% scale when it is
@@ -3017,7 +3058,7 @@ end
 --
 function Nx.Map:MinimapIsVisibleSurface()
     local mm = self.MMFrm
-    if not self.MMOwn or not mm or not mm:IsShown() then
+    if not self.MMOwn or not mm or not self:MinimapIsHostVisible() or not mm:IsVisible() then
         return false
     end
 
@@ -3289,6 +3330,7 @@ function Nx.Map:MinimapUpdate()
         self:MinimapDetachFrms()
         return
     end
+    if not self:MinimapSyncVisibility() then return end
 
     -- Apply debug scale override if active
     if self.DebugScale then
@@ -3509,6 +3551,7 @@ function Nx.Map:MinimapUpdateEnd()
     if not self.MMOwn then
         return
     end
+    if not self:MinimapSyncVisibility() then return end
 
     local mm = self.MMFrm
 
@@ -3585,6 +3628,7 @@ function Nx.Map:MinimapUpdateEnd()
 
         -- Recover from Blizzard's toggle state and any earlier collapse only
         -- after the frame is confirmed inside the Carbonite map.
+        self.MMHiddenByMap = nil
         mm:Show()
 
         local lvl
@@ -3600,6 +3644,11 @@ function Nx.Map:MinimapUpdateEnd()
         lvl = self:MinimapSyncLayer(lvl, 1, true)
         self:MinimapUpdateDetachedFrms (lvl + 1)
         self.Level = max(self.Level, lvl) + 2
+    end
+
+    if self.MMHiddenByMap then
+        self.MMHiddenByMap = nil
+        mm:Show()
     end
 
     if self.MMZoomChanged then
