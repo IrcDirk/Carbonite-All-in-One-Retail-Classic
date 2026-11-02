@@ -1,21 +1,5 @@
--- Carbonite | Modules / Map / Hotspots
--- Spatial lookup table for "interesting" map regions - quest hubs,
--- cities, starting zones, dungeon entrances. The legacy implementation
--- baked this into Nx.Map:InitHotspots which assembled two long arrays
--- (`WorldHotspots` and `WorldHotspotsCity`) at startup. This class
--- exposes the same data through a stable, query-friendly API.
---
--- Source data:
---   Nx.MapWorldHotspots   - per-continent string (4-byte packed rects)
---   Nx.MapWorldHotspots2  - per-map-id string (12-byte packed wide rects)
---   Nx.Map.MapZones       - continent -> zone-list
---   Nx.Zones              - zone descriptions (level / faction)
---
--- A "hotspot" entry:
---   mapID, zx, zy        - zone-space anchor (0..100)
---   WX1/WY1/WX2/WY2      - world-space bounding rect
---   NxTipBase            - prebuilt tooltip header text
---   city                 - true if part of the city subset
+-- Carbonite | Map hotspot construction and hover selection, shared by all flavors.
+-- Authored shapes control browsing; full bounds protect the player's active layer.
 
 local Carbonite = _G.Carbonite
 local Hotspots = {}
@@ -23,134 +7,200 @@ Carbonite.Modules.Map.Hotspots = Hotspots
 
 local function nxMap() return _G.Nx and _G.Nx.Map end
 
-local function unpackWideLoc(s)
-    -- 12-byte packed: x(3) y(3) w(3) h(3) hex
-    local zx = tonumber(s:sub(1, 3),  16) * 100  / 4095
-    local zy = tonumber(s:sub(4, 6),  16) * 100  / 4095
-    local zw = tonumber(s:sub(7, 9),  16) * 1002 / 4095
-    local zh = tonumber(s:sub(10,12), 16) * 668  / 4095
-    return zx, zy, zw, zh
+local function finite(value)
+    return type(value) == "number"
+        and not (_G.issecretvalue and _G.issecretvalue(value))
+        and value == value and value > -math.huge and value < math.huge
 end
 
-local function unpackSmallLoc(NxMap, s)
-    -- 4-byte legacy format. Delegated to the legacy unpacker because
-    -- it depends on a continent-relative offset table baked in NxMap.
-    if NxMap and NxMap.UnpackLocRect then
-        return NxMap:UnpackLocRect(s)
+local function contains(spot, wx, wy)
+    return spot and finite(spot.WX1) and finite(spot.WY1)
+        and finite(spot.WX2) and finite(spot.WY2)
+        and spot.WX2 > spot.WX1 and spot.WY2 > spot.WY1
+        and wx >= spot.WX1 and wx <= spot.WX2
+        and wy >= spot.WY1 and wy <= spot.WY2
+end
+
+local function setBounds(map, mapID, spot, zx, zy, width, height)
+    local info = map.MapWorldInfo and map.MapWorldInfo[mapID]
+    local geometry = info and (info.BaseMap and map.MapWorldInfo[info.BaseMap] or info)
+    if not geometry or not finite(geometry.Scale) or geometry.Scale <= 0
+        or not finite(geometry[4]) or not finite(geometry[5])
+        or not finite(zx) or not finite(zy) or not finite(width) or not finite(height)
+        or width <= 0 or height <= 0 or not map.GetWorldPos then
+        spot.WX1, spot.WY1, spot.WX2, spot.WY2 = nil, nil, nil, nil
+        return false
     end
-    return 0, 0, 0, 0
+
+    spot.WX1, spot.WY1 = map:GetWorldPos(mapID, zx, zy)
+    spot.WX2, spot.WY2 = map:GetWorldPos(mapID, zx + width, zy + height)
+    return contains(spot, spot.WX1, spot.WY1)
 end
 
--- Build the hotspot arrays. Returns (general, city). Idempotent.
-function Hotspots:Build()
-    local NxMap = nxMap()
-    if not NxMap or not NxMap.ContCnt or not NxMap.MapZones then return {}, {} end
-
+local function encoding(mapID)
     local Nx = _G.Nx
+    local loc = Nx.MapWorldHotspots and Nx.MapWorldHotspots[mapID]
+    if loc ~= nil then return loc, 4 end
+    return Nx.MapWorldHotspots2 and Nx.MapWorldHotspots2[mapID], 12
+end
+
+local function unpackRect(map, chunk, size)
+    if #chunk ~= size then return end
+    if size == 4 then
+        if not map.UnpackLocRect then return end
+        local x, y, width, height = map:UnpackLocRect(chunk)
+        return x, y, width / 1002 * 100, height / 668 * 100
+    end
+    if chunk:find("[^%x]") then return end
+    return tonumber(chunk:sub(1, 3), 16) * 100 / 4095,
+        tonumber(chunk:sub(4, 6), 16) * 100 / 4095,
+        tonumber(chunk:sub(7, 9), 16) * 100 / 4095,
+        tonumber(chunk:sub(10, 12), 16) * 100 / 4095
+end
+
+function Hotspots:Record(map, mapID, tip)
+    if not finite(mapID) or mapID <= 0 then return end
+    self.byMap = self.byMap or {}
+    local record = self.byMap[mapID]
+    if record then return record end
+    local info = map.MapWorldInfo and map.MapWorldInfo[mapID]
+    if not info then return end
+    local loc = encoding(mapID)
+    record = {
+        spots = {}, city = info.City or info.StartZone or false,
+        fallback = loc == nil, disabled = loc == "",
+        spot = {MapId = mapID, mapID = mapID, NxTipBase = tip or map:IdToName(mapID)},
+    }
+    self.byMap[mapID] = record
+    return record
+end
+
+-- Rebuild once at initialization; an empty authored string disables browsing.
+function Hotspots:Build()
+    local map = nxMap()
     local general, city = {}, {}
+    self.general, self.city, self.byMap = general, city, {}
+    if not map then return general, city end
+    map.WorldHotspots, map.WorldHotspotsCity = general, city
 
-    for contN = 1, NxMap.ContCnt do
-        local cname = NxMap.GetWorldContinentInfo and NxMap:GetWorldContinentInfo(contN)
-        if not cname then break end
-
-        for _, zoneN in pairs(NxMap.MapZones[contN] or {}) do
-            local zname = NxMap.GetWorldZoneInfo and NxMap:GetWorldZoneInfo(contN, zoneN)
-            if not zname then break end
-
-            -- Tooltip header built once per zone so per-spot iteration
-            -- in the map renderer can copy it cheaply.
-            local color, infoStr = "|cffffffff", ""
-            if Carbonite.Modules.Map.MapIDs then
-                color, infoStr = Carbonite.Modules.Map.MapIDs:GetZoneDescription(zoneN)
-            end
-            local tipStr = ("%s, %s%s (%s)"):format(cname, color, zname, infoStr)
-
-            local mapId = zoneN
-            local loc      = Nx.MapWorldHotspots and Nx.MapWorldHotspots[zoneN]
-            local locSize  = 4
-            if not loc then
-                loc = Nx.MapWorldHotspots2 and Nx.MapWorldHotspots2[mapId]
-                if loc then
-                    locSize = 12
-                else
-                    loc = string.char(85, 85, 135, 135)  -- default 4-byte rect
+    for cont = 1, map.ContCnt or 0 do
+        local cname = map:GetWorldContinentInfo(cont)
+        if cname then
+            for _, mapID in pairs(map.MapZones and map.MapZones[cont] or {}) do
+                local name = map:GetWorldZoneInfo(cont, mapID)
+                if name and not self.byMap[mapID] then
+                    local color, desc = Carbonite.Modules.Map.MapIDs:GetZoneDescription(mapID)
+                    local tip = ("%s, %s%s (%s)"):format(cname, color, name, desc)
+                    local record = self:Record(map, mapID, tip)
+                    if record then
+                        setBounds(map, mapID, record.spot, 0, 0, 100, 100)
+                        local loc, size = encoding(mapID)
+                        if record.fallback then loc, size = string.char(85, 85, 135, 135), 4 end
+                        local target = record.city and city or general
+                        if type(loc) == "string" then
+                            for i = 1, #loc - size + 1, size do
+                                local chunk = loc:sub(i, i + size - 1)
+                                local zx, zy, width, height = unpackRect(map, chunk, size)
+                                local spot = {MapId = mapID, mapID = mapID, zx = zx, zy = zy,
+                                    x = tonumber(chunk:sub(1, 3), 16) or 0,
+                                    y = tonumber(chunk:sub(4, 6), 16) or 0,
+                                    NxTipBase = tip, city = record.city}
+                                if setBounds(map, mapID, spot, zx, zy, width, height) then
+                                    target[#target + 1] = spot
+                                    record.spots[#record.spots + 1] = spot
+                                end
+                            end
+                        end
+                    end
                 end
-            end
-
-            local wzone = NxMap.GetWorldZone and NxMap:GetWorldZone(mapId) or {}
-            local target = (wzone.City or wzone.StartZone) and city or general
-
-            for n = 0, 100 do
-                local i = n * locSize + 1
-                local chunk = loc:sub(i, i + locSize - 1)
-                if chunk == "" then break end
-
-                local zx, zy, zw, zh
-                if locSize == 4 then
-                    zx, zy, zw, zh = unpackSmallLoc(NxMap, chunk)
-                else
-                    zx, zy, zw, zh = unpackWideLoc(chunk)
-                end
-
-                local spot = {
-                    -- Legacy readers (MapEngine 7509/7515/7521/7523)
-                    -- read `MapId` with the capital I, so keep that
-                    -- spelling as canonical. `mapID` is an alias for
-                    -- new code.
-                    MapId = mapId,
-                    mapID = mapId,
-                    zx    = zx,
-                    zy    = zy,
-                    x     = tonumber(chunk:sub(1, 3), 16) or 0,
-                    y     = tonumber(chunk:sub(4, 6), 16) or 0,
-                    NxTipBase = tipStr,
-                    city  = wzone.City or wzone.StartZone or false,
-                }
-
-                if NxMap.GetWorldPos then
-                    spot.WX1, spot.WY1 = NxMap:GetWorldPos(mapId, zx, zy)
-                    local zw100 = zw / 1002 * 100
-                    local zh100 = zh / 668  * 100
-                    spot.WX2, spot.WY2 = NxMap:GetWorldPos(mapId, zx + zw100, zy + zh100)
-                end
-
-                target[#target + 1] = spot
             end
         end
     end
-
-    self.general = general
-    self.city = city
-
-    -- Mirror onto legacy field names so existing readers find them.
-    if NxMap then
-        NxMap.WorldHotspots = general
-        NxMap.WorldHotspotsCity = city
-    end
-
     return general, city
 end
 
+local function allowed(map, mapID)
+    return finite(mapID) and mapID > 0
+        and not (map.ShouldHideQuelThalasZone and map:ShouldHideQuelThalasZone(mapID))
+end
+
+-- Prefer the actual current zone within its priority group. Otherwise choose
+-- the smallest matching rectangle, then map ID, independently of table order.
+function Hotspots:FindInGroup(map, wx, wy, quad, currentID, record, active)
+    if active and record and record.fallback
+        and quad == (record.city and self.city or self.general)
+        and contains(record.spot, wx, wy) and allowed(map, currentID) then
+        return record.spot
+    end
+    local best, bestArea
+    for _, spot in ipairs(quad or {}) do
+        if contains(spot, wx, wy) and allowed(map, spot.MapId) then
+            if active and spot.MapId == currentID then return spot end
+            local area = (spot.WX2 - spot.WX1) * (spot.WY2 - spot.WY1)
+            if not best or area < bestArea or area == bestArea and spot.MapId < best.MapId then
+                best, bestArea = spot, area
+            end
+        end
+    end
+    return best
+end
+
+function Hotspots:Find(map, wx, wy, quad)
+    if not finite(wx) or not finite(wy) then return end
+    local currentID = map:GetCurrentMapId()
+    local displayableID = map:GetDisplayableMapForPlayer()
+    local playerID = map.GetPlayerWorldMapID and map:GetPlayerWorldMapID()
+    local active = currentID == displayableID or currentID == playerID
+    local info = map.MapWorldInfo and map.MapWorldInfo[currentID]
+    local record = self:Record(map, currentID)
+    if record then setBounds(map, currentID, record.spot, 0, 0, 100, 100) end
+
+    if info and active and allowed(map, currentID) then
+        -- Synthetic instance anchors overlap their outdoor entrance zones.
+        if info.Instance and record then return record.spot end
+        if record and not record.disabled
+            and (info.Underground or finite(info.MapLevel) and info.MapLevel > 0)
+            and contains(record.spot, wx, wy) then
+            return record.spot
+        end
+    end
+
+    if map.InstMapId then
+        local spot = map._hoverInstanceSpot
+        if not spot or spot.MapId ~= map.InstMapId then
+            spot = {MapId = map.InstMapId, mapID = map.InstMapId,
+                NxTipBase = map:IdToName(map.InstMapId)}
+            map._hoverInstanceSpot = spot
+        end
+        spot.WX1, spot.WY1 = map.InstMapWX1, map.InstMapWY1
+        spot.WX2, spot.WY2 = map.InstMapWX2, map.InstMapWY2
+        if contains(spot, wx, wy) and allowed(map, spot.MapId) then return spot, true end
+    end
+
+    -- Legacy city artwork must remain selected within its authored shapes.
+    if info and info.City and info.LegacyMapArt and record and allowed(map, currentID) then
+        for _, spot in ipairs(record.spots) do
+            if contains(spot, wx, wy) then return spot end
+        end
+    end
+    if quad then return self:FindInGroup(map, wx, wy, quad, currentID, record, active) end
+
+    local first, second = self.city, self.general
+    if map.NXCitiesUnder then first, second = second, first end
+    return self:FindInGroup(map, wx, wy, first, currentID, record, active)
+        or self:FindInGroup(map, wx, wy, second, currentID, record, active)
+end
+
 function Hotspots:General() return self.general or {} end
-function Hotspots:Cities()  return self.city or {} end
-
--- Iterate spots for a specific map ID. Linear scan; the dataset is
--- small enough (~2-3K spots total) that any index would be overkill.
+function Hotspots:Cities() return self.city or {} end
 function Hotspots:Each(mapID, fn)
-    for _, spot in ipairs(self.general or {}) do
-        if spot.mapID == mapID then fn(spot) end
-    end
-    for _, spot in ipairs(self.city or {}) do
-        if spot.mapID == mapID then fn(spot) end
-    end
+    local record = self.byMap and self.byMap[mapID]
+    for _, spot in ipairs(record and record.spots or {}) do fn(spot) end
 end
 
--- Rewire the legacy entry point.
 local function rewireLegacy()
-    local NxMap = nxMap()
-    if not NxMap then return end
-    NxMap.InitHotspots = function(_) Hotspots:Build() end
+    local map = nxMap()
+    if map then map.InitHotspots = function(_) return Hotspots:Build() end end
 end
-
 Carbonite.Core.EventBus:Subscribe("CARBONITE_LOADED", rewireLegacy)
 Carbonite.Core.EventBus:Subscribe("CARBONITE_ENABLE", rewireLegacy)

@@ -1971,6 +1971,7 @@ function Nx.Map:GetInstanceMapCanvas()
     local canvas = Nx.Map.WMDF
     local viewport = Nx.Map.WMVP
     if not canvas or not canvas.GetParent
+        or canvas.NxMapID ~= self.MapId
         or (canvas:GetParent() ~= self.Frm
             and not (canvas:GetParent() == viewport and viewport
                 and viewport:GetParent() == self.Frm))
@@ -1986,6 +1987,25 @@ function Nx.Map:GetInstanceMapCanvas()
     end
 
     return canvas, width, height
+end
+
+-- Classification alone does not mean that any instance artwork was drawn.
+-- Suppress the regular layers only after this window owns the selected map's
+-- canvas. RMapId can still describe the previous map during a transition.
+function Nx.Map:IsInstanceOverlayActive()
+    if self:UsesModernInstanceCanvas(self.MapId) then
+        return self:GetInstanceMapCanvas() ~= nil
+    end
+    return self.CurOpts and self.CurOpts.NXInstanceMaps
+        and (self:IsInstanceMap(self.MapId) or self:IsBattleGroundMap(self.MapId)) or false
+end
+
+-- Run after the entry fit and pan/zoom interpolation, before layer drawing.
+-- Modern art must not depend on legacy InstMapId/InstanceInfo initialization.
+function Nx.Map:PrepareInstanceMapCanvas()
+    if self:UsesModernInstanceCanvas(self.MapId) then
+        Nx.Map.MoveWorldMap(self, self.MapId, not self.CurOpts.NXInstanceMaps)
+    end
 end
 
 function Nx.Map:AnchorInstanceMapOverlay(overlay, levelOffset)
@@ -2032,9 +2052,7 @@ function Nx.Map:UpdateWorldMap()
     if f then
         -- The modern instance canvas owns both fixed and zoomable artwork.
         -- A stopped pan/zoom must not reveal the legacy world-map frame above it.
-        local isInstanceWithOverlay = self:UsesModernInstanceCanvas(Nx.Map.RMapId)
-            or ((self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
-                and self.CurOpts.NXInstanceMaps)
+        local isInstanceWithOverlay = self:IsInstanceOverlayActive()
 
         if self.StepTime ~= 0 or self.Scrolling or IsShiftKeyDown() or isInstanceWithOverlay then
             f:Hide()
@@ -2341,101 +2359,11 @@ end
 -- Init hotspots
 
 function Nx.Map:InitHotspots()
-
-    local quad = {}
-    self.WorldHotspots = quad
-    local quadCity = {}
-    self.WorldHotspotsCity = quadCity
-
-    for contN = 1, Nx.Map.ContCnt do
-
-        cname = self:GetWorldContinentInfo (contN)
-        if not cname then
-            break
-        end
-        for _,zoneN in pairs(Nx.Map.MapZones[contN]) do
-            zname, zx, zy, zw, zh = self:GetWorldZoneInfo (contN, zoneN)
-            if not zx then
-                break
-            end
-
-            local color, infoStr = self:GetMapNameDesc (zoneN)
-            local tipStr = format ("%s, %s%s (%s)", L[cname], color, zname, infoStr)
-
-            local loc = Nx.MapWorldHotspots[nxz]    -- Old way
-            local locSize = 4
-            local mapId = zoneN
-
-            if not loc then
-
-                loc = Nx.MapWorldHotspots2[mapId]
-                if loc then
-                    locSize = 12
-                else
-                    loc = format ("%c%c%c%c", 85, 85, 135, 135)
-                end
-            end
-
-            for n = 0, 100 do
-
-                local locN = n * locSize + 1
-
-                local loc1 = strsub (loc, locN, locN + locSize - 1)
-                if loc1 == "" then
-                    break
-                end
-
-                local zx, zy, zw, zh
-
-                if locSize == 4 then
-                    zx, zy, zw, zh = Nx.Map:UnpackLocRect (loc1)
-                else
-                    zx = tonumber (strsub (loc1, 1, 3), 16) * 100 / 4095
-                    zy = tonumber (strsub (loc1, 4, 6), 16) * 100 / 4095
-                    zw = tonumber (strsub (loc1, 7, 9), 16) * 1002 / 4095
-                    zh = tonumber (strsub (loc1, 10, 12), 16) * 668 / 4095
-                end
-
-                local spot = {}
-
-                local wzone = self:GetWorldZone (mapId)
-
-                if wzone.City or wzone.StartZone then
-                    tinsert (quadCity, spot)
-                else
-                    tinsert (quad, spot)
-                end
-
-                spot.MapId = mapId
-
-                spot.x = tonumber (strsub (loc1, 1, 3), 16)
-                spot.y = tonumber (strsub (loc1, 4, 6), 16)
-                spot.zx = zx
-                spot.zy = zy
-
-                local wx, wy = self:GetWorldPos (mapId, zx, zy)
-                spot.WX1 = wx
-                spot.WY1 = wy
-                zw = zw / 1002 * 100
-                zh = zh / 668 * 100
-                local wx, wy = self:GetWorldPos (mapId, zx + zw, zy + zh)
-                spot.WX2 = wx
-                spot.WY2 = wy
-
-                spot.NxTipBase = tipStr
-
---                if contN == 5 then
---                    Nx.prtVar ("Spot", spot)
---                end
-
-            end
-        end
-    end
-
+    return Carbonite.Modules.Map.Hotspots:Build()
 end
 
 --------
--- Get description (color) that goes with a map nane
+-- Get description (color) that goes with a map name
 
 function Nx.Map:GetMapNameDesc (mapId)
 
@@ -2491,6 +2419,8 @@ function Nx.Map:MinimapOwnInit()
         self.MMOriginalParent = mm:GetParent()
         self.MMOriginalStrata = mm:GetFrameStrata()
         self.MMOriginalLevel = mm:GetFrameLevel()
+        self.MMOriginalShown = mm:IsShown()
+        self.MMOriginalAlpha = mm:GetAlpha()
         self.MMOriginalPoints = {}
         for index = 1, mm:GetNumPoints() do
             self.MMOriginalPoints[index] = { mm:GetPoint(index) }
@@ -2533,6 +2463,11 @@ function Nx.Map:MinimapOwnInit()
         end
         self.MMArrowName = nil
         self.MMBlizzardPlayerArrowActive = false
+        if self.MMHiddenByMap and not InCombatLockdown() then
+            self.MMHiddenByMap = nil
+            mm:SetAlpha(self.MMOriginalAlpha or 1)
+            if self.MMOriginalShown then mm:Show() else mm:Hide() end
+        end
         self:MinimapSetInputMode("blizzard", true)
         self.Win:Show (self.StartupShown)
         Nx.Map:MinimapButtonShowUpdate()
@@ -2611,6 +2546,16 @@ function Nx.Map:MinimapOwnInit()
 
     hooksecurefunc("Minimap_ZoomIn", Nx.Map.Minimap_ZoomInClick)
     hooksecurefunc("Minimap_ZoomOut", Nx.Map.Minimap_ZoomOutClick)
+
+    if not self.MMVisibilityHooked then
+        self.MMVisibilityHooked = true
+        self.MMHiddenByMap = true
+        self.Frm:HookScript("OnHide", function() self:MinimapSyncVisibility() end)
+        self.Frm:HookScript("OnShow", function() self.MMZoomChanged = true end)
+        mm:HookScript("OnShow", function() self:MinimapSyncVisibility() end)
+        self.Win:Show(self.StartupShown)
+    end
+    self:MinimapSyncVisibility()
 end
 
 ---
@@ -3082,6 +3027,30 @@ function Nx.Map:MinimapSyncLayer(preferredLevel, hostOffset, aboveHost)
     return level
 end
 
+-- UIParent ownership keeps the minimap outside the movable map hierarchy.
+-- Synchronize visibility explicitly, including updates while the map is closed.
+function Nx.Map:MinimapIsHostVisible()
+    return self.Win and self.Win.Frm:IsVisible()
+        and self.Frm and self.Frm:IsVisible() or false
+end
+
+function Nx.Map:MinimapSyncVisibility()
+    local mm = self.MMFrm
+    if not self.MMOwn or not mm then return true end
+    local visible = self:MinimapIsHostVisible()
+    if visible and not self.MMHiddenByMap then return true end
+
+    -- Reopening waits for a safe positioning pass before showing the map.
+    self.MMHiddenByMap = true
+    local inCombat = InCombatLockdown()
+    if inCombat and mm.IsProtected and mm:IsProtected() then
+        mm:SetAlpha(0)
+    elseif mm:IsShown() then
+        mm:Hide()
+    end
+    return visible and not inCombat
+end
+
 ---
 -- Return whether the owned Blizzard minimap is a meaningful visible surface.
 -- Carbonite deliberately leaves the frame shown at 2% scale when it is
@@ -3089,7 +3058,7 @@ end
 --
 function Nx.Map:MinimapIsVisibleSurface()
     local mm = self.MMFrm
-    if not self.MMOwn or not mm or not mm:IsShown() then
+    if not self.MMOwn or not mm or not self:MinimapIsHostVisible() or not mm:IsVisible() then
         return false
     end
 
@@ -3361,6 +3330,7 @@ function Nx.Map:MinimapUpdate()
         self:MinimapDetachFrms()
         return
     end
+    if not self:MinimapSyncVisibility() then return end
 
     -- Apply debug scale override if active
     if self.DebugScale then
@@ -3581,6 +3551,7 @@ function Nx.Map:MinimapUpdateEnd()
     if not self.MMOwn then
         return
     end
+    if not self:MinimapSyncVisibility() then return end
 
     local mm = self.MMFrm
 
@@ -3657,6 +3628,7 @@ function Nx.Map:MinimapUpdateEnd()
 
         -- Recover from Blizzard's toggle state and any earlier collapse only
         -- after the frame is confirmed inside the Carbonite map.
+        self.MMHiddenByMap = nil
         mm:Show()
 
         local lvl
@@ -3672,6 +3644,11 @@ function Nx.Map:MinimapUpdateEnd()
         lvl = self:MinimapSyncLayer(lvl, 1, true)
         self:MinimapUpdateDetachedFrms (lvl + 1)
         self.Level = max(self.Level, lvl) + 2
+    end
+
+    if self.MMHiddenByMap then
+        self.MMHiddenByMap = nil
+        mm:Show()
     end
 
     if self.MMZoomChanged then
@@ -5264,7 +5241,7 @@ function Nx.Map:ScrollScale(value)
     end
 
     local r = math.max(s + value * s * .3, .015)
-    if self.View3D then
+    if self.View3D and not self:UsesModernInstanceCanvas(self.MapId) then
         local mx = P3D().View3DMaxScale or 3
         -- Never zoom in past the cap; if the view is already past it
         -- (cap lowered, or 3D switched on while zoomed in) allow zooming out.
@@ -6472,15 +6449,15 @@ function Nx.Map:Update (elapsed)
         --self.Scale = self.RealScale
     end
     local plZX, plZY = Nx.Map.GetPlayerMapPosition ("player")
-    if (Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
+    if self:UsesModernInstanceCanvas(self.MapId) then
+        -- Prepare the artwork after the entry fit and interpolated geometry.
+        -- Both display modes use this window, rather than the global map 1.
+        self.PlyrFrm:Hide()
+    elseif (Nx.Map:IsInstanceMap(Nx.Map.RMapId) or Nx.Map:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
         Nx.Map.MoveWorldMap()
         Nx.Map:GetMap(1).PlyrFrm:Hide()
-    elseif self:UsesModernInstanceCanvas(Nx.Map.RMapId) then
-        -- The zoomable renderer updates the same canvas later in this pass.
-        -- Keep it visible here so unit pins are not torn down every frame.
-        Nx.Map:GetMap(1).PlyrFrm:Hide()
     else
-        Nx.Map.RestoreWorldMap()
+        Nx.Map.RestoreWorldMap(true)
         Nx.Map:GetMap(1).PlyrFrm:Show()
     end
     if (Nx.Map.RMapId ~= Nx.Map.UpdateMapID) then
@@ -6647,7 +6624,10 @@ function Nx.Map:Update (elapsed)
 
         if not self.Scrolling and not self.MouseIsOver then
             if self.CurOpts.NXPlyrFollow then
-                local scOn = self.LOpts.NXAutoScaleOn        --self.GOpts["MapFollowChangeScale"]
+                -- World-route waypoints use outdoor geometry. They must not
+                -- pull a small instance canvas off screen or undo its fit.
+                local scOn = self.LOpts.NXAutoScaleOn
+                    and not self:UsesModernInstanceCanvas(rid)
                 if plZX ~= 0 or plZY ~= 0 then
                     if #self.Tracking == 0 or not scOn then
                         self:Move (plX, plY, nil, 30)
@@ -6831,6 +6811,8 @@ function Nx.Map:Update (elapsed)
     end
 
     self:ResetIcons()
+
+    self:PrepareInstanceMapCanvas()
 
     -- Instance artwork and native unit pins share a flat canvas. Keep the
     -- saved tilted-view preference for outdoor maps and its normal zoom limit.
@@ -7811,6 +7793,17 @@ end
 function Nx.Map:SetInstanceMap (mapId)
     self.InstMapId = nil
     if not mapId then
+        return
+    end
+    if self:UsesModernInstanceCanvas(mapId) then
+        -- Modern map IDs and artwork need no legacy texture-name cache.
+        -- Map metadata can still be unavailable while entering/reloading.
+        -- The legacy selector clears self.MapId to force a future redraw.
+        -- Calling it on this window would invalidate the active render pass.
+        Nx.Map:SetCurrentMap(mapId)
+        self.InstMapId, self.InstMapInfo = mapId, nil
+        self.InstMapWX1, self.InstMapWY1 = self:GetWorldPos(mapId, 0, 0)
+        self.InstMapWX2, self.InstMapWY2 = self:GetWorldPos(mapId, 100, 100)
         return
     end
     local Map = Nx.Map
@@ -9219,9 +9212,7 @@ end
 function Nx.Map:MoveContinents()
     -- MoveWorldMap owns modern instance art in both display modes.
     -- Preserve the existing fixed-overlay behavior for legacy maps and BGs.
-    local isInstanceWithOverlay = self:UsesModernInstanceCanvas(Nx.Map.RMapId)
-        or ((self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
-            and self.CurOpts.NXInstanceMaps)
+    local isInstanceWithOverlay = self:IsInstanceOverlayActive()
 
     -- The tilted view drops the art while minimap blocks cover the view;
     -- art returns only at world zoom (several continents in view).
@@ -9286,177 +9277,44 @@ end
 -- Detects which zone the cursor is over
 -------------------------------------------------------------------------------
 
-local function FindMapHotspotAtPosition(hotspots, mapID, worldX, worldY)
-    if not hotspots then
-        return nil
-    end
-
-    for _, hotspot in ipairs(hotspots) do
-        if hotspot.MapId == mapID
-            and worldX >= hotspot.WX1 and worldX <= hotspot.WX2
-            and worldY >= hotspot.WY1 and worldY <= hotspot.WY2 then
-            return hotspot
-        end
-    end
-
-    return nil
+-- Freeze both selection and tooltip while a menu or Alt owns the cursor.
+function Nx.Map:IsWorldHotspotNavigationBlocked()
+    return IsAltKeyDown() or self:CheckDropdownListVisible()
+        or (Nx.Menu and Nx.Menu:IsAnyOpened())
 end
 
----
--- Check if cursor is over a world zone hotspot
--- Updates current map display based on cursor position
--- @param wx  World X coordinate
--- @param wy  World Y coordinate
---
+function Nx.Map:ApplyWorldHotspot(spot, instanceOverlay)
+    if not spot then return end
+    if spot.MapId ~= self:GetCurrentMapId() then
+        Nx.Map:SetCurrentMap(spot.MapId)
+    end
+    Nx.Map.MouseIsOverMap = spot.MapId
+    self.WorldHotspotTipStr = spot.NxTipBase .. "\n"
+    if instanceOverlay then self.InstLevelSet = -1 end
+    return true
+end
+
 function Nx.Map:CheckWorldHotspots(wx, wy)
-    -- Alt key disables hotspot detection
-    if IsAltKeyDown() then
-        return
+    if self:IsWorldHotspotNavigationBlocked() then return end
+    if not self:ApplyWorldHotspot(Carbonite.Modules.Map.Hotspots:Find(self, wx, wy)) then
+        self.WorldHotspotTipStr = false
     end
-
-    -- Check if over instance map overlay
-    if self.InstMapId then
-        if wx >= self.InstMapWX1 and wx <= self.InstMapWX2 and wy >= self.InstMapWY1 and wy <= self.InstMapWY2 then
-            local lvl = floor((wy - self.InstMapWY1) / 668 * 256) + 1
-
-            if self.InstMapId ~= self.MapId then
-                self:SetCurrentMap(self.InstMapId)
-            end
-
-            self.InstLevelSet = -1
-            self.WorldHotspotTipStr = self:IdToName(self.InstMapId) .. "\n"
-
-            return
-        end
-    end
-
-    -- Keep the active city while the cursor is still inside that city's own
-    -- hotspot. City and parent-zone rectangles intentionally overlap; testing
-    -- the general list first could otherwise replace Exodar with Azuremyst or
-    -- Undercity with Tirisfal before the city hotspot was considered. This is
-    -- geometric selection, not an "underground" lock, so leaving the city's
-    -- actual bounds still selects the surrounding zone normally.
-    local currentMapID = self:GetCurrentMapId()
-    local currentInfo = self.MapWorldInfo and self.MapWorldInfo[currentMapID]
-    if currentInfo and currentInfo.City and currentInfo.LegacyMapArt then
-        local currentSpot = FindMapHotspotAtPosition(
-            self.WorldHotspotsCity, currentMapID, wx, wy)
-        if currentSpot then
-            Nx.Map.MouseIsOverMap = currentMapID
-            self.WorldHotspotTipStr = currentSpot.NxTipBase .. "\n"
-            return
-        end
-    end
-
-    -- Layered maps often share world geometry with their surface map. Keep an
-    -- underground layer selected only while it is the player's actual map and
-    -- the cursor remains inside that layer's own hotspot. A remotely browsed
-    -- underground map must never prevent normal mouseover navigation.
-    if currentInfo and currentInfo.Underground
-        and currentMapID == self:GetDisplayableMapForPlayer() then
-        local currentSpot = FindMapHotspotAtPosition(
-            self.WorldHotspotsCity, currentMapID, wx, wy)
-            or FindMapHotspotAtPosition(
-                self.WorldHotspots, currentMapID, wx, wy)
-        if currentSpot then
-            Nx.Map.MouseIsOverMap = currentMapID
-            self.WorldHotspotTipStr = currentSpot.NxTipBase .. "\n"
-            return
-        end
-    end
-
-    local quad1 = self.WorldHotspotsCity
-    local quad2 = self.WorldHotspots
-
-    if self.NXCitiesUnder then
-        quad1, quad2 = quad2, quad1
-    end
-
-    if self:CheckWorldHotspotsType (wx, wy, quad1) then
-        return
-    end
-
-    if self:CheckWorldHotspotsType (wx, wy, quad2) then
-        return
-    end
-
-    self.WorldHotspotTipStr = false
-
---    local tt = GameTooltip
---    if tt:IsOwned (self.Win.Frm) and self.TooltipType == 1 then
---        tt:Hide()
---    end
 end
-
---------
--- Check world zone hotspots type
--- This is very fast. No need to make a quad tree
 
 function Nx.Map:CheckDropdownListVisible()
     for i = 1, 10 do
-        local _DropdownList = _G["DropDownList" .. i]
-        if _DropdownList and _DropdownList:IsVisible() and _DropdownList:GetFrameStrata() == "FULLSCREEN_DIALOG" then
+        local dropdown = _G["DropDownList" .. i]
+        if dropdown and dropdown:IsVisible()
+            and dropdown:GetFrameStrata() == "FULLSCREEN_DIALOG" then
             return true
         end
     end
-
     return false
 end
 
-function Nx.Map:CheckWorldHotspotsType (wx, wy, quad)
-
-    for n, spot in ipairs (quad) do
-        -- Skip Quel'Thalas zones based on player location (old vs new)
-        if self:ShouldHideQuelThalasZone(spot.MapId) then
-            -- Skip this hotspot entirely
-        elseif wx >= spot.WX1 and wx <= spot.WX2 and wy >= spot.WY1 and wy <= spot.WY2 then
-
-            local curId = self:GetCurrentMapId()
-
-            if spot.MapId ~= curId then
-                local winfo = self.MapWorldInfo[curId]
-                if winfo and winfo.Instance
-                    and curId == self:GetDisplayableMapForPlayer() then
-                    -- Instance-style standalone maps are positioned at their
-                    -- outdoor entrance for Carbonite's world geometry. Do not
-                    -- let that overlapping parent hotspot replace the active
-                    -- map or its tooltip (Emerald Dreamway / Val'sharah).
-                    Nx.Map.MouseIsOverMap = curId
-                    self.WorldHotspotTipStr = self:IdToName(curId) .. "\n"
-                    return true
-                end
---                Nx.prt ("hotspot %s %s %s %s %s", spot.MapId, spot.WX1, spot.WX2, spot.WY1, spot.WY2)
-                if not Nx.Map:CheckDropdownListVisible() then self:SetCurrentMap (spot.MapId) end
-            end
-            Nx.Map.MouseIsOverMap = spot.MapId
-            self.WorldHotspotTipStr = spot.NxTipBase .. "\n"
---[[
-            if false then
-
-                local tt = GameTooltip
-                local owner = self.Win.Frm
-
-                owner.NXTip = spot.NxTipBase
-
-                if not tt:IsVisible() then
-
---                    Nx.prt ("hotspot tip")
-
-                    local tippos = "ANCHOR_TOPLEFT"
-
-                    Nx.TooltipOwner = owner
-                    self.TooltipType = 1
-
-                    tt:SetOwner (owner, tippos, 0, 0)
-                    Nx:SetTooltipText (owner.NXTip .. Nx.Map.PlyrNamesTipStr)
-
-                    owner["UpdateTooltip"] = Nx.Map.OnUpdateTooltip
-                end
-            end
---]]
-            return true
-        end
-    end
+function Nx.Map:CheckWorldHotspotsType(wx, wy, quad)
+    if self:IsWorldHotspotNavigationBlocked() then return end
+    return self:ApplyWorldHotspot(Carbonite.Modules.Map.Hotspots:Find(self, wx, wy, quad))
 end
 
 --------
@@ -9552,9 +9410,7 @@ function Nx.Map:MoveCurZoneTiles (clear)
     end
 
     -- Avoid drawing another zone layer above the modern instance canvas.
-    local isInstanceWithOverlay = self:UsesModernInstanceCanvas(Nx.Map.RMapId)
-        or ((self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
-            and self.CurOpts.NXInstanceMaps)
+    local isInstanceWithOverlay = self:IsInstanceOverlayActive()
 
     if not clear and not isInstanceWithOverlay and
             (wzone.City or wzone.ModernZoneArt or
@@ -9983,10 +9839,8 @@ function Nx.Map:UpdateZones()
     local freeOrScale = self.ScaleDraw <= s
 
     -- The modern instance canvas replaces zone art and outdoor detail tiles.
-    local modernInstanceCanvas = self:UsesModernInstanceCanvas(Nx.Map.RMapId)
-    local isInstanceWithOverlay = modernInstanceCanvas
-        or ((self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
-            and self.CurOpts.NXInstanceMaps)
+    local modernInstanceCanvas = self:UsesModernInstanceCanvas(self.MapId)
+    local isInstanceWithOverlay = self:IsInstanceOverlayActive()
     if isInstanceWithOverlay then
         self:MoveCurZoneTiles(true)  -- Clear tiles
         if modernInstanceCanvas then
@@ -10186,7 +10040,7 @@ end
 -- Update the overlays
 
 function Nx.Map:UpdateOverlay (mapId, bright, noUnexplored)
-    if self:UsesModernInstanceCanvas(Nx.Map.RMapId) then return end
+    if self:UsesModernInstanceCanvas(self.MapId) and self:GetInstanceMapCanvas() then return end
     if(mapId == 0) then mapId = Nx.Map:GetCurrentMapAreaID(); end
     if (mapId == nil or mapId == -1) then
         return
@@ -10441,7 +10295,7 @@ function Nx.Map:UpdateMiniFrames()
     -- These are outdoor minimap-detail textures, separate from the live
     -- docked minimap. Instance records inherit an entrance continent, so
     -- GetMiniInfo can resolve surface tiles that become opaque on mouseover.
-    if self:UsesModernInstanceCanvas(self.MapId) then
+    if self:UsesModernInstanceCanvas(self.MapId) and self:GetInstanceMapCanvas() then
         self:HideMiniFrames()
         self.Mini3D, self.View3DBaseH = nil, 0
         return
@@ -11235,7 +11089,8 @@ function Nx.Map:SetView3D (on)
     if self.MenuIView3D then
         self.MenuIView3D:SetChecked (self.View3D)
     end
-    if self.View3D and self.Scale > (P3D().View3DMaxScale or 3) then
+    if self.View3D and not self:UsesModernInstanceCanvas(self.MapId)
+        and self.Scale > (P3D().View3DMaxScale or 3) then
         self.Scale = P3D().View3DMaxScale or 3
         self.StepTime = 10
     end
@@ -13845,6 +13700,9 @@ end
 -- Update instance map
 
 function Nx.Map:UpdateInstanceMap()
+
+    -- Prepared earlier in this pass, even when legacy instance state is nil.
+    if self:UsesModernInstanceCanvas(self.MapId) then return end
 
     local mapId = self.InstMapId
     if not mapId or not Nx.Initialized then
@@ -17911,7 +17769,8 @@ end
 -- Restore/hide the world map overlay frame
 -- Clears textures and hides encounter journal buttons
 --
-function Nx.Map.RestoreWorldMap()
+function Nx.Map.RestoreWorldMap(clearInstance)
+    if clearInstance then Nx.Map.NInstMapId = nil end
     if not Nx.Map.WMDF then
         return
     end
@@ -17932,6 +17791,7 @@ function Nx.Map.RestoreWorldMap()
     end)
 
     Nx.Map.WMDF:Hide()
+    Nx.Map.WMDF.NxMapID = nil
     if Nx.Map.WMVP then Nx.Map.WMVP:Hide() end
     local index = 1
     local bossButton = _G["NXEJMapButton"..index]
@@ -17954,7 +17814,8 @@ function Nx.Map.MoveWorldMap(map, mapID, zoomable)
     if not Nx.Map.NInstMapId or Nx.Map.NInstMapId ~= curId then
         Nx.Map.NInstMapId = curId
     end
-    Nx.Map:SetCurrentMap (Nx.Map.NInstMapId)
+    -- Art queries already use curId. Drawing must not rerun map selection
+    -- or reset the selected map while its layers and pins are being updated.
 
     local mapInfo
     if C_Map and C_Map.GetMapInfo then
@@ -18035,6 +17896,7 @@ function Nx.Map.MoveWorldMap(map, mapID, zoomable)
     end
 
     Nx.Map.WMDF:SetParent(viewport)
+    Nx.Map.WMDF.NxMapID = curId
     Nx.Map.WMDF:SetScale(1)
     Nx.Map.WMDF:SetFrameLevel(viewport:GetFrameLevel() + 1)
     Nx.Map.WMDF:ClearAllPoints()
