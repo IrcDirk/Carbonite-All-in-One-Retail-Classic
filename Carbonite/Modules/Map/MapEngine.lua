@@ -2821,7 +2821,7 @@ function Nx.Map:MinimapButtonShowUpdate(justNameplate)
         "GameTimeFrame", "ButShowCalendar",
         "TimeManagerClockButton", "ButShowClock",
         "MiniMapWorldMapButton", "ButShowWorldMap",
-        "MiniMapLFGFrame", "ButShowLFG",
+        "LFGMinimapFrame", "ButShowLFG",
     }
 
     for n = 1, #t, 2 do
@@ -15977,7 +15977,7 @@ function Nx.Map.Dock:MinimapOwnInit()
     local mm = _G["Minimap"]
 
     local mmOwnerNames = {
-        "NXMiniMapBut","GameTimeFrame","TimeManagerClockButton","MiniMapWorldMapButton","MiniMapMailFrame","MiniMapTracking","MiniMapVoiceChatFrame","QueueStatusMinimapButton","MiniMapInstanceDifficulty","GarrisonLandingPageMinimapButton","MiniMapLFGFrame",
+        "NXMiniMapBut","GameTimeFrame","TimeManagerClockButton","MiniMapWorldMapButton","MiniMapMailFrame","MiniMapTracking","MiniMapVoiceChatFrame","QueueStatusMinimapButton","MiniMapInstanceDifficulty","GarrisonLandingPageMinimapButton","LFGMinimapFrame",
     }
 
     local f = _G["MinimapBackdrop"]    -- Add so it gets ignored
