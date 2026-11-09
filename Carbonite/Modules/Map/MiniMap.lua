@@ -193,7 +193,7 @@ local BUTTON_MAP = {
     { frameName = "GameTimeFrame",           setting = "ButShowCalendar" },
     { frameName = "TimeManagerClockButton",  setting = "ButShowClock" },
     { frameName = "MiniMapWorldMapButton",   setting = "ButShowWorldMap" },
-    { frameName = "MiniMapLFGFrame",         setting = "ButShowLFG" },
+    { frameName = "LFGMinimapFrame",         setting = "ButShowLFG" },
 }
 
 function MiniMap:Buttons() return BUTTON_MAP end
