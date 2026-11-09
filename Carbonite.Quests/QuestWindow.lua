@@ -158,6 +158,8 @@ function Nx.Quest.List:Open()
             end
             hooksecurefunc(C_SuperTrack, "SetSuperTrackedQuestID", function(qID)
                 qID = qID or 0
+                Nx.Quest._stHookQID = qID
+                Nx.Quest._stHookTime = GetTime and GetTime() or 0
                 if Nx.Quest:NoteSuperTrackSet(qID) then
                     return
                 end
@@ -1801,6 +1803,10 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
 
     Nx.prtD ("OnQuestUpdate %s", event)
 
+    if Quest.QuestEventStampEvents and Quest.QuestEventStampEvents[event] then
+        Quest:StampQuestEvent()
+    end
+
     if event == "PLAYER_LOGIN" then
         self.LoggingIn = true
     elseif event == "QUEST_TURNED_IN" then
@@ -1827,7 +1833,7 @@ function CarboniteQuest:OnQuestUpdate (event, ...)
             Quest.Watch:OnBlizzardWatchChanged (arg1, arg2)
         end
     elseif event == "SUPER_TRACKING_CHANGED" then
-        Nx.Quest:OnSuperTrackChanged()
+        Quest:NoteSuperTrackEvent()
     elseif event == "USER_WAYPOINT_UPDATED" then
         Nx.Quest:OnUserWaypointUpdated()
     elseif event == "QUEST_POI_UPDATE" then

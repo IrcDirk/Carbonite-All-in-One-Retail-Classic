@@ -93,7 +93,16 @@ if _G.Nx then
         questID = questID or 0
         RunNowOrAfterCombat(function()
             local get = superTrackAPI("GetSuperTrackedQuestID")
-            if get and (get() or 0) == questID then return end
+            _G.Nx.SuperTrackOwnQID = questID
+            _G.Nx.SuperTrackOwnTime = _G.GetTime and _G.GetTime() or 0
+            if get and (get() or 0) == questID then
+                local Quest = _G.Nx.Quest
+                if questID ~= 0 and Quest and Quest.OnSuperTrackChanged and Quest.IsGotoOnQuest
+                    and not Quest:IsGotoOnQuest(questID) then
+                    Quest:OnSuperTrackChanged()
+                end
+                return
+            end
             CallBlizzardAPI(api, questID)
         end)
         return true

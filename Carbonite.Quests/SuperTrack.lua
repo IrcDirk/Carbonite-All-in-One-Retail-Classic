@@ -765,7 +765,76 @@ function Nx.Quest:IsFreshUserWaypoint()
         or GetTime() - (self.UserWaypointTime or 0) < 2
 end
 
-function Nx.Quest:OnSuperTrackChanged(isRefresh)
+Nx.Quest.QuestEventStampEvents = {
+    QUEST_LOG_UPDATE = true,
+    UNIT_QUEST_LOG_CHANGED = true,
+    QUEST_ACCEPTED = true,
+    QUEST_REMOVED = true,
+    QUEST_TURNED_IN = true,
+    QUEST_COMPLETE = true,
+}
+
+local AUTO_WINDOW = 0.3
+local EVT_RING = 8
+
+function Nx.Quest:StampQuestEvent()
+    local now = GetTime()
+    local ring = self._qEvtRing
+    if not ring then
+        ring = {}
+        self._qEvtRing = ring
+        self._qEvtPos = 0
+    end
+    if ring[self._qEvtPos] == now then
+        return
+    end
+    self._qEvtPos = self._qEvtPos % EVT_RING + 1
+    ring[self._qEvtPos] = now
+end
+
+local function QuestEventNear(self, t)
+    local ring = self._qEvtRing
+    if not ring then
+        return false
+    end
+    for _, et in pairs(ring) do
+        if et <= t + 0.05 and et >= t - AUTO_WINDOW then
+            return true
+        end
+    end
+    return false
+end
+
+function Nx.Quest:IsGotoOnQuest(qId)
+    local typ, tid = Nx.Map:GetTargetInfo()
+    return typ == "Q" and tid and floor(tid / 100) == qId or false
+end
+
+function Nx.Quest:IsAutoTrackOn()
+    local w = self.Watch
+    return w and w.ButATarget and w.ButATarget:GetPressed() and true or false
+end
+
+function Nx.Quest:NoteSuperTrackEvent()
+    local evtTime = GetTime()
+    C_Timer.After(0, function()
+        Nx.Quest:OnSuperTrackChanged(nil, evtTime)
+    end)
+end
+
+function Nx.Quest:IsAutomaticSuperTrack(qID, evtTime)
+    local now = GetTime()
+    if Nx.SuperTrackOwnQID == qID and now - (Nx.SuperTrackOwnTime or 0) < 1 then
+        return false
+    end
+    local t = evtTime or now
+    if self._stHookQID == qID and self._stHookTime and t - self._stHookTime < 1 then
+        t = self._stHookTime
+    end
+    return QuestEventNear(self, t)
+end
+
+function Nx.Quest:OnSuperTrackChanged(isRefresh, evtTime)
     if not C_SuperTrack then
         return
     end
@@ -836,6 +905,7 @@ function Nx.Quest:OnSuperTrackChanged(isRefresh)
         end
         local prev = self.ActiveQID
         if prev and prev > 0
+           and self:IsGotoOnQuest(prev)
            and C_QuestLog and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest(prev)
            and C_SuperTrack.SetSuperTrackedQuestID then
             -- Combat-defer the restore: this listener runs off
@@ -853,6 +923,15 @@ function Nx.Quest:OnSuperTrackChanged(isRefresh)
         clearBlob()
         return
     end
+
+    if isRefresh then
+        if not self:IsGotoOnQuest(liveQID) and self.PendingGotoQID ~= liveQID then
+            return
+        end
+    elseif not self:IsAutoTrackOn() and self:IsAutomaticSuperTrack(liveQID, evtTime) then
+        return
+    end
+
     self.ActiveQID = liveQID
 
     -- Skip world quests; their click path already calls SetSuperTrackedQuestID
@@ -944,7 +1023,10 @@ function Nx.Quest:OnSuperTrackChanged(isRefresh)
         end
     end
     if not InCombatLockdown() then
+        self.PendingGotoQID = nil
         self:TrackOnMap(liveQID, pickedObj, true, true, isRefresh)
+    else
+        self.PendingGotoQID = liveQID
     end
     -- Mirror the picked objective into ActiveObjI so the (qId, objI) toggle
     -- check in the click handlers can see it. Without this, super-track
