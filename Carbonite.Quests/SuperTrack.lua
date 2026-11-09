@@ -670,9 +670,75 @@ function Nx.Quest:ClearUserWaypointTarget()
     end
 end
 
+local function IsRXPIntegrationOff()
+    local notes = Nx.Notes
+    return _G.RXP ~= nil and notes and notes.IsRXPIntegrationEnabled
+        and not notes:IsRXPIntegrationEnabled() or false
+end
+
+local function CalledFromRXP()
+    local stack = debugstack and debugstack(2, 40, 0)
+    return type(stack) == "string" and stack:find("RXPGuides", 1, true) ~= nil
+end
+
+function Nx.Quest:NoteSuperTrackSet(qID)
+    if IsRXPIntegrationOff() and CalledFromRXP() then
+        self.RXPSuperTrackQID = qID
+        return true
+    end
+    self.RXPSuperTrackQID = nil
+    return false
+end
+
+function Nx.Quest:NoteUserWaypointSet()
+    local sig = UserWaypointSig()
+    if IsRXPIntegrationOff() and CalledFromRXP() then
+        self.RXPWaypointSig = sig
+        self.LastUserWaypointSig = sig
+    else
+        self.RXPWaypointSig = nil
+    end
+end
+
+function Nx.Quest:IsIgnoredRXPSuperTrack(qID, isRefresh)
+    if not IsRXPIntegrationOff() then
+        self.RXPSuperTrackQID = nil
+        return false
+    end
+    if qID == self.RXPSuperTrackQID then
+        return true
+    end
+    if not isRefresh and CalledFromRXP() then
+        self.RXPSuperTrackQID = qID
+        return true
+    end
+    return false
+end
+
+function Nx.Quest:IsIgnoredRXPWaypoint()
+    if not IsRXPIntegrationOff() then
+        self.RXPWaypointSig = nil
+        return false
+    end
+    local sig = UserWaypointSig()
+    if sig and sig == self.RXPWaypointSig then
+        self.LastUserWaypointSig = sig
+        return true
+    end
+    if sig and CalledFromRXP() then
+        self.RXPWaypointSig = sig
+        self.LastUserWaypointSig = sig
+        return true
+    end
+    return false
+end
+
 function Nx.Quest:OnUserWaypointUpdated()
     if not self.UserWaypointSeeded then
         self:SeedUserWaypoint()
+        return
+    end
+    if self:IsIgnoredRXPWaypoint() then
         return
     end
     local sig = UserWaypointSig()
@@ -717,6 +783,9 @@ function Nx.Quest:OnSuperTrackChanged(isRefresh)
     local userWaypointType = Enum and Enum.SuperTrackingType and Enum.SuperTrackingType.UserWaypoint
     if (C_SuperTrack.IsSuperTrackingUserWaypoint and C_SuperTrack.IsSuperTrackingUserWaypoint())
         or (userWaypointType and liveType == userWaypointType) then
+        if self:IsIgnoredRXPWaypoint() then
+            return
+        end
         self.ActiveQID = 0
         self.ActiveObjI = 0
         if self.UpdateQuestBlob then
@@ -727,6 +796,9 @@ function Nx.Quest:OnSuperTrackChanged(isRefresh)
     end
 
     local liveQID = C_SuperTrack.GetSuperTrackedQuestID()
+    if liveQID and liveQID ~= 0 and self:IsIgnoredRXPSuperTrack(liveQID, isRefresh) then
+        return
+    end
     if not liveQID or liveQID == 0 then
         -- Blizzard sometimes drops the super-track value to 0 during
         -- objective-completion transitions on chained quests. If we

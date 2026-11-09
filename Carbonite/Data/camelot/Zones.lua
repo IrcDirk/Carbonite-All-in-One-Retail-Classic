@@ -124,7 +124,11 @@ Nx.Zones = {
     [2998] = L["Excavation Site: Wetlands"] .. "|24|29|3|5|1437|52.3|66.4|5",
     [2999] = L["Ruins of Lordaeron"] .. "|11|24|3|5|1458|72.9|11.3|5",
     [3065] = L["The Hall of Thanes"] .. "|13|22|3|5|1455|46.8|52.3|5",
-    [17780] = L["Krol'dok Stronghold"] .. "|40|45|3|5|2548|37.5|37.4|5",
+    [2970] = L["The Drowned City"] .. "|35|40|3|5|1434|20.9|28.1|5",
+    [2974] = L["Blackmaw Hold"] .. "|55|60|3|5|1447|39.6|32.7|5",
+    [2994] = L["Alcaz Prison"] .. "|48|53|3|5|1445|77.5|17.2|5",
+    [3001] = L["The Shaper's Terrace"] .. "|60|60|3|5|1449|49.1|1.0|5",
+    [3039] = L["Krol'dok Stronghold"] .. "|40|45|3|5|2548|37.5|37.4|5",
 
     -- ---------------------------------------------------------------
     -- WoW Forever ("camelot") instances, from Map.db2 of build 1.60.1.69893
@@ -137,12 +141,6 @@ Nx.Zones = {
     --
     -- Keys are the Map.db2 instance IDs: they are unique, they are what
     -- GetInstanceInfo() reports from inside, and no UiMap uses them.
-    --
-    -- Krol'dok Stronghold has NO Map.db2 row in 1.60.1.69913 - the client only
-    -- knows AreaTable 17780 "Krol'dok Stronghold", an outdoor sub-area of
-    -- Riverglades (area 16591). Its Zones key is therefore that area ID, which
-    -- is unique and traceable; re-key it to the instance map ID once Blizzard
-    -- ships one. Entrance found in-game: Riverglades 37.5, 37.4.
     --
     --   party:      2959 City of Dalaran           [done: Alterac 9.8, 60.6]
     --                    That is the sewer door inside Dalaran itself. A second

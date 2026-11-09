@@ -1370,6 +1370,8 @@ function Nx.Map:Create(index)
     local item = ismenu:AddItem(0, L["Icon Scaling Size"])
     item:SetSlider(Nx.db.profile.Map, 1, 50, nil, "InstanceScale")
 
+    if Nx.DungeonChart then Nx.DungeonChart:AddMenu(menu, f) end
+
     ---------------------------------------------------------------------------
     -- TRANSPARENCY SUBMENU
     -- Alpha/opacity controls for various map elements
@@ -6813,6 +6815,7 @@ function Nx.Map:Update (elapsed)
     self:ResetIcons()
 
     self:PrepareInstanceMapCanvas()
+    if Nx.DungeonChart then Nx.DungeonChart:Update(self) end
 
     -- Instance artwork and native unit pins share a flat canvas. Keep the
     -- saved tilted-view preference for outdoor maps and its normal zoom limit.
@@ -12122,6 +12125,7 @@ function Nx.Map:GetIcon (levelAdd)
         t:SetTexelSnappingBias(0)
     end
 
+    f:EnableMouse (self.MouseEnabled ~= false)
     f:SetFrameLevel (self.Level + (levelAdd or 0))
 
     f.texture:SetVertexColor (1, 1, 1, 1)

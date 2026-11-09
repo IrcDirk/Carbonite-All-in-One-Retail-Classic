@@ -151,8 +151,16 @@ function Nx.Quest.List:Open()
         if C_SuperTrack.SetSuperTrackedQuestID and not Nx.Quest._stHookInstalled then
             Nx.Quest._stHookInstalled = true
             Nx.Quest._stLastSet = 0
+            if C_Map and C_Map.SetUserWaypoint then
+                hooksecurefunc(C_Map, "SetUserWaypoint", function()
+                    Nx.Quest:NoteUserWaypointSet()
+                end)
+            end
             hooksecurefunc(C_SuperTrack, "SetSuperTrackedQuestID", function(qID)
                 qID = qID or 0
+                if Nx.Quest:NoteSuperTrackSet(qID) then
+                    return
+                end
                 local now = GetTime and GetTime() or 0
 
                 -- Lockout window after a user-initiated toggle-off. Blizzard's

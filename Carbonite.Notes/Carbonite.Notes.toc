@@ -28,5 +28,6 @@ Integrations\RXP.lua
 Integrations\GatherLite.lua
 Integrations\RXPArrow.lua
 Integrations\ZygorArrow.lua
+Integrations\Attune.lua
 Plugin.lua
 
