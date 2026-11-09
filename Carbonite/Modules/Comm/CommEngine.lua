@@ -1027,7 +1027,12 @@ function Nx.Com:UpdateChannelsTimer()
     local curMapId = Nx.Map:GetRealMapId()
 
     -- Determine if we should be in a zone channel
-    if UnitIsAFK("player") or not Nx.db.profile.Comm.Zone then
+    local isAFK = UnitIsAFK("player")
+    if not CanUseComValue(isAFK) then
+        isAFK = self.AFK
+    end
+
+    if isAFK or not Nx.db.profile.Comm.Zone then
         curMapId = nil
     else
         if Nx.Map:IsNormalMap(curMapId) then

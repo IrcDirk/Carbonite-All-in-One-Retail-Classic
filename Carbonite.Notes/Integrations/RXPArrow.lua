@@ -108,19 +108,7 @@ end
 -- RXP's own arrow does) so the title renders coloured rather than
 -- stripped. Newlines are kept (each sub-objective stays on its own row
 -- in the multi-line HUD caption); only surrounding whitespace is trimmed.
-local function formatText(s, rxp)
-    if type(s) ~= "string" then return nil end
-    local gtc = rxp and rxp.guideTextColors
-    if gtc then
-        s = s:gsub("RXP_[A-Z]+_", function(tok)
-            return gtc[tok] or (gtc.default and gtc.default[tok]) or tok
-        end)
-    end
-    s = s:gsub("%s*\n%s*", "\n")             -- trim around newlines, collapse blanks
-    s = s:gsub("^%s+", ""):gsub("%s+$", "")
-    if s == "" then return nil end
-    return s
-end
+local formatText = Nx.Notes.RXPFormatText
 
 -- True when a step-text line is quest bookkeeping (accept / turn in)
 -- rather than a real objective. RXP renders those lines as
@@ -267,6 +255,7 @@ end
 --
 function Nx.Notes:RXPArrowSync()
     local enabled = Nx.fdb and Nx.fdb.profile.Notes.RXPArrow
+        and self:IsRXPIntegrationEnabled()
     local rxp     = rxpAddon()
 
     if not (enabled and rxp) then

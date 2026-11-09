@@ -185,7 +185,7 @@ function Nx.Notes:UpdateIcons()
     if Nx.fdb.profile.Notes.RareScanner and self:IsRareScannerAvailable() then
         self:RareScanner(mapId)
     end
-    if Nx.fdb.profile.Notes.RXP and _G.RXP then
+    if Nx.fdb.profile.Notes.RXP and self:IsRXPIntegrationEnabled() then
         self:RXP(mapId)
     end
     if Nx.fdb.profile.Notes.GatherLite and self.IsGatherLiteAvailable

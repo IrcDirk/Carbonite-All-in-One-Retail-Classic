@@ -179,6 +179,7 @@ L["NPC ID: %s"] = true
 L["Left click"] = true
 L["Right click"] = true
 L["Toggle icons"] = true
+L["Toggle integration"] = true
 L["Context menu"] = true
 L["Open settings"] = true
 L["Carbonite What's New"] = true

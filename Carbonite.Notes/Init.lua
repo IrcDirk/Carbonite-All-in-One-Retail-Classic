@@ -27,6 +27,7 @@ local defaults = {
             Questie         = true,    -- Show Questie quest objectives
             QuestieSE       = true,    -- Show Questie available quests
             QuestieSize     = 32,
+            RXPIntegration  = true,
             RXP             = true,    -- Show RXPGuides waypoint pins
             RXPSize         = 24,
             RXPArrow        = true,    -- Route RXPGuides arrow through Carbonite HUD

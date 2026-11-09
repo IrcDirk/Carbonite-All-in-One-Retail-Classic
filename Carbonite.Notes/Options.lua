@@ -166,7 +166,7 @@ function Nx.Notes:GetOptionsConfig()
                             map:ClearIconType("!RXP")
                         end
                     end,
-                    disabled = function() return not _G.RXP end,
+                    disabled = function() return not Nx.Notes:IsRXPIntegrationEnabled() end,
                 },
                 rxpsize = {
                     order = 10, type = "range", width = "normal",
@@ -180,7 +180,7 @@ function Nx.Notes:GetOptionsConfig()
                         Nx.Notes:BustIntegrationCache("RXP")
                         Nx.Notes:RXP(Nx.Map:GetCurrentMapAreaID())
                     end,
-                    disabled = function() return not _G.RXP end,
+                    disabled = function() return not Nx.Notes:IsRXPIntegrationEnabled() end,
                 },
                 rxparrow = {
                     order = 11, type = "toggle", width = "full",
@@ -191,7 +191,7 @@ function Nx.Notes:GetOptionsConfig()
                         Nx.fdb.profile.Notes.RXPArrow = not Nx.fdb.profile.Notes.RXPArrow
                         if Nx.Notes.RXPArrowSync then Nx.Notes:RXPArrowSync() end
                     end,
-                    disabled = function() return not _G.RXP end,
+                    disabled = function() return not Nx.Notes:IsRXPIntegrationEnabled() end,
                 },
                 zygorarrow = {
                     order = 12, type = "toggle", width = "full",

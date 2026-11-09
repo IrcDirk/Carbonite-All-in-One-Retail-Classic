@@ -351,7 +351,7 @@ end
 local RXP_TIP = {
     title = "RXPGuides",
     rows = {
-        { L["Left click"],  L["Toggle icons"] },
+        { L["Left click"],  L["Toggle integration"] },
         { L["Right click"], L["Open settings"] },
     },
 }
@@ -359,7 +359,7 @@ local RXP_TIP = {
 local function initialRXPPressed()
     local Nx = _G.Nx
     return Nx and Nx.fdb and Nx.fdb.profile and Nx.fdb.profile.Notes
-        and Nx.fdb.profile.Notes.RXP or false
+        and Nx.fdb.profile.Notes.RXPIntegration or false
 end
 
 -- Right-click on the RXP button opens RXPGuides' settings panel.
@@ -382,18 +382,8 @@ local function rxpHandler(_, _, click)
         openRXPSettings()
         return
     end
-    local enabled = not Nx.fdb.profile.Notes.RXP
-    Nx.fdb.profile.Notes.RXP = enabled
-    if Nx.Notes and Nx.Notes.BustIntegrationCache then
-        Nx.Notes:BustIntegrationCache("RXP")
-    end
-    if enabled then
-        if Nx.Notes and Nx.Notes.RXP then
-            Nx.Notes:RXP(Nx.Map:GetCurrentMapAreaID())
-        end
-    else
-        local map = Nx.Map:GetMap(1)
-        if map then map:ClearIconType("!RXP") end
+    if Nx.Notes and Nx.Notes.SetRXPIntegration then
+        Nx.Notes:SetRXPIntegration(not Nx.fdb.profile.Notes.RXPIntegration)
     end
 end
 

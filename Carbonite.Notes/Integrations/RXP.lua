@@ -22,11 +22,80 @@ Nx.Notes = Nx.Notes or {}
 Nx.Notes.RXPCache     = Nx.Notes.RXPCache or {}
 Nx.Notes.RXPLastMapId = nil
 Nx.Notes.PrevRXPPins  = 0
+Nx.Notes.RXPPinFrames = {}
 
 local Carbonite = _G.Carbonite
 local Pin       = Carbonite and Carbonite.Modules
                   and Carbonite.Modules.Map
                   and Carbonite.Modules.Map.Pin
+local L         = LibStub and LibStub("AceLocale-3.0"):GetLocale("Carbonite.Notes", true)
+
+local TIP_REFRESH_INTERVAL = 0.5
+
+function Nx.Notes.RXPFormatText(s, rxp)
+    if type(s) ~= "string" then return nil end
+    local gtc = rxp and rxp.guideTextColors
+    if gtc then
+        s = s:gsub("RXP_[A-Z]+_", function(tok)
+            return gtc[tok] or (gtc.default and gtc.default[tok]) or tok
+        end)
+    end
+    s = s:gsub("%s*\n%s*", "\n")
+    s = s:gsub("^%s+", ""):gsub("%s+$", "")
+    if s == "" then return nil end
+    return s
+end
+
+local function elementText(element, step)
+    local parent = element.parent
+    local owner  = parent or element
+    if owner.hideTooltip then return nil end
+    local hidden = (parent or step).hiddentext
+    if type(hidden) ~= "string" or #hidden < 8 then hidden = nil end
+    return owner.mapTooltip or owner.tooltipText or hidden or owner.text
+        or step.text or element.title or step.arrowtext
+end
+
+local function resolveText(s, rxp)
+    s = Nx.Notes.RXPFormatText(s, rxp)
+    if s and rxp and rxp.ReplaceNpcIds then
+        local ok, res = pcall(rxp.ReplaceNpcIds, s)
+        if ok and type(res) == "string" then s = res end
+    end
+    return s
+end
+
+local function buildTip(frame, fallbackLabel)
+    local rxp      = _G.RXP
+    local stepWord = (L and L["Step"]) or "Step"
+    local active   = frame and frame.activeObject
+    local lines    = { "|cff80c0ffRXPGuides|r" }
+    local seen     = {}
+    local lastTitle
+
+    for _, element in ipairs(active and active.elements or {}) do
+        local step = element.step or active.step
+        if step then
+            local title = step.mapTooltip or step.title
+                or stepWord .. " " .. tostring(element.label or step.index or fallbackLabel or "?")
+            title = resolveText(title, rxp)
+            if title and title ~= lastTitle then
+                lines[#lines + 1] = "|cffffd100" .. title .. "|r"
+                lastTitle = title
+            end
+            local text = resolveText(elementText(element, step), rxp)
+            if text and not seen[text] then
+                seen[text] = true
+                lines[#lines + 1] = text
+            end
+        end
+    end
+
+    if #lines == 1 and fallbackLabel and fallbackLabel ~= "" then
+        lines[2] = stepWord .. " " .. fallbackLabel
+    end
+    return (table.concat(lines, "\n"):gsub("~", ""))
+end
 
 -- Show RXP's step text on the Carbonite icon. The icon pool's
 -- NxLabel font-string (created in GetIconStatic) is hidden by
@@ -56,14 +125,37 @@ local function stampRXPFrame(pin, frame)
     end
 end
 
+function Nx.Notes:IsRXPIntegrationEnabled()
+    local notes = Nx.fdb and Nx.fdb.profile.Notes
+    return notes and notes.RXPIntegration and _G.RXP ~= nil or false
+end
+
+function Nx.Notes:SetRXPIntegration(enabled)
+    local notes = Nx.fdb.profile.Notes
+    notes.RXPIntegration = enabled
+    if enabled then
+        notes.RXP = true
+    end
+
+    self:BustIntegrationCache("RXP")
+    wipe(self.RXPPinFrames)
+    local map = Nx.Map:GetMap(1)
+    if map then map:ClearIconType("!RXP") end
+
+    if enabled then
+        self:RXP(Nx.Map:GetCurrentMapAreaID())
+    end
+    self:RXPArrowSync()
+end
+
 ---
 -- Update RXPGuides waypoint icons on the map.
 -- @param mapId  Current map ID
 --
 function Nx.Notes:RXP(mapId)
     if not Nx.fdb.profile.Notes.RXP then return end
+    if not self:IsRXPIntegrationEnabled() then return end
     local rxp = _G.RXP
-    if not rxp then return end
     local HBDPins = LibStub("HereBeDragons-Pins-2.0", true)
     local HBD     = LibStub("HereBeDragons-2.0", true)
     if not HBDPins or not HBD then return end
@@ -79,6 +171,7 @@ function Nx.Notes:RXP(mapId)
             map:ClearIconType("!RXP")
             self.PrevRXPPins = 0
         end
+        wipe(self.RXPPinFrames)
         return
     end
 
@@ -138,11 +231,19 @@ function Nx.Notes:RXP(mapId)
     if self.RXPCache[cacheKey] == hash
         and self.RXPLastMapId == mapId
         and self.PrevRXPPins == #icons then
+        local now = GetTime()
+        if map and now >= (self.RXPTipRefreshAt or 0) then
+            self.RXPTipRefreshAt = now + TIP_REFRESH_INTERVAL
+            for pin, frame in pairs(self.RXPPinFrames) do
+                map:SetIconTip(pin, buildTip(frame, pin.label))
+            end
+        end
         return
     end
 
     if not map then return end
     map:ClearIconType("!RXP")
+    wipe(self.RXPPinFrames)
     self.RXPCache[cacheKey] = hash
     self.RXPLastMapId       = mapId
     self.PrevRXPPins        = #icons
@@ -190,25 +291,7 @@ function Nx.Notes:RXP(mapId)
         -- `if cls.onStamp`.
         pin.onStamp = stampRXPFrame
 
-        -- Best-effort tooltip from the live activeObject set by RXP's
-        -- frame.render(). Falls back to a generic source tag if the
-        -- step / element structure has changed shape.
-        local active  = ic.frame and ic.frame.activeObject
-        local element = active and active.elements and active.elements[1]
-        local step    = element and (element.step or active.step)
-        local lines   = { "|cff80c0ffRXPGuides|r" }
-        if step then
-            local label = (element and element.label)
-                or step.index
-                or ic.label
-                or "?"
-            lines[#lines + 1] = "Step " .. tostring(label)
-            if step.text then
-                lines[#lines + 1] = "|cffcccccc" .. tostring(step.text) .. "|r"
-            end
-        elseif ic.label and ic.label ~= "" then
-            lines[#lines + 1] = "Step " .. ic.label
-        end
-        map:SetIconTip(pin, table.concat(lines, "\n"))
+        self.RXPPinFrames[pin] = ic.frame
+        map:SetIconTip(pin, buildTip(ic.frame, ic.label))
     end
 end
