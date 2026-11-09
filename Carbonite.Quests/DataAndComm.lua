@@ -250,13 +250,25 @@ end
 -- Example: 3,end,1,xywh
 -------------------------------------------------------------------------------
 
+local LocCache = {}
+
+local function ParseLoc(str)
+    local c = LocCache[str]
+    if c then return c end
+    local desc, zone, typ, a, b, w, h = Nx.Split("|", str)
+    c = { desc, tonumber(zone), tonumber(typ), tonumber(a), tonumber(b), tonumber(w), tonumber(h) }
+    LocCache[str] = c
+    return c
+end
+Nx.Quest.ParseLoc = ParseLoc
+
 function Nx.Quest:UnpackObjective (obj)
 
     if not obj then
         return
     end
-    local desc, zone = Nx.Split("|",obj)
-    return desc, tonumber(zone)
+    local c = ParseLoc(obj)
+    return c[1], c[2]
 end
 
 -------------------------------------------------------------------------------
@@ -512,11 +524,11 @@ end
 
 function Nx.Quest:IsUsableLocation (location, fallbackZone)
     if type(location) ~= "string" then return false end
-    local _, zone, _, x, y = Nx.Split ("|", location)
-    zone = tonumber(zone) or fallbackZone
+    local c = ParseLoc(location)
+    local zone = c[2] or fallbackZone
     if not self:IsKnownZone (zone) then return false end
     if self:IsInstanceZone (zone) then return true end
-    return (tonumber(x) or 0) > 0 or (tonumber(y) or 0) > 0
+    return (c[4] or 0) > 0 or (c[5] or 0) > 0
 end
 
 function Nx.Quest:IsUsableObjective (questObj, fallbackZone)
@@ -585,10 +597,12 @@ function Nx.Quest:GetClosestObjectivePos (str, loc, mapId, px, py)
         local closeX, closeY, closeMapId
         cnt = 0
         for a,b in pairs(str) do
-            local npc,zone,typ,x, y, w, h = Nx.Split ("|",b)
-            local poiTyp = tonumber(typ) or 35
-            local poiMap = tonumber(zone) or mapId
-            local pX = tonumber(x); local pY = tonumber(y)
+            local c = type(b) == "string" and ParseLoc(b) or {}
+            local w, h = c[6], c[7]
+            local poiTyp = c[3] or 35
+            local poiMap = c[2] or mapId
+            local pX = c[4]; local pY = c[5]
+            local x, y
             -- Skip sentinel entries with mapId=0 (PatchQuestFromBlizzard
             -- writes these when live coords aren't available yet).
             if not pX or not pY or poiMap == 0
@@ -1561,8 +1575,11 @@ function Nx.Quest:UnpackObjectiveNew(obj)
     if type(obj) == "table" then
         obj = obj[1]
     end
-    local desc, zone, typ = Nx.Split("|",obj)
-    return desc, tonumber(zone), tonumber(typ)
+    if not obj then
+        return
+    end
+    local c = ParseLoc(obj)
+    return c[1], c[2], c[3]
 end
 
 ---
@@ -1571,8 +1588,8 @@ end
 -- @return        x, y, w, h
 --
 function Nx.Quest:UnpackLocRect(locStr)
-    local _, _, _, x, y, w, h = Nx.Split("|", locStr)
-    return tonumber(x), tonumber(y), tonumber(w), tonumber(h)
+    local c = ParseLoc(locStr)
+    return c[4], c[5], c[6], c[7]
 end
 
 ---
@@ -1581,13 +1598,11 @@ end
 -- @return        x1, x2, y1, y2
 --
 function Nx.Quest:UnpackLocPtOff(locStr)
-    if type(locStr) == "string" then
-        local _,_,_,x1,x2,y1,y2 = Nx.Split("|",locStr)
-        return tonumber(x1), tonumber(x2), tonumber(y1), tonumber(y2)
-    else
-        local _,_,_,x1,x2,y1,y2 = Nx.Split("|",locStr[1])
-        return tonumber(x1), tonumber(x2), tonumber(y1), tonumber(y2)
+    if type(locStr) ~= "string" then
+        locStr = locStr[1]
     end
+    local c = ParseLoc(locStr)
+    return c[4], c[5], c[6], c[7]
 end
 
 ---

@@ -1036,6 +1036,9 @@ function Nx.Quest:SyncQuestPOIMap(mapID, force)
     return false
 end
 
+local EMPTY = {}
+local AREA_OPTS = {}
+
 function Nx.Quest:UpdateIcons (map)
     if not Nx.QInit then
         return
@@ -1094,11 +1097,20 @@ function Nx.Quest:UpdateIcons (map)
     if activeQID == 0 then activeQID = Nx.Quest.ActiveQID or 0 end
     local hoverCur  = Quest.IconHoverCur
     local hoverObjI = Quest.IconHoverObjI or 0
-    local tickBucket = math.floor((map.Tick or 0) / 10)
+    local trackSig = 0
+    for id, m in pairs(Quest.Tracking or EMPTY) do
+        trackSig = (trackSig * 31 + (tonumber(id) or 0) + (tonumber(m) or 0)) % 2147483629
+    end
+    local qprof = Nx.qdb.profile.Quest
+    local safety = math.floor(GetTime() / 10)
     local fp = (map.MapId or 0) .. "|" .. activeQID .. "|"
             .. (hoverCur and hoverCur.QId or 0) .. "|" .. hoverObjI
-            .. "|" .. tickBucket .. "|" .. (instanceIconContext and 1 or 0)
+            .. "|" .. safety .. "|" .. (instanceIconContext and 1 or 0)
             .. "|" .. (isMinimizedMap and 1 or 0)
+            .. "|" .. trackSig .. "|" .. (Quest.CurQ and #Quest.CurQ or 0)
+            .. "|" .. (showOnMap and 1 or 0)
+            .. "|" .. (qprof.MapShowWatchAreas and 1 or 0)
+            .. "|" .. (qprof.ShowAllMapPOIs and 1 or 0)
     -- The dirty-check now guards only the heavy per-quest walk
     -- (Pin/Layer-backed POIs). The BONUS TASKS / WORLD QUESTS block
     -- below uses the legacy direct-stamp pool (IconWQFrms), which the
@@ -1270,9 +1282,8 @@ function Nx.Quest:UpdateIcons (map)
 
     local tracking = self.IconTracking
 
-    if Nx.Map:GetMap (1).Frm.NxMap.Tick % 10 == 0 then
+    do
 
---        tracking = {}        -- garbage creator
         wipe (tracking)
 
         for trackId, trackMode in pairs (Quest.Tracking) do
@@ -1555,6 +1566,7 @@ function Nx.Quest:UpdateIcons (map)
                             -- to see both at once. Hover/tracking still
                             -- override the *color* via existing branches.
                             local drawSpans = true
+                            local areaVC
 
                             for _, loc1 in pairs(obj) do
                                 if loc1 ~= "" and type(loc1) == "string" then
@@ -1649,25 +1661,26 @@ function Nx.Quest:UpdateIcons (map)
                                                 -- applies via onStamp (vertexColor path) or
                                                 -- via SetColorTexture (pin.color path when
                                                 -- areaTex is nil).
-                                                local avc
-                                                if hover then
-                                                    avc = { hovR, hovG, hovB, tonumber(hovA) or 1 }
-                                                elseif tracking then
-                                                    avc = { trkR, trkG, trkB, tonumber(trkA) or 1 }
-                                                else
-                                                    avc = { r, g, b, tonumber(col[4]) or 1 }
+                                                if not areaVC then
+                                                    if hover then
+                                                        areaVC = { hovR, hovG, hovB, tonumber(hovA) or 1 }
+                                                    elseif tracking then
+                                                        areaVC = { trkR, trkG, trkB, tonumber(trkA) or 1 }
+                                                    else
+                                                        areaVC = { r, g, b, tonumber(col[4]) or 1 }
+                                                    end
                                                 end
-                                                Nx.Quest:AddArea(wx, wy, {
-                                                    tip         = tip,
-                                                    tex         = areaTex,
-                                                    color       = (not areaTex) and avc or nil,
-                                                    NXType      = 9000 + n,
-                                                    NXData      = cur,
-                                                    mapID       = poiRenderMapID,
-                                                    w           = w * scale,
-                                                    h           = h * scale,
-                                                    vertexColor = areaTex and avc or nil,
-                                                })
+                                                local ao = AREA_OPTS
+                                                ao.tip         = tip
+                                                ao.tex         = areaTex
+                                                ao.color       = (not areaTex) and areaVC or nil
+                                                ao.NXType      = 9000 + n
+                                                ao.NXData      = cur
+                                                ao.mapID       = poiRenderMapID
+                                                ao.w           = w * scale
+                                                ao.h           = h * scale
+                                                ao.vertexColor = areaTex and areaVC or nil
+                                                Nx.Quest:AddArea(wx, wy, ao)
                                             elseif areaTex then
                                                 local f = map:GetIconStatic (hover and 1)
                                                 if map:ClipFrameTL (f, wx, wy, w * scale, h * scale) then
