@@ -262,6 +262,10 @@ function Nx.Quest:PatchQuestFromBlizzard (qId)
                 end
                 -- else: bundled quest had partial objectives; respect
                 -- the curated DB and skip synthesizing.
+            elseif #slot == 1 and type(slot[1]) == "string"
+                    and slot[1]:match ("^[^|]*|0|32|0|0") and mapId and x and y then
+                slot[1] = format ("%s|%s|32|%f|%f|6|6", objText, mapId, x, y)
+                touched = true
             else
                 for j, poi in ipairs (slot) do
                     if type(poi) == "string" then

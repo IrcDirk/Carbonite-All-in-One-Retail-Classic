@@ -610,10 +610,75 @@ function DC:AddMenu(menu, parentFrm)
     end
 end
 
+local MAP_REQUEST_WINDOW = 1
+
+local function resolveMapID(mapID)
+    local MapIDs = Carbonite and Carbonite.Modules and Carbonite.Modules.Map and Carbonite.Modules.Map.MapIDs
+    local mid = MapIDs and MapIDs:CanonicalizeMapID(mapID) or mapID
+    if Nx.OldMapIDs then
+        if mid == 1414 then mid = 12 end
+        if mid == 1415 then mid = 13 end
+    end
+    if Nx.Map.MapWorldInfo and Nx.Map.MapWorldInfo[mid] then return mid end
+end
+
+function DC:OnShowOnMap(spot)
+    if type(spot) ~= "table" then return end
+    local req = { at = GetTime() }
+    self.MapRequest = req
+    local x, y = tonumber(spot.x), tonumber(spot.y)
+    local mid = spot.mapID and resolveMapID(spot.mapID)
+    if not (x and y and mid and Nx.Map:WorldMapRedirectWanted()) then
+        req.blizzard = true
+        return
+    end
+    local dj = _G.ForeverDungeonJournal_NS
+    local name = spot.label
+    if name and dj and dj.LocalizeFreeText then name = dj.LocalizeFreeText(name) end
+    req.mid, req.x, req.y, req.name = mid, x * 100, y * 100, name
+    C_Timer.After(0, function()
+        if self.MapRequest == req and not req.applied then self:ApplyMapRequest(req) end
+    end)
+end
+
+function DC:ApplyMapRequest(req)
+    req.applied = true
+    local map = Nx.Map:GetMap(1)
+    if not (map and map.Win) then return end
+    if not (map.Win:IsShown() and map.Win:IsSizeMax()) then
+        Nx.Map:ToggleSize()
+    end
+    map:SetCurrentMap(req.mid)
+    map:CenterMap(req.mid)
+    local wx, wy = map:GetWorldPos(req.mid, req.x, req.y)
+    map:Move(wx, wy, nil, 15)
+    map:SetTargetXY(req.mid, req.x, req.y, req.name)
+end
+
+function DC:ClaimWorldMapShow()
+    local req = self.MapRequest
+    if req and GetTime() - req.at <= MAP_REQUEST_WINDOW then
+        return req.blizzard and "blizzard" or "carbonite"
+    end
+    local stack = debugstack and debugstack(2, 40, 0)
+    if type(stack) == "string" and stack:find("ForeverDungeonJournal", 1, true) then
+        return "blizzard"
+    end
+end
+
+function DC:HookShowOnMap()
+    if self.ShowOnMapHooked then return end
+    local dj = _G.ForeverDungeonJournal_NS
+    if not (dj and type(dj.SetWaypointArrow) == "function") then return end
+    self.ShowOnMapHooked = true
+    hooksecurefunc(dj, "SetWaypointArrow", function(spot) DC:OnShowOnMap(spot) end)
+end
+
 local events = CreateFrame("Frame")
 events:RegisterEvent("PLAYER_ENTERING_WORLD")
 events:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 events:SetScript("OnEvent", function()
+    DC:HookShowOnMap()
     C_Timer.After(0, function() DC:Refresh() end)
     C_Timer.After(2, function() DC:Refresh() end)
 end)

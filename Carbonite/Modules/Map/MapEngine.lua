@@ -4456,6 +4456,17 @@ for _, method in ipairs({ "HandleUserActionToggleQuestLog", "HandleUserActionOpe
     end
 end
 
+function Nx.Map:WorldMapRedirectWanted()
+    if not Nx.Map.WMFOnShow or Nx.Map.BlizzToggling then
+        return false
+    end
+    local alt = IsAltKeyDown() and true or false
+    if Nx.db.profile.Map.MaxOverride then
+        return not alt
+    end
+    return alt
+end
+
 WorldMapFrame:HookScript("OnShow", function()
     -- Fix for ElvUI constant WorldMapFrame Show and Hide
     if ElvUI then
@@ -4467,14 +4478,25 @@ WorldMapFrame:HookScript("OnShow", function()
     end
 
     local shownAt = GetTime()
-    local orgin = IsAltKeyDown()
-    if not Nx.db.profile.Map.MaxOverride then
-        orgin = not orgin
+    local keepBlizzard = not Nx.Map:WorldMapRedirectWanted()
+
+    local claim = not keepBlizzard and Nx.DungeonChart and Nx.DungeonChart:ClaimWorldMapShow()
+    if claim == "blizzard" then
+        keepBlizzard = true
+    elseif claim == "carbonite" then
+        WorldMapFrame:SetAlpha(0)
     end
-    local keepBlizzard = Nx.Map.BlizzToggling or orgin
 
     C_Timer.After(0, function()
         if not WorldMapFrame:IsShown() then
+            if claim == "carbonite" then
+                WorldMapFrame:SetAlpha(1)
+            end
+            return
+        end
+        if claim == "carbonite" then
+            HideUIPanel(WorldMapFrame)
+            WorldMapFrame:SetAlpha(1)
             return
         end
         if keepBlizzard or Nx.Map.QuestLogRequestedAt == shownAt then

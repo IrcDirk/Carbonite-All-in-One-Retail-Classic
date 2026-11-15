@@ -650,7 +650,8 @@ function Nx.Quest:TrackOnMap (qId, qObj, useEnd, target, skipSame)
             if Nx.Quest.TrackDebug and debugstack then
                 tdbg ("  caller:\n%s", debugstack (2, 8, 0))
             end
-            if not Nx.Quest:PatchQuestFromBlizzard (qId) then
+            if not Nx.Quest:PatchQuestFromBlizzard (qId)
+                    and (quest["Start"] or quest["End"]) then
                 Nx.Quest:MsgNotInDB ("Z")
             end
         end

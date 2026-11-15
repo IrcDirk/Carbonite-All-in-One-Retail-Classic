@@ -998,6 +998,15 @@ local function harvestTick()
     end
 end
 
+local function startQueue(d, ids)
+    d.HProg = { from = 1, to = #ids, cur = 1, found = 0, queue = ids, locale = LOCALE }
+    harvest.running = true
+    harvest.inflight = {}
+    harvest.nflight = 0
+    if harvest.ticker then harvest.ticker:Cancel() end
+    harvest.ticker = C_Timer.NewTicker(HARVEST_INTERVAL, harvestTick)
+end
+
 function ObjCap:HarvestStart(from, to)
     local d = db()
     if not d then return end
@@ -1050,14 +1059,21 @@ function ObjCap:HarvestKnown(quiet)
         end
         return 0
     end
-    d.HProg = { from = 1, to = #ids, cur = 1, found = 0, queue = ids, locale = LOCALE }
-    harvest.running = true
-    harvest.inflight = {}
-    harvest.nflight = 0
-    if harvest.ticker then harvest.ticker:Cancel() end
-    harvest.ticker = C_Timer.NewTicker(HARVEST_INTERVAL, harvestTick)
+    startQueue(d, ids)
     local log = harvestLog()
     if log then log:info("harvest: loading %d known quests without a %s title", #ids, LOCALE) end
+    return #ids
+end
+
+function ObjCap:HarvestList(ids)
+    local d = db()
+    if not d or #ids == 0 then return 0 end
+    if not (C_QuestLog and C_QuestLog.RequestLoadQuestByID) then return 0 end
+    d.Enabled = true
+    refreshEnabled()
+    startQueue(d, ids)
+    local log = harvestLog()
+    if log then log:info("harvest: loading %d listed quests", #ids) end
     return #ids
 end
 
@@ -2095,6 +2111,13 @@ if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
                         running and "running" or "idle", cur, to, known)
                 elseif sub == "known" then
                     ObjCap:HarvestKnown()
+                elseif sub == "list" then
+                    local ids = {}
+                    for i = 3, #args do
+                        local id = tonumber(args[i])
+                        if id then ids[#ids + 1] = id end
+                    end
+                    ObjCap:HarvestList(ids)
                 else
                     -- "harvest" resumes, "harvest 1 30000" restarts on a range
                     ObjCap:HarvestStart(tonumber(sub), tonumber(args[3]))
@@ -2134,7 +2157,7 @@ if Carbonite and Carbonite.Core and Carbonite.Core.EventBus then
             if running or (cur or 0) > 0 then
                 log:info("  harvest %s at id %d/%d", running and "running" or "idle", cur, to)
             end
-        end, "quest capture (/cb qcap [on|off|wipe|batch N|harvest [stop|status|from to]])")
+        end, "quest capture (/cb qcap [on|off|wipe|batch N|harvest [stop|status|known|list ids|from to]])")
     end)
 end
 

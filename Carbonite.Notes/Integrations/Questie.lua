@@ -49,6 +49,15 @@ function Nx.Notes:Questie(mapId)
 
     local showAvailable = Nx.fdb.profile.Notes.QuestieSE
 
+    local winfo = Nx.Map.MapWorldInfo
+    local here = winfo and winfo[mapId]
+    local cont = here and not here.Instance and here.Cont
+    local function onMap(uiMapID)
+        if uiMapID == mapId then return true end
+        local info = cont and uiMapID and winfo[uiMapID]
+        return info and not info.Instance and info.Cont == cont or false
+    end
+
     -- Harvest Questie's frames for this map, building a content hash
     -- for dirty detection. Questie uses FakeShow/FakeHide rather than
     -- recreating frames when its display-type toggles flip, so the
@@ -62,6 +71,7 @@ function Nx.Notes:Questie(mapId)
         local qid = (data.QuestData and data.QuestData.Id)
             or (data.id) or 0
         currentHash = currentHash
+            + (frame.UiMapID or 0) * 1e9
             + (frame.x or 0) * 10000
             + (frame.y or 0) * 100
             + qid
@@ -72,7 +82,7 @@ function Nx.Notes:Questie(mapId)
         for _, name in pairs(frameNames) do
             local frame = resolveQuestieFrame(name)
             local data  = frame and frame.data
-            if frame and data and data.QuestData and frame.UiMapID == mapId
+            if frame and data and data.QuestData and onMap(frame.UiMapID)
                 and not frame.hidden then
                 local dataType = data.Type
                 if (showAvailable and dataType == "available")
@@ -95,7 +105,7 @@ function Nx.Notes:Questie(mapId)
                 for _, name in pairs(frameList) do
                     local frame = resolveQuestieFrame(name)
                     local data  = frame and frame.data
-                    if frame and data and frame.UiMapID == mapId
+                    if frame and data and onMap(frame.UiMapID)
                         and not frame.hidden then
                         pushIcon(frame, data)
                     end
@@ -224,7 +234,8 @@ function Nx.Notes:Questie(mapId)
     for _, icon in ipairs(icons) do
         local texture = icon.texture and icon.texture:GetTexture()
         -- frame.x / frame.y are stored in 0..100 percentage form
-        local wx, wy = Nx.Map:GetWorldPos(mapId, icon.x, icon.y)
+        local iconMap = icon.UiMapID or mapId
+        local wx, wy = Nx.Map:GetWorldPos(iconMap, icon.x, icon.y)
         -- Townsfolk (manual icons) render smaller than quest POIs.
         -- Detect via the Questie-set frame flag isManualIcon (most
         -- reliable), data.Type, or data.IconScale (manual icons use
@@ -234,7 +245,7 @@ function Nx.Notes:Questie(mapId)
             or (icon.data and (icon.data.IconScale or 1) < 0.85)
         local layer = isManual and "!QUE_T" or "!QUE"
         local qnote = map:AddIconPt(layer, wx, wy, nil, "FFFFFF", texture)
-        qnote.mapID, qnote.MapId = mapId, mapId
+        qnote.mapID, qnote.MapId = iconMap, iconMap
         map:SetIconUserData(qnote, icon)
         local tip = buildQuestieTip(icon.data)
         if tip then map:SetIconTip(qnote, tip) end
