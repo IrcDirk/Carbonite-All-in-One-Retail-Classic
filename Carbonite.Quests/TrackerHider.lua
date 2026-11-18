@@ -576,13 +576,7 @@ function Nx.Quest:Init()
             end
             if not testAlt then
                 HideUIPanel(QuestLogFrame)
-                if self.InShowUIPanel then
-                    Nx.Quest:HideUIPanel(QuestMapFrame)
-                    self.InShowUIPanel = false
-                else
-                    Nx.Quest:ShowUIPanel(QuestMapFrame)
-                    self.InShowUIPanel = true
-                end
+                Nx.Quest:ToggleQuestWindow()
             end
         end
         QuestLogFrame:HookScript("OnShow", func)

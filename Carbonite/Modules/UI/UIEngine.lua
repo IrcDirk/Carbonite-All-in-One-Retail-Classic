@@ -6649,10 +6649,118 @@ function Nx.List:Resize (width, height)
 
         x = x + column.Width
         clipW = clipW - column.Width
+
+        if self.ColResizable and hf then
+            self:ColumnUpdateGrip (k, column, x, width)
+        end
     end
 
     self:CreateStrings()
     self:CreateButtons()
+end
+
+function Nx.List:SetColumnsResizable (minWidth)
+    self.ColResizable = true
+    self.ColMinW = minWidth or 20
+    self.SSW = nil
+end
+
+function Nx.List:ColumnUpdateGrip (colId, column, rightX, listW)
+
+    local grip = column.Grip
+
+    if column.Width < (self.ColMinW or 20) or colId >= #self.Columns then
+        if grip and not grip.Dragging then
+            grip:Hide()
+        end
+        return
+    end
+
+    if not grip then
+
+        grip = CreateFrame ("Frame", nil, self.HdrFrm)
+        column.Grip = grip
+        grip.NxInst = self
+        grip.NxColumn = column
+        grip:SetFrameLevel (self.HdrFrm:GetFrameLevel() + 2)
+        grip:EnableMouse (true)
+
+        local tx = grip:CreateTexture (nil, "OVERLAY")
+        tx:SetPoint ("TOP", 0, 0)
+        tx:SetPoint ("BOTTOM", 0, 0)
+        tx:SetWidth (2)
+        tx:SetColorTexture (.6, .6, .8, .7)
+        grip.Tx = tx
+
+        grip:SetScript ("OnEnter", function (g)
+            g.Tx:SetColorTexture (1, 1, 1, 1)
+            SetCursor ("UI_RESIZE_CURSOR")
+        end)
+        grip:SetScript ("OnLeave", function (g)
+            if not g.Dragging then
+                g.Tx:SetColorTexture (.6, .6, .8, .7)
+                ResetCursor()
+            end
+        end)
+        grip:SetScript ("OnMouseDown", Nx.List.OnGripMouseDown)
+        grip:SetScript ("OnMouseUp", Nx.List.OnGripMouseUp)
+    end
+
+    grip:ClearAllPoints()
+    grip.MaxW = max (column.Width + listW - 24 - rightX, self.ColMinW or 20)
+    grip:SetPoint ("TOPLEFT", self.HdrFrm, "TOPLEFT", min (rightX, listW - 24) - 3, 0)
+    grip:SetWidth (8)
+    grip:SetHeight (max (self.HdrH, 1))
+    grip:Show()
+end
+
+function Nx.List.OnGripMouseDown (grip, click)
+
+    if click ~= "LeftButton" then
+        return
+    end
+
+    local scale = grip:GetEffectiveScale()
+    if scale == 0 then
+        scale = 1
+    end
+
+    grip.Dragging = true
+    grip.StartX = GetCursorPosition() / scale
+    grip.StartW = grip.NxColumn.Width
+
+    grip:SetScript ("OnUpdate", function (g)
+
+        local sc = g:GetEffectiveScale()
+        if sc == 0 then
+            sc = 1
+        end
+
+        local inst = g.NxInst
+        local w = floor (g.StartW + GetCursorPosition() / sc - g.StartX + .5)
+        w = max (min (w, g.MaxW or w), inst.ColMinW or 20)
+
+        if w ~= g.NxColumn.Width then
+            g.NxColumn.Width = w
+            inst:FullUpdate()
+        end
+    end)
+end
+
+function Nx.List.OnGripMouseUp (grip)
+
+    if not grip.Dragging then
+        return
+    end
+
+    grip.Dragging = nil
+    grip:SetScript ("OnUpdate", nil)
+    grip.Tx:SetColorTexture (.6, .6, .8, .7)
+    ResetCursor()
+
+    local inst = grip.NxInst
+    inst:SaveColumns()
+    inst:FullUpdate()
 end
 
 ---------------------------------------------------------------------------------------

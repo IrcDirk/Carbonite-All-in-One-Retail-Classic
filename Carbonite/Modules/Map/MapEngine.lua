@@ -12877,14 +12877,8 @@ function Nx.Map:QuestIconClick (this, button)
         -- Blizzard's API or it will silently reject.
         local liveQID = qId
         local qIndex = cur.QI
-        if qIndex and qIndex > 0 then
-            if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
-                local q = C_QuestLog.GetQuestIDForLogIndex(qIndex)
-                if q and q > 0 then liveQID = q end
-            elseif GetQuestIDFromLogIndex then
-                local q = GetQuestIDFromLogIndex(qIndex)
-                if q and q > 0 then liveQID = q end
-            end
+        if Nx.Quest and Nx.Quest.ResolveLiveQuestId then
+            liveQID = Nx.Quest:ResolveLiveQuestId (liveQID, qIndex) or liveQID
         end
         -- Compute toggle state BEFORE invoking any setter.
         -- The "click the active icon to clear" UX matches the

@@ -407,6 +407,8 @@ function Nx.Quest:GetOptionsConfig()
                             end,
                             set = function(_,r,g,b,a)
                                 Nx.qdb.profile.Quest.MapWatchAreaAlpha = r .. "|" .. g .. "|" .. b .. "|" .. a
+                                Nx.Quest:CalcWatchColors()
+                                Nx.Quest._iconDirty = true
                             end,
                         },
                         qmgraph = {
@@ -462,6 +464,10 @@ function Nx.Quest:GetOptionsConfig()
                             end,
                             set = function()
                                 Nx.qdb.profile.Quest.HideLockedQuests = not Nx.qdb.profile.Quest.HideLockedQuests
+                                local map = Nx.Map:GetMap (1)
+                                if map and map.Guide then
+                                    map.Guide:UpdateMapIcons()
+                                end
                             end,
                         },
                         qttlcols = {
@@ -831,6 +837,9 @@ function Nx.Quest:GetOptionsConfig()
                             end,
                             set = function()
                                 Nx.qdb.profile.QuestWatch.HideRaid = not Nx.qdb.profile.QuestWatch.HideRaid
+                                if Nx.Quest.Watch and Nx.Quest.Watch.Win then
+                                    Nx.Quest.Watch:ShowUpdate()
+                                end
                             end,
                         },
                         qwlock = {

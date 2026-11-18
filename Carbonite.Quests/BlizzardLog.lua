@@ -415,7 +415,8 @@ function Nx.Quest:RecordQuestsLog (validatedQuestCount)
 
 --                Nx.prt ("QD %s %s %s %s", title, qi, isHeader and "H1" or "H0", isComplete and "C1" or "C0")
 
-                if cur.Title == title then        -- Still matches?
+                local sameQuest = not questID or questID == 0 or not cur.QId or cur.QId <= 0 or questID == cur.QId
+                if cur.Title == title and sameQuest then        -- Still matches?
 
                     local change
 

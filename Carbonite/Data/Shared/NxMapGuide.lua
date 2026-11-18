@@ -1298,6 +1298,14 @@ function Nx.Map.Guide:UpdateGatherFolders()
     updateGatherType("ShowGatherL", L["Timber"])
     updateGatherType("ShowGatherA", L["Artifacts"])
 
+    local qFolder = self:FindFolder (L["Quest Givers"])
+    if qFolder then
+        self:AddShowFolders (qFolder, true)
+        if (Nx.db.char.Map.ShowQuestGivers or 1) > 1 then
+            self:AddShowFolders (qFolder)
+        end
+    end
+
     self:UpdateMapIcons()
 end
 

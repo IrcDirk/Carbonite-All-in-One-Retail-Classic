@@ -379,6 +379,26 @@ function Nx.Quest:PlaySound (sndI)
     end
 end
 
+function Nx.Quest:ResolveLiveQuestId (qId, qIndex)
+
+    if type (qId) ~= "number" then
+        qId = nil
+    end
+
+    if qId and qId > 0 and QuestAPI and QuestAPI:GetLogIndexForQuestID (qId) > 0 then
+        return qId
+    end
+
+    if qIndex and qIndex > 0 and QuestAPI then
+        local id = QuestAPI:GetQuestIDForLogIndex (qIndex)
+        if id and id > 0 then
+            return id
+        end
+    end
+
+    return qId
+end
+
 -------------------------------------------------------------------------------
 -- Tell party of quest changes
 -------------------------------------------------------------------------------
@@ -401,30 +421,25 @@ function Nx.Quest:TellPartyOfChanges()
 
     for _, cur in ipairs (curq) do
 
-        if cur.QI > 0 then
+        if cur.QI > 0 and QuestAPI and QuestAPI:GetQuestIDForLogIndex (cur.QI) == cur.QId then
 
             for n = 1, cur.LBCnt do
 
-                local skip
-                local desc, _, done
-                if QuestAPI then
-                    desc, _, done = QuestAPI:GetObjectiveForLogIndex (n, cur.QI)
-                end
-                if desc then
-                    if not done then
+                local desc, _, done = QuestAPI:GetObjectiveForLogIndex (n, cur.QI)
+                local old = cur[n]
+                if desc and desc ~= "" and old and desc ~= old then
 
+                    local send
+                    local oldCnt = tonumber (strmatch (old, "(%d+)/"))
+                    local newCnt = tonumber (strmatch (desc, "(%d+)/"))
+                    if done then
+                        send = not cur[n + 100]
+                    elseif oldCnt and newCnt and newCnt > oldCnt then
                         local num = Nx.qdb.profile.Quest.BroadcastQChangesNum
-                        local oldCnt = tonumber (strmatch (cur[n] or "", "(%d+)/"))
-                        local newCnt = tonumber (strmatch (desc, "(%d+)/"))
-                        if oldCnt and newCnt then
-                            if floor (oldCnt / num) == floor (newCnt / num) then
-                                skip = true
-                            end
-                        end
+                        send = floor (oldCnt / num) ~= floor (newCnt / num)
                     end
-                    if not skip and desc ~= cur[n] then
+                    if send then
                         Nx.Com:Send ("P", desc)
---                        Nx.prt ("%s", desc)
                     end
                 end
             end

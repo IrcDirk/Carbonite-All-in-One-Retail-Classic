@@ -1064,6 +1064,7 @@ function Nx.Quest:UpdateIcons (map)
     local showOnMap = Quest.Watch.ButShowOnMap:GetPressed()
 
     local typ, tid = Map:GetTargetInfo()
+    local blobAnchored
     if typ == "Q" then
 
 --        Nx.prt ("QTar %s", tid)
@@ -1077,9 +1078,14 @@ function Nx.Quest:UpdateIcons (map)
                 and Quest:ResolveCatalogQuestID(cur.QId, cur.QI)
                 or cur.QId
             Quest:TrackOnMap (liveQID, tid % 100, cur.QI > 0 or cur.Party, true, true)
+            blobAnchored = true
 
 --            Nx.prt ("UpIcons target %s %s", typ or "nil", tid or "nil")
         end
+    end
+    if not blobAnchored and map.QuestBlobQId then
+        local blobCur = Quest.QIds and Quest.QIds[map.QuestBlobQId]
+        Quest:UpdateQuestBlob ((blobCur and not blobCur.Complete) and map.QuestBlobQId or nil)
     end
 
     -- Dirty-check fingerprint for the heavier per-quest POI walk

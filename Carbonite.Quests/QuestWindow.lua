@@ -341,7 +341,8 @@ function Nx.Quest.List:Open()
 
     list:SetUser (self, self.OnListEvent)
 
-    list:SetLineHeight (0, 6)
+    list:SetLineHeight (0, 10)
+    list:SetColumnsResizable (40)
 
     list:ColumnAdd ("", 1, 20)
     list:ColumnAdd ("", 2, 300)
@@ -474,6 +475,21 @@ function Nx.Quest.List:Open()
     tinsert (menui3, item)
 
     local item = menu:AddItem (0, "")
+    tinsert (menui1, item)
+    tinsert (menui2, item)
+    tinsert (menui3, item)
+
+    local function func()
+        Nx.Opts:NXCmdFontChange()
+    end
+    local item = menu:AddItem (0, L["Quest Font Size"], func, self)
+    item:SetSlider (Nx.qdb.profile.Quest, 6, 20, 1, "QuestFontSize")
+    tinsert (menui1, item)
+    tinsert (menui2, item)
+    tinsert (menui3, item)
+
+    local item = menu:AddItem (0, L["Quest Font Spacing"], func, self)
+    item:SetSlider (Nx.qdb.profile.Quest, -10, 20, 1, "QuestFontSpacing")
     tinsert (menui1, item)
     tinsert (menui2, item)
     tinsert (menui3, item)
@@ -647,12 +663,13 @@ end
 -------------------------------------------------------------------------------
 
 function Nx.Quest:ToggleQuestWindow()
-    if self.InShowUIPanel then
+    local win = self.List and self.List.Win
+    local shown = win and win.Frm and win.Frm:IsShown()
+    self.InShowUIPanel = false
+    if shown then
         self:HideUIPanel (QuestMapFrame)
-        self.InShowUIPanel = false
     else
         self:ShowUIPanel (QuestMapFrame)
-        self.InShowUIPanel = true
     end
 end
 
@@ -1492,15 +1509,7 @@ function Nx.Quest.List:ToggleWatch (qId, qIndex, qObj, shift)
         local i, cur, id = Quest:FindCur (qId, qIndex)
         if cur then
             local liveQID = qId
-            if qIndex and qIndex > 0 then
-                if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
-                    local q = C_QuestLog.GetQuestIDForLogIndex(qIndex)
-                    if q and q > 0 then liveQID = q end
-                elseif GetQuestIDFromLogIndex then
-                    local q = GetQuestIDFromLogIndex(qIndex)
-                    if q and q > 0 then liveQID = q end
-                end
-            end
+            liveQID = Nx.Quest:ResolveLiveQuestId (liveQID, qIndex) or liveQID
 
             if Quest.PatchQuestFromBlizzard then
                 Quest:PatchQuestFromBlizzard(liveQID)

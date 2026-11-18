@@ -635,6 +635,16 @@ function Nx.Quest.Watch:Open()
     local item = menu:AddItem (0, L["Quest Giver Higher Levels To Show"], func, self)
     item:SetSlider (Nx.qdb.profile.Quest, 0, 90, 1, "MapQuestGiversHighLevel")
 
+    local function func()
+        Nx.Opts:NXCmdFontChange()
+    end
+
+    local item = menu:AddItem (0, L["Watch Font Size"], func, self)
+    item:SetSlider (Nx.qdb.profile.QuestWatch, 6, 20, 1, "WatchFontSize")
+
+    local item = menu:AddItem (0, L["Watch Font Spacing"], func, self)
+    item:SetSlider (Nx.qdb.profile.QuestWatch, -10, 20, 1, "WatchFontSpacing")
+
 --    local item = menu:AddItem (0, L["Group"], update, self)
 --    item:SetSlider (qopts, -200, 200, 1, "NXWPriGroup")
 
@@ -766,15 +776,7 @@ end
 -- a quest-log index is available resolve the live ID off it -- the same
 -- guard the left-click super-track path uses.
 function Nx.Quest:ShowWowheadLink (qId, qIndex)
-    if qIndex and qIndex > 0 then
-        if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
-            local q = C_QuestLog.GetQuestIDForLogIndex (qIndex)
-            if q and q > 0 then qId = q end
-        elseif GetQuestIDFromLogIndex then
-            local q = GetQuestIDFromLogIndex (qIndex)
-            if q and q > 0 then qId = q end
-        end
-    end
+    qId = Nx.Quest:ResolveLiveQuestId (qId, qIndex) or qId
     if not qId or qId == 0 then return end
     local url = self:WowheadURL (qId)
     if not StaticPopupDialogs["NxWowheadLink"] then
@@ -820,7 +822,13 @@ function Nx.Quest.Watch:Menu_OnShare (item)
 
         if GetNumSubgroupMembers() > 0 then
             Nx.Quest:ExpandQuests()
---            Nx.Quest.List:Select (self.MenuQId, self.MenuQIndex)
+            local qId = self.MenuQId
+            if QuestAPI and type (qId) == "number" and qId > 0 then
+                local live = QuestAPI:GetLogIndexForQuestID (qId) or 0
+                if live > 0 then
+                    qi = live
+                end
+            end
             QuestLogPushQuest (qi)
             Nx.Quest:RestoreExpandQuests()
         else
@@ -2798,6 +2806,7 @@ end
 -------------------------------------------------------------------------------
 
 function Nx.Quest.Watch:ShowUpdate()
+    local wasHid = self.Win.RaidHid
     self.Win.RaidHid = nil
     if Nx.qdb.profile.QuestWatch.HideRaid then
         if IsInRaid() then
@@ -2806,6 +2815,8 @@ function Nx.Quest.Watch:ShowUpdate()
         else
             self.Win.Frm:Show()
         end
+    elseif wasHid then
+        self.Win.Frm:Show()
     end
 end
 
@@ -2909,15 +2920,7 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                 if qId and qId > 0 and not typ.WatchError and not typ.AutoComplete
                    and C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
                     local liveQID = qId
-                    if qIndex and qIndex > 0 then
-                        if C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
-                            local q = C_QuestLog.GetQuestIDForLogIndex(qIndex)
-                            if q and q > 0 then liveQID = q end
-                        elseif GetQuestIDFromLogIndex then
-                            local q = GetQuestIDFromLogIndex(qIndex)
-                            if q and q > 0 then liveQID = q end
-                        end
-                    end
+                    liveQID = Nx.Quest:ResolveLiveQuestId (liveQID, qIndex) or liveQID
                     if liveQID == qId
                        and C_QuestLog and C_QuestLog.IsOnQuest
                        and not C_QuestLog.IsOnQuest(liveQID)
@@ -3045,11 +3048,7 @@ function Nx.Quest.Watch:OnListEvent (eventName, val1, val2, click, but)
                                     -- what ShowQuestComplete /
                                     -- AddAutoQuestPopUp expect.
                                     local _liveID = qId
-                                    if qIndex and qIndex > 0
-                                        and C_QuestLog and C_QuestLog.GetQuestIDForLogIndex then
-                                        local id = C_QuestLog.GetQuestIDForLogIndex(qIndex)
-                                        if id and id > 0 then _liveID = id end
-                                    end
+                                    _liveID = Nx.Quest:ResolveLiveQuestId (qId, qIndex) or qId
                                     local _qIndex = qIndex
                                     if Nx.isRetail then
                                         C_Timer.After(0, function()
@@ -3237,11 +3236,7 @@ function Nx.Quest.Watch:Set (data, on, track)
 
         if qObj > 0 and Quest.Tracking[qId] and Quest.Tracking[qId] ~= 0 then
             local liveQId = qId
-            if qIndex and qIndex > 0 and C_QuestLog
-                and C_QuestLog.GetQuestIDForLogIndex then
-                local id = C_QuestLog.GetQuestIDForLogIndex (qIndex)
-                if id and id > 0 then liveQId = id end
-            end
+            liveQId = Nx.Quest:ResolveLiveQuestId (qId, qIndex) or qId
             Quest.UserObjPick = {
                 qId     = qId,
                 liveQId = liveQId,

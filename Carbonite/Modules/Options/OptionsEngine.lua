@@ -2756,6 +2756,7 @@ local function commConfig()
                     end,
                     set = function()
                         Nx.db.profile.Comm.SendToFriends = not Nx.db.profile.Comm.SendToFriends
+                        Nx.Opts:UpdateCom()
                     end,
                 },
                 commLTG = {
@@ -2769,6 +2770,7 @@ local function commConfig()
                     end,
                     set = function()
                         Nx.db.profile.Comm.SendToGuild = not Nx.db.profile.Comm.SendToGuild
+                        Nx.Opts:UpdateCom()
                     end,
                 },
                 commLTZ = {
@@ -2782,6 +2784,7 @@ local function commConfig()
                     end,
                     set = function()
                         Nx.db.profile.Comm.SendToZone = not Nx.db.profile.Comm.SendToZone
+                        Nx.Opts:UpdateCom()
                     end,
                 },
                 commShowLevel = {
@@ -2821,6 +2824,7 @@ local function commConfig()
                     end,
                     set = function()
                         Nx.db.profile.Comm.Zone = not Nx.db.profile.Comm.Zone
+                        Nx.Com:UpdateChannels()
                     end,
                 },
 

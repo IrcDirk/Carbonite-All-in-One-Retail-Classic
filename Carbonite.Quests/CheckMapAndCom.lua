@@ -313,7 +313,14 @@ function Nx.Quest:Abandon (qIndex, qId)
                     elseif QuestAPI and _G.SetAbandonQuest
                         and _G.AbandonQuest then
 
-                         QuestAPI:SetSelectedLogIndex(qIndex)
+                         local liveIndex = qIndex
+                         if qId and qId > 0 then
+                             liveIndex = QuestAPI:GetLogIndexForQuestID(qId) or 0
+                             if liveIndex <= 0 then
+                                 return
+                             end
+                         end
+                         QuestAPI:SetSelectedLogIndex(liveIndex)
                          SetAbandonQuest()
                          -- native blizz
                          AbandonQuest()
