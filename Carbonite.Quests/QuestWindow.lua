@@ -2477,12 +2477,11 @@ function Nx.Quest.List:Update()
 
             if not self.ShowParty or onQ > 0 then
 
+                local color = GetCachedDifficultyColorStr(level)
                 local lvlStr = "  "
                 if level > 0 then
-                    lvlStr = format ("|cffd0d0d0%2d", level)
+                    lvlStr = format ("%s%2d", color, level)
                 end
-
-                local color = GetCachedDifficultyColorStr(level)
 
                 local nameStr = format ("%s %s%s", lvlStr, color, title)
 
@@ -2679,7 +2678,6 @@ function Nx.Quest.List:Update()
 
 --                Nx.prt ("%s [%s] %s", qname, qId, quest.CNum or "")
 
-                local lvlStr = format ("|cffd0d0d0%2d", lvl)
                 local title = qname
 
                 if quest and quest.CNum then
@@ -2732,6 +2730,7 @@ function Nx.Quest.List:Update()
                     end
 
                     local color = GetCachedDifficultyColorStr(lvl)
+                    local lvlStr = format ("%s%2d", color, lvl)
 
                     t.Desc = format ("%s %s%s%s", lvlStr, haveStr, color, title)
                     t.Col4 = format ("%s %s", date ("|cff9f9fcf%m/%d %H:%M:%S", qTime), dailyName)
@@ -2834,7 +2833,6 @@ function Nx.Quest.List:Update()
 
             if show then
 
-                local lvlStr = format ("|cffd0d0d0%2d", lvl)
                 -- Prefer the live, localized title; fall back to Questie's
                 -- per-locale patch table; final fallback is the English
                 -- name baked into the Quest header. A live-cache miss kicks
@@ -2940,6 +2938,7 @@ function Nx.Quest.List:Update()
                     end
 
                     local color = GetCachedDifficultyColorStr(lvl)
+                    local lvlStr = format ("%s%2d", color, lvl)
 
                     local str = format ("%s %s%s%s", lvlStr, haveStr, color, title)
 

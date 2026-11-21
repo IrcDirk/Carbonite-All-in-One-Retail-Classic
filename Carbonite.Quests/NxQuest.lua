@@ -333,17 +333,24 @@ end
 Nx.Quest = Nx.Quest or {}
 Nx.Quest.difficultyColorCache = Nx.Quest.difficultyColorCache or {}
 local difficultyColorCache = Nx.Quest.difficultyColorCache
+local difficultyColorPlayerLevel
 
 -- Get cached difficulty color string for a level.
 -- @param level: Quest level
 -- @return: Color escape sequence string like "|cffRRGGBB"
 function Nx.Quest.GetCachedDifficultyColorStr(level)
+    local playerLevel = UnitLevel("player")
+    if playerLevel ~= difficultyColorPlayerLevel then
+        wipe(difficultyColorCache)
+        difficultyColorPlayerLevel = playerLevel
+    end
+
     local cached = difficultyColorCache[level]
     if cached then
         return cached
     end
     local color = GetQuestDifficultyColor(level)
-    cached = format("|cff%02x%02x%02x", color.r * 255, color.g * 255, color.b * 255)
+    cached = format("|cff%02x%02x%02x", math.floor(color.r * 255), math.floor(color.g * 255), math.floor(color.b * 255))
     difficultyColorCache[level] = cached
     return cached
 end
