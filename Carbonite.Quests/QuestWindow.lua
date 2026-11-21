@@ -342,7 +342,10 @@ function Nx.Quest.List:Open()
     list:SetUser (self, self.OnListEvent)
 
     list:SetLineHeight (0, 10)
-    list:SetColumnsResizable (40)
+    -- Older Carbonite cores use fixed-width list columns.
+    if list.SetColumnsResizable then
+        list:SetColumnsResizable (40)
+    end
 
     list:ColumnAdd ("", 1, 20)
     list:ColumnAdd ("", 2, 300)
@@ -940,7 +943,11 @@ function Nx.Quest.List:FilterOnTextChanged()
 
     local this = self            --V4
     local self = this.NxInst
-    self.Filters[self.TabSelected] = gsub (this:GetText(), self.FilterDescEsc, "")
+    local tab = self.TabSelected
+    if not tab then
+        return
+    end
+    self.Filters[tab] = gsub (this:GetText(), self.FilterDescEsc, "")
 --    Nx.prt ("Filter #%s = %s", self.TabSelected, self.Filters[self.TabSelected])
     self:Update()
 end
