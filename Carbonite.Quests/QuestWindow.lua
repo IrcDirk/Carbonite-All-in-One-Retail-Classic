@@ -342,7 +342,6 @@ function Nx.Quest.List:Open()
     list:SetUser (self, self.OnListEvent)
 
     list:SetLineHeight (0, 10)
-    -- Older Carbonite cores use fixed-width list columns.
     if list.SetColumnsResizable then
         list:SetColumnsResizable (40)
     end
@@ -3227,7 +3226,38 @@ end
 
 function Nx.Quest:UpdateQuestDetailsTimer()
 
+    -- Carbonite uses Blizzard's shared map reward widgets. Clear the
+    -- dynamic row anchors before Blizzard lays out the selected quest.
+    local rewards = MapQuestInfoRewardsFrame
+    if rewards then
+        if rewards.PlayerTitleText then rewards.PlayerTitleText:ClearAllPoints() end
+        if rewards.TitleFrame then rewards.TitleFrame:ClearAllPoints() end
+        if rewards.ItemReceiveText then rewards.ItemReceiveText:ClearAllPoints() end
+        if rewards.XPFrame then rewards.XPFrame:ClearAllPoints() end
+    end
+
     QuestInfo_Display (CBQUEST_TEMPLATE, NXQuestLogDetailScrollChildFrame, nil, nil, "Carb")
+
+    local renderedRewards = QuestInfoFrame and QuestInfoFrame.rewardsFrame
+    if renderedRewards then
+        -- Mists includes a second title widget that its renderer never manages.
+        local legacyTitle = renderedRewards.QuestInfoPlayerTitleFrame
+        if legacyTitle and legacyTitle ~= renderedRewards.TitleFrame then
+            legacyTitle:Hide()
+        end
+
+        if GetQuestLogRewardTitle then
+            local title = GetQuestLogRewardTitle()
+            if type(title) ~= "string" or not title:find("%S") then
+                if renderedRewards.PlayerTitleText then
+                    renderedRewards.PlayerTitleText:Hide()
+                end
+                if renderedRewards.TitleFrame then
+                    renderedRewards.TitleFrame:Hide()
+                end
+            end
+        end
+    end
 
     local r, g, b, a = Nx.Util_str2rgba (Nx.qdb.profile.Quest.DetailBC)
     -- 0.18, 0.12, 0.06 parchment
