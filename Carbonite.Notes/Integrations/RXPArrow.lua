@@ -53,6 +53,13 @@ local function rxpAddon()
     return _G.RXP
 end
 
+local function guideWindowShown()
+    local rxp = rxpAddon()
+    local f = (rxp and type(rxp.RXPFrame) == "table" and rxp.RXPFrame) or _G.RXPFrame
+    if type(f) ~= "table" or type(f.IsShown) ~= "function" then return true end
+    return f:IsShown() and true or false
+end
+
 local function arrowFrame()
     local af = _G.RXPG_ARROW
     if type(af) == "table" then return af end
@@ -265,6 +272,11 @@ function Nx.Notes:RXPArrowSync()
     end
 
     suppressRxpArrow(true)
+
+    if not guideWindowShown() then
+        clearTarget()
+        return
+    end
 
     local af  = arrowFrame()
     local el  = af and af.element

@@ -57,6 +57,12 @@ local function zygorPointer()
     if type(P) == "table" then return P, ZGV end
 end
 
+local function guideWindowShown(ZGV)
+    local f = (ZGV and type(ZGV.Frame) == "table" and ZGV.Frame) or _G.ZygorGuidesViewerFrame
+    if type(f) ~= "table" or type(f.IsShown) ~= "function" then return true end
+    return f:IsShown() and true or false
+end
+
 -- The live destination waypoint Zygor is pointing at, or nil.
 local function activeWaypoint(P)
     if not P then return nil end
@@ -240,6 +246,11 @@ function Nx.Notes:ZygorArrowSync()
     end
 
     suppressZygorArrow(true)
+
+    if not guideWindowShown(ZGV) then
+        clearTarget()
+        return
+    end
 
     local way = activeWaypoint(P)
     local sig = waypointSig(way)

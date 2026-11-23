@@ -434,7 +434,15 @@ local function ResolveTrackTarget(self, quest, qId, qObj, useEnd)
             res = CatalogEndpoint (self, quest, useEnd)
         end
     else
-        res = CatalogEndpoint (self, quest, useEnd) or LiveTarget (qId)
+        local cur = self.QIds and self.QIds[qId]
+        local complete = (cur and cur.Complete)
+            or (C_QuestLog and C_QuestLog.IsComplete and C_QuestLog.IsComplete (qId))
+        local inLog = cur or (C_QuestLog and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest (qId))
+        if inLog and not complete then
+            res = LiveTarget (qId) or CatalogEndpoint (self, quest, useEnd)
+        else
+            res = CatalogEndpoint (self, quest, useEnd) or LiveTarget (qId)
+        end
     end
 
     if not res then
