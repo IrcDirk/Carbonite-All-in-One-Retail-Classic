@@ -2483,7 +2483,7 @@ function Nx.Quest.List:Update()
 
             if not self.ShowParty or onQ > 0 then
 
-                local color = GetCachedDifficultyColorStr(level)
+                local color = Quest.GetQuestTitleColorStr(level, qId)
                 local lvlStr = "  "
                 if level > 0 then
                     lvlStr = format ("%s%2d", color, level)

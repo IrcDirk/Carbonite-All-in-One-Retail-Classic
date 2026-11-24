@@ -1,5 +1,10 @@
 # Carbonite Quests Project Changelog
 
+## 2026-11-24 — Quest difficulty colors
+
+- Use native per-quest difficulty for active quest titles in the quest list and watch on Forever and Retail.
+- Apply difficulty color to the watched quest name and level by default. Custom watch title colors still take precedence for the name.
+
 ## 2026-10-12 — Map and Quest diagnostic interface
 
 - Added a shared native diagnostic window with Overview, Functions, Compare, Help, and Export views.
