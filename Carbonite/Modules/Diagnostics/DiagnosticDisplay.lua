@@ -435,7 +435,8 @@ local function Tooltip(region, text)
         local tooltip = _G.GameTooltip
         if not tooltip then return end
         tooltip:SetOwner(self, "ANCHOR_RIGHT")
-        tooltip:SetText(text, 1, 1, 1, true)
+        tooltip:ClearLines()
+        tooltip:AddLine(text, 1, 1, 1, true)
         tooltip:Show()
     end)
     region:SetScript("OnLeave", function() if _G.GameTooltip then _G.GameTooltip:Hide() end end)

@@ -9174,12 +9174,20 @@ function Nx.Map:DrawTracking(srcX, srcY, dstX, dstY, mode, target)
             local f
 
             local arrowDir = dir
+            local instanceCanvas = self:UsesInstanceIconPlacement()
+            if instanceCanvas then
+                local canvas, width, height = self:GetInstanceMapCanvas()
+                if not canvas then return end
+                local x1, y1 = Nx.Map:GetZonePos(self.MapId, srcX, srcY)
+                local x2, y2 = Nx.Map:GetZonePos(self.MapId, dstX, dstY)
+                arrowDir = math.deg(math.atan2((y2 - y1) * height, (x2 - x1) * width)) + 90
+            end
             for n = 1, cnt do
 
                 local wx = srcX + x / sx
                 local wy = srcY + y / sy
 
-                if self.View3DActive then
+                if self.View3DActive and not instanceCanvas then
                     -- Direction along the projected trail, not the flat one.
                     local nx2, ny2 = srcX + (x + dx) / sx, srcY + (y + dy) / sy
                     local px1, py1 = self:Screen3D (wx, wy)
@@ -10687,8 +10695,13 @@ function Nx.Map:ClipFrameZTLO (frm, x, y, w, h, xo, yo)
 end
 
 
+function Nx.Map:UsesInstanceIconPlacement()
+    return self.CurOpts.NXInstanceMaps
+        and (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId))
+end
+
 function Nx.Map:ClipFrameByMapType (frm, bx, by, w, h, dir, hideOutside)
-    if (self:IsInstanceMap(Nx.Map.RMapId) or self:IsBattleGroundMap(Nx.Map.RMapId)) and self.CurOpts.NXInstanceMaps then
+    if self:UsesInstanceIconPlacement() then
         return self:ClipFrameMF (frm, bx, by, w, h, dir)
     else
         return self:ClipFrameW (frm, bx, by, w, h, dir, hideOutside)
@@ -11707,7 +11720,6 @@ function Nx.Map:ClipFrameMF (frm, bx, by, w, h, dir)
         return false, x, y
     end
 
-    frm.texture:SetTexCoord(0, 1, 0, 1)
     if dir and dir ~= 0 then
         local co = cos(dir)
         local si = sin(dir)
@@ -11715,12 +11727,10 @@ function Nx.Map:ClipFrameMF (frm, bx, by, w, h, dir)
         local t2x, t2y = -.5 * co + .5 * si + .5,  .5 * si + .5 * co + .5
         local t3x, t3y =  .5 * co - .5 * si + .5, -.5 * si - .5 * co + .5
         local t4x, t4y =  .5 * co + .5 * si + .5, -.5 * si + .5 * co + .5
-        if t1x >= 0 and t1x <= 1 and t1y >= 0 and t1y <= 1
-            and t2x >= 0 and t2x <= 1 and t2y >= 0 and t2y <= 1
-            and t3x >= 0 and t3x <= 1 and t3y >= 0 and t3y <= 1
-            and t4x >= 0 and t4x <= 1 and t4y >= 0 and t4y <= 1 then
-            frm.texture:SetTexCoord(t1x, t1y, t2x, t2y, t3x, t3y, t4x, t4y)
-        end
+        -- Rotating a square samples beyond its corners at diagonal headings.
+        frm.texture:SetTexCoord(t1x, t1y, t2x, t2y, t3x, t3y, t4x, t4y)
+    else
+        frm.texture:SetTexCoord(0, 1, 0, 1)
     end
 
     return true, x, y
