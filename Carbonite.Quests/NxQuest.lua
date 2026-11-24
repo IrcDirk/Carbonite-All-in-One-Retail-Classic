@@ -354,7 +354,18 @@ function Nx.Quest.GetCachedDifficultyColorStr(level)
     difficultyColorCache[level] = cached
     return cached
 end
-local GetCachedDifficultyColorStr = Nx.Quest.GetCachedDifficultyColorStr
+-- Forever and Retail classify individual quests, including scaled quests.
+function Nx.Quest.GetQuestTitleColorStr(level, questID)
+    if (Nx.isCamelot or Nx.isRetail) and questID and questID > 0
+        and C_PlayerInfo and C_PlayerInfo.GetContentDifficultyQuestForPlayer and GetDifficultyColor then
+        local difficulty = C_PlayerInfo.GetContentDifficultyQuestForPlayer(questID)
+        if difficulty then
+            local color = GetDifficultyColor(difficulty)
+            return format("|cff%02x%02x%02x", math.floor(color.r * 255), math.floor(color.g * 255), math.floor(color.b * 255))
+        end
+    end
+    return Nx.Quest.GetCachedDifficultyColorStr(level)
+end
 
 -- Create the AceAddon for the Quest module
 CarboniteQuest = LibStub("AceAddon-3.0"):NewAddon("Carbonite.Quest", "AceEvent-3.0", "AceComm-3.0")

@@ -149,7 +149,6 @@ local function SplitWatchMarkupLine(text, maxVisible)
 end
 
 -- Promoted from NxQuest.lua's file-local cache helper.
-local GetCachedDifficultyColorStr = Nx.Quest.GetCachedDifficultyColorStr
 
 -- Promoted from NxQuest.lua's file-local compat shim.
 local GetQuestTagInfoCompat = Nx.Quest.GetQuestTagInfoCompat
@@ -2017,8 +2016,9 @@ function Nx.Quest.Watch:UpdateList()
 
     -- Cache color settings
     local Cols = Quest.Cols
-    local compColor = Cols["compColor"]
-    local incompColor = Cols["incompColor"]
+    local defaults = Quest.defaults.profile.QuestWatch
+    local customComplete = qwProfile.CompleteColor ~= defaults.CompleteColor and Cols["compColor"]
+    local customIncomplete = qwProfile.IncompleteColor ~= defaults.IncompleteColor and Cols["incompColor"]
     local oCompColor = Cols["oCompColor"]
     local oIncompColor = Cols["oIncompColor"]
 
@@ -2570,11 +2570,16 @@ function Nx.Quest.Watch:UpdateList()
                                     .. (self.Modern and "~R" or ""))
                             end
                             list:ItemSetButtonTip ((cur.ObjText or "?") .. (cur.PartyDesc or ""))
-                            local color = isComplete and compColor or incompColor
+                            local difficultyColor = Quest.GetQuestTitleColorStr(level, qId)
+                            local color = difficultyColor
+                            if isComplete then
+                                color = customComplete or difficultyColor
+                            else
+                                color = customIncomplete or difficultyColor
+                            end
                             local lvlStr = ""
                             if level > 0 then
-                                local colStr = GetCachedDifficultyColorStr(level)
-                                lvlStr = format ("%s%2d%s ", colStr, level, cur.TagShort)
+                                lvlStr = format ("%s%2d%s ", difficultyColor, level, cur.TagShort)
                             end
                             local nameStr = format ("%s%s%s", lvlStr, color, title)
                             if isSuperTracked and not self.Modern then

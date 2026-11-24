@@ -597,7 +597,6 @@ function Profiler:RenderDisplay()
     if data.baselineState ~= "none" then frame.baselineClear:Enable() else frame.baselineClear:Disable() end
     if export then
         frame.editBox:SetText(self:BuildReport(data.scope, data))
-        frame.editBox:SetHeight(max(1, frame.editBox:GetStringHeight() + 24))
         return
     end
     local canvas = NewCanvas(frame)
@@ -779,12 +778,10 @@ function Profiler:OpenReport(scope, view)
         frame.editBox = CreateFrame("EditBox", nil, frame.exportScroll)
         frame.editBox:SetMultiLine(true)
         frame.editBox:SetAutoFocus(false)
-        frame.editBox:SetWidth(CONTENT_WIDTH)
+        frame.editBox:SetSize(CONTENT_WIDTH, 1)
+        frame.editBox:SetTextInsets(0, 0, 0, 24)
         frame.editBox:SetTextColor(unpack(PRIMARY))
         frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
-        frame.editBox:SetScript("OnTextChanged", function(self)
-            self:SetHeight(max(1, self:GetStringHeight() + 24))
-        end)
         frame.exportScroll:SetScrollChild(frame.editBox)
         frame.footer = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.footer:SetPoint("BOTTOMLEFT", 22, 23)
