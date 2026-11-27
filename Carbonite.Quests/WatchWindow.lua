@@ -404,6 +404,44 @@ end
 -- Init and open
 -------------------------------------------------------------------------------
 
+-- The map, party log and super-tracking code also read these native controls.
+-- Keep one state and callback path for toolbar menu actions and tracking updates.
+local function ActivateWatchControl (button)
+    Nx.Button.OnMouseDown (button.Frm, "LeftButton")
+end
+
+function Nx.Quest.Watch:CreateControlMenu (parent)
+    local menu = Nx.Menu:Create (parent, 300)
+    self.ControlMenu = menu
+    self.ControlItems = {}
+    menu:AddSubMenu (self.MenuPri, L["Priorities"])
+    local buttons = { self.ButShowOnMap, self.ButATarget, self.ButQGivers, self.ButShowParty }
+    for i, button in ipairs (buttons) do
+        self.ControlItems[i] = menu:AddItem (0, button.Type.Tip, ActivateWatchControl, button)
+    end
+    menu:AddSubMenu (self.Menu, L["Watch Actions and Options"])
+end
+
+function Nx.Quest.Watch:OpenControlMenu()
+    if not self.ControlMenu then
+        self:CreateControlMenu (self.List.Frm)
+    end
+    -- The map guide can also change the saved giver mode.
+    self.ButQGivers:SetState (Nx.db.char.Map.ShowQuestGivers or 1)
+    for _, item in ipairs (self.ControlItems) do
+        local button = item.User
+        local state
+        if button == self.ButQGivers then
+            local modes = { OFF or "Off", ALL or "All", L["Dailies and Weeklies"] }
+            state = modes[button:GetState()] or (UNKNOWN or "Unknown")
+        else
+            state = button:GetPressed() and (ON or "On") or (OFF or "Off")
+        end
+        item:SetText (format ("%s (%s)", button.Type.Tip, state))
+    end
+    self.ControlMenu:Open()
+end
+
 function Nx.Quest.Watch:Open()
     self.GOpts = opts
     local qopts = Nx.Quest:GetQuestOpts()
@@ -479,7 +517,7 @@ function Nx.Quest.Watch:Open()
     -- Buttons
 
     local function func (self)
-        self.Menu:Open()
+        self:OpenControlMenu()
     end
     self.ButMenu = Nx.Button:Create (win.Frm, "QuestWatchMenu", nil, nil, 4, -5 + yo, "TOPLEFT", 1, 1, func, self)
 
@@ -686,6 +724,14 @@ function Nx.Quest.Watch:Open()
         tinsert (minimizedHideFrames, win.TitleFStr[2])
         tinsert (minimizedHideFrames, self.HdrLine2)
     end
+
+    -- Only the menu launcher is visible. Tracking still reads the native controls.
+    self.ControlMenu = nil
+    self.ButPri.Frm:Hide()
+    self.ButShowOnMap.Frm:Hide()
+    self.ButATarget.Frm:Hide()
+    self.ButQGivers.Frm:Hide()
+    self.ButShowParty.Frm:Hide()
 
     win:SetMinimizedHideFrames (minimizedHideFrames)
 
@@ -2570,7 +2616,9 @@ function Nx.Quest.Watch:UpdateList()
                                     .. (self.Modern and "~R" or ""))
                             end
                             list:ItemSetButtonTip ((cur.ObjText or "?") .. (cur.PartyDesc or ""))
-                            local difficultyColor = Quest.GetQuestTitleColorStr(level, qId)
+                            -- Older quest modules expose only the level-based color helper.
+                            local getTitleColor = Quest.GetQuestTitleColorStr or Quest.GetCachedDifficultyColorStr
+                            local difficultyColor = getTitleColor and getTitleColor(level, qId) or "|cffffffff"
                             local color = difficultyColor
                             if isComplete then
                                 color = customComplete or difficultyColor

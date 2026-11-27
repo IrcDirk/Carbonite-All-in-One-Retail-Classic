@@ -1,5 +1,18 @@
 # Carbonite Quests Project Changelog
 
+## 2026-11-26 — Quest Watch menu revision 3
+
+- Fixed a blank Quest Watch on installations missing the per-quest title-color helper. Use the installed level-based color helper when available, with white as the final fallback.
+
+## 2026-11-26 — Quest Watch menu revision 2
+
+- Restored the supplied watch frame layout and title spacing. The header opens the combined menu on demand.
+
+## 2026-11-26 — Quest Watch menu
+
+- Combined the watch toolbar into one Menu button in both watch layouts. It opens Priorities, Show Quests On Map, Auto Track, Quest Givers, Show Party Quests, and Watch Actions and Options.
+- Show the current setting for each control when the menu opens. Quest Givers cycles through Off, All, and Dailies and Weeklies.
+
 ## 2026-11-24 — Quest difficulty colors
 
 - Use native per-quest difficulty for active quest titles in the quest list and watch on Forever and Retail.
