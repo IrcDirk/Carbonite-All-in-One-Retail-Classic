@@ -290,6 +290,8 @@ L["Quest Completion..."] = true
 
 L["Menu"] = true
 L["Priorities"] = true
+L["Watch Actions and Options"] = true
+L["Dailies and Weeklies"] = true
 L["Swap Views"] = true
 L["Show Quests On Map"] = true
 L["Auto Track"] = true
